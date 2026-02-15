@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>dPaul TTS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #131413;
+            min-height: 100vh;
+            padding: 5px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 280px;
+            width: 100%;
+            margin: 0 auto;
+            background: linear-gradient(145deg, #4a0a0a, #6a1010);
+            border-radius: 10px;
+            padding: 8px;
+            box-shadow: 
+                0 14px 39px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+            border: none;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 35%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 12px 12px 0 0;
+            pointer-events: none;
+        }
+
+        h1 {
+            color: #000000;
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+            font-family: Impact, 'Arial Black', sans-serif;
+            text-align: center;
+        }
+
+        .section {
+            background: #0a0a0a;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 
+                inset 0 2px 3px rgba(0, 0, 0, 0.5),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+                0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid #000;
+            position: relative;
+        }
+
+        .section-title {
+            color: #888;
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        label {
+            display: block;
+            color: #666;
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Green LED Display Style - LARGE */
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            padding: 12px;
+            background: #001a00;
+            border: 2px solid #000;
+            border-radius: 6px;
+            color: #00dd00;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            line-height: 1.5;
+            box-shadow: 
+                inset 0 3px 6px rgba(0, 0, 0, 0.8),
+                inset 0 0 30px rgba(0, 80, 0, 0.15);
+        }
+
+        textarea::placeholder {
+            color: #004400;
+            font-size: 12px;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: 
+                inset 0 3px 6px rgba(0, 0, 0, 0.8),
+                inset 0 0 30px rgba(0, 100, 0, 0.25);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        select {
+            padding: 12px;
+            background: #0a0a0a;
+            border: 2px solid #000;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 
+                inset 0 2px 4px rgba(0, 0, 0, 0.5),
+                0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #000;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            margin-top: 8px;
+            box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(145deg, #999, #666);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 2px solid #333;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            background: linear-gradient(145deg, #aaa, #777);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(145deg, #999, #666);
+            border-radius: 50%;
+            border: 2px solid #333;
+            cursor: pointer;
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb:active {
+            background: linear-gradient(145deg, #aaa, #777);
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .slider-number {
+            color: #00dd00;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            padding: 18px;
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border: 2px solid #000;
+            border-radius: 8px;
+            color: #888;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 
+                0 3px 6px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button:active {
+            background: linear-gradient(145deg, #444, #222);
+            transform: translateY(2px);
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #666, #444);
+            color: #ffffff;
+            font-size: 18px;
+        }
+
+        .btn-primary:active {
+            background: linear-gradient(145deg, #777, #555);
+        }
+
+        /* LED Status Display */
+        .status {
+            margin-top: 12px;
+            padding: 12px;
+            background: #001a00;
+            border-radius: 6px;
+            text-align: center;
+            color: #00aa00;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+            box-shadow: 
+                inset 0 3px 6px rgba(0, 0, 0, 0.8),
+                inset 0 0 25px rgba(0, 80, 0, 0.15);
+            border: 2px solid #000;
+        }
+
+        .status.active {
+            color: #00dd00;
+            box-shadow: 
+                inset 0 3px 6px rgba(0, 0, 0, 0.8),
+                inset 0 0 25px rgba(0, 120, 0, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>dPaul TTS</h1>
+
+        <!-- Display Section at Top -->
+        <div class="section">
+            <label>SCRIPT DISPLAY</label>
+            <textarea id="textInput" placeholder="Enter your text here and select the voice. You adjust the pitch and speed."></textarea>
+        </div>
+
+        <!-- Controls Below -->
+        <div class="section">
+            <div class="section-title">VOICE</div>
+            <div class="control-group">
+                <select id="voiceSelect">
+                    <option value="">Loading voices...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" id="speakBtn">SPEAK</button>
+        </div>
+
+        <div class="controls-grid">
+            <div class="section">
+                <div class="section-title">SPEED</div>
+                <div class="control-group slider-container">
+                    <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
+                    <div class="slider-value">
+                        <span class="slider-number" id="rateValue">1.0x</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">PITCH</div>
+                <div class="control-group slider-container">
+                    <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
+                    <div class="slider-value">
+                        <span class="slider-number" id="pitchValue">1.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">VOLUME</div>
+                <div class="control-group slider-container">
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+                    <div class="slider-value">
+                        <span class="slider-number" id="volumeValue">100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="clearBtn">CLEAR</button>
+            <button id="stopBtn" disabled>STOP</button>
+        </div>
+
+        <div class="status" id="status">Ready</div>
+    </div>
+
+    <script>
+        let synth = window.speechSynthesis;
+        let voices = [];
+        let utterance = null;
+
+        // Load voices
+        function loadVoices() {
+            voices = synth.getVoices();
+            
+            // Filter out novelty/bad voices
+            const excludeKeywords = ['wobble', 'bells', 'superstar', 'trinoids', 'bad news', 'good news', 'bahh', 'zarvox', 'cellos', 'organ', 'junior', 'bubbles', 'albert', 'fred', 'hysterical', 'kathy', 'princess', 'ralph', 'whisper'];
+            
+            let filteredVoices = voices.filter(voice => {
+                const nameLower = voice.name.toLowerCase();
+                // Exclude novelty voices
+                for (let keyword of excludeKeywords) {
+                    if (nameLower.includes(keyword)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            // Prioritize Google voices first, then others
+            filteredVoices.sort((a, b) => {
+                const aIsGoogle = a.name.toLowerCase().includes('google');
+                const bIsGoogle = b.name.toLowerCase().includes('google');
+                if (aIsGoogle && !bIsGoogle) return -1;
+                if (!aIsGoogle && bIsGoogle) return 1;
+                return 0;
+            });
+
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+
+            if (filteredVoices.length === 0) {
+                voiceSelect.innerHTML = '<option value="">No voices available</option>';
+                return;
+            }
+
+            let defaultIndex = -1;
+            
+            filteredVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                
+                // Add special labels for interesting voices
+                let label = voice.name;
+                const nameLower = voice.name.toLowerCase();
+                
+                // Mark robot-like voices
+                if (nameLower.includes('daniel') || nameLower.includes('alex') || nameLower.includes('robotic')) {
+                    label += ' 🤖';
+                }
+                // Mark sultry/sexy female voices
+                else if ((nameLower.includes('samantha') || nameLower.includes('serena') || nameLower.includes('ava') || 
+                         (nameLower.includes('female') && nameLower.includes('us'))) && 
+                         !nameLower.includes('enhanced')) {
+                    label += ' 💋';
+                }
+                // Mark UK voices
+                else if (nameLower.includes('uk')) {
+                    label += ' 🇬🇧';
+                }
+                
+                option.textContent = `${label} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+                
+                // Set default to a good female voice if available
+                if (defaultIndex === -1) {
+                    if (nameLower.includes('samantha') || nameLower.includes('ava')) {
+                        defaultIndex = index;
+                    } else if (nameLower.includes('uk') && nameLower.includes('male')) {
+                        defaultIndex = index;
+                    }
+                }
+            });
+
+            // Set default voice
+            if (defaultIndex !== -1) {
+                voiceSelect.value = defaultIndex;
+            }
+
+            window.filteredVoices = filteredVoices;
+        }
+
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
+        // Slider updates
+        document.getElementById('rateSlider').addEventListener('input', (e) => {
+            document.getElementById('rateValue').textContent = e.target.value + 'x';
+        });
+
+        document.getElementById('pitchSlider').addEventListener('input', (e) => {
+            document.getElementById('pitchValue').textContent = e.target.value;
+        });
+
+        document.getElementById('volumeSlider').addEventListener('input', (e) => {
+            document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%';
+        });
+
+        // Speak button
+        document.getElementById('speakBtn').addEventListener('click', () => {
+            const text = document.getElementById('textInput').value;
+            
+            if (!text.trim()) {
+                updateStatus('Please enter text');
+                return;
+            }
+
+            synth.cancel();
+
+            utterance = new SpeechSynthesisUtterance(text);
+            
+            const voiceSelect = document.getElementById('voiceSelect');
+            const selectedIndex = voiceSelect.value;
+            
+            if (window.filteredVoices && window.filteredVoices[selectedIndex]) {
+                utterance.voice = window.filteredVoices[selectedIndex];
+            }
+
+            utterance.rate = parseFloat(document.getElementById('rateSlider').value);
+            utterance.pitch = parseFloat(document.getElementById('pitchSlider').value);
+            utterance.volume = parseFloat(document.getElementById('volumeSlider').value);
+
+            utterance.onstart = () => {
+                updateStatus('Speaking...', true);
+                document.getElementById('speakBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+            };
+
+            utterance.onend = () => {
+                updateStatus('Finished');
+                document.getElementById('speakBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            };
+
+            utterance.onerror = (event) => {
+                updateStatus('Error: ' + event.error);
+                document.getElementById('speakBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            };
+
+            synth.speak(utterance);
+        });
+
+        // Clear button
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('textInput').value = '';
+            updateStatus('Text cleared');
+        });
+
+        // Stop button
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            synth.cancel();
+            updateStatus('Stopped');
+            document.getElementById('speakBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        });
+
+        function updateStatus(message, isActive = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            if (isActive) {
+                status.classList.add('active');
+            } else {
+                status.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
