@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dPaul TTS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #131413;
+            min-height: 100vh;
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 392px;
+            width: 100%;
+            background: linear-gradient(145deg, #4a0a0a, #6a1010);
+            border-radius: 9px;
+            padding: 17px;
+            box-shadow: 
+                0 14px 39px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+           border: 1px solid rgba(58, 5, 5, 0.3);
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 35%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 9px 9px 0 0;
+            pointer-events: none;
+        }
+
+        h1 {
+            color: #000000;
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+            font-family: Impact, 'Arial Black', sans-serif;
+        }
+
+        .main-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .display-section {
+            width: 100%;
+        }
+
+        .controls-layout {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .left-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .section {
+            background: #0a0a0a;
+            border-radius: 5px;
+            padding: 7px;
+            box-shadow: 
+                inset 0 2px 3px rgba(0, 0, 0, 0.5),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+                0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid #000;
+            position: relative;
+        }
+
+        .section-title {
+            color: #888;
+            font-size: 6px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        label {
+            display: block;
+            color: #666;
+            font-size: 5px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Green LED Display Style - LARGER */
+        textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 10px;
+            background: #001a00;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #00dd00;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            line-height: 1.4;
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.8),
+                inset 0 0 22px rgba(0, 80, 0, 0.15);
+        }
+
+        textarea::placeholder {
+            color: #004400;
+            font-size: 9px;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.8),
+                inset 0 0 22px rgba(0, 100, 0, 0.25);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        select {
+            padding: 4px 3px;
+            background: #0a0a0a;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #ffffff;
+            font-size: 6px;
+            cursor: pointer;
+            box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 
+                inset 0 2px 3px rgba(0, 0, 0, 0.5),
+                0 0 2px rgba(255, 255, 255, 0.2);
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 2px;
+            background: #000;
+            border-radius: 1px;
+            outline: none;
+            -webkit-appearance: none;
+            margin-top: 2px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 9px;
+            height: 9px;
+            background: linear-gradient(145deg, #999, #666);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 1px solid #333;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: linear-gradient(145deg, #aaa, #777);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 9px;
+            height: 9px;
+            background: linear-gradient(145deg, #999, #666);
+            border-radius: 50%;
+            border: 1px solid #333;
+            cursor: pointer;
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            background: linear-gradient(145deg, #aaa, #777);
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2px;
+        }
+
+        .slider-label {
+            color: #555;
+            font-size: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .slider-number {
+            color: #888;
+            font-size: 8px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+        }
+
+        button {
+            padding: 10px 16px;
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #888;
+            font-size: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 
+                0 2px 5px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            flex: 1;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #444, #222);
+            transform: translateY(-1px);
+            box-shadow: 
+                0 3px 6px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 
+                0 1px 2px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button:disabled:hover {
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            transform: none;
+            box-shadow: 
+                0 2px 5px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #666, #444);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #777, #555);
+        }
+
+        /* LED Status Display */
+        .status {
+            margin-top: 10px;
+            padding: 8px;
+            background: #001a00;
+            border-radius: 3px;
+            text-align: center;
+            color: #00aa00;
+            font-size: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+            box-shadow: 
+                inset 0 2px 3px rgba(0, 0, 0, 0.8),
+                inset 0 0 17px rgba(0, 80, 0, 0.15);
+            border: 1px solid #000;
+        }
+
+        .status.active {
+            color: #00dd00;
+            box-shadow: 
+                inset 0 2px 3px rgba(0, 0, 0, 0.8),
+                inset 0 0 17px rgba(0, 120, 0, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            .controls-layout {
+                flex-direction: column;
+            }
+
+            .left-controls {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>dPaul TTS</h1>
+
+        <div class="main-layout">
+            <!-- Display Section at Top -->
+            <div class="display-section">
+                <div class="section">
+                    <label>SCRIPT DISPLAY</label>
+                    <textarea id="textInput" placeholder="Enter your text here and select the voice. You adjust the pitch and speed."></textarea>
+                </div>
+                
+                <!-- Buttons directly under display -->
+                <div class="button-group" style="margin-top: 10px;">
+                    <button class="btn-primary" id="speakBtn">SPEAK</button>
+                    <button id="clearBtn">CLEAR</button>
+                    <button id="stopBtn" disabled>STOP</button>
+                </div>
+                
+                <!-- Status directly under buttons -->
+                <div class="status" id="status">Ready</div>
+            </div>
+
+            <!-- Controls Below -->
+            <div class="controls-layout">
+                <div class="left-controls">
+                    <div class="section">
+                        <div class="section-title">VOICE</div>
+                        <div class="control-group">
+                            <select id="voiceSelect">
+                                <option value="">Loading...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">SPEED</div>
+                        <div class="control-group slider-container">
+                            <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
+                            <div class="slider-value">
+                                <span class="slider-number" id="rateValue">1.0x</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">PITCH</div>
+                        <div class="control-group slider-container">
+                            <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
+                            <div class="slider-value">
+                                <span class="slider-number" id="pitchValue">1.0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">VOLUME</div>
+                        <div class="control-group slider-container">
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+                            <div class="slider-value">
+                                <span class="slider-number" id="volumeValue">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let synth = window.speechSynthesis;
+        let voices = [];
+        let utterance = null;
+
+        // Load voices
+        function loadVoices() {
+            voices = synth.getVoices();
+            
+            let googleVoices = voices.filter(voice => 
+                voice.name.toLowerCase().includes('google')
+            );
+
+            if (googleVoices.length === 0) {
+                googleVoices = voices;
+            }
+
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+
+            if (googleVoices.length === 0) {
+                voiceSelect.innerHTML = '<option value="">No voices</option>';
+                return;
+            }
+
+            let ukMaleIndex = -1;
+            
+            googleVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+                
+                // Find Google UK English Male
+                if (voice.name.toLowerCase().includes('uk') && 
+                    voice.name.toLowerCase().includes('male') && 
+                    voice.lang.toLowerCase().includes('en')) {
+                    ukMaleIndex = index;
+                }
+            });
+
+            // Set default to UK Male if found
+            if (ukMaleIndex !== -1) {
+                voiceSelect.value = ukMaleIndex;
+            }
+
+            window.filteredVoices = googleVoices;
+        }
+
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+        loadVoices();
+
+        // Slider updates
+        document.getElementById('rateSlider').addEventListener('input', (e) => {
+            document.getElementById('rateValue').textContent = e.target.value + 'x';
+        });
+
+        document.getElementById('pitchSlider').addEventListener('input', (e) => {
+            document.getElementById('pitchValue').textContent = e.target.value;
+        });
+
+        document.getElementById('volumeSlider').addEventListener('input', (e) => {
+            document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%';
+        });
+
+        // Speak button
+        document.getElementById('speakBtn').addEventListener('click', () => {
+            const text = document.getElementById('textInput').value;
+            
+            if (!text.trim()) {
+                updateStatus('Please enter text');
+                return;
+            }
+
+            synth.cancel();
+
+            utterance = new SpeechSynthesisUtterance(text);
+            
+            const voiceSelect = document.getElementById('voiceSelect');
+            const selectedIndex = voiceSelect.value;
+            
+            if (window.filteredVoices && window.filteredVoices[selectedIndex]) {
+                utterance.voice = window.filteredVoices[selectedIndex];
+            }
+
+            utterance.rate = parseFloat(document.getElementById('rateSlider').value);
+            utterance.pitch = parseFloat(document.getElementById('pitchSlider').value);
+            utterance.volume = parseFloat(document.getElementById('volumeSlider').value);
+
+            utterance.onstart = () => {
+                updateStatus('Speaking...', true);
+                document.getElementById('speakBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+            };
+
+            utterance.onend = () => {
+                updateStatus('Finished');
+                document.getElementById('speakBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            };
+
+            utterance.onerror = (event) => {
+                updateStatus('Error: ' + event.error);
+                document.getElementById('speakBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            };
+
+            synth.speak(utterance);
+        });
+
+        // Clear button
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('textInput').value = '';
+            updateStatus('Text cleared');
+        });
+
+        // Stop button
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            synth.cancel();
+            updateStatus('Stopped');
+            document.getElementById('speakBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        });
+
+        function updateStatus(message, isActive = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            if (isActive) {
+                status.classList.add('active');
+            } else {
+                status.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

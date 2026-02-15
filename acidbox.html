@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACID-Box - dPaul Technologies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #131413;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .synth-container {
+            background: linear-gradient(145deg, #1a1a0a, #0a0a00);
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9),
+                        0 0 20px rgba(255, 215, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            border: 2px solid #FFD700;
+            position: relative;
+        }
+
+        .synth-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .synth-title {
+            color: #FFD700;
+            font-size: 19px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+            margin-bottom: 2px;
+        }
+
+        .synth-subtitle {
+            color: #888;
+            font-size: 7px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+        }
+
+        .controls-section {
+            background: #000;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #FFD700;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            justify-content: space-around;
+            margin-bottom: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-label {
+            color: #FFD700;
+            font-size: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            font-weight: bold;
+        }
+
+        .knob {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle at 30% 30%, #2a2a0a, #0a0a00);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.7),
+                        inset 0 -2px 3px rgba(0,0,0,0.8),
+                        inset 0 2px 3px rgba(255,255,255,0.05);
+            border: 2px solid #FFD700;
+        }
+
+        .knob::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 14px;
+            background: #FFD700;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.8);
+        }
+
+        .knob-value {
+            color: #000 !important;
+            background: #FFD700 !important;
+            font-size: 7px;
+            margin-top: 2px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 2px;
+        }
+
+        .arp-section {
+            background: #000;
+            border-radius: 5px;
+            padding: 10px;
+            border: 1px solid #FFD700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .arp-label {
+            color: #FFD700;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .switch {
+            width: 40px;
+            height: 21px;
+            background: #1a1a0a;
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            border: 2px solid #FFD700;
+            transition: background 0.3s;
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #666;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+        }
+
+        .switch.active {
+            background: #FFD700;
+        }
+
+        .switch.active::after {
+            transform: translateX(19px);
+            background: #000;
+        }
+
+        .tempo-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tempo-led {
+            width: 10px;
+            height: 10px;
+            background: #0a2a0a;
+            border-radius: 50%;
+            border: 1px solid #1a3a1a;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+            transition: all 0.08s;
+        }
+
+        .tempo-led.blink {
+            background: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.9),
+                        inset 0 0 5px rgba(150, 255, 150, 0.6);
+        }
+
+        .tempo-btn {
+            width: 21px;
+            height: 21px;
+            background: linear-gradient(145deg, #1a1a0a, #0a0a00);
+            border: 2px solid #FFD700;
+            border-radius: 3px;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .tempo-btn:active {
+            transform: scale(0.95);
+            background: #FFD700 !important;
+            color: #000 !important;
+        }
+
+        .tempo-display {
+            color: #000 !important;
+            background: #FFD700 !important;
+            font-size: 9px;
+            font-weight: bold;
+            min-width: 52px;
+            text-align: center;
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+
+        .preset-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: #000;
+            border-radius: 5px;
+            border: 1px solid #FFD700;
+            margin-bottom: 10px;
+            gap: 8px;
+        }
+
+        .preset-label {
+            color: #FFD700;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            width: 36px;
+            height: 26px;
+            background: #8B0000;
+            border: 2px solid #ff0000;
+            border-radius: 3px;
+            color: #ff0000;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+        }
+
+        .preset-btn:active {
+            transform: scale(0.95);
+        }
+
+        .preset-btn.selected {
+            background: #ff0000;
+            color: #000;
+            box-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
+        }
+
+        .preset-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .preset-action-btn {
+            padding: 5px 8px;
+            background: linear-gradient(145deg, #1a1a0a, #0a0a00);
+            border: 2px solid #FFD700;
+            border-radius: 3px;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 7px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+        }
+
+        .preset-action-btn:active {
+            transform: scale(0.95);
+            background: #FFD700;
+            color: #000;
+        }
+
+        .note-display {
+            text-align: center;
+            color: #000 !important;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 8px;
+            background: #FFD700 !important;
+            border-radius: 6px;
+            border: 1px solid #FFD700;
+            margin-bottom: 12px;
+        }
+
+        .keyboard {
+            position: relative;
+            height: 40px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            background: #000;
+            padding: 6px;
+            border-radius: 5px;
+            border: 1px solid #FFD700;
+        }
+
+        .piano-keys {
+            position: relative;
+            display: inline-block;
+        }
+
+        .white-key {
+            width: 19px;
+            height: 40px;
+            background: #000;
+            border: 2px solid #FFD700;
+            border-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            vertical-align: top;
+            margin-right: 2px;
+            transition: all 0.05s ease;
+        }
+
+        .white-key:active,
+        .white-key.playing {
+            background: #FFD700;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.9);
+            transform: scale(0.95);
+        }
+
+        .black-key {
+            width: 14px;
+            height: 26px;
+            background: #FFD700;
+            border: 1px solid #000;
+            border-radius: 2px;
+            position: absolute;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(255, 215, 0, 0.4);
+            cursor: pointer;
+            top: 0;
+            transition: all 0.05s ease;
+        }
+
+        .black-key:active,
+        .black-key.playing {
+            background: #fff;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+            transform: scale(0.95);
+        }
+
+        .midi-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #000 !important;
+            background: #FFD700 !important;
+            font-size: 8px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border: 1px solid #FFD700;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .midi-indicator.connected {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="synth-container">
+        <div class="midi-indicator" id="midiIndicator">MIDI CONNECTED</div>
+        
+        <div class="synth-header">
+            <div class="synth-title">ACID-BOX</div>
+            <div class="synth-subtitle">dPaul Technologies</div>
+        </div>
+
+        <div class="preset-section">
+            <div class="preset-label">MEMORY</div>
+            <div class="preset-buttons">
+                <div class="preset-btn" id="preset1" data-preset="1">M1</div>
+                <div class="preset-btn" id="preset2" data-preset="2">M2</div>
+                <div class="preset-btn" id="preset3" data-preset="3">M3</div>
+            </div>
+            <div class="preset-actions">
+                <div class="preset-action-btn" id="savePreset">SAVE</div>
+                <div class="preset-action-btn" id="loadPreset">LOAD</div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="controls-row">
+                <div class="control-group">
+                    <div class="control-label">CUTOFF</div>
+                    <div class="knob" id="cutoffKnob" data-value="50"></div>
+                    <div class="knob-value" id="cutoffValue">50%</div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">RESONANCE</div>
+                    <div class="knob" id="resonanceKnob" data-value="70"></div>
+                    <div class="knob-value" id="resonanceValue">70%</div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">DECAY</div>
+                    <div class="knob" id="decayKnob" data-value="40"></div>
+                    <div class="knob-value" id="decayValue">40%</div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">ACCENT</div>
+                    <div class="knob" id="accentKnob" data-value="60"></div>
+                    <div class="knob-value" id="accentValue">60%</div>
+                </div>
+            </div>
+
+            <div class="controls-row">
+                <div class="control-group">
+                    <div class="control-label">DELAY</div>
+                    <div class="knob" id="delayKnob" data-value="30"></div>
+                    <div class="knob-value" id="delayValue">30%</div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">REPEATS</div>
+                    <div class="knob" id="feedbackKnob" data-value="25"></div>
+                    <div class="knob-value" id="feedbackValue">25%</div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">DISTORTION</div>
+                    <div class="knob" id="distortionKnob" data-value="20"></div>
+                    <div class="knob-value" id="distortionValue">20%</div>
+                </div>
+
+                <div class="control-group">
+                    <div class="control-label">VOLUME</div>
+                    <div class="knob" id="volumeKnob" data-value="70"></div>
+                    <div class="knob-value" id="volumeValue">70%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="arp-section">
+            <div class="arp-label">ARPEGGIATOR</div>
+            <div class="switch-container">
+                <div class="switch" id="arpSwitch"></div>
+            </div>
+            <div class="tempo-control">
+                <div class="tempo-led" id="tempoLed"></div>
+                <div class="tempo-btn" id="tempoDown">−</div>
+                <div class="tempo-display" id="tempoDisplay">120 BPM</div>
+                <div class="tempo-btn" id="tempoUp">+</div>
+            </div>
+            <div class="tempo-btn" id="midiClear" style="background: #8B0000; border-color: #ff0000; color: #ff0000; width: 40px; font-size: 10px;">CLR</div>
+            <div class="tempo-btn" id="midiToggle" style="width: 50px; font-size: 9px; background: #1a1a0a; border-color: #FFD700; color: #FFD700;">MIDI</div>
+        </div>
+
+        <div class="keyboard">
+            <div class="piano-keys" id="pianoKeys"></div>
+        </div>
+    </div>
+
+    <script>
+        // Audio Context
+        let audioContext;
+        let masterGain;
+        let delayNode;
+        let feedbackGain;
+        let filter;
+        let distortion;
+
+        // Synth state
+        let arpEnabled = false;
+        let arpInterval = null;
+        let arpNotes = [];
+        let arpIndex = 0;
+        let activeNotes = new Map();
+        let tempo = 120;
+        let midiEnabled = true; // MIDI input enabled by default
+        let midiInputs = []; // Store MIDI inputs for disconnect/reconnect
+        let selectedPreset = 1; // Currently selected preset slot (1, 2, or 3)
+        let tempoLedInterval = null; // Tempo LED blinking interval
+        let presets = {
+            1: null,
+            2: null,
+            3: null
+        };
+
+        // Synth parameters
+        let cutoff = 50;
+        let resonance = 70;
+        let decay = 40;
+        let accent = 60;
+        let delayAmount = 30;
+        let feedbackAmount = 25;
+        let distortionAmount = 20;
+
+        // Note frequencies (C3 to G4)
+        const notes = [
+            { name: 'C3', freq: 130.81 },
+            { name: 'C#3', freq: 138.59 },
+            { name: 'D3', freq: 146.83 },
+            { name: 'D#3', freq: 155.56 },
+            { name: 'E3', freq: 164.81 },
+            { name: 'F3', freq: 174.61 },
+            { name: 'F#3', freq: 185.00 },
+            { name: 'G3', freq: 196.00 },
+            { name: 'G#3', freq: 207.65 },
+            { name: 'A3', freq: 220.00 },
+            { name: 'A#3', freq: 233.08 },
+            { name: 'B3', freq: 246.94 },
+            { name: 'C4', freq: 261.63 },
+            { name: 'C#4', freq: 277.18 },
+            { name: 'D4', freq: 293.66 },
+            { name: 'D#4', freq: 311.13 },
+            { name: 'E4', freq: 329.63 },
+            { name: 'F4', freq: 349.23 },
+            { name: 'F#4', freq: 369.99 },
+            { name: 'G4', freq: 392.00 }
+        ];
+
+        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+        // Build piano keyboard
+        function buildPianoKeyboard() {
+            const container = document.getElementById('pianoKeys');
+            container.innerHTML = '';
+
+            const blackKeyOffsets = {
+                0: 13,   // C# after C (was 16, now 80%)
+                1: 34,   // D# after D (was 42, now 80%)
+                3: 75,   // F# after F (was 94, now 80%)
+                4: 96,   // G# after G (was 120, now 80%)
+                5: 117   // A# after A (was 146, now 80%)
+            };
+
+            let whiteKeyIndex = 0;
+
+            for (let i = 0; i < 20; i++) {
+                const note = notes[i];
+                const isBlack = note.name.includes('#');
+
+                if (!isBlack) {
+                    const key = document.createElement('div');
+                    key.className = 'white-key';
+                    key.dataset.note = i;
+                    key.dataset.noteName = note.name;
+
+                    key.addEventListener('mousedown', () => handleKeyPress(key));
+                    key.addEventListener('mouseup', () => handleKeyRelease(key));
+                    key.addEventListener('mouseleave', () => handleKeyRelease(key));
+
+                    container.appendChild(key);
+
+                    // Add black key if needed
+                    const whiteKeyInOctave = whiteKeyIndex % 7;
+                    const nextIndex = i + 1;
+                    if (blackKeyOffsets[whiteKeyInOctave] !== undefined && nextIndex < 20 && notes[nextIndex].name.includes('#')) {
+                        const blackKey = document.createElement('div');
+                        blackKey.className = 'black-key';
+                        blackKey.dataset.note = nextIndex;
+                        blackKey.dataset.noteName = notes[nextIndex].name;
+                        const octaveOffset = Math.floor(whiteKeyIndex / 7);
+                        blackKey.style.left = blackKeyOffsets[whiteKeyInOctave] + (octaveOffset * 146) + 'px';
+
+                        blackKey.addEventListener('mousedown', () => handleKeyPress(blackKey));
+                        blackKey.addEventListener('mouseup', () => handleKeyRelease(blackKey));
+                        blackKey.addEventListener('mouseleave', () => handleKeyRelease(blackKey));
+
+                        container.appendChild(blackKey);
+                    }
+
+                    whiteKeyIndex++;
+                }
+            }
+        }
+
+        // MIDI Support
+        function initMIDI() {
+            if (navigator.requestMIDIAccess) {
+                navigator.requestMIDIAccess()
+                    .then(onMIDISuccess, onMIDIFailure);
+            }
+        }
+
+        function onMIDISuccess(midiAccess) {
+            console.log('MIDI Access:', midiAccess);
+
+            const inputs = midiAccess.inputs.values();
+            for (let input of inputs) {
+                midiInputs.push(input);
+                input.onmidimessage = handleMIDIMessage;
+                console.log('MIDI Input:', input.name);
+                document.getElementById('midiIndicator').classList.add('connected');
+            }
+        }
+
+        function onMIDIFailure() {
+            console.log('Failed to get MIDI access');
+        }
+
+        function disconnectMIDI() {
+            midiInputs.forEach(input => {
+                input.onmidimessage = null;
+            });
+            console.log('MIDI inputs disconnected');
+        }
+
+        function reconnectMIDI() {
+            midiInputs.forEach(input => {
+                input.onmidimessage = handleMIDIMessage;
+            });
+            console.log('MIDI inputs reconnected');
+        }
+
+        function handleMIDIMessage(message) {
+            // Check if MIDI is enabled - exit immediately if disabled
+            if (!midiEnabled) {
+                console.log('MIDI disabled - ignoring input');
+                return;
+            }
+            
+            const command = message.data[0] >> 4;
+            const note = message.data[1];
+            const velocity = message.data.length > 2 ? message.data[2] : 0;
+
+            // Note On (9) with velocity > 0
+            if (command === 9 && velocity > 0) {
+                const frequency = midiNoteToFrequency(note);
+                const noteName = midiNoteToName(note);
+                
+                // Find the corresponding piano key index
+                const noteIndex = notes.findIndex(n => n.name === noteName);
+                
+                if (noteIndex !== -1) {
+                    if (!arpEnabled) {
+                        // Normal play mode
+                        playAcidNote(frequency, noteName);
+                        animateKeyForMIDI(noteName, true);
+                    } else {
+                        // Arp mode - toggle note in/out of pattern (latch mode)
+                        if (arpNotes.includes(noteIndex)) {
+                            // Remove note
+                            const arpNoteIndex = arpNotes.indexOf(noteIndex);
+                            arpNotes.splice(arpNoteIndex, 1);
+                            animateKeyForMIDI(noteName, false);
+                            
+                            // Stop arp if no notes left
+                            if (arpNotes.length === 0) {
+                                stopArp();
+                            }
+                        } else {
+                            // Add note
+                            arpNotes.push(noteIndex);
+                            arpNotes.sort((a, b) => a - b);
+                            animateKeyForMIDI(noteName, true);
+                            
+                            // Start arp if not running
+                            if (!arpInterval) {
+                                startArp();
+                            }
+                        }
+                        autoSave();
+                    }
+                }
+            }
+            // Note Off (8) or Note On with velocity 0
+            else if (command === 8 || (command === 9 && velocity === 0)) {
+                const noteName = midiNoteToName(note);
+                
+                // In normal mode, remove key highlight
+                if (!arpEnabled) {
+                    animateKeyForMIDI(noteName, false);
+                }
+                // In arp mode, keys stay latched until pressed again (do nothing on release)
+            }
+        }
+
+        function midiNoteToFrequency(midiNote) {
+            return 440 * Math.pow(2, (midiNote - 69) / 12);
+        }
+
+        function midiNoteToName(midiNote) {
+            const octave = Math.floor(midiNote / 12) - 1;
+            const noteName = noteNames[midiNote % 12];
+            return noteName + octave;
+        }
+
+        function animateKeyForMIDI(noteName, isPressed) {
+            const keys = document.querySelectorAll('.white-key, .black-key');
+            keys.forEach(key => {
+                if (key.dataset.noteName === noteName) {
+                    if (isPressed) {
+                        key.classList.add('playing');
+                    } else {
+                        if (!arpEnabled) {
+                            key.classList.remove('playing');
+                        }
+                    }
+                }
+            });
+        }
+
+        // MIDI CLEAR button
+        document.getElementById('midiClear').addEventListener('click', () => {
+            // Stop arp
+            if (arpInterval) {
+                clearInterval(arpInterval);
+                arpInterval = null;
+                arpIndex = 0;
+            }
+            
+            // Clear all arp notes
+            arpNotes = [];
+            
+            // Stop all active notes
+            activeNotes.forEach((noteData, noteName) => {
+                stopNote(noteName);
+            });
+            activeNotes.clear();
+            
+            // Clear all key highlights
+            document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                key.classList.remove('playing');
+            });
+            
+            // Visual feedback
+            updateNoteDisplay('CLEARED');
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+            
+            autoSave();
+        });
+
+        // MIDI Toggle button
+        document.getElementById('midiToggle').addEventListener('click', () => {
+            midiEnabled = !midiEnabled;
+            const btn = document.getElementById('midiToggle');
+            
+            console.log('MIDI toggled:', midiEnabled ? 'ON' : 'OFF');
+            
+            if (midiEnabled) {
+                btn.style.background = '#FFD700';
+                btn.style.color = '#000';
+                btn.textContent = 'MIDI';
+                updateNoteDisplay('MIDI ON');
+                reconnectMIDI(); // Actually reconnect MIDI inputs
+            } else {
+                btn.style.background = '#1a1a0a';
+                btn.style.color = '#FFD700';
+                btn.textContent = 'MIDI';
+                updateNoteDisplay('MIDI OFF');
+                disconnectMIDI(); // Actually disconnect MIDI inputs
+                
+                // Clear any stuck notes when disabling MIDI
+                activeNotes.forEach((noteData, noteName) => {
+                    stopNote(noteName);
+                });
+                activeNotes.clear();
+                
+                // Clear key highlights from MIDI
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    key.classList.remove('playing');
+                });
+            }
+            
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+        });
+
+        // Initialize Audio
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                masterGain = audioContext.createGain();
+                masterGain.gain.value = 0.7;
+
+                delayNode = audioContext.createDelay();
+                delayNode.delayTime.value = 0.3;
+
+                feedbackGain = audioContext.createGain();
+                feedbackGain.gain.value = 0.25;
+
+                filter = audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 1000;
+                filter.Q.value = 15;
+
+                // Distortion
+                distortion = audioContext.createWaveShaper();
+                distortion.curve = makeDistortionCurve(20);
+
+                // Routing
+                delayNode.connect(feedbackGain);
+                feedbackGain.connect(delayNode);
+                delayNode.connect(distortion);
+                distortion.connect(masterGain);
+                masterGain.connect(audioContext.destination);
+            }
+        }
+
+        function makeDistortionCurve(amount) {
+            const samples = 44100;
+            const curve = new Float32Array(samples);
+            const deg = Math.PI / 180;
+            
+            for (let i = 0; i < samples; i++) {
+                const x = (i * 2) / samples - 1;
+                curve[i] = (3 + amount) * x * 20 * deg / (Math.PI + amount * Math.abs(x));
+            }
+            return curve;
+        }
+
+        function playAcidNote(frequency, noteName) {
+            initAudio();
+
+            const now = audioContext.currentTime;
+
+            // Acid bassline oscillator (sawtooth for classic 303 sound)
+            const osc = audioContext.createOscillator();
+            osc.type = 'sawtooth';
+            osc.frequency.value = frequency;
+
+            // VCA envelope
+            const envelope = audioContext.createGain();
+            envelope.gain.value = 0;
+            envelope.gain.setValueAtTime(0, now);
+            envelope.gain.linearRampToValueAtTime(accent / 100, now + 0.001);
+            envelope.gain.exponentialRampToValueAtTime(0.01, now + (decay / 100) * 2);
+
+            // VCF envelope (sweeping filter)
+            const filterFreq = 200 + (cutoff / 100) * 3800;
+            const filterEnvAmount = (resonance / 100) * 4000;
+            
+            filter.frequency.setValueAtTime(filterFreq, now);
+            filter.frequency.exponentialRampToValueAtTime(filterFreq + filterEnvAmount, now + 0.001);
+            filter.frequency.exponentialRampToValueAtTime(filterFreq, now + (decay / 100) * 1.5);
+            filter.Q.value = 5 + (resonance / 100) * 25;
+
+            // Connect
+            osc.connect(envelope);
+            envelope.connect(filter);
+            filter.connect(delayNode);
+            filter.connect(distortion);
+
+            osc.start(now);
+            osc.stop(now + (decay / 100) * 2);
+
+            activeNotes.set(noteName, { osc, envelope });
+            updateNoteDisplay(noteName);
+            
+            // Clear display after note duration
+            setTimeout(() => {
+                if (!arpEnabled) {
+                    updateNoteDisplay('---');
+                }
+            }, (decay / 100) * 2000);
+
+            return { osc, envelope };
+        }
+
+        function stopNote(noteName) {
+            if (activeNotes.has(noteName)) {
+                const noteData = activeNotes.get(noteName);
+                if (noteData.envelope) {
+                    const now = audioContext.currentTime;
+                    noteData.envelope.gain.cancelScheduledValues(now);
+                    noteData.envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.01);
+                }
+                activeNotes.delete(noteName);
+            }
+        }
+
+        function updateNoteDisplay(note) {
+            // Display messages in the tempo display temporarily
+            const tempoDisplay = document.getElementById('tempoDisplay');
+            const originalText = tempoDisplay.textContent;
+            tempoDisplay.textContent = note;
+            setTimeout(() => {
+                tempoDisplay.textContent = originalText;
+            }, 1000);
+        }
+
+        // Save and Load Settings
+        function saveSettings() {
+            const settings = {
+                // Knob values
+                cutoff: cutoff,
+                resonance: resonance,
+                decay: decay,
+                accent: accent,
+                delayAmount: delayAmount,
+                feedbackAmount: feedbackAmount,
+                distortionAmount: distortionAmount,
+                tempo: tempo,
+                
+                // Arp state
+                arpEnabled: arpEnabled,
+                arpNotes: arpNotes,
+                
+                // MIDI state
+                midiEnabled: midiEnabled,
+                
+                // Knob UI values
+                knobValues: {
+                    cutoff: parseInt(document.getElementById('cutoffKnob').dataset.value),
+                    resonance: parseInt(document.getElementById('resonanceKnob').dataset.value),
+                    decay: parseInt(document.getElementById('decayKnob').dataset.value),
+                    accent: parseInt(document.getElementById('accentKnob').dataset.value),
+                    delay: parseInt(document.getElementById('delayKnob').dataset.value),
+                    feedback: parseInt(document.getElementById('feedbackKnob').dataset.value),
+                    distortion: parseInt(document.getElementById('distortionKnob').dataset.value),
+                    volume: parseInt(document.getElementById('volumeKnob').dataset.value)
+                }
+            };
+            
+            try {
+                localStorage.setItem('acidBox_settings', JSON.stringify(settings));
+                updateNoteDisplay('SAVED');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+                return true;
+            } catch (e) {
+                console.error('Failed to save settings:', e);
+                updateNoteDisplay('SAVE FAILED');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+                return false;
+            }
+        }
+
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem('acidBox_settings');
+                if (!saved) return false;
+                
+                const settings = JSON.parse(saved);
+                
+                // Apply parameters
+                cutoff = settings.cutoff || 50;
+                resonance = settings.resonance || 70;
+                decay = settings.decay || 40;
+                accent = settings.accent || 60;
+                delayAmount = settings.delayAmount || 30;
+                feedbackAmount = settings.feedbackAmount || 25;
+                distortionAmount = settings.distortionAmount || 20;
+                tempo = settings.tempo || 120;
+                
+                // Apply knob UI values
+                if (settings.knobValues) {
+                    Object.keys(settings.knobValues).forEach(knobName => {
+                        const knob = document.getElementById(knobName + 'Knob');
+                        if (knob) {
+                            knob.dataset.value = settings.knobValues[knobName];
+                            updateKnob(knob);
+                        }
+                    });
+                }
+                
+                // Restore arp state
+                if (settings.arpEnabled) {
+                    arpEnabled = true;
+                    document.getElementById('arpSwitch').classList.add('active');
+                }
+                
+                // Restore MIDI state
+                if (settings.midiEnabled !== undefined) {
+                    midiEnabled = settings.midiEnabled;
+                    const btn = document.getElementById('midiToggle');
+                    if (midiEnabled) {
+                        btn.style.background = '#FFD700';
+                        btn.style.color = '#000';
+                        reconnectMIDI();
+                    } else {
+                        btn.style.background = '#1a1a0a';
+                        btn.style.color = '#FFD700';
+                        disconnectMIDI();
+                    }
+                }
+                
+                // Restore arp notes
+                if (settings.arpNotes && settings.arpNotes.length > 0) {
+                    arpNotes = settings.arpNotes;
+                    
+                    // Light up the saved keys
+                    document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                        const index = parseInt(key.dataset.note);
+                        if (arpNotes.includes(index)) {
+                            key.classList.add('playing');
+                        }
+                    });
+                    
+                    // Start arp if it was enabled
+                    if (arpEnabled) {
+                        startArp();
+                    }
+                }
+                
+                updateTempoDisplay();
+                updateNoteDisplay('LOADED');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+                return true;
+            } catch (e) {
+                console.error('Failed to load settings:', e);
+                return false;
+            }
+        }
+
+        // Preset Management
+        function savePreset(slot) {
+            const presetData = {
+                cutoff: cutoff,
+                resonance: resonance,
+                decay: decay,
+                accent: accent,
+                delayAmount: delayAmount,
+                feedbackAmount: feedbackAmount,
+                distortionAmount: distortionAmount,
+                tempo: tempo,
+                arpEnabled: arpEnabled,
+                arpNotes: [...arpNotes],
+                knobValues: {
+                    cutoff: parseInt(document.getElementById('cutoffKnob').dataset.value),
+                    resonance: parseInt(document.getElementById('resonanceKnob').dataset.value),
+                    decay: parseInt(document.getElementById('decayKnob').dataset.value),
+                    accent: parseInt(document.getElementById('accentKnob').dataset.value),
+                    delay: parseInt(document.getElementById('delayKnob').dataset.value),
+                    feedback: parseInt(document.getElementById('feedbackKnob').dataset.value),
+                    distortion: parseInt(document.getElementById('distortionKnob').dataset.value),
+                    volume: parseInt(document.getElementById('volumeKnob').dataset.value)
+                }
+            };
+            
+            presets[slot] = presetData;
+            
+            // Save to localStorage
+            try {
+                localStorage.setItem('acidBox_presets', JSON.stringify(presets));
+                updateNoteDisplay(`M${slot} SAVED`);
+            } catch (e) {
+                console.error('Failed to save preset:', e);
+                updateNoteDisplay('SAVE FAIL');
+            }
+        }
+
+        function loadPreset(slot) {
+            const presetData = presets[slot];
+            
+            if (!presetData) {
+                updateNoteDisplay(`M${slot} EMPTY`);
+                return;
+            }
+            
+            // Apply parameters
+            cutoff = presetData.cutoff;
+            resonance = presetData.resonance;
+            decay = presetData.decay;
+            accent = presetData.accent;
+            delayAmount = presetData.delayAmount;
+            feedbackAmount = presetData.feedbackAmount;
+            distortionAmount = presetData.distortionAmount;
+            tempo = presetData.tempo;
+            
+            // Apply knob UI values
+            Object.keys(presetData.knobValues).forEach(knobName => {
+                const knob = document.getElementById(knobName + 'Knob');
+                if (knob) {
+                    knob.dataset.value = presetData.knobValues[knobName];
+                    updateKnob(knob);
+                }
+            });
+            
+            // Apply arp state
+            arpEnabled = presetData.arpEnabled;
+            const arpSwitch = document.getElementById('arpSwitch');
+            if (arpEnabled) {
+                arpSwitch.classList.add('active');
+            } else {
+                arpSwitch.classList.remove('active');
+            }
+            
+            // Clear existing arp notes and keys
+            arpNotes = [];
+            document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                key.classList.remove('playing');
+            });
+            
+            // Apply arp notes
+            if (presetData.arpNotes && presetData.arpNotes.length > 0) {
+                arpNotes = [...presetData.arpNotes];
+                
+                // Light up the keys
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    const index = parseInt(key.dataset.note);
+                    if (arpNotes.includes(index)) {
+                        key.classList.add('playing');
+                    }
+                });
+                
+                // Start arp if it was enabled
+                if (arpEnabled) {
+                    stopArp(); // Stop if already running
+                    startArp();
+                }
+            }
+            
+            updateTempoDisplay();
+            updateNoteDisplay(`M${slot} LOAD`);
+        }
+
+        function loadPresetsFromStorage() {
+            try {
+                const saved = localStorage.getItem('acidBox_presets');
+                if (saved) {
+                    presets = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('Failed to load presets:', e);
+            }
+        }
+
+        // Auto-save on changes
+        function autoSave() {
+            saveSettings();
+        }
+
+        function handleKeyPress(key) {
+            const index = parseInt(key.dataset.note);
+            const note = notes[index];
+            
+            if (!arpEnabled) {
+                // Normal play mode
+                key.classList.add('playing');
+                playAcidNote(note.freq, note.name);
+            } else {
+                // Arp mode - toggle note in/out of pattern
+                if (arpNotes.includes(index)) {
+                    // Remove note
+                    const noteIndex = arpNotes.indexOf(index);
+                    arpNotes.splice(noteIndex, 1);
+                    key.classList.remove('playing');
+                    
+                    // Stop arp if no notes left
+                    if (arpNotes.length === 0) {
+                        stopArp();
+                    }
+                } else {
+                    // Add note
+                    arpNotes.push(index);
+                    arpNotes.sort((a, b) => a - b);
+                    key.classList.add('playing');
+                    
+                    // Start arp if not running
+                    if (!arpInterval) {
+                        startArp();
+                    }
+                }
+                autoSave();
+            }
+        }
+
+        function handleKeyRelease(key) {
+            // Only remove playing class in normal mode
+            if (!arpEnabled) {
+                key.classList.remove('playing');
+            }
+            // In arp mode, keys stay highlighted until clicked again
+        }
+
+        // Arpeggiator
+        function startArp() {
+            if (arpInterval) return;
+
+            const stepTime = (60 / tempo) * 1000 / 4;
+
+            arpInterval = setInterval(() => {
+                if (arpNotes.length === 0) {
+                    stopArp();
+                    return;
+                }
+
+                const noteIndex = arpNotes[arpIndex % arpNotes.length];
+                const note = notes[noteIndex];
+                
+                playAcidNote(note.freq, note.name);
+                
+                // Visual feedback on piano keys
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    if (parseInt(key.dataset.note) === noteIndex) {
+                        key.classList.add('playing');
+                        setTimeout(() => key.classList.remove('playing'), 100);
+                    }
+                });
+
+                arpIndex++;
+            }, stepTime);
+        }
+
+        function stopArp() {
+            if (arpInterval) {
+                clearInterval(arpInterval);
+                arpInterval = null;
+                arpIndex = 0;
+            }
+            updateNoteDisplay('---');
+        }
+
+        function toggleArp() {
+            arpEnabled = !arpEnabled;
+            const arpSwitch = document.getElementById('arpSwitch');
+
+            if (arpEnabled) {
+                arpSwitch.classList.add('active');
+            } else {
+                arpSwitch.classList.remove('active');
+                arpNotes = [];
+                stopArp();
+                // Clear all key highlights
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    key.classList.remove('playing');
+                });
+            }
+            autoSave();
+        }
+
+        // Knob controls
+        function setupKnobs() {
+            const knobs = document.querySelectorAll('.knob');
+
+            knobs.forEach(knob => {
+                let isDragging = false;
+                let startY = 0;
+                let startValue = parseInt(knob.dataset.value);
+
+                knob.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startY = e.clientY;
+                    startValue = parseInt(knob.dataset.value);
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+
+                    const delta = startY - e.clientY;
+                    let newValue = startValue + delta;
+                    newValue = Math.max(0, Math.min(100, newValue));
+
+                    knob.dataset.value = newValue;
+                    updateKnob(knob);
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        autoSave();
+                    }
+                });
+            });
+        }
+
+        function updateKnob(knob) {
+            const value = parseInt(knob.dataset.value);
+            const rotation = (value / 100) * 270 - 135;
+            knob.style.transform = `rotate(${rotation}deg)`;
+
+            const valueDisplay = document.getElementById(knob.id.replace('Knob', 'Value'));
+            if (valueDisplay) {
+                valueDisplay.textContent = value + '%';
+            }
+
+            // Update parameters
+            if (knob.id === 'cutoffKnob') {
+                cutoff = value;
+            } else if (knob.id === 'resonanceKnob') {
+                resonance = value;
+            } else if (knob.id === 'decayKnob') {
+                decay = value;
+            } else if (knob.id === 'accentKnob') {
+                accent = value;
+            } else if (knob.id === 'delayKnob') {
+                delayAmount = value;
+                if (delayNode) {
+                    delayNode.delayTime.value = (value / 100) * 0.5;
+                }
+            } else if (knob.id === 'feedbackKnob') {
+                feedbackAmount = value;
+                if (feedbackGain) {
+                    feedbackGain.gain.value = value / 100;
+                }
+            } else if (knob.id === 'distortionKnob') {
+                distortionAmount = value;
+                if (distortion) {
+                    distortion.curve = makeDistortionCurve(value);
+                }
+            } else if (knob.id === 'volumeKnob') {
+                if (masterGain) {
+                    masterGain.gain.value = value / 100;
+                }
+            }
+        }
+
+        // Tempo controls
+        document.getElementById('tempoUp').addEventListener('click', () => {
+            tempo = Math.min(300, tempo + 5);
+            updateTempoDisplay();
+            if (arpEnabled && arpNotes.length > 0) {
+                stopArp();
+                startArp();
+            }
+            autoSave();
+        });
+
+        document.getElementById('tempoDown').addEventListener('click', () => {
+            tempo = Math.max(5, tempo - 5);
+            updateTempoDisplay();
+            if (arpEnabled && arpNotes.length > 0) {
+                stopArp();
+                startArp();
+            }
+            autoSave();
+        });
+
+        function updateTempoDisplay() {
+            document.getElementById('tempoDisplay').textContent = tempo + ' BPM';
+            startTempoLed();
+        }
+
+        function startTempoLed() {
+            // Clear existing interval
+            if (tempoLedInterval) {
+                clearInterval(tempoLedInterval);
+            }
+            
+            const tempoLed = document.getElementById('tempoLed');
+            const beatInterval = (60 / tempo) * 1000; // One beat in milliseconds
+            
+            // Blink immediately
+            tempoLed.classList.add('blink');
+            setTimeout(() => tempoLed.classList.remove('blink'), 80);
+            
+            // Set up repeating blink
+            tempoLedInterval = setInterval(() => {
+                tempoLed.classList.add('blink');
+                setTimeout(() => tempoLed.classList.remove('blink'), 80);
+            }, beatInterval);
+        }
+
+        // Arp switch
+        document.getElementById('arpSwitch').addEventListener('click', toggleArp);
+
+        // Initialize
+        buildPianoKeyboard();
+        setupKnobs();
+        initMIDI();
+        document.querySelectorAll('.knob').forEach(updateKnob);
+        
+        // Initialize MIDI button visual state
+        const midiBtn = document.getElementById('midiToggle');
+        if (midiEnabled) {
+            midiBtn.style.background = '#FFD700';
+            midiBtn.style.color = '#000';
+        } else {
+            midiBtn.style.background = '#1a1a0a';
+            midiBtn.style.color = '#FFD700';
+        }
+        
+        // Load presets from storage
+        loadPresetsFromStorage();
+        
+        // Preset button selection
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove selected class from all
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+                // Add to clicked
+                btn.classList.add('selected');
+                selectedPreset = parseInt(btn.dataset.preset);
+            });
+        });
+        
+        // Set M1 as default selected
+        document.getElementById('preset1').classList.add('selected');
+        
+        // Save preset button
+        document.getElementById('savePreset').addEventListener('click', () => {
+            savePreset(selectedPreset);
+        });
+        
+        // Load preset button
+        document.getElementById('loadPreset').addEventListener('click', () => {
+            loadPreset(selectedPreset);
+        });
+        
+        // Load saved settings
+        loadSettings();
+        
+        // Start tempo LED blinking
+        startTempoLed();
+        
+        // Click anywhere to initialize audio
+        document.body.addEventListener('click', initAudio, { once: true });
+    </script>
+</body>
+</html>
