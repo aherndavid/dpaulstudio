@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Expenditure</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: #131414;
+    color: #d8d8d0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #d8d8d0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #2e2e2e;
+    padding-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #888;
+    margin: 20px 0 10px 0;
+  }
+
+  .section {
+    margin-bottom: 24px;
+  }
+
+  label {
+    display: block;
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  input[type="number"], input[type="text"], select {
+    background: #1c1d1d;
+    border: 1px solid #2e2e2e;
+    color: #d8d8d0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    padding: 8px 10px;
+    width: 100%;
+    outline: none;
+    margin-bottom: 10px;
+  }
+
+  input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    border-color: #555;
+  }
+
+  select option {
+    background: #1c1d1d;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #1e1f1f;
+  }
+
+  .row:last-child {
+    border-bottom: none;
+  }
+
+  .row-name {
+    flex: 1;
+    color: #d8d8d0;
+  }
+
+  .row-amount {
+    color: #d8d8d0;
+    min-width: 90px;
+    text-align: right;
+  }
+
+  .row-remove {
+    background: none;
+    border: none;
+    color: #444;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    padding: 0 0 0 14px;
+    line-height: 1;
+  }
+
+  .row-remove:hover {
+    color: #888;
+  }
+
+  .add-bill {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .add-bill input[type="text"] {
+    flex: 2;
+    margin-bottom: 0;
+  }
+
+  .add-bill input[type="number"] {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .add-bill button {
+    background: #1c1d1d;
+    border: 1px solid #2e2e2e;
+    color: #d8d8d0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    padding: 8px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .add-bill button:hover {
+    border-color: #555;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #2e2e2e;
+    margin: 12px 0;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    color: #888;
+  }
+
+  .summary-row.highlight {
+    color: #d8d8d0;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  .summary-row.balance {
+    color: #d8d8d0;
+    font-size: 15px;
+    border-top: 1px solid #2e2e2e;
+    margin-top: 8px;
+    padding-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  .balance-positive { color: #7a9e7e; }
+  .balance-negative { color: #9e6e6e; }
+
+  .child-maint-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #1e1f1f;
+    color: #888;
+    font-size: 13px;
+  }
+
+  .note {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1>My Expenditure</h1>
+
+<!-- INCOME SECTION -->
+<div class="section">
+  <h2>Income</h2>
+
+  <label>Employment Type</label>
+  <select id="empType" onchange="calculate()">
+    <option value="perm">Permanent (PAYE)</option>
+    <option value="inside">Contract — Inside IR35</option>
+    <option value="outside">Contract — Outside IR35</option>
+  </select>
+
+  <label>Gross Annual Income (£)</label>
+  <input type="number" id="grossIncome" value="35000" oninput="calculate()" />
+
+  <div id="outsideFields" style="display:none;">
+    <label>Salary Portion (£/yr) — Outside IR35</label>
+    <input type="number" id="salaryPortion" value="12570" oninput="calculate()" />
+    <p class="note">Remainder taken as dividends. Dividend allowance £500. Basic rate dividend tax 8.75%.</p>
+  </div>
+
+  <div class="summary-row highlight">
+    <span>Estimated Net Monthly</span>
+    <span id="netMonthly">—</span>
+  </div>
+  <div class="summary-row">
+    <span>Income Tax (monthly)</span>
+    <span id="taxMonthly">—</span>
+  </div>
+  <div class="summary-row">
+    <span>NI / NIC (monthly)</span>
+    <span id="niMonthly">—</span>
+  </div>
+  <div id="dividendRow" class="summary-row" style="display:none;">
+    <span>Dividend Tax (monthly)</span>
+    <span id="divTaxMonthly">—</span>
+  </div>
+</div>
+
+<!-- BILLS SECTION -->
+<div class="section">
+  <h2>Monthly Bills</h2>
+
+  <div class="child-maint-row">
+    <span>Child Maintenance</span>
+    <span style="display:flex;align-items:center;gap:8px;">
+      <input type="number" id="cmRate" value="16" min="0" max="100" oninput="calculate()"
+        style="width:52px;padding:4px 6px;margin:0;font-size:13px;" />
+      <span style="color:#555;">% of net</span>
+      <span id="cmAmount" style="min-width:80px;text-align:right;">—</span>
+    </span>
+  </div>
+
+  <div id="billList"></div>
+
+  <div class="add-bill" style="margin-top:14px;">
+    <input type="text" id="newName" placeholder="Bill name" />
+    <input type="number" id="newAmount" placeholder="£" min="0" step="0.01" />
+    <button onclick="addBill()">+ Add</button>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="section">
+  <hr class="divider">
+  <div class="summary-row">
+    <span>Net Monthly Income</span>
+    <span id="sumNet">—</span>
+  </div>
+  <div class="summary-row">
+    <span>Child Maintenance</span>
+    <span id="sumCM">—</span>
+  </div>
+  <div class="summary-row">
+    <span>Total Bills</span>
+    <span id="sumBills">—</span>
+  </div>
+  <div class="summary-row">
+    <span>Total Outgoings</span>
+    <span id="sumTotal">—</span>
+  </div>
+  <div class="summary-row balance">
+    <span>BALANCE</span>
+    <span id="sumBalance">—</span>
+  </div>
+</div>
+
+<script>
+  let bills = [
+    { id: 1, name: 'Rent',         amount: 1100.00 },
+    { id: 2, name: 'Electric',     amount: 121.67 },
+    { id: 3, name: 'Council Tax',  amount: 167.00 },
+    { id: 4, name: 'Fuel',         amount: 150.00 },
+    { id: 5, name: 'Food',         amount: 139.00 },
+    { id: 6, name: 'Car Insurance',amount: 66.77  },
+    { id: 7, name: 'Broadband',    amount: 35.15  },
+    { id: 8, name: 'ReadyMag',     amount: 28.38  },
+    { id: 9, name: 'Adobe',        amount: 19.97  },
+    { id:10, name: 'Road Tax',     amount: 17.06  },
+    { id:11, name: 'Claude AI',    amount: 15.00  },
+    { id:12, name: 'Mobile Phone', amount: 13.00  },
+    { id:13, name: 'Water',        amount: 10.00  },
+    { id:14, name: 'Google',       amount: 7.99   },
+  ];
+  let nextId = 15;
+
+  function fmt(n) {
+    return '£' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function calcPAYE(gross) {
+    const pa = 12570, brl = 50270, niLow = 12570, niHigh = 50270;
+    const taxable = Math.max(0, gross - pa);
+    let tax = 0;
+    if (taxable <= (brl - pa)) {
+      tax = taxable * 0.20;
+    } else {
+      tax = (brl - pa) * 0.20 + (taxable - (brl - pa)) * 0.40;
+    }
+    const niBase = Math.max(0, gross - niLow);
+    let ni = 0;
+    if (gross <= niHigh) {
+      ni = niBase * 0.08;
+    } else {
+      ni = (niHigh - niLow) * 0.08 + (gross - niHigh) * 0.02;
+    }
+    return { tax, ni, divTax: 0 };
+  }
+
+  function calcOutside(gross, salary) {
+    salary = Math.min(salary, gross);
+    const dividends = gross - salary;
+    // Tax on salary
+    const res = calcPAYE(salary);
+    // Dividend tax (allowance £500, basic rate 8.75%)
+    const taxableDivs = Math.max(0, dividends - 500);
+    const divTax = taxableDivs * 0.0875;
+    return { tax: res.tax, ni: res.ni, divTax };
+  }
+
+  function calculate() {
+    const gross = parseFloat(document.getElementById('grossIncome').value) || 0;
+    const empType = document.getElementById('empType').value;
+    const cmRate = parseFloat(document.getElementById('cmRate').value) || 0;
+
+    const outsideFields = document.getElementById('outsideFields');
+    const dividendRow = document.getElementById('dividendRow');
+
+    let tax, ni, divTax;
+
+    if (empType === 'outside') {
+      outsideFields.style.display = 'block';
+      dividendRow.style.display = 'flex';
+      const salary = parseFloat(document.getElementById('salaryPortion').value) || 0;
+      ({ tax, ni, divTax } = calcOutside(gross, salary));
+    } else {
+      outsideFields.style.display = 'none';
+      dividendRow.style.display = 'none';
+      ({ tax, ni, divTax } = calcPAYE(gross));
+    }
+
+    const netAnnual = gross - tax - ni - divTax;
+    const netMonthly = netAnnual / 12;
+    const cm = netMonthly * (cmRate / 100);
+    const totalBills = bills.reduce((s, b) => s + b.amount, 0);
+    const totalOut = cm + totalBills;
+    const balance = netMonthly - totalOut;
+
+    document.getElementById('netMonthly').textContent  = fmt(netMonthly);
+    document.getElementById('taxMonthly').textContent  = fmt(tax / 12);
+    document.getElementById('niMonthly').textContent   = fmt(ni / 12);
+    document.getElementById('divTaxMonthly').textContent = fmt(divTax / 12);
+    document.getElementById('cmAmount').textContent    = fmt(cm);
+    document.getElementById('sumNet').textContent      = fmt(netMonthly);
+    document.getElementById('sumCM').textContent       = fmt(cm);
+    document.getElementById('sumBills').textContent    = fmt(totalBills);
+    document.getElementById('sumTotal').textContent    = fmt(totalOut);
+
+    const balEl = document.getElementById('sumBalance');
+    balEl.textContent = fmt(balance);
+    balEl.className = balance >= 0 ? 'balance-positive' : 'balance-negative';
+
+    renderBills();
+  }
+
+  function renderBills() {
+    const list = document.getElementById('billList');
+    list.innerHTML = '';
+    bills.forEach(b => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <span class="row-name">${b.name}</span>
+        <span class="row-amount">${fmt(b.amount)}</span>
+        <button class="row-remove" onclick="removeBill(${b.id})" title="Remove">×</button>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  function addBill() {
+    const name = document.getElementById('newName').value.trim();
+    const amount = parseFloat(document.getElementById('newAmount').value);
+    if (!name || isNaN(amount) || amount < 0) return;
+    bills.push({ id: nextId++, name, amount });
+    document.getElementById('newName').value = '';
+    document.getElementById('newAmount').value = '';
+    calculate();
+  }
+
+  function removeBill(id) {
+    bills = bills.filter(b => b.id !== id);
+    calculate();
+  }
+
+  // Allow Enter key to add bill
+  document.getElementById('newAmount').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addBill();
+  });
+
+  calculate();
+</script>
+</body>
+</html>
