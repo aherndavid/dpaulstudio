@@ -87,6 +87,17 @@
     border-color: #555;
   }
 
+  /* Remove increment/decrement arrows */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
   .row {
     display: flex;
     justify-content: space-between;
@@ -412,24 +423,36 @@
     balEl.textContent = fmt(balance);
     balEl.className = balance >= 0 ? 'balance-positive' : 'balance-negative';
 
-    renderBills();
     saveData();
   }
 
   function renderBills() {
     const list = document.getElementById('billList');
     list.innerHTML = '';
-    bills.forEach(b => {
+    bills.forEach((b, index) => {
       const row = document.createElement('div');
       row.className = 'row';
       row.innerHTML = `
         <span class="row-name">${b.name}</span>
         <input class="bill-input" type="number" value="${b.amount}" min="0" step="0.01"
-          oninput="updateBill(${b.id}, this.value)" />
+          oninput="updateBill(${b.id}, this.value)"
+          onkeydown="handleBillEnter(event, ${index})" />
         <button class="row-remove" onclick="removeBill(${b.id})" title="Remove">×</button>
       `;
       list.appendChild(row);
     });
+  }
+
+  function handleBillEnter(event, currentIndex) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const inputs = document.querySelectorAll('.bill-input');
+      const nextIndex = currentIndex + 1;
+      if (nextIndex < inputs.length) {
+        inputs[nextIndex].focus();
+        inputs[nextIndex].select();
+      }
+    }
   }
 
   function updateBill(id, val) {
@@ -445,11 +468,13 @@
     bills.push({ id: nextId++, name, amount });
     document.getElementById('newName').value   = '';
     document.getElementById('newAmount').value = '';
+    renderBills();
     calculate();
   }
 
   function removeBill(id) {
     bills = bills.filter(b => b.id !== id);
+    renderBills();
     calculate();
   }
 
@@ -468,6 +493,7 @@
   }
 
   loadData();
+  renderBills();
   calculate();
 </script>
 </body>
