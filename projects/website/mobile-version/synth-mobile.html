@@ -1,0 +1,3811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Retro Analog Synth</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Remove 300ms tap delay on all interactive elements */
+        .pad, .sample-pad, .seq-btn, .sync-btn, .tempo-btn, .octave-btn,
+        .song-btn, .preset-btn, .preset-action-btn, .waveform-btn,
+        .clear-arp-btn, .clear-midi-btn, .power-btn, .knob, .drum-knob,
+        .sampler-knob, .switch, .sampler-switch, .white-key, .black-key,
+        .volume-dot, .step, .load-sample-btn, .clear-sample-btn,
+        .pitch-bend, .pitch-hold-btn, .tempo-slider {
+            touch-action: manipulation;
+        }
+
+        body {
+            background: #131413;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .synth-container {
+            background: #0a0a0a;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            max-width: 784px;
+            width: 100%;
+            border: 1px solid #1a1a1a;
+            position: relative;
+        }
+
+        .synth-header {
+            text-align: left;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .power-btn {
+            width: 60px;
+            height: 32px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            border: 2px solid #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: #666;
+            font-family: Verdana, Geneva, sans-serif;
+            transition: all 0.2s;
+        }
+
+        .power-btn:active {
+            transform: scale(0.95);
+        }
+
+        .power-btn.on {
+            background: linear-gradient(145deg, #8B0000, #5a0000);
+            color: #ff0000;
+            border-color: #8B0000;
+            box-shadow: 0 0 12px rgba(139, 0, 0, 0.6),
+                        inset 0 -2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* LED Glow effect for labels when powered on */
+        .synth-container.powered-on .control-label,
+        .synth-container.powered-on .drum-volume-label,
+        .synth-container.powered-on .sequencer-title,
+        .synth-container.powered-on .tempo-label,
+        .synth-container.powered-on .tempo-led-label,
+        .synth-container.powered-on .pitch-bend-label,
+        .synth-container.powered-on .waveform-label,
+        .synth-container.powered-on .preset-label,
+        .synth-container.powered-on .info-text,
+        .synth-container.powered-on .pad,
+        .synth-container.powered-on .seq-btn,
+        .synth-container.powered-on .sync-btn,
+        .synth-container.powered-on .clear-midi-btn,
+        .synth-container.powered-on .waveform-btn,
+        .synth-container.powered-on .clear-arp-btn,
+        .synth-container.powered-on .preset-btn,
+        .synth-container.powered-on .preset-action-btn {
+            text-shadow: 0 0 8px currentColor;
+        }
+
+        /* Powered off state - dim everything */
+        .synth-container.powered-off {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .synth-container.powered-off .power-btn {
+            pointer-events: all;
+            opacity: 1;
+        }
+
+        /* Dim specific text elements when powered off */
+        .synth-container.powered-off .pad,
+        .synth-container.powered-off .preset-btn,
+        .synth-container.powered-off .preset-action-btn,
+        .synth-container.powered-off .tempo-value,
+        .synth-container.powered-off .octave-display,
+        .synth-container.powered-off .tempo-led-label {
+            color: #333 !important;
+        }
+
+        /* Stop tempo LED blinking when powered off */
+        .synth-container.powered-off .tempo-led {
+            background: #0a0a0a !important;
+            box-shadow: none !important;
+        }
+
+        .synth-title {
+            color: #cc5500;
+            font-size: 14px;
+            font-weight: normal;
+            font-family: Verdana, Geneva, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px rgba(204, 85, 0, 0.3);
+        }
+
+        .synth-title .bold {
+            color: white;
+            font-weight: bold;
+        }
+
+        .synth-title .mkii {
+            color: white;
+            font-weight: bold;
+        }
+
+        .controls-panel {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .control-label {
+            color: #666;
+            font-size: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .knob {
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle at 30% 30%, #2a2a2a, #0a0a0a);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5),
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        inset 0 2px 4px rgba(255,255,255,0.05);
+            border: 1px solid #1a1a1a;
+        }
+
+        .knob::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: #ff6b6b;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 1px;
+            box-shadow: 0 0 4px rgba(255, 107, 107, 0.8);
+        }
+
+        .knob-value {
+            color: #ff6b6b;
+            font-size: 7px;
+            margin-top: 2px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .switch {
+            width: 45px;
+            height: 22px;
+            background: #0a0a0a;
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #1a1a1a;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .switch.active {
+            background: #ff6b6b;
+            box-shadow: 0 0 8px rgba(255, 107, 107, 0.5),
+                        inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #2a2a2a;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .switch.active::after {
+            transform: translateX(23px);
+            background: #fff;
+        }
+
+        .drum-pads {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 4px;
+            margin-bottom: 4px;
+            justify-items: center;
+        }
+
+        .drum-pad-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .pad {
+            width: 38px;
+            height: 22px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 7px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+            border: 1px solid #1a1a1a;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+            transition: all 0.1s;
+        }
+
+        .pad:active {
+            transform: scale(0.95);
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+        }
+
+        .pad.selected {
+            border: 2px solid #cc5500;
+            box-shadow: 0 0 10px rgba(204, 85, 0, 0.5);
+        }
+
+        .drum-volume-switch {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .volume-dot {
+            width: 6px;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid #2a2a2a;
+            transition: all 0.1s;
+        }
+
+        .volume-dot.active {
+            background: #cc5500;
+            box-shadow: 0 0 6px rgba(204, 85, 0, 0.6);
+        }
+
+        .sample-section {
+            margin-bottom: 4px;
+            padding: 6px;
+            background: #000;
+            border-radius: 6px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .sample-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .sample-title {
+            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .sample-pads {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            justify-items: center;
+        }
+
+        .sample-pad-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            position: relative;
+        }
+
+        .sample-pad {
+            width: 38px;
+            height: 22px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 7px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+            border: 1px solid #1a1a1a;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .sample-pad:active {
+            transform: scale(0.95);
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+        }
+
+        .sample-pad.selected {
+            border: 2px solid #cc5500;
+            box-shadow: 0 0 10px rgba(204, 85, 0, 0.5);
+        }
+
+        .sample-pad.loaded {
+            border: 2px solid #00ff00;
+            box-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+        }
+
+        .sample-pad.loaded.selected {
+            border: 2px solid #cc5500;
+            box-shadow: 0 0 10px rgba(204, 85, 0, 0.5);
+        }
+
+        .load-sample-btn {
+            width: 42px;
+            height: 16px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 3px;
+            color: #666;
+            cursor: pointer;
+            font-size: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .load-sample-btn:active {
+            transform: scale(0.95);
+            background: #cc5500;
+            color: white;
+        }
+
+        .clear-sample-btn {
+            width: 42px;
+            height: 14px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 3px;
+            color: #666;
+            cursor: pointer;
+            font-size: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .clear-sample-btn:active {
+            transform: scale(0.95);
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .sampler-control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sampler-label {
+            color: #666;
+            font-size: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .sampler-knob {
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle at 30% 30%, #2a2a2a, #0a0a0a);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5),
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        inset 0 2px 4px rgba(255,255,255,0.05);
+            border: 1px solid #1a1a1a;
+        }
+
+        .sampler-knob::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: #00ff00;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 1px;
+            box-shadow: 0 0 4px rgba(0, 255, 0, 0.8);
+        }
+
+        .sampler-value {
+            color: #00ff00;
+            font-size: 7px;
+            margin-top: 2px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .sampler-switch {
+            width: 40px;
+            height: 20px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #1a1a1a;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .sampler-switch.active {
+            background: #00ff00;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5),
+                        inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .sampler-switch::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #2a2a2a;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .sampler-switch.active::after {
+            transform: translateX(20px);
+            background: #fff;
+        }
+
+        .pitch-bend-container {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pitch-bend-label {
+            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 0;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+
+        .pitch-bend {
+            width: 32px;
+            height: 80px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .pitch-bend-thumb {
+            width: 29px;
+            height: 20px;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border: 1px solid #3a3a3a;
+            border-radius: 13px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 30px;
+            cursor: grab;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            transition: background 0.1s;
+        }
+
+        .pitch-bend-thumb:active {
+            cursor: grabbing;
+            background: #cc5500;
+        }
+
+        .pitch-bend-center {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #cc5500;
+            top: 50%;
+            left: 0;
+            opacity: 0.3;
+        }
+
+        .pitch-hold-btn {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            font-family: Verdana, Geneva, sans-serif;
+            font-weight: bold;
+            margin-top: 8px;
+            transition: all 0.1s;
+        }
+
+        .pitch-hold-btn:active {
+            transform: scale(0.95);
+        }
+
+        .pitch-hold-btn.active {
+            background: #cc5500;
+            color: white;
+            box-shadow: 0 0 8px rgba(204, 85, 0, 0.5);
+        }
+
+        .sequencer {
+            margin-bottom: 4px;
+            padding: 6px;
+            background: #000;
+            border-radius: 6px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .sequencer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .sequencer-title {
+            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .sequencer-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .seq-btn {
+            padding: 5px 12px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .seq-btn:active {
+            transform: scale(0.95);
+        }
+
+        .seq-btn.active {
+            background: #cc5500;
+            color: white;
+            box-shadow: 0 0 8px rgba(204, 85, 0, 0.5);
+        }
+
+        .sequencer-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 3px;
+        }
+
+        .step {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .step.active {
+            background: #cc5500;
+            box-shadow: 0 0 8px rgba(204, 85, 0, 0.6);
+        }
+
+        .step.playing {
+            box-shadow: 0 0 12px rgba(255, 107, 107, 1);
+            border-color: #ff6b6b;
+        }
+
+        .step-number {
+            position: absolute;
+            bottom: 2px;
+            right: 3px;
+            font-size: 7px;
+            color: #444;
+        }
+
+        .tempo-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .tempo-label {
+            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .tempo-value {
+            color: #cc5500;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 60px;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .tempo-slider {
+            flex: 1;
+            height: 4px;
+            background: #1a1a1a;
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tempo-slider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: var(--tempo-width, 50%);
+            background: #cc5500;
+            border-radius: 2px;
+        }
+
+        .tempo-btn {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            user-select: none;
+        }
+
+        .tempo-btn:active {
+            transform: scale(0.95);
+            background: #cc5500;
+            color: white;
+        }
+
+        .bpm-indicator {
+            width: 12px;
+            height: 12px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            border: 1px solid #2a2a2a;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+            transition: all 0.1s;
+        }
+
+        .bpm-indicator.beat {
+            background: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.8),
+                        inset 0 0 4px rgba(255, 100, 100, 0.5);
+        }
+
+        .tempo-led-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tempo-led-label {
+            color: #666;
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .tempo-led {
+            width: 14px;
+            height: 14px;
+            background: #0a2a0a;
+            border-radius: 2px;
+            border: 1px solid #1a3a1a;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+            transition: all 0.08s;
+        }
+
+        .tempo-led.blink {
+            background: #00ff00;
+            box-shadow: 0 0 12px rgba(0, 255, 0, 0.9),
+                        inset 0 0 6px rgba(150, 255, 150, 0.6);
+        }
+
+        .sync-btn {
+            padding: 5px 12px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .sync-btn:active {
+            transform: scale(0.95);
+        }
+
+        .sync-btn.active {
+            background: #cc5500;
+            color: white;
+            box-shadow: 0 0 8px rgba(204, 85, 0, 0.5);
+        }
+
+        .drum-volume-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .drum-volume-label {
+            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .drum-knob {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #2a2a2a, #0a0a0a);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5),
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        inset 0 2px 4px rgba(255,255,255,0.05);
+            border: 1px solid #1a1a1a;
+        }
+
+        .drum-knob::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 12px;
+            background: #cc5500;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 1px;
+            box-shadow: 0 0 4px rgba(204, 85, 0, 0.8);
+        }
+
+        .drum-knob-value {
+            color: #cc5500;
+            font-size: 10px;
+            margin-top: 3px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .keyboard {
+            position: relative;
+            height: 56px;
+            margin-top: 4px;
+            display: flex;
+            justify-content: center;
+            padding-left: 64px;
+        }
+
+        .piano-keys {
+            position: relative;
+            display: inline-block;
+        }
+
+        .white-key {
+            width: 21px;
+            height: 56px;
+            background: linear-gradient(180deg, #fafafa 0%, #d0d0d0 100%);
+            border: 1px solid #1a1a1a;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            vertical-align: top;
+            margin-right: -1px;
+            transition: all 0.05s ease;
+        }
+
+        .white-key:active,
+        .white-key.playing {
+            background: linear-gradient(180deg, #ff6b6b 0%, #ff8787 100%);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+            transform: translateY(2px);
+        }
+
+        .black-key {
+            width: 14px;
+            height: 36px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+            border: 1px solid #000;
+            border-radius: 0 0 3px 3px;
+            position: absolute;
+            z-index: 10;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+            cursor: pointer;
+            top: 0;
+            transition: all 0.05s ease;
+        }
+
+        .black-key:active,
+        .black-key.playing {
+            background: linear-gradient(180deg, #ff6b6b 0%, #ff4757 100%);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+            transform: translateY(2px);
+            height: 34px;
+        }
+
+        .visualizer {
+            width: 100%;
+            height: 14px;
+            background: #000;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            border: 1px solid #1a1a1a;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .wave-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wave-bar {
+            width: 2px;
+            background: #ff6b6b;
+            margin: 0 1px;
+            border-radius: 1px;
+            box-shadow: 0 0 4px rgba(255, 107, 107, 0.5);
+            transition: height 0.1s;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-light {
+            width: 8px;
+            height: 8px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .status-light.active {
+            background: #ff6b6b;
+            box-shadow: 0 0 8px rgba(255, 107, 107, 0.8);
+            animation: glow 1s infinite;
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+            padding: 4px;
+            background: #000;
+            border-radius: 6px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .song-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .song-btn {
+            padding: 5px 10px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 9px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .song-btn:active {
+            transform: scale(0.95);
+            background: #00ff00;
+            color: #000;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 10px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .clear-midi-btn {
+            padding: 5px 12px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 9px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .clear-midi-btn:active {
+            transform: scale(0.95);
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .octave-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .octave-btn {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .octave-btn:active {
+            transform: scale(0.95);
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .octave-display {
+            color: #ff6b6b;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .preset-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: #000;
+            border-radius: 6px;
+            border: 1px solid #1a1a1a;
+            margin-top: 8px;
+            gap: 8px;
+        }
+
+        .preset-label {
+            color: #cc5500;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            width: 36px;
+            height: 26px;
+            background: #8B0000;
+            border: 2px solid #ff0000;
+            border-radius: 3px;
+            color: #ff0000;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .preset-btn:active {
+            transform: scale(0.95);
+        }
+
+        .preset-btn.selected {
+            background: #ff0000;
+            color: #000;
+            box-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
+        }
+
+        .preset-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .preset-action-btn {
+            padding: 5px 8px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 2px solid #cc5500;
+            border-radius: 3px;
+            color: #cc5500;
+            cursor: pointer;
+            font-size: 7px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .preset-action-btn:active {
+            transform: scale(0.95);
+            background: #cc5500;
+            color: #000;
+        }
+
+        .waveform-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            padding: 6px;
+            background: #000;
+            border-radius: 6px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .waveform-label {
+            color: #666;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .waveform-btn {
+            padding: 5px 10px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 9px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .waveform-btn:active {
+            transform: scale(0.95);
+        }
+
+        .waveform-btn.active {
+            background: #cc5500;
+            color: white;
+            box-shadow: 0 0 8px rgba(204, 85, 0, 0.5);
+        }
+
+        .clear-arp-btn {
+            padding: 5px 12px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 9px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            transition: all 0.1s;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .clear-arp-btn:active {
+            transform: scale(0.95);
+            background: #cc5500;
+            color: white;
+        }
+
+        /* ── MOBILE LANDSCAPE ── */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            html, body {
+                height: 100%;
+                overflow: hidden;
+            }
+
+            body {
+                padding: 0;
+                align-items: flex-start;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            .synth-container {
+                /* Scale the whole synth to fit landscape height */
+                transform-origin: top left;
+                transform: scale(var(--synth-scale, 0.62));
+                width: calc(100% / var(--synth-scale, 0.62));
+                max-width: none;
+                border-radius: 0;
+                padding: 8px;
+                margin: 0;
+            }
+        }
+
+        /* Separate rule to handle touch targets – always applies on touch devices */
+        @media (pointer: coarse) {
+            .pad, .sample-pad, .seq-btn, .sync-btn, .tempo-btn, .octave-btn,
+            .song-btn, .preset-btn, .preset-action-btn, .waveform-btn,
+            .clear-arp-btn, .clear-midi-btn {
+                min-height: 28px;
+                min-width: 28px;
+            }
+            .white-key {
+                cursor: default;
+            }
+            .black-key {
+                cursor: default;
+            }
+        }
+    </style>
+
+    <script>
+        // Set scale dynamically based on viewport in landscape
+        function applyMobileScale() {
+            const isLandscape = window.innerWidth > window.innerHeight;
+            const isMobile = window.innerHeight < 500;
+            if (isLandscape && isMobile) {
+                const targetHeight = window.innerHeight;
+                const synth = document.getElementById('synthContainer');
+                if (synth) {
+                    const naturalHeight = 780; // approx natural height of synth
+                    const scale = Math.min(targetHeight / naturalHeight, 0.75);
+                    document.documentElement.style.setProperty('--synth-scale', scale.toFixed(3));
+                }
+            } else {
+                document.documentElement.style.setProperty('--synth-scale', '1');
+            }
+        }
+        window.addEventListener('resize', applyMobileScale);
+        window.addEventListener('orientationchange', () => setTimeout(applyMobileScale, 100));
+        document.addEventListener('DOMContentLoaded', applyMobileScale);
+    </script>
+</head>
+<body>
+    <div class="synth-container powered-on" id="synthContainer">
+        <div class="synth-header">
+            <div class="synth-title">dPAUL <span class="bold">TECHNOLOGIES</span> <span class="mkii">MKII</span></div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div class="tempo-led-container">
+                    <div class="tempo-led-label">TEMPO</div>
+                    <div class="tempo-led" id="tempoLed"></div>
+                </div>
+                <div class="power-btn on" id="powerBtn">ON</div>
+            </div>
+        </div>
+
+        <div class="visualizer">
+            <div class="wave-container" id="visualizer"></div>
+        </div>
+
+        <div class="waveform-section">
+            <div class="waveform-label">WAVE</div>
+            <div class="waveform-btn active" id="waveSaw" data-wave="sawtooth">SAW</div>
+            <div class="waveform-btn" id="waveSquare" data-wave="square">SQR</div>
+            <div class="waveform-btn" id="waveTri" data-wave="triangle">TRI</div>
+            <div class="waveform-btn" id="waveSine" data-wave="sine">SIN</div>
+            <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
+        </div>
+
+        <div class="controls-panel">
+            <div class="control-group">
+                <div class="control-label">DELAY</div>
+                <div class="knob" id="delayKnob" data-value="50"></div>
+                <div class="knob-value" id="delayValue">50%</div>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">FEEDBACK</div>
+                <div class="knob" id="feedbackKnob" data-value="30"></div>
+                <div class="knob-value" id="feedbackValue">30%</div>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">FILTER</div>
+                <div class="knob" id="filterKnob" data-value="80"></div>
+                <div class="knob-value" id="filterValue">80%</div>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">RESONANCE</div>
+                <div class="knob" id="resonanceKnob" data-value="20"></div>
+                <div class="knob-value" id="resonanceValue">20%</div>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">ARP</div>
+                <div class="switch" id="arpSwitch"></div>
+                <div class="status-light" id="arpLight"></div>
+            </div>
+
+            <div class="control-group">
+                <div class="control-label">VOLUME</div>
+                <div class="knob" id="volumeKnob" data-value="70"></div>
+                <div class="knob-value" id="volumeValue">70%</div>
+            </div>
+
+            <div class="drum-volume-control">
+                <div class="drum-volume-label">DRUM VOL</div>
+                <div class="drum-knob" id="drumVolumeKnob" data-value="70"></div>
+                <div class="drum-knob-value" id="drumVolumeValue">70%</div>
+            </div>
+
+            <div class="sampler-control-group">
+                <div class="sampler-label">PITCH</div>
+                <div class="sampler-knob" id="samplePitchKnob" data-value="50"></div>
+                <div class="sampler-value" id="samplePitchValue">0</div>
+            </div>
+
+            <div class="sampler-control-group">
+                <div class="sampler-label">SPEED</div>
+                <div class="sampler-knob" id="sampleSpeedKnob" data-value="50"></div>
+                <div class="sampler-value" id="sampleSpeedValue">1.0x</div>
+            </div>
+
+            <div class="sampler-control-group">
+                <div class="sampler-label">S.FILT</div>
+                <div class="sampler-knob" id="sampleFilterKnob" data-value="100"></div>
+                <div class="sampler-value" id="sampleFilterValue">20k</div>
+            </div>
+
+            <div class="sampler-control-group">
+                <div class="sampler-label">REV</div>
+                <div class="sampler-switch" id="sampleReverseSwitch"></div>
+            </div>
+
+            <div class="sampler-control-group">
+                <div class="sampler-label">LOOP</div>
+                <div class="sampler-switch" id="sampleLoopSwitch"></div>
+            </div>
+        </div>
+
+        <div class="sequencer">
+            <div class="sequencer-header">
+                <div class="sequencer-title">16-STEP DRUM SEQUENCER</div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div class="bpm-indicator" id="bpmIndicator"></div>
+                    <div class="sync-btn" id="syncBtn">SYNC</div>
+                    <div class="sequencer-controls">
+                        <div class="seq-btn" id="playSeq">PLAY</div>
+                        <div class="seq-btn" id="stopSeq">STOP</div>
+                        <div class="seq-btn" id="clearSeq">CLEAR</div>
+                    </div>
+                </div>
+            </div>
+            <div class="sequencer-grid" id="sequencerGrid"></div>
+            <div class="tempo-control">
+                <div class="tempo-label">TEMPO</div>
+                <div class="tempo-btn" id="tempoDown">-</div>
+                <div class="tempo-slider" id="tempoSlider"></div>
+                <div class="tempo-btn" id="tempoUp">+</div>
+                <div class="tempo-value" id="tempoValue">120 BPM</div>
+            </div>
+        </div>
+
+        <div class="drum-pads">
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="kick">KICK</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="kick" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="kick" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="kick" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="snare">SNARE</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="snare" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="snare" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="snare" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="hihat">HIHAT</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="hihat" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="hihat" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="hihat" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="clap">CLAP</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="clap" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="clap" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="clap" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="tom1">TOM1</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="tom1" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="tom1" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="tom1" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="tom2">TOM2</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="tom2" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="tom2" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="tom2" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="cymbal">CYMBAL</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="cymbal" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="cymbal" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="cymbal" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="perc">PERC</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="perc" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="perc" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="perc" data-level="1.0"></div>
+                </div>
+            </div>
+            <div class="drum-pad-container">
+                <div class="pad" data-sound="shaker">SHAKER</div>
+                <div class="drum-volume-switch">
+                    <div class="volume-dot" data-drum="shaker" data-level="0.3"></div>
+                    <div class="volume-dot active" data-drum="shaker" data-level="0.7"></div>
+                    <div class="volume-dot" data-drum="shaker" data-level="1.0"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sample-section">
+            <div class="sample-header">
+                <div class="sample-title">CUSTOM SAMPLES (LOAD & SEQUENCE)</div>
+            </div>
+            <div class="sample-pads">
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="0">S1</div>
+                    <div class="load-sample-btn" data-sample="0">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="0">CLR</div>
+                    <div class="clear-sample-btn" data-sample="0">CLR</div>
+                    <input type="file" id="sampleFile0" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="1">S2</div>
+                    <div class="load-sample-btn" data-sample="1">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="1">CLR</div>
+                    <input type="file" id="sampleFile1" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="2">S3</div>
+                    <div class="load-sample-btn" data-sample="2">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="2">CLR</div>
+                    <input type="file" id="sampleFile2" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="3">S4</div>
+                    <div class="load-sample-btn" data-sample="3">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="3">CLR</div>
+                    <input type="file" id="sampleFile3" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="4">S5</div>
+                    <div class="load-sample-btn" data-sample="4">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="4">CLR</div>
+                    <input type="file" id="sampleFile4" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="5">S6</div>
+                    <div class="load-sample-btn" data-sample="5">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="5">CLR</div>
+                    <input type="file" id="sampleFile5" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="6">S7</div>
+                    <div class="load-sample-btn" data-sample="6">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="6">CLR</div>
+                    <input type="file" id="sampleFile6" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="7">S8</div>
+                    <div class="load-sample-btn" data-sample="7">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="7">CLR</div>
+                    <input type="file" id="sampleFile7" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="8">S9</div>
+                    <div class="load-sample-btn" data-sample="8">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="8">CLR</div>
+                    <input type="file" id="sampleFile8" accept="audio/*" style="display:none">
+                </div>
+                <div class="sample-pad-container">
+                    <div class="sample-pad" data-sample="9">S10</div>
+                    <div class="load-sample-btn" data-sample="9">LOAD</div>
+                    <div class="clear-sample-btn" data-sample="9">CLR</div>
+                    <input type="file" id="sampleFile9" accept="audio/*" style="display:none">
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-text">37-KEY ANALOG SYNTHESIZER</div>
+            <div class="song-controls">
+                <div class="song-btn" id="saveSongBtn">SAVE SONG</div>
+                <div class="song-btn" id="loadSongBtn">LOAD SONG</div>
+                <input type="file" id="loadSongFile" accept=".json" style="display:none">
+            </div>
+            <div class="clear-midi-btn" id="clearMidiBtn">CLEAR MIDI</div>
+            <div class="octave-controls">
+                <div class="octave-btn" id="octaveDown">-</div>
+                <div class="octave-display" id="octaveDisplay">OCT 4</div>
+                <div class="octave-btn" id="octaveUp">+</div>
+            </div>
+            <div class="info-text" id="noteDisplay" style="display:none;">---</div>
+        </div>
+
+        <div class="preset-section">
+            <div class="preset-label">MEMORY</div>
+            <div class="preset-buttons">
+                <div class="preset-btn" id="preset1" data-preset="1">M1</div>
+                <div class="preset-btn" id="preset2" data-preset="2">M2</div>
+                <div class="preset-btn" id="preset3" data-preset="3">M3</div>
+            </div>
+            <div class="preset-actions">
+                <div class="preset-action-btn" id="savePreset">SAVE</div>
+                <div class="preset-action-btn" id="loadPreset">LOAD</div>
+            </div>
+        </div>
+
+        <div class="keyboard">
+            <div class="pitch-bend-container">
+                <div class="pitch-bend" id="pitchBend">
+                    <div class="pitch-bend-center"></div>
+                    <div class="pitch-bend-thumb" id="pitchBendThumb"></div>
+                </div>
+                <div class="pitch-bend-label">PITCH</div>
+                <div class="pitch-hold-btn" id="pitchHoldBtn">HOLD</div>
+            </div>
+            <div class="piano-keys" id="pianoKeys"></div>
+        </div>
+    </div>
+
+    <script>
+        // Audio Context
+        let audioContext;
+        let masterGain;
+        let drumGain;
+        let delayNode;
+        let feedbackGain;
+        let filterNode;
+        
+        // Synth state
+        let currentOctave = 4;
+        let arpEnabled = false;
+        let arpInterval = null;
+        let arpNotes = [];
+        let arpIndex = 0;
+        let activeNotes = new Map();
+        let pitchBendValue = 0; // -1 to 1
+        let pitchHoldEnabled = false; // Pitch hold state
+        let synthPowered = true; // Synth power state
+        let syncEnabled = false;
+        let midiAccess = null;
+        let midiInputs = [];
+        let selectedPreset = 1; // Currently selected preset slot (1, 2, or 3)
+        let currentWaveform = 'sawtooth'; // Current waveform: sawtooth, square, triangle, sine
+        let presets = {
+            1: null,
+            2: null,
+            3: null
+        };
+        
+        // Individual drum volumes (0-1)
+        let drumVolumes = {
+            kick: 0.7,
+            snare: 0.7,
+            hihat: 0.7,
+            clap: 0.7,
+            tom1: 0.7,
+            tom2: 0.7,
+            cymbal: 0.7,
+            perc: 0.7,
+            shaker: 0.7
+        };
+        
+        // Sequencer state
+        let selectedDrum = 'kick';
+        let selectedSample = null; // Currently selected sample for sequencing
+        let sampleBuffers = {}; // Loaded audio buffers for samples (0-9)
+        let samplePitch = 0; // -12 to +12 semitones
+        let sampleSpeed = 1.0; // 0.5 to 2.0x
+        let sampleFilter = 20000; // 200 to 20000 Hz
+        let sampleReverse = false;
+        let sampleLoop = false;
+        let sequencerPattern = {
+            kick: Array(16).fill(false),
+            snare: Array(16).fill(false),
+            hihat: Array(16).fill(false),
+            clap: Array(16).fill(false),
+            tom1: Array(16).fill(false),
+            tom2: Array(16).fill(false),
+            cymbal: Array(16).fill(false),
+            perc: Array(16).fill(false),
+            shaker: Array(16).fill(false),
+            sample0: Array(16).fill(false),
+            sample1: Array(16).fill(false),
+            sample2: Array(16).fill(false),
+            sample3: Array(16).fill(false),
+            sample4: Array(16).fill(false),
+            sample5: Array(16).fill(false),
+            sample6: Array(16).fill(false),
+            sample7: Array(16).fill(false),
+            sample8: Array(16).fill(false),
+            sample9: Array(16).fill(false)
+        };
+        let sequencerPlaying = false;
+        let sequencerInterval = null;
+        let currentStep = 0;
+        let tempo = 120;
+        let tempoLedInterval = null;
+
+        // Note names
+        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+        // Initialize Audio
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                masterGain = audioContext.createGain();
+                masterGain.gain.value = 0.7;
+                
+                drumGain = audioContext.createGain();
+                drumGain.gain.value = 0.7;
+                
+                delayNode = audioContext.createDelay();
+                delayNode.delayTime.value = 0.3;
+                
+                feedbackGain = audioContext.createGain();
+                feedbackGain.gain.value = 0.3;
+                
+                filterNode = audioContext.createBiquadFilter();
+                filterNode.type = 'lowpass';
+                filterNode.frequency.value = 2000;
+                filterNode.Q.value = 1;
+                
+                delayNode.connect(feedbackGain);
+                feedbackGain.connect(delayNode);
+                delayNode.connect(filterNode);
+                filterNode.connect(masterGain);
+                
+                drumGain.connect(masterGain);
+                masterGain.connect(audioContext.destination);
+            }
+        }
+
+        function getNoteFrequency(noteIndex, octave) {
+            const A4 = 440;
+            const C4_INDEX = -9;
+            const semitonesFromA4 = (octave - 4) * 12 + noteIndex + C4_INDEX;
+            return A4 * Math.pow(2, semitonesFromA4 / 12);
+        }
+
+        function playNote(frequency, noteName) {
+            initAudio();
+            
+            const now = audioContext.currentTime;
+            
+            // Apply pitch bend (Â±2 semitones)
+            const bendedFrequency = frequency * Math.pow(2, (pitchBendValue * 2) / 12);
+            
+            const osc1 = audioContext.createOscillator();
+            const osc2 = audioContext.createOscillator();
+            const osc3 = audioContext.createOscillator();
+            
+            osc1.type = currentWaveform;
+            osc2.type = currentWaveform;
+            osc3.type = currentWaveform;
+            
+            osc1.frequency.value = bendedFrequency;
+            osc2.frequency.value = bendedFrequency * 0.995;
+            osc3.frequency.value = bendedFrequency * 1.005;
+            
+            const envelope = audioContext.createGain();
+            envelope.gain.value = 0;
+            envelope.gain.setValueAtTime(0, now);
+            envelope.gain.linearRampToValueAtTime(0.3, now + 0.02);
+            envelope.gain.linearRampToValueAtTime(0.2, now + 0.15);
+            
+            const oscGain1 = audioContext.createGain();
+            const oscGain2 = audioContext.createGain();
+            const oscGain3 = audioContext.createGain();
+            
+            oscGain1.gain.value = 0.4;
+            oscGain2.gain.value = 0.3;
+            oscGain3.gain.value = 0.3;
+            
+            osc1.connect(oscGain1);
+            osc2.connect(oscGain2);
+            osc3.connect(oscGain3);
+            
+            oscGain1.connect(envelope);
+            oscGain2.connect(envelope);
+            oscGain3.connect(envelope);
+            
+            envelope.connect(filterNode);
+            envelope.connect(delayNode);
+            
+            osc1.start(now);
+            osc2.start(now);
+            osc3.start(now);
+            
+            activeNotes.set(noteName, { osc1, osc2, osc3, envelope, baseFrequency: frequency });
+            
+            animateVisualizer();
+            updateNoteDisplay(noteName);
+            
+            return { osc1, osc2, osc3, envelope };
+        }
+
+        function stopNote(noteName) {
+            if (activeNotes.has(noteName)) {
+                const { osc1, osc2, osc3, envelope } = activeNotes.get(noteName);
+                const now = audioContext.currentTime;
+                
+                envelope.gain.cancelScheduledValues(now);
+                envelope.gain.setValueAtTime(envelope.gain.value, now);
+                envelope.gain.linearRampToValueAtTime(0, now + 0.3);
+                
+                setTimeout(() => {
+                    osc1.stop();
+                    osc2.stop();
+                    osc3.stop();
+                }, 400);
+                
+                activeNotes.delete(noteName);
+            }
+        }
+
+        function playDrum(type) {
+            initAudio();
+            
+            const now = audioContext.currentTime;
+            
+            switch(type) {
+                case 'kick':
+                    const kickOsc = audioContext.createOscillator();
+                    const kickGain = audioContext.createGain();
+                    kickOsc.frequency.value = 150;
+                    kickOsc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+                    kickGain.gain.value = 1 * drumVolumes.kick;
+                    kickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    kickOsc.type = 'sine';
+                    kickOsc.connect(kickGain);
+                    kickGain.connect(drumGain);
+                    kickOsc.start(now);
+                    kickOsc.stop(now + 0.5);
+                    break;
+                    
+                case 'snare':
+                    const snareOsc = audioContext.createOscillator();
+                    const snareGain = audioContext.createGain();
+                    const snareNoise = createNoiseSource();
+                    const snareNoiseGain = audioContext.createGain();
+                    
+                    snareOsc.frequency.value = 200;
+                    snareOsc.type = 'triangle';
+                    snareGain.gain.value = 0.3 * drumVolumes.snare;
+                    snareGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    
+                    snareNoiseGain.gain.value = 0.4 * drumVolumes.snare;
+                    snareNoiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    
+                    snareOsc.connect(snareGain);
+                    snareNoise.connect(snareNoiseGain);
+                    snareGain.connect(drumGain);
+                    snareNoiseGain.connect(drumGain);
+                    
+                    snareOsc.start(now);
+                    snareNoise.start(now);
+                    snareOsc.stop(now + 0.2);
+                    snareNoise.stop(now + 0.15);
+                    break;
+                    
+                case 'hihat':
+                    const hihatNoise = createNoiseSource();
+                    const hihatFilter = audioContext.createBiquadFilter();
+                    const hihatGain = audioContext.createGain();
+                    
+                    hihatFilter.type = 'highpass';
+                    hihatFilter.frequency.value = 7000;
+                    hihatGain.gain.value = 0.3 * drumVolumes.hihat;
+                    hihatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    
+                    hihatNoise.connect(hihatFilter);
+                    hihatFilter.connect(hihatGain);
+                    hihatGain.connect(drumGain);
+                    
+                    hihatNoise.start(now);
+                    hihatNoise.stop(now + 0.05);
+                    break;
+                    
+                case 'clap':
+                    // Create smoother, more natural clap sound
+                    for (let i = 0; i < 7; i++) {
+                        setTimeout(() => {
+                            const clapNoise = createNoiseSource();
+                            const clapFilter = audioContext.createBiquadFilter();
+                            const clapGain = audioContext.createGain();
+                            const clapTime = audioContext.currentTime;
+                            
+                            clapFilter.type = 'bandpass';
+                            clapFilter.frequency.value = 1200;
+                            clapFilter.Q.value = 1.5;
+                            
+                            // Smooth volume curve - builds up and fades
+                            let burstVolume;
+                            if (i < 3) {
+                                burstVolume = 0.3 + (i * 0.15); // Build up
+                            } else {
+                                burstVolume = 0.75 - ((i - 3) * 0.1); // Fade out
+                            }
+                            
+                            clapGain.gain.value = burstVolume * drumVolumes.clap;
+                            clapGain.gain.linearRampToValueAtTime(0.01, clapTime + 0.06);
+                            
+                            clapNoise.connect(clapFilter);
+                            clapFilter.connect(clapGain);
+                            clapGain.connect(drumGain);
+                            
+                            clapNoise.start(clapTime);
+                            clapNoise.stop(clapTime + 0.06);
+                        }, i * 20);
+                    }
+                    break;
+                    
+                case 'tom1':
+                    const tom1Osc = audioContext.createOscillator();
+                    const tom1Gain = audioContext.createGain();
+                    tom1Osc.frequency.value = 180;
+                    tom1Osc.frequency.exponentialRampToValueAtTime(80, now + 0.2);
+                    tom1Gain.gain.value = 0.8 * drumVolumes.tom1;
+                    tom1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    tom1Osc.connect(tom1Gain);
+                    tom1Gain.connect(drumGain);
+                    tom1Osc.start(now);
+                    tom1Osc.stop(now + 0.3);
+                    break;
+                    
+                case 'tom2':
+                    const tom2Osc = audioContext.createOscillator();
+                    const tom2Gain = audioContext.createGain();
+                    tom2Osc.frequency.value = 120;
+                    tom2Osc.frequency.exponentialRampToValueAtTime(60, now + 0.2);
+                    tom2Gain.gain.value = 0.8 * drumVolumes.tom2;
+                    tom2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    tom2Osc.connect(tom2Gain);
+                    tom2Gain.connect(drumGain);
+                    tom2Osc.start(now);
+                    tom2Osc.stop(now + 0.3);
+                    break;
+                    
+                case 'cymbal':
+                    const cymbalNoise = createNoiseSource();
+                    const cymbalFilter = audioContext.createBiquadFilter();
+                    const cymbalGain = audioContext.createGain();
+                    
+                    cymbalFilter.type = 'highpass';
+                    cymbalFilter.frequency.value = 5000;
+                    cymbalGain.gain.value = 0.4 * drumVolumes.cymbal;
+                    cymbalGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    
+                    cymbalNoise.connect(cymbalFilter);
+                    cymbalFilter.connect(cymbalGain);
+                    cymbalGain.connect(drumGain);
+                    
+                    cymbalNoise.start(now);
+                    cymbalNoise.stop(now + 0.5);
+                    break;
+                    
+                case 'perc':
+                    const percOsc = audioContext.createOscillator();
+                    const percGain = audioContext.createGain();
+                    percOsc.frequency.value = 800;
+                    percGain.gain.value = 0.3 * drumVolumes.perc;
+                    percGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    percOsc.type = 'triangle';
+                    percOsc.connect(percGain);
+                    percGain.connect(drumGain);
+                    percOsc.start(now);
+                    percOsc.stop(now + 0.1);
+                    break;
+                    
+                case 'shaker':
+                    // Shaker - short burst of filtered noise
+                    const shakerNoise = createNoiseSource();
+                    const shakerFilter = audioContext.createBiquadFilter();
+                    const shakerGain = audioContext.createGain();
+                    
+                    shakerFilter.type = 'highpass';
+                    shakerFilter.frequency.value = 4000;
+                    shakerFilter.Q.value = 2;
+                    shakerGain.gain.value = 0.25 * drumVolumes.shaker;
+                    shakerGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    
+                    shakerNoise.connect(shakerFilter);
+                    shakerFilter.connect(shakerGain);
+                    shakerGain.connect(drumGain);
+                    
+                    shakerNoise.start(now);
+                    shakerNoise.stop(now + 0.08);
+                    break;
+            }
+            
+            animateVisualizer();
+        }
+
+        function createNoiseSource() {
+            const bufferSize = audioContext.sampleRate * 0.1;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const output = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            return noise;
+        }
+
+        // MIDI Support
+        async function initMIDI() {
+            if (navigator.requestMIDIAccess) {
+                try {
+                    midiAccess = await navigator.requestMIDIAccess();
+                    console.log('MIDI Access granted');
+                    
+                    // Get all MIDI inputs
+                    midiInputs = Array.from(midiAccess.inputs.values());
+                    
+                    if (midiInputs.length > 0) {
+                        console.log(`Found ${midiInputs.length} MIDI input(s):`);
+                        midiInputs.forEach((input, index) => {
+                            console.log(`  ${index}: ${input.name}`);
+                            input.onmidimessage = handleMIDIMessage;
+                        });
+                        
+                        // Show notification to user
+                        updateNoteDisplay('MIDI CONNECTED');
+                        setTimeout(() => updateNoteDisplay('---'), 2000);
+                    } else {
+                        console.log('No MIDI inputs found. Connect a MIDI keyboard and refresh the page.');
+                    }
+                    
+                    // Listen for device connection changes
+                    midiAccess.onstatechange = (e) => {
+                        if (e.port.type === 'input') {
+                            if (e.port.state === 'connected') {
+                                console.log(`MIDI device connected: ${e.port.name}`);
+                                e.port.onmidimessage = handleMIDIMessage;
+                                updateNoteDisplay('MIDI CONNECTED');
+                                setTimeout(() => updateNoteDisplay('---'), 2000);
+                            } else if (e.port.state === 'disconnected') {
+                                console.log(`MIDI device disconnected: ${e.port.name}`);
+                            }
+                        }
+                    };
+                } catch (err) {
+                    console.error('Failed to get MIDI access:', err);
+                }
+            } else {
+                console.log('Web MIDI API not supported in this browser.');
+            }
+        }
+
+        function handleMIDIMessage(message) {
+            initAudio(); // Ensure audio context is initialized
+            
+            const [status, note, velocity] = message.data;
+            const command = status >> 4;
+            const channel = status & 0xf;
+            
+            // Note On (9) with velocity > 0
+            if (command === 9 && velocity > 0) {
+                const frequency = midiNoteToFrequency(note);
+                const noteName = midiNoteToName(note);
+                playNote(frequency, noteName);
+                
+                // Animate the corresponding key if it exists on screen
+                animateKeyForMIDI(noteName, true);
+            }
+            // Note Off (8) or Note On with velocity 0
+            else if (command === 8 || (command === 9 && velocity === 0)) {
+                const noteName = midiNoteToName(note);
+                stopNote(noteName);
+                
+                // Remove animation from the key
+                animateKeyForMIDI(noteName, false);
+            }
+            // Pitch Bend (14)
+            else if (command === 14) {
+                // MIDI pitch bend is 14-bit (0-16383, center at 8192)
+                const bendValue = (note | (velocity << 7)) - 8192;
+                // Convert to -1 to 1 range
+                pitchBendValue = bendValue / 8192;
+                
+                // Update pitch bend thumb position
+                const pitchBendThumb = document.getElementById('pitchBendThumb');
+                const pitchBend = document.getElementById('pitchBend');
+                const range = 100 - 25; // height - thumb height
+                const centerPos = range / 2;
+                const newPos = centerPos - (pitchBendValue * centerPos);
+                pitchBendThumb.style.top = newPos + 'px';
+                
+                // Update all active notes
+                activeNotes.forEach((noteData, noteName) => {
+                    if (noteData.osc1 && noteData.osc1.frequency && noteData.baseFrequency) {
+                        const baseFreq = noteData.baseFrequency;
+                        const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
+                        noteData.osc1.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
+                        noteData.osc2.frequency.setValueAtTime(bendedFreq * 0.995, audioContext.currentTime);
+                        noteData.osc3.frequency.setValueAtTime(bendedFreq * 1.005, audioContext.currentTime);
+                    }
+                });
+            }
+            // Control Change (11)
+            else if (command === 11) {
+                // CC 1 = Modulation Wheel
+                // CC 7 = Volume
+                // CC 64 = Sustain Pedal
+                // You can add more CC mappings here
+            }
+        }
+
+        function midiNoteToFrequency(midiNote) {
+            // MIDI note 69 = A4 = 440 Hz
+            return 440 * Math.pow(2, (midiNote - 69) / 12);
+        }
+
+        function midiNoteToName(midiNote) {
+            const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const octave = Math.floor(midiNote / 12) - 1;
+            const noteName = noteNames[midiNote % 12];
+            return noteName + octave;
+        }
+
+        function animateKeyForMIDI(noteName, isPressed) {
+            // Find the key element with this note name
+            const keys = document.querySelectorAll('.white-key, .black-key');
+            keys.forEach(key => {
+                if (key.dataset.noteName === noteName) {
+                    if (isPressed) {
+                        key.classList.add('playing');
+                    } else {
+                        key.classList.remove('playing');
+                    }
+                }
+            });
+        }
+
+        function clearAllMIDINotes() {
+            // Stop all active notes
+            const notesToStop = Array.from(activeNotes.keys());
+            notesToStop.forEach(noteName => {
+                stopNote(noteName);
+            });
+            
+            // Stop arpeggiator if playing
+            if (arpInterval) {
+                clearInterval(arpInterval);
+                arpInterval = null;
+            }
+            
+            // Clear arp notes
+            arpNotes = [];
+            arpIndex = 0;
+            
+            // Remove all playing animations from keys
+            const keys = document.querySelectorAll('.white-key, .black-key');
+            keys.forEach(key => {
+                key.classList.remove('playing');
+            });
+            
+            // Reset pitch bend to center
+            pitchBendValue = 0;
+            const pitchBendThumb = document.getElementById('pitchBendThumb');
+            if (pitchBendThumb) {
+                pitchBendThumb.style.top = '30px';
+            }
+            
+            // Turn off pitch hold
+            pitchHoldEnabled = false;
+            const pitchHoldBtn = document.getElementById('pitchHoldBtn');
+            if (pitchHoldBtn) {
+                pitchHoldBtn.classList.remove('active');
+            }
+            
+            // Clear active notes map
+            activeNotes.clear();
+            
+            // Show feedback
+            updateNoteDisplay('MIDI CLEARED');
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+        }
+
+        // Save and Load Settings
+        // Preset Management
+        function savePreset(slot) {
+            const presetData = {
+                currentOctave: currentOctave,
+                currentWaveform: currentWaveform,
+                arpEnabled: arpEnabled,
+                arpNotes: [...arpNotes],
+                syncEnabled: syncEnabled,
+                pitchHoldEnabled: pitchHoldEnabled,
+                tempo: tempo,
+                drumVolumes: {...drumVolumes},
+                sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
+                knobValues: {
+                    delay: parseInt(document.getElementById('delayKnob').dataset.value),
+                    feedback: parseInt(document.getElementById('feedbackKnob').dataset.value),
+                    filter: parseInt(document.getElementById('filterKnob').dataset.value),
+                    resonance: parseInt(document.getElementById('resonanceKnob').dataset.value),
+                    volume: parseInt(document.getElementById('volumeKnob').dataset.value),
+                    drumVolume: parseInt(document.getElementById('drumVolumeKnob').dataset.value)
+                }
+            };
+            
+            presets[slot] = presetData;
+            
+            // Save to localStorage
+            try {
+                localStorage.setItem('dPaulMKII_presets', JSON.stringify(presets));
+                updateNoteDisplay(`M${slot} SAVED`);
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+            } catch (e) {
+                console.error('Failed to save preset:', e);
+                updateNoteDisplay('SAVE FAIL');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+            }
+        }
+
+        function loadPreset(slot) {
+            const presetData = presets[slot];
+            
+            if (!presetData) {
+                updateNoteDisplay(`M${slot} EMPTY`);
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+                return;
+            }
+            
+            // Apply octave
+            currentOctave = presetData.currentOctave;
+            updateOctaveDisplay();
+            rebuildKeyboard();
+            
+            // Apply waveform
+            if (presetData.currentWaveform) {
+                currentWaveform = presetData.currentWaveform;
+                // Update waveform button visual
+                document.querySelectorAll('.waveform-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.wave === currentWaveform) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            
+            // Apply tempo
+            tempo = presetData.tempo;
+            updateTempoDisplay();
+            
+            // Apply knob values
+            Object.keys(presetData.knobValues).forEach(knobName => {
+                const knob = document.getElementById(knobName + 'Knob');
+                if (knob) {
+                    knob.dataset.value = presetData.knobValues[knobName];
+                    updateKnob(knob);
+                }
+            });
+            
+            // Apply drum volumes
+            if (presetData.drumVolumes) {
+                drumVolumes = presetData.drumVolumes;
+                // Update volume dot visuals
+                Object.keys(drumVolumes).forEach(drumName => {
+                    const level = drumVolumes[drumName];
+                    const dots = document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`);
+                    dots.forEach(dot => {
+                        dot.classList.remove('active');
+                        if (parseFloat(dot.dataset.level) === level) {
+                            dot.classList.add('active');
+                        }
+                    });
+                });
+            }
+            
+            // Apply sequencer pattern
+            if (presetData.sequencerPattern) {
+                sequencerPattern = presetData.sequencerPattern;
+                updateSequencerDisplay();
+            }
+            
+            // Apply sync
+            syncEnabled = presetData.syncEnabled;
+            const syncBtn = document.getElementById('syncBtn');
+            if (syncEnabled) {
+                syncBtn.classList.add('active');
+            } else {
+                syncBtn.classList.remove('active');
+            }
+            
+            // Apply pitch hold
+            pitchHoldEnabled = presetData.pitchHoldEnabled || false;
+            const pitchHoldBtn = document.getElementById('pitchHoldBtn');
+            if (pitchHoldEnabled) {
+                pitchHoldBtn.classList.add('active');
+            } else {
+                pitchHoldBtn.classList.remove('active');
+            }
+            
+            // Apply arp state
+            arpEnabled = presetData.arpEnabled;
+            const arpSwitch = document.getElementById('arpSwitch');
+            const arpLight = document.getElementById('arpLight');
+            if (arpEnabled) {
+                arpSwitch.classList.add('active');
+                arpLight.classList.add('active');
+            } else {
+                arpSwitch.classList.remove('active');
+                arpLight.classList.remove('active');
+            }
+            
+            // Restart sequencer if it was playing
+            if (sequencerPlaying) {
+                stopSequencer();
+                startSequencer();
+            }
+            
+            updateNoteDisplay(`M${slot} LOAD`);
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+        }
+
+        function loadPresetsFromStorage() {
+            try {
+                const saved = localStorage.getItem('dPaulMKII_presets');
+                if (saved) {
+                    presets = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('Failed to load presets:', e);
+            }
+        }
+
+        function saveSettings() {
+            const settings = {
+                // Synth settings
+                volume: masterGain ? masterGain.gain.value : 0.7,
+                drumVolume: drumGain ? drumGain.gain.value : 0.7,
+                delay: delayNode ? delayNode.delayTime.value : 0.3,
+                feedback: feedbackGain ? feedbackGain.gain.value : 0.3,
+                filter: filterNode ? filterNode.frequency.value : 2000,
+                resonance: filterNode ? filterNode.Q.value : 1,
+                currentOctave: currentOctave,
+                currentWaveform: currentWaveform,
+                arpEnabled: arpEnabled,
+                syncEnabled: syncEnabled,
+                pitchHoldEnabled: pitchHoldEnabled,
+                synthPowered: synthPowered,
+                tempo: tempo,
+                
+                // Drum volumes
+                drumVolumes: drumVolumes,
+                
+                // Sequencer pattern
+                sequencerPattern: sequencerPattern
+            };
+            
+            try {
+                localStorage.setItem('dPaulMKII_settings', JSON.stringify(settings));
+                updateNoteDisplay('SAVED');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+                return true;
+            } catch (e) {
+                console.error('Failed to save settings:', e);
+                updateNoteDisplay('SAVE FAILED');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+                return false;
+            }
+        }
+
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem('dPaulMKII_settings');
+                if (!saved) return false;
+                
+                const settings = JSON.parse(saved);
+                
+                // Apply synth settings
+                if (masterGain) masterGain.gain.value = settings.volume || 0.7;
+                if (drumGain) drumGain.gain.value = settings.drumVolume || 0.7;
+                if (delayNode) delayNode.delayTime.value = settings.delay || 0.3;
+                if (feedbackGain) feedbackGain.gain.value = settings.feedback || 0.3;
+                if (filterNode) {
+                    filterNode.frequency.value = settings.filter || 2000;
+                    filterNode.Q.value = settings.resonance || 1;
+                }
+                
+                currentOctave = settings.currentOctave || 4;
+                arpEnabled = settings.arpEnabled || false;
+                syncEnabled = settings.syncEnabled || false;
+                pitchHoldEnabled = settings.pitchHoldEnabled || false;
+                
+                // Update pitch hold button visual
+                if (pitchHoldEnabled) {
+                    document.getElementById('pitchHoldBtn').classList.add('active');
+                } else {
+                    document.getElementById('pitchHoldBtn').classList.remove('active');
+                }
+                
+                tempo = settings.tempo || 120;
+                
+                // Apply waveform
+                if (settings.currentWaveform) {
+                    currentWaveform = settings.currentWaveform;
+                    // Update waveform button visual
+                    document.querySelectorAll('.waveform-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.wave === currentWaveform) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+                
+                // Apply drum volumes
+                if (settings.drumVolumes) {
+                    drumVolumes = settings.drumVolumes;
+                    
+                    // Update volume dot visuals
+                    Object.keys(drumVolumes).forEach(drumName => {
+                        const level = drumVolumes[drumName];
+                        const dots = document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`);
+                        dots.forEach(dot => {
+                            dot.classList.remove('active');
+                            if (parseFloat(dot.dataset.level) === level) {
+                                dot.classList.add('active');
+                            }
+                        });
+                    });
+                }
+                
+                // Apply sequencer pattern
+                if (settings.sequencerPattern) {
+                    sequencerPattern = settings.sequencerPattern;
+                    updateSequencerDisplay();
+                }
+                
+                // Update UI
+                updateOctaveDisplay();
+                updateTempoDisplay();
+                
+                // Update knobs
+                document.getElementById('volumeKnob').dataset.value = Math.round(settings.volume * 100);
+                document.getElementById('drumVolumeKnob').dataset.value = Math.round(settings.drumVolume * 100);
+                
+                // Update ARP and SYNC switches
+                // Reset arp to off on page load to prevent confusion
+                // User can turn it back on manually
+                arpEnabled = false;
+                document.getElementById('arpSwitch').classList.remove('active');
+                document.getElementById('arpLight').classList.remove('active');
+                
+                if (syncEnabled) {
+                    document.getElementById('syncBtn').classList.add('active');
+                } else {
+                    document.getElementById('syncBtn').classList.remove('active');
+                }
+                
+                // Apply power state
+                synthPowered = settings.synthPowered !== false; // Default to true
+                const powerBtn = document.getElementById('powerBtn');
+                const synthContainer = document.getElementById('synthContainer');
+                if (synthPowered) {
+                    powerBtn.classList.add('on');
+                    powerBtn.textContent = 'ON';
+                    synthContainer.classList.remove('powered-off');
+                    synthContainer.classList.add('powered-on');
+                } else {
+                    powerBtn.classList.remove('on');
+                    powerBtn.textContent = 'OFF';
+                    synthContainer.classList.remove('powered-on');
+                    synthContainer.classList.add('powered-off');
+                }
+                
+                document.querySelectorAll('.knob').forEach(updateKnob);
+                
+                updateNoteDisplay('LOADED');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+                return true;
+            } catch (e) {
+                console.error('Failed to load settings:', e);
+                return false;
+            }
+        }
+
+        // Auto-save on changes
+        function autoSave() {
+            saveSettings();
+        }
+
+        // Kraftwerk-style synth sounds
+        // Build keyboard with proper piano layout
+        function buildKeyboard() {
+            const container = document.getElementById('pianoKeys');
+            container.innerHTML = '';
+            
+            // 37 keys = 3 full octaves + 1 note (C to C)
+            // Pattern: C D E F G A B (white keys per octave)
+            // Black keys appear after: C, D, F, G, A
+            
+            const blackKeyOffsets = {
+                0: 14,   // C# after C (21 - 14/2 = 14)
+                1: 35,   // D# after D (21*2 - 21 - 14/2 = 35)
+                3: 77,   // F# after F
+                4: 98,   // G# after G
+                5: 119   // A# after A
+            };
+            
+            let whiteKeyIndex = 0;
+            
+            for (let i = 0; i < 37; i++) {
+                const noteIndex = i % 12;
+                const octaveOffset = Math.floor(i / 12);
+                const noteName = noteNames[noteIndex] + (currentOctave + octaveOffset);
+                const isBlack = noteNames[noteIndex].includes('#');
+                
+                if (!isBlack) {
+                    const key = document.createElement('div');
+                    key.className = 'white-key';
+                    key.dataset.note = i;
+                    key.dataset.noteName = noteName;
+                    
+                    key.addEventListener('mousedown', () => handleKeyPress(key));
+                    key.addEventListener('mouseup', () => handleKeyRelease(key));
+                    key.addEventListener('mouseleave', () => handleKeyRelease(key));
+                    key.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        handleKeyPress(key);
+                    });
+                    key.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        handleKeyRelease(key);
+                    });
+                    
+                    container.appendChild(key);
+                    
+                    // Add black key if needed (and if not the last key)
+                    const whiteKeyInOctave = whiteKeyIndex % 7;
+                    const nextNoteIndex = (i + 1) % 12;
+                    const nextIsBlack = noteNames[nextNoteIndex] && noteNames[nextNoteIndex].includes('#');
+                    
+                    if (blackKeyOffsets[whiteKeyInOctave] !== undefined && i < 36 && nextIsBlack) {
+                        const blackKey = document.createElement('div');
+                        blackKey.className = 'black-key';
+                        blackKey.dataset.note = i + 1;
+                        blackKey.dataset.noteName = noteNames[nextNoteIndex] + (currentOctave + Math.floor((i + 1) / 12));
+                        blackKey.style.left = blackKeyOffsets[whiteKeyInOctave] + (Math.floor(whiteKeyIndex / 7) * 147) + 'px'; // 7 white keys * 21px = 147px per octave
+                        
+                        blackKey.addEventListener('mousedown', () => handleKeyPress(blackKey));
+                        blackKey.addEventListener('mouseup', () => handleKeyRelease(blackKey));
+                        blackKey.addEventListener('mouseleave', () => handleKeyRelease(blackKey));
+                        blackKey.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            handleKeyPress(blackKey);
+                        });
+                        blackKey.addEventListener('touchend', (e) => {
+                            e.preventDefault();
+                            handleKeyRelease(blackKey);
+                        });
+                        
+                        container.appendChild(blackKey);
+                    }
+                    
+                    whiteKeyIndex++;
+                }
+            }
+        }
+
+        function handleKeyPress(key) {
+            if (key.classList.contains('playing')) return;
+            
+            key.classList.add('playing');
+            const noteIndex = parseInt(key.dataset.note);
+            const noteName = key.dataset.noteName;
+            const frequency = getNoteFrequency(noteIndex, currentOctave);
+            
+            if (arpEnabled) {
+                arpNotes.push({ frequency, noteName });
+                
+                // Start arp if not already running
+                if (!arpInterval) {
+                    startArp();
+                }
+            } else {
+                playNote(frequency, noteName);
+            }
+        }
+
+        function handleKeyRelease(key) {
+            key.classList.remove('playing');
+            const noteName = key.dataset.noteName;
+            
+            if (!arpEnabled) {
+                stopNote(noteName);
+            }
+        }
+
+        function toggleArp() {
+            arpEnabled = !arpEnabled;
+            const arpSwitch = document.getElementById('arpSwitch');
+            const arpLight = document.getElementById('arpLight');
+            
+            if (arpEnabled) {
+                arpSwitch.classList.add('active');
+                arpLight.classList.add('active');
+                
+                // Don't start arp here - it will start when first note is added
+                // Only start if there are already notes (e.g., loading from preset)
+                if (arpNotes.length > 0) {
+                    startArp();
+                }
+                
+                // Start sequencer if sync is enabled
+                if (syncEnabled && !sequencerPlaying) {
+                    startSequencer();
+                }
+            } else {
+                arpSwitch.classList.remove('active');
+                arpLight.classList.remove('active');
+                
+                // Force stop the arp interval
+                if (arpInterval) {
+                    clearInterval(arpInterval);
+                    arpInterval = null;
+                }
+                
+                // Clear arp notes and state
+                stopArp();
+                
+                // Stop sequencer if sync is enabled
+                if (syncEnabled && sequencerPlaying) {
+                    stopSequencer();
+                }
+            }
+            autoSave();
+        }
+
+        function startArp() {
+            // Don't start if no notes
+            if (arpNotes.length === 0) {
+                return;
+            }
+            
+            // Clear any existing interval first
+            if (arpInterval) {
+                clearInterval(arpInterval);
+                arpInterval = null;
+            }
+            
+            const stepTime = (60 / tempo) * 1000 / 4; // 16th notes - same as sequencer
+            arpInterval = setInterval(() => {
+                if (arpNotes.length > 0) {
+                    const note = arpNotes[arpIndex % arpNotes.length];
+                    playNote(note.frequency, note.noteName);
+                    setTimeout(() => stopNote(note.noteName), stepTime * 0.75); // 75% of step time
+                    arpIndex++;
+                } else {
+                    // No notes left, stop the arp
+                    if (arpInterval) {
+                        clearInterval(arpInterval);
+                        arpInterval = null;
+                    }
+                }
+            }, stepTime);
+        }
+
+        function stopArp() {
+            if (arpInterval) {
+                clearInterval(arpInterval);
+                arpInterval = null;
+            }
+            arpNotes = [];
+            arpIndex = 0;
+        }
+
+        function pauseArp() {
+            // Just stop the interval, don't clear notes
+            if (arpInterval) {
+                clearInterval(arpInterval);
+                arpInterval = null;
+            }
+        }
+
+        function syncRestart() {
+            // Restart both arp and sequencer in sync
+            const wasArpPlaying = arpEnabled && arpInterval;
+            const wasSeqPlaying = sequencerPlaying;
+            
+            // Stop both
+            if (wasArpPlaying) pauseArp();
+            if (wasSeqPlaying) stopSequencer();
+            
+            // Reset indices to sync them
+            arpIndex = 0;
+            currentStep = 0;
+            
+            // Restart both simultaneously
+            if (wasArpPlaying) startArp();
+            if (wasSeqPlaying) startSequencer();
+        }
+
+        function setupKnobs() {
+            const knobs = document.querySelectorAll('.knob');
+            
+            knobs.forEach(knob => {
+                let isDragging = false;
+                let startY = 0;
+                let startValue = parseInt(knob.dataset.value);
+                
+                knob.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startY = e.clientY;
+                    startValue = parseInt(knob.dataset.value);
+                });
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const delta = startY - e.clientY;
+                    let newValue = startValue + delta;
+                    newValue = Math.max(0, Math.min(100, newValue));
+                    
+                    knob.dataset.value = newValue;
+                    updateKnob(knob);
+                });
+                
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        autoSave(); // Save when knob is released
+                    }
+                });
+            });
+        }
+
+        function updateKnob(knob) {
+            const value = parseInt(knob.dataset.value);
+            const rotation = (value / 100) * 270 - 135;
+            knob.style.transform = `rotate(${rotation}deg)`;
+            
+            const valueDisplay = document.getElementById(knob.id.replace('Knob', 'Value'));
+            if (valueDisplay) {
+                valueDisplay.textContent = value + '%';
+            }
+            
+            if (knob.id === 'delayKnob' && delayNode) {
+                delayNode.delayTime.value = (value / 100) * 0.5;
+            } else if (knob.id === 'feedbackKnob' && feedbackGain) {
+                feedbackGain.gain.value = value / 100;
+            } else if (knob.id === 'filterKnob' && filterNode) {
+                filterNode.frequency.value = 200 + (value / 100) * 4800;
+            } else if (knob.id === 'resonanceKnob' && filterNode) {
+                filterNode.Q.value = 1 + (value / 100) * 19;
+            } else if (knob.id === 'volumeKnob' && masterGain) {
+                masterGain.gain.value = value / 100;
+            }
+        }
+
+        function animateVisualizer() {
+            const visualizer = document.getElementById('visualizer');
+            visualizer.innerHTML = '';
+            
+            for (let i = 0; i < 40; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'wave-bar';
+                bar.style.height = Math.random() * 40 + 'px';
+                visualizer.appendChild(bar);
+            }
+            
+            setTimeout(() => {
+                visualizer.innerHTML = '';
+            }, 300);
+        }
+
+        function updateNoteDisplay(note) {
+            document.getElementById('noteDisplay').textContent = note;
+        }
+
+        document.getElementById('octaveUp').addEventListener('click', () => {
+            if (currentOctave < 7) {
+                currentOctave++;
+                updateOctaveDisplay();
+                rebuildKeyboard();
+                autoSave();
+            }
+        });
+
+        document.getElementById('octaveDown').addEventListener('click', () => {
+            if (currentOctave > 1) {
+                currentOctave--;
+                updateOctaveDisplay();
+                rebuildKeyboard();
+                autoSave();
+            }
+        });
+
+        // Clear MIDI button
+        document.getElementById('clearMidiBtn').addEventListener('click', () => {
+            clearAllMIDINotes();
+        });
+
+        function updateOctaveDisplay() {
+            document.getElementById('octaveDisplay').textContent = `OCT ${currentOctave}`;
+        }
+
+        function rebuildKeyboard() {
+            buildKeyboard();
+        }
+
+        document.querySelectorAll('.pad').forEach(pad => {
+            pad.addEventListener('click', () => {
+                // Deselect sample pads
+                document.querySelectorAll('.sample-pad').forEach(sp => sp.classList.remove('selected'));
+                selectedSample = null;
+                
+                // Select this drum for sequencing
+                document.querySelectorAll('.pad').forEach(p => p.classList.remove('selected'));
+                pad.classList.add('selected');
+                selectedDrum = pad.dataset.sound;
+                updateSequencerDisplay();
+                
+                // Play drum sound
+                playDrum(pad.dataset.sound);
+            });
+        });
+
+        // Sample pads - play sample
+        document.querySelectorAll('.sample-pad').forEach(samplePad => {
+            samplePad.addEventListener('click', () => {
+                const sampleNum = parseInt(samplePad.dataset.sample);
+                
+                // Deselect drum pads
+                document.querySelectorAll('.pad').forEach(p => p.classList.remove('selected'));
+                selectedDrum = null;
+                
+                // Select this sample for sequencing
+                document.querySelectorAll('.sample-pad').forEach(sp => sp.classList.remove('selected'));
+                samplePad.classList.add('selected');
+                selectedSample = `sample${sampleNum}`;
+                updateSequencerDisplay();
+                
+                // Play sample if loaded
+                playSample(sampleNum);
+            });
+        });
+
+        // Load sample buttons
+        document.querySelectorAll('.load-sample-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const sampleNum = parseInt(btn.dataset.sample);
+                document.getElementById(`sampleFile${sampleNum}`).click();
+            });
+        });
+
+        // Clear sample buttons
+        document.querySelectorAll('.clear-sample-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const sampleNum = parseInt(btn.dataset.sample);
+                clearSample(sampleNum);
+            });
+        });
+
+        function clearSample(sampleNum) {
+            // Remove sample buffer
+            delete sampleBuffers[sampleNum];
+            
+            // Remove loaded visual state
+            const pad = document.querySelector(`.sample-pad[data-sample="${sampleNum}"]`);
+            pad.classList.remove('loaded');
+            
+            // Clear file input
+            document.getElementById(`sampleFile${sampleNum}`).value = '';
+            
+            // Clear sequencer pattern for this sample
+            sequencerPattern[`sample${sampleNum}`] = Array(16).fill(false);
+            
+            // Deselect if this sample was selected
+            if (selectedSample === `sample${sampleNum}`) {
+                pad.classList.remove('selected');
+                selectedSample = null;
+                updateSequencerDisplay();
+            }
+            
+            updateNoteDisplay(`S${sampleNum + 1} CLEARED`);
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+        }
+
+        // File input handlers
+        for (let i = 0; i < 10; i++) {
+            document.getElementById(`sampleFile${i}`).addEventListener('change', (e) => {
+                loadSampleFile(i, e.target.files[0]);
+            });
+        }
+
+        // Load sample file
+        function loadSampleFile(sampleNum, file) {
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
+            
+            console.log(`Loading sample ${sampleNum}: ${file.name}`);
+            
+            initAudio();
+            const reader = new FileReader();
+            
+            reader.onerror = (error) => {
+                console.error('FileReader error:', error);
+                updateNoteDisplay('READ ERROR');
+                setTimeout(() => updateNoteDisplay('---'), 1000);
+            };
+            
+            reader.onload = (e) => {
+                console.log(`File read complete for sample ${sampleNum}, decoding...`);
+                
+                // Create a copy of the array buffer
+                const arrayBuffer = e.target.result.slice(0);
+                
+                audioContext.decodeAudioData(arrayBuffer, (buffer) => {
+                    console.log(`Sample ${sampleNum} decoded successfully`);
+                    
+                    // Store the buffer
+                    sampleBuffers[sampleNum] = buffer;
+                    
+                    // Visual feedback - add green border
+                    const pad = document.querySelector(`.sample-pad[data-sample="${sampleNum}"]`);
+                    if (pad) {
+                        pad.classList.add('loaded');
+                        console.log(`Sample ${sampleNum} visual updated`);
+                    }
+                    
+                    updateNoteDisplay(`S${sampleNum + 1} LOADED`);
+                    setTimeout(() => updateNoteDisplay('---'), 1000);
+                    
+                    // Play sample immediately to confirm it loaded
+                    playSample(sampleNum);
+                    
+                }, (error) => {
+                    console.error('Error decoding audio:', error);
+                    updateNoteDisplay('DECODE ERROR');
+                    setTimeout(() => updateNoteDisplay('---'), 1000);
+                });
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Play sample
+        function playSample(sampleNum) {
+            console.log(`Attempting to play sample ${sampleNum}`);
+            console.log(`Available samples:`, Object.keys(sampleBuffers));
+            
+            if (!sampleBuffers[sampleNum]) {
+                console.log(`Sample ${sampleNum} not loaded`);
+                return;
+            }
+            
+            console.log(`Playing sample ${sampleNum}`);
+            
+            initAudio();
+            let buffer = sampleBuffers[sampleNum];
+            
+            // Reverse if enabled
+            if (sampleReverse) {
+                buffer = reverseBuffer(buffer);
+            }
+            
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            
+            // Apply pitch (detune in cents: semitones * 100)
+            source.detune.value = samplePitch * 100;
+            
+            // Apply speed (playback rate)
+            source.playbackRate.value = sampleSpeed;
+            
+            // Apply loop
+            source.loop = sampleLoop;
+            
+            // Apply filter
+            const sampleFilterNode = audioContext.createBiquadFilter();
+            sampleFilterNode.type = 'lowpass';
+            sampleFilterNode.frequency.value = sampleFilter;
+            
+            source.connect(sampleFilterNode);
+            sampleFilterNode.connect(drumGain);
+            source.start(audioContext.currentTime);
+            
+            animateVisualizer();
+        }
+
+        // Reverse audio buffer
+        function reverseBuffer(buffer) {
+            const reversed = audioContext.createBuffer(
+                buffer.numberOfChannels,
+                buffer.length,
+                buffer.sampleRate
+            );
+            
+            for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+                const inputData = buffer.getChannelData(channel);
+                const outputData = reversed.getChannelData(channel);
+                
+                for (let i = 0; i < buffer.length; i++) {
+                    outputData[i] = inputData[buffer.length - 1 - i];
+                }
+            }
+            
+            return reversed;
+        }
+
+        document.getElementById('arpSwitch').addEventListener('click', toggleArp);
+
+        // Sampler controls
+        setupSamplerKnobs();
+        
+        function setupSamplerKnobs() {
+            // Pitch knob (-12 to +12 semitones)
+            setupSamplerKnob('samplePitchKnob', -12, 12, (value) => {
+                samplePitch = value;
+                document.getElementById('samplePitchValue').textContent = (value > 0 ? '+' : '') + value;
+            });
+            
+            // Speed knob (0.5x to 2.0x)
+            setupSamplerKnob('sampleSpeedKnob', 0.5, 2.0, (value) => {
+                sampleSpeed = value;
+                document.getElementById('sampleSpeedValue').textContent = value.toFixed(1) + 'x';
+            });
+            
+            // Filter knob (200Hz to 20kHz)
+            setupSamplerKnob('sampleFilterKnob', 200, 20000, (value) => {
+                sampleFilter = value;
+                const displayValue = value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value.toFixed(0);
+                document.getElementById('sampleFilterValue').textContent = displayValue;
+            });
+        }
+        
+        function setupSamplerKnob(knobId, minVal, maxVal, callback) {
+            const knob = document.getElementById(knobId);
+            let isDragging = false;
+            let startY = 0;
+            let startValue = parseInt(knob.dataset.value);
+            
+            knob.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startY = e.clientY;
+                startValue = parseInt(knob.dataset.value);
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging || e.target.closest(`#${knobId}`) === null && !isDragging) return;
+                if (!isDragging) return;
+                
+                const delta = startY - e.clientY;
+                let newValue = startValue + delta;
+                newValue = Math.max(0, Math.min(100, newValue));
+                
+                knob.dataset.value = newValue;
+                const rotation = (newValue / 100) * 270 - 135;
+                knob.style.transform = `rotate(${rotation}deg)`;
+                
+                // Map to actual value range
+                const actualValue = minVal + (newValue / 100) * (maxVal - minVal);
+                callback(actualValue);
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            // Initialize
+            const rotation = (startValue / 100) * 270 - 135;
+            knob.style.transform = `rotate(${rotation}deg)`;
+            const initialValue = minVal + (startValue / 100) * (maxVal - minVal);
+            callback(initialValue);
+        }
+        
+        // Reverse switch
+        document.getElementById('sampleReverseSwitch').addEventListener('click', () => {
+            sampleReverse = !sampleReverse;
+            const sw = document.getElementById('sampleReverseSwitch');
+            if (sampleReverse) {
+                sw.classList.add('active');
+            } else {
+                sw.classList.remove('active');
+            }
+        });
+        
+        // Loop switch
+        document.getElementById('sampleLoopSwitch').addEventListener('click', () => {
+            sampleLoop = !sampleLoop;
+            const sw = document.getElementById('sampleLoopSwitch');
+            if (sampleLoop) {
+                sw.classList.add('active');
+            } else {
+                sw.classList.remove('active');
+            }
+        });
+
+
+        // Waveform buttons
+        document.querySelectorAll('.waveform-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all waveform buttons
+                document.querySelectorAll('.waveform-btn').forEach(b => b.classList.remove('active'));
+                // Add active to clicked button
+                btn.classList.add('active');
+                // Update current waveform
+                currentWaveform = btn.dataset.wave;
+                autoSave();
+            });
+        });
+
+        // Clear arp button
+        document.getElementById('clearArpBtn').addEventListener('click', () => {
+            // Clear arp notes array
+            arpNotes = [];
+            arpIndex = 0;
+            
+            // Remove playing class from all keys
+            document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                key.classList.remove('playing');
+            });
+            
+            // If arp is playing, pause it (will restart when new notes added)
+            if (arpInterval) {
+                pauseArp();
+            }
+            
+            // Visual feedback
+            updateNoteDisplay('ARP CLEARED');
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+        });
+
+        // Initialize sequencer
+        function initSequencer() {
+            const grid = document.getElementById('sequencerGrid');
+            
+            for (let i = 0; i < 16; i++) {
+                const step = document.createElement('div');
+                step.className = 'step';
+                step.dataset.step = i;
+                
+                const stepNum = document.createElement('div');
+                stepNum.className = 'step-number';
+                stepNum.textContent = i + 1;
+                step.appendChild(stepNum);
+                
+                step.addEventListener('click', () => {
+                    const activeTrack = selectedDrum || selectedSample;
+                    if (activeTrack && sequencerPattern[activeTrack]) {
+                        sequencerPattern[activeTrack][i] = !sequencerPattern[activeTrack][i];
+                        updateSequencerDisplay();
+                        autoSave();
+                    }
+                });
+                
+                grid.appendChild(step);
+            }
+            
+            // Select kick by default
+            document.querySelector('[data-sound="kick"]').classList.add('selected');
+        }
+
+        function updateSequencerDisplay() {
+            const steps = document.querySelectorAll('.step');
+            const activeTrack = selectedDrum || selectedSample;
+            if (!activeTrack) return;
+            
+            steps.forEach((step, i) => {
+                if (sequencerPattern[activeTrack] && sequencerPattern[activeTrack][i]) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+        }
+
+        function startSequencer() {
+            if (sequencerPlaying) return;
+            
+            sequencerPlaying = true;
+            currentStep = 0;
+            
+            const stepTime = (60 / tempo) * 1000 / 4; // 16th notes
+            
+            sequencerInterval = setInterval(() => {
+                // Remove playing class from all steps
+                document.querySelectorAll('.step').forEach(s => s.classList.remove('playing'));
+                
+                // Add playing class to current step
+                const stepElements = document.querySelectorAll('.step');
+                stepElements[currentStep].classList.add('playing');
+                
+                // Flash BPM indicator on beat 1
+                if (currentStep === 0 || currentStep === 4 || currentStep === 8 || currentStep === 12) {
+                    const bpmLed = document.getElementById('bpmIndicator');
+                    bpmLed.classList.add('beat');
+                    setTimeout(() => bpmLed.classList.remove('beat'), 50);
+                }
+                
+                // Play all active drums and samples on this step
+                Object.keys(sequencerPattern).forEach(track => {
+                    if (sequencerPattern[track][currentStep]) {
+                        if (track.startsWith('sample')) {
+                            // Play sample
+                            const sampleNum = parseInt(track.replace('sample', ''));
+                            playSample(sampleNum);
+                        } else {
+                            // Play drum
+                            playDrum(track);
+                        }
+                    }
+                });
+                
+                currentStep = (currentStep + 1) % 16;
+            }, stepTime);
+            
+            document.getElementById('playSeq').classList.add('active');
+        }
+
+        function stopSequencer() {
+            sequencerPlaying = false;
+            if (sequencerInterval) {
+                clearInterval(sequencerInterval);
+                sequencerInterval = null;
+            }
+            currentStep = 0;
+            
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('playing'));
+            document.getElementById('playSeq').classList.remove('active');
+        }
+
+        function clearSequencer() {
+            Object.keys(sequencerPattern).forEach(drum => {
+                sequencerPattern[drum] = Array(16).fill(false);
+            });
+            updateSequencerDisplay();
+            autoSave();
+        }
+
+        // Sequencer controls
+        document.getElementById('playSeq').addEventListener('click', () => {
+            if (sequencerPlaying) {
+                stopSequencer();
+            } else {
+                startSequencer();
+            }
+        });
+
+        document.getElementById('stopSeq').addEventListener('click', stopSequencer);
+        document.getElementById('clearSeq').addEventListener('click', clearSequencer);
+
+        // Sync button
+        document.getElementById('syncBtn').addEventListener('click', () => {
+            syncEnabled = !syncEnabled;
+            const syncBtn = document.getElementById('syncBtn');
+            if (syncEnabled) {
+                syncBtn.classList.add('active');
+                // When sync is enabled and arp is playing, start sequencer
+                if (arpEnabled && !sequencerPlaying) {
+                    startSequencer();
+                    // Re-sync both if arp is already playing
+                    if (arpInterval) {
+                        syncRestart();
+                    }
+                } else if (!arpEnabled && sequencerPlaying) {
+                    stopSequencer();
+                } else if (arpInterval && sequencerPlaying) {
+                    // Both already playing - re-sync them
+                    syncRestart();
+                }
+            } else {
+                syncBtn.classList.remove('active');
+            }
+            autoSave();
+        });
+
+        // Drum volume knob
+        const drumVolumeKnob = document.getElementById('drumVolumeKnob');
+        let isDraggingDrumVolume = false;
+        let drumVolumeStartY = 0;
+        let drumVolumeStartValue = 70;
+
+        drumVolumeKnob.addEventListener('mousedown', (e) => {
+            isDraggingDrumVolume = true;
+            drumVolumeStartY = e.clientY;
+            drumVolumeStartValue = parseInt(drumVolumeKnob.dataset.value);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDraggingDrumVolume) return;
+            
+            const delta = drumVolumeStartY - e.clientY;
+            let newValue = drumVolumeStartValue + delta;
+            newValue = Math.max(0, Math.min(100, newValue));
+            
+            drumVolumeKnob.dataset.value = newValue;
+            const rotation = (newValue / 100) * 270 - 135;
+            drumVolumeKnob.style.transform = `rotate(${rotation}deg)`;
+            
+            document.getElementById('drumVolumeValue').textContent = newValue + '%';
+            
+            if (drumGain) {
+                drumGain.gain.value = newValue / 100;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingDrumVolume) {
+                isDraggingDrumVolume = false;
+                autoSave();
+            }
+        });
+
+        // Individual drum volume 3-dot switches
+        document.querySelectorAll('.volume-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                const drumName = dot.dataset.drum;
+                const level = parseFloat(dot.dataset.level);
+                
+                // Remove active class from all dots for this drum
+                document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`).forEach(d => {
+                    d.classList.remove('active');
+                });
+                
+                // Add active class to clicked dot
+                dot.classList.add('active');
+                
+                // Update drum volume
+                drumVolumes[drumName] = level;
+                autoSave();
+            });
+        });
+
+        // Tempo control
+        const tempoSlider = document.getElementById('tempoSlider');
+        let isDraggingTempo = false;
+
+        tempoSlider.addEventListener('mousedown', (e) => {
+            isDraggingTempo = true;
+            updateTempo(e);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingTempo) {
+                updateTempo(e);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDraggingTempo = false;
+        });
+
+        function updateTempo(e) {
+            const rect = tempoSlider.getBoundingClientRect();
+            const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+            const percentage = x / rect.width;
+            tempo = Math.round(60 + (percentage * 180)); // 60-240 BPM
+            
+            updateTempoDisplay();
+            
+            // Restart sequencer if playing to update tempo
+            if (sequencerPlaying) {
+                stopSequencer();
+                startSequencer();
+            }
+        }
+
+        function updateTempoDisplay() {
+            const percentage = (tempo - 60) / 180;
+            tempoSlider.style.setProperty('--tempo-width', (percentage * 100) + '%');
+            document.getElementById('tempoValue').textContent = tempo + ' BPM';
+            
+            // Restart tempo LED blinking at new tempo
+            startTempoLed();
+        }
+
+        function startTempoLed() {
+            // Clear existing interval
+            if (tempoLedInterval) {
+                clearInterval(tempoLedInterval);
+            }
+            
+            const tempoLed = document.getElementById('tempoLed');
+            const beatInterval = (60 / tempo) * 1000; // One beat in milliseconds
+            
+            // Blink immediately
+            tempoLed.classList.add('blink');
+            setTimeout(() => tempoLed.classList.remove('blink'), 100);
+            
+            // Set up repeating blink
+            tempoLedInterval = setInterval(() => {
+                tempoLed.classList.add('blink');
+                setTimeout(() => tempoLed.classList.remove('blink'), 100);
+            }, beatInterval);
+        }
+
+        // Tempo up/down buttons
+        document.getElementById('tempoUp').addEventListener('click', () => {
+            tempo = Math.min(240, tempo + 5);
+            updateTempoDisplay();
+            
+            // If sync is enabled and both are playing, restart in sync
+            if (syncEnabled && sequencerPlaying && arpInterval) {
+                syncRestart();
+            } else {
+                // Otherwise restart them independently
+                if (sequencerPlaying) {
+                    stopSequencer();
+                    startSequencer();
+                }
+                
+                if (arpEnabled && arpInterval) {
+                    pauseArp();
+                    startArp();
+                }
+            }
+            autoSave();
+        });
+
+        document.getElementById('tempoDown').addEventListener('click', () => {
+            tempo = Math.max(60, tempo - 5);
+            updateTempoDisplay();
+            
+            // If sync is enabled and both are playing, restart in sync
+            if (syncEnabled && sequencerPlaying && arpInterval) {
+                syncRestart();
+            } else {
+                // Otherwise restart them independently
+                if (sequencerPlaying) {
+                    stopSequencer();
+                    startSequencer();
+                }
+                
+                if (arpEnabled && arpInterval) {
+                    pauseArp();
+                    startArp();
+                }
+            }
+            autoSave();
+        });
+
+        // Initialize tempo slider
+        updateTempoDisplay();
+
+        // Pitch bend control
+        const pitchBend = document.getElementById('pitchBend');
+        const pitchBendThumb = document.getElementById('pitchBendThumb');
+        let isDraggingPitch = false;
+
+        pitchBendThumb.addEventListener('mousedown', (e) => {
+            isDraggingPitch = true;
+            e.stopPropagation();
+        });
+
+        pitchBend.addEventListener('mousedown', (e) => {
+            if (e.target === pitchBend || e.target.classList.contains('pitch-bend-center')) {
+                isDraggingPitch = true;
+                updatePitchBend(e);
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingPitch) {
+                updatePitchBend(e);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDraggingPitch) {
+                isDraggingPitch = false;
+                
+                // Only snap back to center if hold is not enabled
+                if (!pitchHoldEnabled) {
+                    pitchBendValue = 0;
+                    pitchBendThumb.style.top = '30px';
+                    
+                    // Update all active notes
+                    activeNotes.forEach((noteData, noteName) => {
+                        if (noteData.osc1 && noteData.osc1.frequency) {
+                            const baseFreq = noteData.baseFrequency;
+                            noteData.osc1.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                            noteData.osc2.frequency.setValueAtTime(baseFreq * 0.995, audioContext.currentTime);
+                            noteData.osc3.frequency.setValueAtTime(baseFreq * 1.005, audioContext.currentTime);
+                        }
+                    });
+                }
+            }
+        });
+
+        function updatePitchBend(e) {
+            const rect = pitchBend.getBoundingClientRect();
+            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 20));
+            pitchBendThumb.style.top = y + 'px';
+            
+            // Calculate bend value (-1 to 1)
+            const center = (rect.height - 20) / 2;
+            pitchBendValue = -(y - center) / center;
+            
+            // Update all active notes in real-time
+            activeNotes.forEach((noteData, noteName) => {
+                if (noteData.osc1 && noteData.osc1.frequency && noteData.baseFrequency) {
+                    const baseFreq = noteData.baseFrequency;
+                    const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
+                    noteData.osc1.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
+                    noteData.osc2.frequency.setValueAtTime(bendedFreq * 0.995, audioContext.currentTime);
+                    noteData.osc3.frequency.setValueAtTime(bendedFreq * 1.005, audioContext.currentTime);
+                }
+            });
+        }
+
+        buildKeyboard();
+        setupKnobs();
+        initSequencer();
+        initMIDI(); // Initialize MIDI support
+        
+        // Load presets from storage
+        loadPresetsFromStorage();
+        
+        // Preset button selection
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove selected class from all
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+                // Add to clicked
+                btn.classList.add('selected');
+                selectedPreset = parseInt(btn.dataset.preset);
+            });
+        });
+        
+        // Set M1 as default selected
+        document.getElementById('preset1').classList.add('selected');
+        
+        // Save preset button
+        document.getElementById('savePreset').addEventListener('click', () => {
+            savePreset(selectedPreset);
+        });
+        
+        // Load preset button
+        document.getElementById('loadPreset').addEventListener('click', () => {
+            loadPreset(selectedPreset);
+        });
+        
+        // Pitch hold button
+        document.getElementById('pitchHoldBtn').addEventListener('click', () => {
+            pitchHoldEnabled = !pitchHoldEnabled;
+            const holdBtn = document.getElementById('pitchHoldBtn');
+            
+            if (pitchHoldEnabled) {
+                holdBtn.classList.add('active');
+            } else {
+                holdBtn.classList.remove('active');
+                // When disabling hold, snap back to center
+                pitchBendValue = 0;
+                document.getElementById('pitchBendThumb').style.top = '37.5px';
+                
+                // Update all active notes
+                activeNotes.forEach((noteData, noteName) => {
+                    if (noteData.osc1 && noteData.osc1.frequency) {
+                        const baseFreq = noteData.baseFrequency;
+                        noteData.osc1.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                        noteData.osc2.frequency.setValueAtTime(baseFreq * 0.995, audioContext.currentTime);
+                        noteData.osc3.frequency.setValueAtTime(baseFreq * 1.005, audioContext.currentTime);
+                    }
+                });
+            }
+            autoSave();
+        });
+        
+        // Power button
+        document.getElementById('powerBtn').addEventListener('click', () => {
+            synthPowered = !synthPowered;
+            const powerBtn = document.getElementById('powerBtn');
+            const synthContainer = document.getElementById('synthContainer');
+            
+            if (synthPowered) {
+                // Power ON
+                powerBtn.classList.add('on');
+                powerBtn.textContent = 'ON';
+                synthContainer.classList.remove('powered-off');
+                synthContainer.classList.add('powered-on');
+                
+                // Restart tempo LED
+                startTempoLed();
+            } else {
+                // Power OFF
+                powerBtn.classList.remove('on');
+                powerBtn.textContent = 'OFF';
+                synthContainer.classList.remove('powered-on');
+                synthContainer.classList.add('powered-off');
+                
+                // Stop tempo LED
+                if (tempoLedInterval) {
+                    clearInterval(tempoLedInterval);
+                    tempoLedInterval = null;
+                }
+                const tempoLed = document.getElementById('tempoLed');
+                tempoLed.classList.remove('blink');
+                
+                // Stop all audio
+                if (arpInterval) {
+                    pauseArp();
+                }
+                if (sequencerPlaying) {
+                    stopSequencer();
+                }
+                
+                // Stop all active notes
+                const notesToStop = Array.from(activeNotes.keys());
+                notesToStop.forEach(noteName => {
+                    stopNote(noteName);
+                });
+                
+                // Clear visual states
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    key.classList.remove('playing');
+                });
+            }
+            autoSave();
+        });
+        
+        // Save/Load Song (complete project with samples and patterns)
+        document.getElementById('saveSongBtn').addEventListener('click', saveSong);
+        document.getElementById('loadSongBtn').addEventListener('click', () => {
+            document.getElementById('loadSongFile').click();
+        });
+        document.getElementById('loadSongFile').addEventListener('change', (e) => {
+            loadSong(e.target.files[0]);
+        });
+
+        function saveSong() {
+            const songData = {
+                version: '1.0',
+                timestamp: new Date().toISOString(),
+                
+                // Synth settings
+                settings: {
+                    volume: masterGain ? masterGain.gain.value : 0.7,
+                    drumVolume: drumGain ? drumGain.gain.value : 0.7,
+                    delay: delayNode ? delayNode.delayTime.value : 0.3,
+                    feedback: feedbackGain ? feedbackGain.gain.value : 0.3,
+                    filter: filterNode ? filterNode.frequency.value : 2000,
+                    resonance: filterNode ? filterNode.Q.value : 1,
+                    currentOctave: currentOctave,
+                    currentWaveform: currentWaveform,
+                    arpEnabled: arpEnabled,
+                    syncEnabled: syncEnabled,
+                    tempo: tempo,
+                    pitchHoldEnabled: pitchHoldEnabled
+                },
+                
+                // Drum volumes
+                drumVolumes: drumVolumes,
+                
+                // Sequencer patterns
+                sequencerPattern: sequencerPattern,
+                
+                // Sampler settings
+                sampler: {
+                    pitch: samplePitch,
+                    speed: sampleSpeed,
+                    filter: sampleFilter,
+                    reverse: sampleReverse,
+                    loop: sampleLoop
+                },
+                
+                // Sample data (convert buffers to base64)
+                samples: {}
+            };
+            
+            // Convert loaded samples to exportable format
+            Object.keys(sampleBuffers).forEach(key => {
+                const buffer = sampleBuffers[key];
+                const channelData = [];
+                for (let i = 0; i < buffer.numberOfChannels; i++) {
+                    channelData.push(Array.from(buffer.getChannelData(i)));
+                }
+                songData.samples[key] = {
+                    numberOfChannels: buffer.numberOfChannels,
+                    sampleRate: buffer.sampleRate,
+                    length: buffer.length,
+                    channelData: channelData
+                };
+            });
+            
+            // Create and download JSON file
+            const json = JSON.stringify(songData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dPaul-MKII-Song-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            updateNoteDisplay('SONG SAVED');
+            setTimeout(() => updateNoteDisplay('---'), 2000);
+        }
+
+        function loadSong(file) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const songData = JSON.parse(e.target.result);
+                    
+                    initAudio();
+                    
+                    // Load settings
+                    if (masterGain) masterGain.gain.value = songData.settings.volume || 0.7;
+                    if (drumGain) drumGain.gain.value = songData.settings.drumVolume || 0.7;
+                    if (delayNode) delayNode.delayTime.value = songData.settings.delay || 0.3;
+                    if (feedbackGain) feedbackGain.gain.value = songData.settings.feedback || 0.3;
+                    if (filterNode) {
+                        filterNode.frequency.value = songData.settings.filter || 2000;
+                        filterNode.Q.value = songData.settings.resonance || 1;
+                    }
+                    
+                    currentOctave = songData.settings.currentOctave || 4;
+                    currentWaveform = songData.settings.currentWaveform || 'sawtooth';
+                    arpEnabled = songData.settings.arpEnabled || false;
+                    syncEnabled = songData.settings.syncEnabled || false;
+                    tempo = songData.settings.tempo || 120;
+                    pitchHoldEnabled = songData.settings.pitchHoldEnabled || false;
+                    
+                    // Load drum volumes
+                    if (songData.drumVolumes) {
+                        drumVolumes = songData.drumVolumes;
+                    }
+                    
+                    // Load sequencer patterns
+                    if (songData.sequencerPattern) {
+                        sequencerPattern = songData.sequencerPattern;
+                    }
+                    
+                    // Load sampler settings
+                    if (songData.sampler) {
+                        samplePitch = songData.sampler.pitch || 0;
+                        sampleSpeed = songData.sampler.speed || 1.0;
+                        sampleFilter = songData.sampler.filter || 20000;
+                        sampleReverse = songData.sampler.reverse || false;
+                        sampleLoop = songData.sampler.loop || false;
+                    }
+                    
+                    // Load samples
+                    if (songData.samples) {
+                        Object.keys(songData.samples).forEach(key => {
+                            const sampleData = songData.samples[key];
+                            const buffer = audioContext.createBuffer(
+                                sampleData.numberOfChannels,
+                                sampleData.length,
+                                sampleData.sampleRate
+                            );
+                            
+                            for (let i = 0; i < sampleData.numberOfChannels; i++) {
+                                buffer.getChannelData(i).set(sampleData.channelData[i]);
+                            }
+                            
+                            sampleBuffers[key] = buffer;
+                            
+                            // Update visual
+                            const pad = document.querySelector(`.sample-pad[data-sample="${key}"]`);
+                            if (pad) pad.classList.add('loaded');
+                        });
+                    }
+                    
+                    // Update all UI elements
+                    updateOctaveDisplay();
+                    updateTempoDisplay();
+                    updateSequencerDisplay();
+                    
+                    // Update waveform buttons
+                    document.querySelectorAll('.waveform-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.waveform === currentWaveform) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
+                    // Update knobs
+                    document.querySelectorAll('.knob').forEach(updateKnob);
+                    
+                    // Update switches
+                    document.getElementById('arpSwitch').classList.toggle('active', arpEnabled);
+                    document.getElementById('arpLight').classList.toggle('active', arpEnabled);
+                    document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
+                    document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
+                    document.getElementById('sampleReverseSwitch').classList.toggle('active', sampleReverse);
+                    document.getElementById('sampleLoopSwitch').classList.toggle('active', sampleLoop);
+                    
+                    updateNoteDisplay('SONG LOADED');
+                    setTimeout(() => updateNoteDisplay('---'), 2000);
+                    
+                } catch (error) {
+                    console.error('Error loading song:', error);
+                    updateNoteDisplay('LOAD ERROR');
+                    setTimeout(() => updateNoteDisplay('---'), 2000);
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Load saved settings
+        loadSettings();
+        
+        document.querySelectorAll('.knob').forEach(updateKnob);
+    </script>
+</body>
+</html>
