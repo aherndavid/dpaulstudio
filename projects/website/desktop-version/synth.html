@@ -123,7 +123,7 @@
             color: #cc5500;
             font-size: 18px;
             font-weight: normal;
-            font-family: Verdana, Geneva, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-shadow: 0 0 8px rgba(204, 85, 0, 0.3);
@@ -671,7 +671,7 @@
 
         .sequencer-grid {
             display: grid;
-            grid-template-columns: repeat(16, 1fr);
+            grid-template-columns: repeat(32, 1fr);
             gap: 4px;
         }
 
@@ -1247,7 +1247,7 @@
 <body>
     <div class="synth-container powered-on" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dPaul <span class="bold">TECHNOLOGIES</span> <span class="mkii">MKII</span></div>
+            <div class="synth-title">dPaul Technologies MKII</div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1267,6 +1267,8 @@
             <div class="waveform-btn" id="waveSquare" data-wave="square">SQR</div>
             <div class="waveform-btn" id="waveTri" data-wave="triangle">TRI</div>
             <div class="waveform-btn" id="waveSine" data-wave="sine">SIN</div>
+            <div class="waveform-btn" id="wavePulse" data-wave="pulse">PULSE</div>
+            <div class="waveform-btn" id="waveNoise" data-wave="noise">NOISE</div>
             <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
         </div>
 
@@ -1316,7 +1318,7 @@
 
         <div class="sequencer">
             <div class="sequencer-header">
-                <div class="sequencer-title">16-STEP DRUM SEQUENCER</div>
+                <div class="sequencer-title">32-STEP DRUM SEQUENCER</div>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <div class="bpm-indicator" id="bpmIndicator"></div>
                     <div class="sync-btn" id="syncBtn">SYNC</div>
@@ -1601,25 +1603,25 @@
         let sampleReverse = false;
         let sampleLoop = false;
         let sequencerPattern = {
-            kick: Array(16).fill(false),
-            snare: Array(16).fill(false),
-            hihat: Array(16).fill(false),
-            clap: Array(16).fill(false),
-            tom1: Array(16).fill(false),
-            tom2: Array(16).fill(false),
-            cymbal: Array(16).fill(false),
-            perc: Array(16).fill(false),
-            shaker: Array(16).fill(false),
-            sample0: Array(16).fill(false),
-            sample1: Array(16).fill(false),
-            sample2: Array(16).fill(false),
-            sample3: Array(16).fill(false),
-            sample4: Array(16).fill(false),
-            sample5: Array(16).fill(false),
-            sample6: Array(16).fill(false),
-            sample7: Array(16).fill(false),
-            sample8: Array(16).fill(false),
-            sample9: Array(16).fill(false)
+            kick: Array(32).fill(false),
+            snare: Array(32).fill(false),
+            hihat: Array(32).fill(false),
+            clap: Array(32).fill(false),
+            tom1: Array(32).fill(false),
+            tom2: Array(32).fill(false),
+            cymbal: Array(32).fill(false),
+            perc: Array(32).fill(false),
+            shaker: Array(32).fill(false),
+            sample0: Array(32).fill(false),
+            sample1: Array(32).fill(false),
+            sample2: Array(32).fill(false),
+            sample3: Array(32).fill(false),
+            sample4: Array(32).fill(false),
+            sample5: Array(32).fill(false),
+            sample6: Array(32).fill(false),
+            sample7: Array(32).fill(false),
+            sample8: Array(32).fill(false),
+            sample9: Array(32).fill(false)
         };
         let sequencerPlaying = false;
         let sequencerInterval = null;
@@ -1674,16 +1676,63 @@
             
             const now = audioContext.currentTime;
             
-            // Apply pitch bend (Â±2 semitones)
+            // Apply pitch bend (±2 semitones)
             const bendedFrequency = frequency * Math.pow(2, (pitchBendValue * 2) / 12);
+            
+            // Handle noise waveform differently
+            if (currentWaveform === 'noise') {
+                const bufferSize = audioContext.sampleRate * 0.5;
+                const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                const output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+                const noise = audioContext.createBufferSource();
+                noise.buffer = buffer;
+                noise.loop = true;
+                
+                const noiseFilter = audioContext.createBiquadFilter();
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.value = bendedFrequency;
+                noiseFilter.Q.value = 10;
+                
+                const envelope = audioContext.createGain();
+                envelope.gain.value = 0;
+                envelope.gain.setValueAtTime(0, now);
+                envelope.gain.linearRampToValueAtTime(0.2, now + 0.02);
+                envelope.gain.linearRampToValueAtTime(0.15, now + 0.15);
+                
+                noise.connect(noiseFilter);
+                noiseFilter.connect(envelope);
+                envelope.connect(filterNode);
+                envelope.connect(delayNode);
+                
+                noise.start(now);
+                
+                activeNotes.set(noteName, { noise, envelope, baseFrequency: frequency, noiseFilter });
+                
+                animateVisualizer();
+                updateNoteDisplay(noteName);
+                return { noise, envelope };
+            }
             
             const osc1 = audioContext.createOscillator();
             const osc2 = audioContext.createOscillator();
             const osc3 = audioContext.createOscillator();
             
-            osc1.type = currentWaveform;
-            osc2.type = currentWaveform;
-            osc3.type = currentWaveform;
+            // Handle pulse wave (narrow square wave)
+            if (currentWaveform === 'pulse') {
+                const real = new Float32Array([0, 0, 1, 0, 0.5, 0, 0.3]);
+                const imag = new Float32Array(real.length);
+                const wave = audioContext.createPeriodicWave(real, imag);
+                osc1.setPeriodicWave(wave);
+                osc2.setPeriodicWave(wave);
+                osc3.setPeriodicWave(wave);
+            } else {
+                osc1.type = currentWaveform;
+                osc2.type = currentWaveform;
+                osc3.type = currentWaveform;
+            }
             
             osc1.frequency.value = bendedFrequency;
             osc2.frequency.value = bendedFrequency * 0.995;
@@ -1728,17 +1777,21 @@
 
         function stopNote(noteName) {
             if (activeNotes.has(noteName)) {
-                const { osc1, osc2, osc3, envelope } = activeNotes.get(noteName);
+                const noteData = activeNotes.get(noteName);
                 const now = audioContext.currentTime;
                 
-                envelope.gain.cancelScheduledValues(now);
-                envelope.gain.setValueAtTime(envelope.gain.value, now);
-                envelope.gain.linearRampToValueAtTime(0, now + 0.3);
+                noteData.envelope.gain.cancelScheduledValues(now);
+                noteData.envelope.gain.setValueAtTime(noteData.envelope.gain.value, now);
+                noteData.envelope.gain.linearRampToValueAtTime(0, now + 0.3);
                 
                 setTimeout(() => {
-                    osc1.stop();
-                    osc2.stop();
-                    osc3.stop();
+                    if (noteData.noise) {
+                        noteData.noise.stop();
+                    } else if (noteData.osc1) {
+                        noteData.osc1.stop();
+                        noteData.osc2.stop();
+                        noteData.osc3.stop();
+                    }
                 }, 400);
                 
                 activeNotes.delete(noteName);
@@ -2803,7 +2856,7 @@
             document.getElementById(`sampleFile${sampleNum}`).value = '';
             
             // Clear sequencer pattern for this sample
-            sequencerPattern[`sample${sampleNum}`] = Array(16).fill(false);
+            sequencerPattern[`sample${sampleNum}`] = Array(32).fill(false);
             
             // Deselect if this sample was selected
             if (selectedSample === `sample${sampleNum}`) {
@@ -3067,7 +3120,7 @@
         function initSequencer() {
             const grid = document.getElementById('sequencerGrid');
             
-            for (let i = 0; i < 16; i++) {
+            for (let i = 0; i < 32; i++) {
                 const step = document.createElement('div');
                 step.className = 'step';
                 step.dataset.step = i;
@@ -3144,7 +3197,7 @@
                     }
                 });
                 
-                currentStep = (currentStep + 1) % 16;
+                currentStep = (currentStep + 1) % 32;
             }, stepTime);
             
             document.getElementById('playSeq').classList.add('active');
@@ -3164,7 +3217,7 @@
 
         function clearSequencer() {
             Object.keys(sequencerPattern).forEach(drum => {
-                sequencerPattern[drum] = Array(16).fill(false);
+                sequencerPattern[drum] = Array(32).fill(false);
             });
             updateSequencerDisplay();
             autoSave();
