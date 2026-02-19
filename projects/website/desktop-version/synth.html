@@ -24,9 +24,9 @@
         .synth-container {
             background: #0a0a0a;
             border-radius: 12px;
-            padding: 12px;
+            padding: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            max-width: 784px;
+            max-width: 980px;
             width: 100%;
             border: 1px solid #1a1a1a;
             position: relative;
@@ -34,7 +34,7 @@
 
         .synth-header {
             text-align: left;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -121,7 +121,7 @@
 
         .synth-title {
             color: #cc5500;
-            font-size: 14px;
+            font-size: 18px;
             font-weight: normal;
             font-family: Verdana, Geneva, sans-serif;
             text-transform: uppercase;
@@ -141,8 +141,8 @@
 
         .controls-panel {
             display: flex;
-            gap: 8px;
-            margin-bottom: 4px;
+            gap: 12px;
+            margin-bottom: 6px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -156,7 +156,7 @@
 
         .control-label {
             color: #666;
-            font-size: 7px;
+            font-size: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-weight: bold;
@@ -164,8 +164,8 @@
         }
 
         .knob {
-            width: 26px;
-            height: 26px;
+            width: 32px;
+            height: 32px;
             background: radial-gradient(circle at 30% 30%, #2a2a2a, #0a0a0a);
             border-radius: 50%;
             position: relative;
@@ -180,7 +180,7 @@
             content: '';
             position: absolute;
             width: 2px;
-            height: 10px;
+            height: 12px;
             background: #ff6b6b;
             top: 3px;
             left: 50%;
@@ -191,7 +191,7 @@
 
         .knob-value {
             color: #ff6b6b;
-            font-size: 7px;
+            font-size: 8px;
             margin-top: 2px;
             font-weight: bold;
             font-family: Verdana, Geneva, sans-serif;
@@ -235,8 +235,8 @@
         .drum-pads {
             display: grid;
             grid-template-columns: repeat(9, 1fr);
-            gap: 4px;
-            margin-bottom: 4px;
+            gap: 6px;
+            margin-bottom: 6px;
             justify-items: center;
         }
 
@@ -248,8 +248,8 @@
         }
 
         .pad {
-            width: 38px;
-            height: 22px;
+            width: 48px;
+            height: 28px;
             background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
             border-radius: 4px;
             cursor: pointer;
@@ -299,8 +299,8 @@
         }
 
         .sample-section {
-            margin-bottom: 4px;
-            padding: 6px;
+            margin-bottom: 6px;
+            padding: 8px;
             background: #000;
             border-radius: 6px;
             border: 1px solid #1a1a1a;
@@ -310,7 +310,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .sample-title {
@@ -325,7 +325,7 @@
         .sample-pads {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
+            gap: 6px;
             justify-items: center;
         }
 
@@ -338,8 +338,8 @@
         }
 
         .sample-pad {
-            width: 38px;
-            height: 22px;
+            width: 48px;
+            height: 28px;
             background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
             border-radius: 4px;
             cursor: pointer;
@@ -426,6 +426,18 @@
             color: white;
         }
 
+        .sampler-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            padding: 8px;
+            background: #0a0a0a;
+            border-radius: 4px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .sampler-control-group {
             display: flex;
             flex-direction: column;
@@ -443,8 +455,8 @@
         }
 
         .sampler-knob {
-            width: 26px;
-            height: 26px;
+            width: 32px;
+            height: 32px;
             background: radial-gradient(circle at 30% 30%, #2a2a2a, #0a0a0a);
             border-radius: 50%;
             position: relative;
@@ -459,7 +471,7 @@
             content: '';
             position: absolute;
             width: 2px;
-            height: 8px;
+            height: 10px;
             background: #00ff00;
             top: 3px;
             left: 50%;
@@ -536,8 +548,8 @@
         }
 
         .pitch-bend {
-            width: 32px;
-            height: 80px;
+            width: 40px;
+            height: 100px;
             background: #1a1a1a;
             border: 1px solid #2a2a2a;
             border-radius: 20px;
@@ -546,15 +558,15 @@
         }
 
         .pitch-bend-thumb {
-            width: 29px;
-            height: 20px;
+            width: 36px;
+            height: 25px;
             background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
             border: 1px solid #3a3a3a;
             border-radius: 13px;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            top: 30px;
+            top: 37.5px;
             cursor: grab;
             box-shadow: 0 2px 6px rgba(0,0,0,0.5);
             transition: background 0.1s;
@@ -605,8 +617,8 @@
         }
 
         .sequencer {
-            margin-bottom: 4px;
-            padding: 6px;
+            margin-bottom: 6px;
+            padding: 8px;
             background: #000;
             border-radius: 6px;
             border: 1px solid #1a1a1a;
@@ -616,7 +628,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .sequencer-title {
@@ -660,7 +672,7 @@
         .sequencer-grid {
             display: grid;
             grid-template-columns: repeat(16, 1fr);
-            gap: 3px;
+            gap: 4px;
         }
 
         .step {
@@ -696,7 +708,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-top: 4px;
+            margin-top: 8px;
         }
 
         .tempo-label {
@@ -845,8 +857,8 @@
         }
 
         .drum-knob {
-            width: 30px;
-            height: 30px;
+            width: 38px;
+            height: 38px;
             background: radial-gradient(circle at 30% 30%, #2a2a2a, #0a0a0a);
             border-radius: 50%;
             position: relative;
@@ -861,7 +873,7 @@
             content: '';
             position: absolute;
             width: 2px;
-            height: 12px;
+            height: 15px;
             background: #cc5500;
             top: 4px;
             left: 50%;
@@ -880,8 +892,8 @@
 
         .keyboard {
             position: relative;
-            height: 56px;
-            margin-top: 4px;
+            height: 70px;
+            margin-top: 6px;
             display: flex;
             justify-content: center;
             padding-left: 64px;
@@ -893,8 +905,8 @@
         }
 
         .white-key {
-            width: 21px;
-            height: 56px;
+            width: 26px;
+            height: 70px;
             background: linear-gradient(180deg, #fafafa 0%, #d0d0d0 100%);
             border: 1px solid #1a1a1a;
             border-radius: 0 0 4px 4px;
@@ -915,8 +927,8 @@
         }
 
         .black-key {
-            width: 14px;
-            height: 36px;
+            width: 18px;
+            height: 45px;
             background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
             border: 1px solid #000;
             border-radius: 0 0 3px 3px;
@@ -933,15 +945,15 @@
             background: linear-gradient(180deg, #ff6b6b 0%, #ff4757 100%);
             box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
             transform: translateY(2px);
-            height: 34px;
+            height: 43px;
         }
 
         .visualizer {
             width: 100%;
-            height: 14px;
+            height: 18px;
             background: #000;
             border-radius: 6px;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
             border: 1px solid #1a1a1a;
             overflow: hidden;
             position: relative;
@@ -987,8 +999,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 4px;
-            padding: 4px;
+            margin-top: 6px;
+            padding: 6px;
             background: #000;
             border-radius: 6px;
             border: 1px solid #1a1a1a;
@@ -1235,7 +1247,7 @@
 <body>
     <div class="synth-container powered-on" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dPAUL <span class="bold">TECHNOLOGIES</span> <span class="mkii">MKII</span></div>
+            <div class="synth-title">dPaul <span class="bold">TECHNOLOGIES</span> <span class="mkii">MKII</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1299,34 +1311,6 @@
                 <div class="drum-volume-label">DRUM VOL</div>
                 <div class="drum-knob" id="drumVolumeKnob" data-value="70"></div>
                 <div class="drum-knob-value" id="drumVolumeValue">70%</div>
-            </div>
-
-            <div class="sampler-control-group">
-                <div class="sampler-label">PITCH</div>
-                <div class="sampler-knob" id="samplePitchKnob" data-value="50"></div>
-                <div class="sampler-value" id="samplePitchValue">0</div>
-            </div>
-
-            <div class="sampler-control-group">
-                <div class="sampler-label">SPEED</div>
-                <div class="sampler-knob" id="sampleSpeedKnob" data-value="50"></div>
-                <div class="sampler-value" id="sampleSpeedValue">1.0x</div>
-            </div>
-
-            <div class="sampler-control-group">
-                <div class="sampler-label">S.FILT</div>
-                <div class="sampler-knob" id="sampleFilterKnob" data-value="100"></div>
-                <div class="sampler-value" id="sampleFilterValue">20k</div>
-            </div>
-
-            <div class="sampler-control-group">
-                <div class="sampler-label">REV</div>
-                <div class="sampler-switch" id="sampleReverseSwitch"></div>
-            </div>
-
-            <div class="sampler-control-group">
-                <div class="sampler-label">LOOP</div>
-                <div class="sampler-switch" id="sampleLoopSwitch"></div>
             </div>
         </div>
 
@@ -1493,6 +1477,31 @@
                     <div class="load-sample-btn" data-sample="9">LOAD</div>
                     <div class="clear-sample-btn" data-sample="9">CLR</div>
                     <input type="file" id="sampleFile9" accept="audio/*" style="display:none">
+                </div>
+            </div>
+            <div class="sampler-controls">
+                <div class="sampler-control-group">
+                    <div class="sampler-label">PITCH</div>
+                    <div class="sampler-knob" id="samplePitchKnob" data-value="50"></div>
+                    <div class="sampler-value" id="samplePitchValue">0</div>
+                </div>
+                <div class="sampler-control-group">
+                    <div class="sampler-label">SPEED</div>
+                    <div class="sampler-knob" id="sampleSpeedKnob" data-value="50"></div>
+                    <div class="sampler-value" id="sampleSpeedValue">1.0x</div>
+                </div>
+                <div class="sampler-control-group">
+                    <div class="sampler-label">FILTER</div>
+                    <div class="sampler-knob" id="sampleFilterKnob" data-value="100"></div>
+                    <div class="sampler-value" id="sampleFilterValue">20k</div>
+                </div>
+                <div class="sampler-control-group">
+                    <div class="sampler-label">REV</div>
+                    <div class="sampler-switch" id="sampleReverseSwitch"></div>
+                </div>
+                <div class="sampler-control-group">
+                    <div class="sampler-label">LOOP</div>
+                    <div class="sampler-switch" id="sampleLoopSwitch"></div>
                 </div>
             </div>
         </div>
@@ -2085,7 +2094,7 @@
             pitchBendValue = 0;
             const pitchBendThumb = document.getElementById('pitchBendThumb');
             if (pitchBendThumb) {
-                pitchBendThumb.style.top = '30px';
+                pitchBendThumb.style.top = '37.5px';
             }
             
             // Turn off pitch hold
@@ -2419,11 +2428,11 @@
             // Black keys appear after: C, D, F, G, A
             
             const blackKeyOffsets = {
-                0: 14,   // C# after C (21 - 14/2 = 14)
-                1: 35,   // D# after D (21*2 - 21 - 14/2 = 35)
-                3: 77,   // F# after F
-                4: 98,   // G# after G
-                5: 119   // A# after A
+                0: 17,   // C# after C (26 - 18/2 = 17)
+                1: 43,   // D# after D (26*2 - 26 - 18/2 = 43)
+                3: 95,   // F# after F
+                4: 121,  // G# after G
+                5: 147   // A# after A
             };
             
             let whiteKeyIndex = 0;
@@ -2464,7 +2473,7 @@
                         blackKey.className = 'black-key';
                         blackKey.dataset.note = i + 1;
                         blackKey.dataset.noteName = noteNames[nextNoteIndex] + (currentOctave + Math.floor((i + 1) / 12));
-                        blackKey.style.left = blackKeyOffsets[whiteKeyInOctave] + (Math.floor(whiteKeyIndex / 7) * 147) + 'px'; // 7 white keys * 21px = 147px per octave
+                        blackKey.style.left = blackKeyOffsets[whiteKeyInOctave] + (Math.floor(whiteKeyIndex / 7) * 182) + 'px'; // 7 white keys * 26px = 182px per octave
                         
                         blackKey.addEventListener('mousedown', () => handleKeyPress(blackKey));
                         blackKey.addEventListener('mouseup', () => handleKeyRelease(blackKey));
@@ -3396,7 +3405,7 @@
                 // Only snap back to center if hold is not enabled
                 if (!pitchHoldEnabled) {
                     pitchBendValue = 0;
-                    pitchBendThumb.style.top = '30px';
+                    pitchBendThumb.style.top = '37.5px';
                     
                     // Update all active notes
                     activeNotes.forEach((noteData, noteName) => {
@@ -3413,11 +3422,11 @@
 
         function updatePitchBend(e) {
             const rect = pitchBend.getBoundingClientRect();
-            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 20));
+            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 25));
             pitchBendThumb.style.top = y + 'px';
             
             // Calculate bend value (-1 to 1)
-            const center = (rect.height - 20) / 2;
+            const center = (rect.height - 25) / 2;
             pitchBendValue = -(y - center) / center;
             
             // Update all active notes in real-time
