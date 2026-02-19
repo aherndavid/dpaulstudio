@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SKYLAR FC - PENALTY SHOOT</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --black:  #000000;
+  --green:  #00ff41;
+  --yellow: #ffff00;
+  --red:    #ff2222;
+  --cyan:   #00ffff;
+  --white:  #ffffff;
+  --orange: #ff8800;
+  --pink:   #ff44ff;
+  --bg:     #0a0a0a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; image-rendering: pixelated; }
+
+body {
+  background: var(--bg);
+  font-family: 'Press Start 2P', monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 10px 6px 20px;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+/* CRT scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* CRT glow flicker */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0,60,0,0.18) 0%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none;
+  z-index: 998;
+  animation: flicker 8s infinite;
+}
+@keyframes flicker {
+  0%,96%,100%{opacity:1} 97%{opacity:0.85} 98%{opacity:1} 99%{opacity:0.9}
+}
+
+/* ── TITLE BAR ─────────────────────────────── */
+#title-bar {
+  text-align: center;
+  margin-bottom: 6px;
+  animation: scanin 0.6s ease-out;
+}
+@keyframes scanin { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+#game-title {
+  font-size: clamp(0.7rem, 3.5vw, 1.05rem);
+  color: var(--yellow);
+  text-shadow: 0 0 8px var(--yellow), 3px 3px 0 #885500;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 4px;
+  animation: glow-pulse 2s infinite;
+}
+@keyframes glow-pulse {
+  0%,100%{text-shadow:0 0 8px var(--yellow),3px 3px 0 #885500}
+  50%{text-shadow:0 0 22px var(--yellow),0 0 40px #ff8800,3px 3px 0 #885500}
+}
+
+#sub-title {
+  font-size: clamp(0.45rem, 2vw, 0.6rem);
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-shadow: 0 0 6px var(--cyan);
+}
+
+/* ── SCOREBOARD ─────────────────────────────── */
+#scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #000;
+  border: 3px solid var(--green);
+  box-shadow: 0 0 14px var(--green), inset 0 0 10px rgba(0,255,65,0.08);
+  padding: 8px 16px;
+  margin-bottom: 8px;
+  width: min(98vw, 520px);
+}
+.sb-name { font-size: clamp(0.38rem,1.8vw,0.52rem); color: var(--green); letter-spacing:1px; }
+.sb-score { font-size: clamp(1rem,4vw,1.5rem); color: var(--yellow); text-shadow: 0 0 10px var(--yellow); min-width:28px; text-align:center; }
+.sb-div { font-size: 0.6rem; color: var(--white); }
+.sb-shots { font-size: clamp(0.32rem,1.5vw,0.44rem); color: #888; margin-top:2px; letter-spacing:1px; }
+.sb-col { text-align:center; }
+
+/* Penalty dots */
+.dot-row { display:flex; gap:5px; justify-content:center; margin-top:4px; }
+.dot {
+  width: 10px; height: 10px;
+  border: 2px solid #444;
+  background: #111;
+  display: inline-block;
+}
+.dot.scored { background: var(--green); border-color: var(--green); box-shadow: 0 0 6px var(--green); }
+.dot.missed { background: var(--red); border-color: var(--red); box-shadow: 0 0 6px var(--red); }
+
+/* ── CANVAS ─────────────────────────────────── */
+#game-canvas {
+  border: 3px solid var(--green);
+  box-shadow: 0 0 20px var(--green), 0 0 60px rgba(0,255,65,0.15);
+  display: block;
+  background: #000;
+  max-width: min(98vw, 520px);
+  width: min(98vw, 520px);
+  height: auto;
+  image-rendering: pixelated;
+}
+
+/* ── CONTROLS ───────────────────────────────── */
+#controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  width: min(98vw, 520px);
+}
+
+#aim-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+.pix-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(0.45rem,2vw,0.6rem);
+  border: 3px solid var(--green);
+  background: #000;
+  color: var(--green);
+  cursor: pointer;
+  padding: 10px 12px;
+  text-shadow: 0 0 6px var(--green);
+  box-shadow: 0 0 8px var(--green), inset 0 0 6px rgba(0,255,65,0.1);
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.05s;
+  letter-spacing: 1px;
+  min-width: 52px;
+  text-align: center;
+}
+.pix-btn:active, .pix-btn.pressed {
+  background: var(--green);
+  color: #000;
+  box-shadow: 0 0 18px var(--green);
+}
+
+#shoot-btn {
+  font-size: clamp(0.55rem,2.5vw,0.75rem);
+  border-color: var(--yellow);
+  color: var(--yellow);
+  text-shadow: 0 0 8px var(--yellow);
+  box-shadow: 0 0 12px var(--yellow), inset 0 0 8px rgba(255,255,0,0.1);
+  padding: 14px 22px;
+  letter-spacing: 2px;
+}
+#shoot-btn:active, #shoot-btn.pressed {
+  background: var(--yellow);
+  color: #000;
+}
+
+#power-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+}
+#power-label { font-size: 0.38rem; color: var(--cyan); letter-spacing:2px; text-shadow:0 0 6px var(--cyan); }
+#power-bar-outer {
+  width: 160px; height: 14px;
+  border: 2px solid var(--cyan);
+  background: #000;
+  box-shadow: 0 0 6px var(--cyan);
+  overflow: hidden;
+  position: relative;
+}
+#power-bar-inner {
+  height: 100%;
+  background: var(--green);
+  width: 0%;
+  transition: background 0.1s;
+}
+
+/* ── MESSAGE OVERLAY ────────────────────────── */
+#msg-box {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: #000;
+  border: 4px solid var(--yellow);
+  box-shadow: 0 0 24px var(--yellow);
+  padding: 18px 24px;
+  margin-top: 10px;
+  width: min(98vw, 520px);
+  text-align: center;
+  animation: pop-in 0.25s ease-out;
+}
+#msg-box.show { display: flex; }
+@keyframes pop-in { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
+
+#msg-line1 { font-size: clamp(0.7rem,3.5vw,1.1rem); color: var(--yellow); text-shadow:0 0 14px var(--yellow); }
+#msg-line2 { font-size: clamp(0.38rem,1.8vw,0.52rem); color: var(--cyan); letter-spacing:1px; }
+
+#insert-coin {
+  font-size: clamp(0.38rem,1.8vw,0.5rem);
+  color: var(--white);
+  letter-spacing: 2px;
+  margin-top: 6px;
+  animation: blink 0.9s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── CREDIT ─────────────────────────────────── */
+#credit {
+  margin-top: 10px;
+  font-size: 0.32rem;
+  color: #444;
+  letter-spacing: 2px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div id="title-bar">
+  <span id="game-title">★ SKYLAR FC ★</span>
+  <span id="sub-title">PENALTY  SHOOT  1984</span>
+</div>
+
+<div id="scoreboard">
+  <div class="sb-col">
+    <div class="sb-name">SKYLAR</div>
+    <div class="sb-score" id="p-score">0</div>
+    <div class="dot-row" id="p-dots"></div>
+    <div class="sb-shots" id="p-shots">SHOTS: 0/5</div>
+  </div>
+  <div class="sb-col">
+    <div class="sb-div">VS</div>
+  </div>
+  <div class="sb-col">
+    <div class="sb-name">KEEPER</div>
+    <div class="sb-score" id="k-score">0</div>
+    <div class="dot-row" id="k-dots"></div>
+    <div class="sb-shots" id="k-shots">SAVES: 0/5</div>
+  </div>
+</div>
+
+<canvas id="game-canvas" width="520" height="340"></canvas>
+
+<div id="controls">
+  <div id="aim-row">
+    <button class="pix-btn" id="btn-left">◄ LEFT</button>
+    <button class="pix-btn" id="shoot-btn">► SHOOT ◄</button>
+    <button class="pix-btn" id="btn-right">RIGHT ►</button>
+  </div>
+  <div id="power-wrap">
+    <span id="power-label">POWER:</span>
+    <div id="power-bar-outer"><div id="power-bar-inner"></div></div>
+  </div>
+</div>
+
+<div id="msg-box">
+  <div id="msg-line1">SKYLAR FC</div>
+  <div id="msg-line2">PENALTY SHOOTOUT - 5 SHOTS EACH</div>
+  <div id="insert-coin">► PRESS SHOOT TO BEGIN ◄</div>
+</div>
+
+<div id="credit">© 1984 SKYLAR ARCADE SYSTEMS  •  ALL RIGHTS RESERVED</div>
+
+<script>
+// ─── Audio ──────────────────────────────────────────────────────
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+function resumeAC(){ if(AC.state==='suspended') AC.resume(); }
+
+function beep(freq, type, dur, vol=0.3, delay=0){
+  const o=AC.createOscillator(), g=AC.createGain();
+  o.connect(g); g.connect(AC.destination);
+  o.type=type; o.frequency.setValueAtTime(freq, AC.currentTime+delay);
+  g.gain.setValueAtTime(vol, AC.currentTime+delay);
+  g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime+delay+dur);
+  o.start(AC.currentTime+delay); o.stop(AC.currentTime+delay+dur+0.01);
+}
+
+function sfxKick(){
+  beep(200,'sawtooth',0.08,0.5);
+  beep(100,'square',0.12,0.4,0.05);
+}
+function sfxGoal(){
+  // Chiptune fanfare
+  const notes=[523,659,784,1047,1319];
+  notes.forEach((f,i)=>{ beep(f,'square',0.18,0.35,i*0.1); beep(f*1.5,'sine',0.12,0.15,i*0.1); });
+
+  // Crowd cheer — layered noise bursts with pitch variation
+  function cheerBurst(startTime, duration, vol){
+    const bufSize = AC.sampleRate * duration;
+    const buf = AC.createBuffer(1, bufSize, AC.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i=0;i<bufSize;i++){
+      // Pink-ish noise: blend white noise with filtered low rumble
+      data[i] = (Math.random()*2-1) * 0.6 + Math.sin(i*0.03)*0.1 + Math.sin(i*0.07)*0.08;
+    }
+    const src = AC.createBufferSource();
+    src.buffer = buf;
+
+    // Bandpass to make it sound like a crowd (400–3000 Hz range)
+    const bp = AC.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 1200;
+    bp.Q.value = 0.4;
+
+    // Low shelf boost for chest rumble
+    const ls = AC.createBiquadFilter();
+    ls.type = 'lowshelf';
+    ls.frequency.value = 300;
+    ls.gain.value = 8;
+
+    const gainNode = AC.createGain();
+    gainNode.gain.setValueAtTime(0, AC.currentTime + startTime);
+    gainNode.gain.linearRampToValueAtTime(vol, AC.currentTime + startTime + 0.08);
+    gainNode.gain.setValueAtTime(vol, AC.currentTime + startTime + duration * 0.5);
+    gainNode.gain.linearRampToValueAtTime(0, AC.currentTime + startTime + duration);
+
+    src.connect(bp); bp.connect(ls); ls.connect(gainNode); gainNode.connect(AC.destination);
+    src.start(AC.currentTime + startTime);
+    src.stop(AC.currentTime + startTime + duration + 0.05);
+  }
+
+  // Multiple overlapping cheer bursts — builds up like a real crowd
+  cheerBurst(0.3,  1.6, 0.28);
+  cheerBurst(0.5,  1.4, 0.22);
+  cheerBurst(0.65, 1.2, 0.18);
+  cheerBurst(0.9,  0.9, 0.14);
+  cheerBurst(1.2,  0.7, 0.10);
+}
+function sfxSave(){
+  beep(300,'sawtooth',0.1,0.4);
+  beep(200,'square',0.1,0.4,0.1);
+  beep(120,'sine',0.15,0.3,0.2);
+}
+function sfxMove(){ beep(440,'square',0.03,0.08); }
+function sfxPowerUp(){ beep(880,'square',0.04,0.1); }
+function sfxGameOver(){
+  [523,494,440,392,349].forEach((f,i)=>beep(f,'square',0.2,0.3,i*0.15));
+}
+function sfxWin(){
+  const melody=[523,523,523,392,523,659,784];
+  melody.forEach((f,i)=>beep(f,'square',0.2,0.35,i*0.14));
+}
+
+function sfxStartupMelody(){
+  // ── SKYLAR FC Title Theme ─────────────────────────────────────
+  // Punchy 1984-style arcade attract melody
+  const t = AC.currentTime;
+
+  function note(freq, start, dur, vol=0.28, type='square'){
+    const o=AC.createOscillator(), g=AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    o.type=type;
+    o.frequency.setValueAtTime(freq, t+start);
+    o.frequency.linearRampToValueAtTime(freq*1.02, t+start+0.02);
+    o.frequency.linearRampToValueAtTime(freq,       t+start+0.06);
+    g.gain.setValueAtTime(0, t+start);
+    g.gain.linearRampToValueAtTime(vol, t+start+0.01);
+    g.gain.setValueAtTime(vol, t+start+dur*0.7);
+    g.gain.linearRampToValueAtTime(0, t+start+dur);
+    o.start(t+start); o.stop(t+start+dur+0.02);
+  }
+
+  function bass(freq, start, dur){ note(freq/2, start, dur, 0.18, 'triangle'); }
+
+  function kick(start){
+    const bufLen=AC.sampleRate*0.12, buf=AC.createBuffer(1,bufLen,AC.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<bufLen;i++) data[i]=(Math.random()*2-1)*Math.exp(-i/(bufLen*0.18));
+    const src=AC.createBufferSource(); src.buffer=buf;
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=180;
+    const g=AC.createGain(); g.gain.setValueAtTime(0.5,t+start); g.gain.linearRampToValueAtTime(0,t+start+0.12);
+    src.connect(lp); lp.connect(g); g.connect(AC.destination);
+    src.start(t+start); src.stop(t+start+0.15);
+  }
+
+  function hat(start){
+    const bufLen=AC.sampleRate*0.05, buf=AC.createBuffer(1,bufLen,AC.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<bufLen;i++) data[i]=(Math.random()*2-1);
+    const src=AC.createBufferSource(); src.buffer=buf;
+    const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=6000;
+    const g=AC.createGain(); g.gain.setValueAtTime(0.12,t+start); g.gain.linearRampToValueAtTime(0,t+start+0.05);
+    src.connect(hp); hp.connect(g); g.connect(AC.destination);
+    src.start(t+start); src.stop(t+start+0.06);
+  }
+
+  const B=0.18; // beat length
+
+  // Bar 1 — intro fanfare C E G C'
+  note(523,  0*B, B*1.1);
+  note(659,  1*B, B*0.9);
+  note(784,  2*B, B*0.9);
+  note(1047, 3*B, B*1.8);
+
+  // Bar 2 — descending bounce
+  note(988,  5*B, B*0.8);
+  note(880,  6*B, B*0.8);
+  note(784,  7*B, B*0.8);
+  note(659,  8*B, B*1.5);
+
+  // Bar 3 — climbing run to high C
+  note(523,  10*B,   B*0.5);
+  note(587,  10.5*B, B*0.5);
+  note(659,  11*B,   B*0.5);
+  note(698,  11.5*B, B*0.5);
+  note(784,  12*B,   B*0.5);
+  note(880,  12.5*B, B*0.5);
+  note(988,  13*B,   B*0.5);
+  note(1047, 13.5*B, B*2.5); // big hold
+
+  // Bar 4 — punchy resolution
+  note(784, 16*B,  B*0.7);
+  note(659, 16.8*B,B*0.7);
+  note(523, 17.6*B,B*2.2);
+
+  // Bass line
+  bass(523, 0*B,  B*4);
+  bass(392, 4*B,  B*4);
+  bass(349, 8*B,  B*4);
+  bass(440, 12*B, B*4);
+  bass(523, 16*B, B*4);
+
+  // Harmony layer
+  note(330, 0*B,  B*1.1, 0.10, 'square');
+  note(392, 2*B,  B*0.9, 0.10, 'square');
+  note(523, 3*B,  B*1.8, 0.10, 'square');
+  note(494, 7*B,  B*1.5, 0.10, 'square');
+  note(330, 10*B, B*4,   0.08, 'square');
+  note(392, 16*B, B*2.2, 0.10, 'square');
+
+  // Drums
+  [0,4,8,12,16].forEach(i=>kick(i*B));
+  [2,6,10,14,18].forEach(i=>kick(i*B));
+  for(let i=0;i<20;i++) hat(i*B);
+}
+
+// ─── Canvas Setup ───────────────────────────────────────────────
+const canvas = document.getElementById('game-canvas');
+const ctx    = canvas.getContext('2d');
+const W = 520, H = 340;
+
+// Pixel helpers
+function pxRect(x,y,w,h,col){ ctx.fillStyle=col; ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h)); }
+function pxLine(x1,y1,x2,y2,col,lw=2){
+  ctx.strokeStyle=col; ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(Math.round(x1),Math.round(y1)); ctx.lineTo(Math.round(x2),Math.round(y2)); ctx.stroke();
+}
+function pxText(txt,x,y,col,size=8){
+  ctx.font=`${size}px "Press Start 2P"`;
+  ctx.fillStyle=col;
+  ctx.shadowColor=col; ctx.shadowBlur=6;
+  ctx.fillText(txt,Math.round(x),Math.round(y));
+  ctx.shadowBlur=0;
+}
+function pxTextCenter(txt,y,col,size=8){
+  ctx.font=`${size}px "Press Start 2P"`;
+  const tw=ctx.measureText(txt).width;
+  pxText(txt,(W-tw)/2,y,col,size);
+}
+
+// ─── Game State ─────────────────────────────────────────────────
+const TOTAL_SHOTS = 5;
+let state = 'title'; // title | aiming | shooting | result | gameover
+let playerScore=0, keeperScore=0;
+let playerShots=0, keeperSaves=0;
+let playerDots=[], keeperDots=[];
+
+// Aim cursor (0=left, 1=centre-left, 2=centre, 3=centre-right, 4=right)
+let aimPos = 2;
+const AIM_ZONES = 5;
+
+// Power bar
+let power = 0;
+let powerDir = 1;
+let powerRunning = false;
+
+// Ball animation
+let ball = {x:260,y:240,tx:260,ty:100,animating:false,frame:0,totalFrames:30};
+let shotResult = ''; // 'goal' | 'save'
+
+// Keeper
+let keeper = {x:260, y:90, dir:1, speed:3};
+let keeperSaveAnim = false;
+let keeperSaveTimer = 0;
+let keeperSaveDir = 0; // -1 left, +1 right
+
+// Particles
+let particles = [];
+
+// ─── Drawing ────────────────────────────────────────────────────
+function drawField(){
+  // Sky/crowd area
+  pxRect(0,0,W,60,'#111100');
+  // Crowd pixel art (simple rows of coloured squares)
+  const crowdColors=['#cc2200','#ffff00','#0055cc','#00aa00','#ff6600','#cc0088','#ffffff'];
+  for(let r=0;r<3;r++){
+    for(let c=0;c<52;c++){
+      if(Math.sin(c*3.7+r*5.3)>0.2){
+        const col=crowdColors[(c+r*7)%crowdColors.length];
+        pxRect(c*10,r*18+4,8,14,col);
+        // head
+        pxRect(c*10+1,r*18,6,6,'#ffddaa');
+      }
+    }
+  }
+
+  // Grass
+  pxRect(0,60,W,H-60,'#006600');
+  // Grass stripes
+  for(let i=0;i<W;i+=30){
+    pxRect(i,60,15,H-60,'#007700');
+  }
+
+  // Penalty box
+  pxLine(150,60,150,200,'#ffffff',2);
+  pxLine(370,60,370,200,'#ffffff',2);
+  pxLine(150,200,370,200,'#ffffff',2);
+
+  // Six yard box
+  pxLine(200,60,200,120,'#ffffff',2);
+  pxLine(320,60,320,120,'#ffffff',2);
+  pxLine(200,120,320,120,'#ffffff',2);
+
+  // Penalty spot
+  pxRect(258,236,4,4,'#ffffff');
+
+  // Centre spot on halfway
+  pxRect(258,290,4,4,'#ffffff');
+}
+
+function drawGoal(){
+  // Posts (white pixel art style)
+  const GL=170, GR=350, GT=62, GB=115;
+  // Crossbar
+  pxRect(GL,GT,GR-GL,6,'#ffffff');
+  // Posts
+  pxRect(GL,GT,6,GB-GT,'#ffffff');
+  pxRect(GR-6,GT,6,GB-GT,'#ffffff');
+  // Net (pixel dots)
+  ctx.fillStyle='rgba(255,255,255,0.25)';
+  for(let nx=GL+8;nx<GR-6;nx+=12){
+    for(let ny=GT+8;ny<GB;ny+=10){
+      ctx.fillRect(nx,ny,2,2);
+    }
+  }
+  // Vertical net lines
+  for(let nx=GL+8;nx<GR-6;nx+=12){
+    ctx.fillRect(nx,GT+6,2,GB-GT-6);
+  }
+  // Horizontal net lines
+  for(let ny=GT+8;ny<GB;ny+=10){
+    ctx.fillRect(GL+6,ny,GR-GL-12,2);
+  }
+  // Ground line
+  pxRect(GL,GB,GR-GL,4,'#009900');
+}
+
+// Aim zones drawn on goal
+const ZONE_LABELS = ['◄◄','◄','▪','►','►►'];
+const ZONE_COLS   = ['#ff4444','#ff8800','#ffff00','#ff8800','#ff4444'];
+const ZONE_XS     = [178,202,228,289,315]; // approx pixel x per zone inside goal
+function drawAimCursor(){
+  if(state!=='aiming') return;
+  const zoneW = (350-170)/AIM_ZONES;
+  const ax = 178 + aimPos * zoneW + zoneW/2 - 6;
+  // Blinking arrow
+  if(Math.floor(Date.now()/300)%2===0){
+    pxRect(ax-1,65,14,8,'#00ff41');
+    pxRect(ax+3,73,6,6,'#00ff41');
+    pxRect(ax+5,79,2,4,'#00ff41');
+  }
+}
+
+function drawKeeper(){
+  const kx = keeper.x;
+  const ky = 68;
+
+  if(keeperSaveAnim){
+    // Dive animation
+    const diveX = kx + keeperSaveDir*18;
+    drawPixelKeeper(diveX, ky+8, true);
+  } else {
+    drawPixelKeeper(kx, ky, false);
+  }
+}
+
+function drawPixelKeeper(x,y,diving){
+  // Pixel art keeper sprite (8x16 grid cells)
+  const c = '#ffddaa'; // skin
+  const j = '#00aa00'; // jersey
+  const g = '#ffff00'; // gloves
+  const s = '#333333'; // shorts
+  const k = '#222222'; // socks/boots
+  const px = 5; // pixel size
+
+  if(!diving){
+    // Head
+    pxRect(x-px,y,px*2,px*2,c);
+    // Body
+    pxRect(x-px*1.5,y+px*2,px*3,px*3,j);
+    // Arms up
+    pxRect(x-px*3,y+px*2,px*1.5,px*2,j);
+    pxRect(x+px*1.5,y+px*2,px*1.5,px*2,j);
+    pxRect(x-px*3.5,y+px*2,px*1.5,px,g);
+    pxRect(x+px*2.5,y+px*2,px*1.5,px,g);
+    // Shorts
+    pxRect(x-px*1.5,y+px*5,px*3,px*2,s);
+    // Legs
+    pxRect(x-px,y+px*7,px,px*2,k);
+    pxRect(x,y+px*7,px,px*2,k);
+  } else {
+    // Diving
+    pxRect(x,y,px*2,px*2,c);
+    pxRect(x-px,y+px*2,px*4,px*2,j);
+    pxRect(x-px*3,y+px,px*2,px,g);
+    pxRect(x+px*3,y+px,px*2,px,g);
+    pxRect(x,y+px*4,px*3,px*2,s);
+    pxRect(x+px*2,y+px*6,px,px*2,k);
+  }
+}
+
+function drawPlayer(){
+  const x=260, y=230;
+  const px=4;
+  const c='#ffddaa', j='#ff2222', s='#ffffff', k='#111111';
+  // Head
+  pxRect(x-px,y-px*7,px*2,px*2,c);
+  // Body
+  pxRect(x-px*1.5,y-px*5,px*3,px*3,j);
+  // Arms
+  pxRect(x-px*3,y-px*5,px*1.5,px*2,j);
+  pxRect(x+px*1.5,y-px*5,px*1.5,px*2,j);
+  // Shorts
+  pxRect(x-px*1.5,y-px*2,px*3,px*2,s);
+  // Legs
+  pxRect(x-px,y,px,px*3,k);
+  pxRect(x,y,px,px*3,k);
+}
+
+function drawBall(){
+  const bx=ball.x, by=ball.y;
+  // Pixel football
+  const s=10;
+  pxRect(bx-s/2,by-s/2,s,s,'#ffffff');
+  pxRect(bx-s/2+2,by-s/2,'#000',2,2); // fake - use dots
+  // Pixel pentagon pattern
+  ctx.fillStyle='#000000';
+  ctx.fillRect(bx-2,by-4,4,3);
+  ctx.fillRect(bx-4,by,3,3);
+  ctx.fillRect(bx+1,by,3,3);
+  ctx.fillRect(bx-1,by+3,3,2);
+}
+
+function drawParticles(){
+  particles.forEach(p=>{
+    ctx.globalAlpha=p.life;
+    pxRect(p.x,p.y,p.size,p.size,p.col);
+    ctx.globalAlpha=1;
+  });
+}
+
+function spawnParticles(x,y,col){
+  for(let i=0;i<24;i++){
+    const angle=Math.random()*Math.PI*2;
+    const spd=2+Math.random()*4;
+    particles.push({
+      x,y,
+      vx:Math.cos(angle)*spd,
+      vy:Math.sin(angle)*spd,
+      life:1, col,
+      size:4+Math.floor(Math.random()*4)
+    });
+  }
+}
+
+function updateParticles(){
+  particles=particles.filter(p=>p.life>0.05);
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    p.vy+=0.15;
+    p.life-=0.04;
+  });
+}
+
+// ─── Keeper AI ──────────────────────────────────────────────────
+function keeperIdle(){
+  keeper.x += keeper.dir * keeper.speed;
+  if(keeper.x>310){ keeper.x=310; keeper.dir=-1; }
+  if(keeper.x<210){ keeper.x=210; keeper.dir=1; }
+}
+
+function keeperDive(targetZone){
+  // Keeper has 40% chance of guessing correctly
+  const guess = Math.floor(Math.random()*AIM_ZONES);
+  const diff = Math.abs(guess - targetZone);
+  const saves = diff <= 1 ? 0.52 : 0.18; // harder to score on sides if keeper guesses right
+
+  keeperSaveAnim = true;
+  keeperSaveTimer = 45;
+  keeperSaveDir = (targetZone < 2) ? -1 : (targetZone > 2) ? 1 : (Math.random()<0.5?-1:1);
+
+  return Math.random() < saves;
+}
+
+// ─── Ball Animation ─────────────────────────────────────────────
+function getBallTarget(zone, pow){
+  const goalXS = [182,210,240,295,322];
+  const goalYS = [72,75,80,75,72];
+  const tx = goalXS[zone];
+  const ty = goalYS[zone];
+  return {tx, ty};
+}
+
+// ─── Aim movement ───────────────────────────────────────────────
+let aimHoldInterval=null;
+
+function moveAim(dir){
+  aimPos = Math.max(0, Math.min(AIM_ZONES-1, aimPos+dir));
+  sfxMove();
+}
+
+// Power bar loop
+let powerInterval=null;
+function startPowerBar(){
+  power=0; powerDir=1; powerRunning=true;
+  powerInterval=setInterval(()=>{
+    if(!powerRunning) return;
+    power+=3*powerDir;
+    if(power>=100){ power=100; powerDir=-1; }
+    if(power<=0){ power=0; powerDir=1; }
+    updatePowerUI();
+    sfxPowerUp();
+    const col = power<40?'#00ff41':power<70?'#ffff00':'#ff2222';
+    document.getElementById('power-bar-inner').style.background=col;
+  },50);
+}
+function stopPowerBar(){ powerRunning=false; clearInterval(powerInterval); }
+function updatePowerUI(){
+  document.getElementById('power-bar-inner').style.width=power+'%';
+}
+
+// ─── SHOOT ──────────────────────────────────────────────────────
+function shoot(){
+  if(state!=='aiming') return;
+  stopPowerBar();
+  state='shooting';
+  sfxKick();
+
+  const zone=aimPos;
+  const pow=power;
+  const {tx,ty}=getBallTarget(zone,pow);
+  ball.tx=tx; ball.ty=ty;
+  ball.animating=true; ball.frame=0; ball.totalFrames=28;
+
+  const saved=keeperDive(zone);
+  shotResult = saved ? 'save' : 'goal';
+
+  playerShots++;
+
+  setTimeout(()=>{
+    ball.animating=false;
+    if(shotResult==='goal'){
+      playerScore++;
+      spawnParticles(tx,ty,'#ffff00');
+      spawnParticles(tx+10,ty+5,'#00ff41');
+      sfxGoal();
+      showResult('GOAL!!!','GREAT SHOT SKYLAR!','#ffff00');
+    } else {
+      keeperSaves++;
+      sfxSave();
+      showResult('SAVED!','THE KEEPER GOT IT!','#ff4444');
+    }
+    updateDots();
+    updateScoreboard();
+
+    setTimeout(()=>{
+      if(playerShots>=TOTAL_SHOTS){
+        setTimeout(endGame,300);
+      } else {
+        resetForNextShot();
+      }
+    },1800);
+  },900);
+}
+
+function showResult(line1, line2, col){
+  // Draw on canvas as overlay text
+  resultMsg={line1,line2,col,timer:60};
+}
+let resultMsg=null;
+
+function resetForNextShot(){
+  ball.x=260; ball.y=240;
+  aimPos=2; power=0;
+  updatePowerUI();
+  document.getElementById('power-bar-inner').style.width='0%';
+  keeperSaveAnim=false;
+  resultMsg=null;
+  state='aiming';
+  startPowerBar();
+}
+
+// ─── DOTS & SCOREBOARD ──────────────────────────────────────────
+function updateDots(){
+  const pd=document.getElementById('p-dots');
+  const kd=document.getElementById('k-dots');
+  pd.innerHTML=''; kd.innerHTML='';
+
+  for(let i=0;i<TOTAL_SHOTS;i++){
+    const d=document.createElement('div');
+    d.className='dot';
+    if(i<playerShots){
+      // Check if scored or missed (track separately)
+      d.classList.add(playerDots[i]==='goal'?'scored':'missed');
+    }
+    pd.appendChild(d);
+  }
+  for(let i=0;i<TOTAL_SHOTS;i++){
+    const d=document.createElement('div');
+    d.className='dot';
+    if(i<playerShots){
+      d.classList.add(keeperDots[i]==='save'?'scored':'missed');
+    }
+    kd.appendChild(d);
+  }
+
+  if(shotResult==='goal'){ playerDots.push('goal'); keeperDots.push('miss'); }
+  else { playerDots.push('miss'); keeperDots.push('save'); }
+}
+
+function updateScoreboard(){
+  document.getElementById('p-score').textContent=playerScore;
+  document.getElementById('k-score').textContent=keeperSaves;
+  document.getElementById('p-shots').textContent=`SHOTS: ${playerShots}/${TOTAL_SHOTS}`;
+  document.getElementById('k-shots').textContent=`SAVES: ${keeperSaves}/${TOTAL_SHOTS}`;
+}
+
+// ─── END GAME ───────────────────────────────────────────────────
+function endGame(){
+  state='gameover';
+  stopPowerBar();
+  resultMsg=null;
+
+  const box=document.getElementById('msg-box');
+  const l1=document.getElementById('msg-line1');
+  const l2=document.getElementById('msg-line2');
+  const ic=document.getElementById('insert-coin');
+
+  if(playerScore>keeperSaves){
+    l1.textContent='★ SKYLAR WINS! ★';
+    l1.style.color='#ffff00';
+    l2.textContent=`${playerScore} GOALS!  CHAMPION!`;
+    sfxWin();
+    spawnParticles(200,150,'#ffff00');
+    spawnParticles(320,150,'#00ff41');
+  } else if(playerScore===keeperSaves){
+    l1.textContent='DRAW!';
+    l1.style.color='#00ffff';
+    l2.textContent=`${playerScore} - ${keeperSaves}  PLAY AGAIN?`;
+    sfxSave();
+  } else {
+    l1.textContent='GAME OVER';
+    l1.style.color='#ff2222';
+    l2.textContent=`${playerScore} - ${keeperSaves}  TRY HARDER!`;
+    sfxGameOver();
+  }
+  ic.textContent='► PRESS SHOOT TO PLAY AGAIN ◄';
+  box.classList.add('show');
+}
+
+// ─── START ──────────────────────────────────────────────────────
+function startGame(){
+  resumeAC();
+  document.getElementById('msg-box').classList.remove('show');
+  playerScore=0; keeperScore=0; playerShots=0; keeperSaves=0;
+  playerDots=[]; keeperDots=[];
+  resultMsg=null; particles=[];
+  updateScoreboard();
+  updatePowerUI();
+
+  // Reset dot rows
+  const pd=document.getElementById('p-dots');
+  const kd=document.getElementById('k-dots');
+  pd.innerHTML=''; kd.innerHTML='';
+  for(let i=0;i<TOTAL_SHOTS;i++){
+    const d1=document.createElement('div'); d1.className='dot'; pd.appendChild(d1);
+    const d2=document.createElement('div'); d2.className='dot'; kd.appendChild(d2);
+  }
+
+  ball.x=260; ball.y=240;
+  aimPos=2; power=0;
+  state='aiming';
+  startPowerBar();
+}
+
+// ─── MAIN LOOP ──────────────────────────────────────────────────
+let lastTime=0;
+function loop(ts){
+  ctx.clearRect(0,0,W,H);
+
+  drawField();
+  drawGoal();
+
+  if(state==='title' || state==='gameover'){
+    pxTextCenter('PRESS SHOOT',H/2-10,'#00ff41',10);
+    pxTextCenter('TO START',H/2+14,'#00ff41',10);
+    requestAnimationFrame(loop);
+    return;
+  }
+
+  keeperIdle();
+  if(keeperSaveTimer>0){ keeperSaveTimer--; if(keeperSaveTimer<=0) keeperSaveAnim=false; }
+
+  // Animate ball
+  if(ball.animating){
+    ball.frame++;
+    const t=ball.frame/ball.totalFrames;
+    const ease=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+    ball.x=260+(ball.tx-260)*ease;
+    ball.y=240+(ball.ty-240)*ease;
+  }
+
+  updateParticles();
+  drawParticles();
+  drawKeeper();
+  drawAimCursor();
+  drawPlayer();
+  drawBall();
+
+  // Aim zone labels on goal
+  if(state==='aiming'){
+    for(let i=0;i<AIM_ZONES;i++){
+      const ax=178+i*(180/AIM_ZONES)+8;
+      ctx.font='6px "Press Start 2P"';
+      ctx.fillStyle = i===aimPos?'#00ff41':'#555555';
+      ctx.shadowColor=i===aimPos?'#00ff41':'transparent';
+      ctx.shadowBlur=i===aimPos?8:0;
+      ctx.fillText(ZONE_LABELS[i],ax,90);
+      ctx.shadowBlur=0;
+    }
+    // Power indicator text
+    ctx.font='7px "Press Start 2P"';
+    ctx.fillStyle=power>70?'#ff2222':power>40?'#ffff00':'#00ff41';
+    ctx.shadowColor=ctx.fillStyle; ctx.shadowBlur=6;
+    ctx.fillText('AIM & SHOOT!',186,310);
+    ctx.shadowBlur=0;
+  }
+
+  // Result message on canvas
+  if(resultMsg){
+    resultMsg.timer--;
+    ctx.fillStyle='rgba(0,0,0,0.72)';
+    ctx.fillRect(100,130,320,70);
+    ctx.strokeStyle=resultMsg.col;
+    ctx.lineWidth=3;
+    ctx.shadowColor=resultMsg.col; ctx.shadowBlur=16;
+    ctx.strokeRect(100,130,320,70);
+    ctx.shadowBlur=0;
+    pxTextCenter(resultMsg.line1,160,resultMsg.col,14);
+    pxTextCenter(resultMsg.line2,185,'#ffffff',7);
+  }
+
+  requestAnimationFrame(loop);
+}
+
+// ─── Input Binding ──────────────────────────────────────────────
+function handleShoot(){
+  resumeAC();
+  if(state==='title'||state==='gameover'){ startGame(); return; }
+  if(state==='aiming') shoot();
+}
+
+document.getElementById('btn-left').addEventListener('mousedown',()=>{ resumeAC(); if(state==='aiming'){moveAim(-1);} });
+document.getElementById('btn-right').addEventListener('mousedown',()=>{ resumeAC(); if(state==='aiming'){moveAim(1);} });
+document.getElementById('shoot-btn').addEventListener('mousedown',handleShoot);
+
+document.getElementById('btn-left').addEventListener('touchstart',e=>{ e.preventDefault(); resumeAC(); if(state==='aiming'){moveAim(-1);} });
+document.getElementById('btn-right').addEventListener('touchstart',e=>{ e.preventDefault(); resumeAC(); if(state==='aiming'){moveAim(1);} });
+document.getElementById('shoot-btn').addEventListener('touchstart',e=>{ e.preventDefault(); handleShoot(); });
+
+// Hold left/right
+let holdDir=null, holdInt=null;
+function startHold(dir){ if(holdInt) clearInterval(holdInt); holdDir=dir; holdInt=setInterval(()=>{ if(state==='aiming') moveAim(dir); },200); }
+function stopHold(){ clearInterval(holdInt); holdInt=null; }
+document.getElementById('btn-left').addEventListener('mousedown',()=>startHold(-1));
+document.getElementById('btn-right').addEventListener('mousedown',()=>startHold(1));
+['mouseup','mouseleave'].forEach(e=>{ document.getElementById('btn-left').addEventListener(e,stopHold); document.getElementById('btn-right').addEventListener(e,stopHold); });
+document.getElementById('btn-left').addEventListener('touchstart',e=>{ e.preventDefault(); startHold(-1); },{passive:false});
+document.getElementById('btn-right').addEventListener('touchstart',e=>{ e.preventDefault(); startHold(1); },{passive:false});
+['touchend','touchcancel'].forEach(e=>{ document.getElementById('btn-left').addEventListener(e,stopHold); document.getElementById('btn-right').addEventListener(e,stopHold); });
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'){ resumeAC(); if(state==='aiming') moveAim(-1); }
+  if(e.key==='ArrowRight'){ resumeAC(); if(state==='aiming') moveAim(1); }
+  if(e.key===' '||e.key==='Enter'){ e.preventDefault(); handleShoot(); }
+});
+
+// ─── Boot ────────────────────────────────────────────────────────
+document.getElementById('msg-box').classList.add('show');
+state='title';
+requestAnimationFrame(loop);
+
+// Play startup melody on first tap/click (browsers require user gesture)
+let melodyPlayed = false;
+function playStartupOnce(){
+  if(melodyPlayed) return;
+  melodyPlayed = true;
+  resumeAC();
+  sfxStartupMelody();
+}
+document.addEventListener('pointerdown', playStartupOnce, { once: true });
+document.addEventListener('keydown',     playStartupOnce, { once: true });
+</script>
+</body>
+</html>
