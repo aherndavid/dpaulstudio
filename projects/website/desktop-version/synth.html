@@ -24,12 +24,15 @@
         .synth-container {
             background: #0a0a0a;
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            max-width: 980px;
+            max-width: 1600px;
             width: 100%;
+            aspect-ratio: 16 / 9;
             border: 1px solid #1a1a1a;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .synth-header {
@@ -140,11 +143,21 @@
         }
 
         .controls-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .control-section {
+            background: #000;
+            border: 1px solid #1a1a1a;
+            border-radius: 6px;
+            padding: 12px;
             display: flex;
             gap: 12px;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .control-group {
@@ -1251,7 +1264,7 @@
 <body>
     <div class="synth-container powered-on" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dPaul Technologies MKII</div>
+            <div class="synth-title">dPaul Technologies MKII <span style="font-size: 12px; color: #666;">v2.01</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1277,46 +1290,74 @@
         </div>
 
         <div class="controls-panel">
-            <div class="control-group">
-                <div class="control-label">DELAY</div>
-                <div class="knob" id="delayKnob" data-value="50"></div>
-                <div class="knob-value" id="delayValue">50%</div>
+            <!-- Section 1: Effects -->
+            <div class="control-section">
+                <div class="control-group">
+                    <div class="control-label">DELAY</div>
+                    <div class="knob" id="delayKnob" data-value="50"></div>
+                    <div class="knob-value" id="delayValue">50%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">FEEDBACK</div>
+                    <div class="knob" id="feedbackKnob" data-value="30"></div>
+                    <div class="knob-value" id="feedbackValue">30%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">FILTER</div>
+                    <div class="knob" id="filterKnob" data-value="80"></div>
+                    <div class="knob-value" id="filterValue">80%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">RESONANCE</div>
+                    <div class="knob" id="resonanceKnob" data-value="20"></div>
+                    <div class="knob-value" id="resonanceValue">20%</div>
+                </div>
             </div>
 
-            <div class="control-group">
-                <div class="control-label">FEEDBACK</div>
-                <div class="knob" id="feedbackKnob" data-value="30"></div>
-                <div class="knob-value" id="feedbackValue">30%</div>
+            <!-- Section 2: Sampler -->
+            <div class="control-section">
+                <div class="control-group">
+                    <div class="control-label">PITCH</div>
+                    <div class="sampler-knob knob" id="samplePitchKnob" data-value="50"></div>
+                    <div class="sampler-value knob-value" id="samplePitchValue">0</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">SPEED</div>
+                    <div class="sampler-knob knob" id="sampleSpeedKnob" data-value="50"></div>
+                    <div class="sampler-value knob-value" id="sampleSpeedValue">1.0x</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">S.FILT</div>
+                    <div class="sampler-knob knob" id="sampleFilterKnob" data-value="100"></div>
+                    <div class="sampler-value knob-value" id="sampleFilterValue">20k</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">REV</div>
+                    <div class="sampler-switch switch" id="sampleReverseSwitch"></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">LOOP</div>
+                    <div class="sampler-switch switch" id="sampleLoopSwitch"></div>
+                </div>
             </div>
 
-            <div class="control-group">
-                <div class="control-label">FILTER</div>
-                <div class="knob" id="filterKnob" data-value="80"></div>
-                <div class="knob-value" id="filterValue">80%</div>
-            </div>
-
-            <div class="control-group">
-                <div class="control-label">RESONANCE</div>
-                <div class="knob" id="resonanceKnob" data-value="20"></div>
-                <div class="knob-value" id="resonanceValue">20%</div>
-            </div>
-
-            <div class="control-group">
-                <div class="control-label">ARP</div>
-                <div class="switch" id="arpSwitch"></div>
-                <div class="status-light" id="arpLight"></div>
-            </div>
-
-            <div class="control-group">
-                <div class="control-label">VOLUME</div>
-                <div class="knob" id="volumeKnob" data-value="70"></div>
-                <div class="knob-value" id="volumeValue">70%</div>
-            </div>
-
-            <div class="drum-volume-control">
-                <div class="drum-volume-label">DRUM VOL</div>
-                <div class="drum-knob" id="drumVolumeKnob" data-value="70"></div>
-                <div class="drum-knob-value" id="drumVolumeValue">70%</div>
+            <!-- Section 3: Volume & ARP -->
+            <div class="control-section">
+                <div class="control-group">
+                    <div class="control-label">VOLUME</div>
+                    <div class="knob" id="volumeKnob" data-value="70"></div>
+                    <div class="knob-value" id="volumeValue">70%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">DRUM VOL</div>
+                    <div class="drum-knob knob" id="drumVolumeKnob" data-value="70"></div>
+                    <div class="drum-knob-value knob-value" id="drumVolumeValue">70%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">ARP</div>
+                    <div class="switch" id="arpSwitch"></div>
+                    <div class="status-light" id="arpLight"></div>
+                </div>
             </div>
         </div>
 
@@ -1486,31 +1527,6 @@
                     <div class="load-sample-btn" data-sample="9">LOAD</div>
                     <div class="clear-sample-btn" data-sample="9">CLR</div>
                     <input type="file" id="sampleFile9" accept="audio/*" style="display:none">
-                </div>
-            </div>
-            <div class="sampler-controls">
-                <div class="sampler-control-group">
-                    <div class="sampler-label">PITCH</div>
-                    <div class="sampler-knob" id="samplePitchKnob" data-value="50"></div>
-                    <div class="sampler-value" id="samplePitchValue">0</div>
-                </div>
-                <div class="sampler-control-group">
-                    <div class="sampler-label">SPEED</div>
-                    <div class="sampler-knob" id="sampleSpeedKnob" data-value="50"></div>
-                    <div class="sampler-value" id="sampleSpeedValue">1.0x</div>
-                </div>
-                <div class="sampler-control-group">
-                    <div class="sampler-label">FILTER</div>
-                    <div class="sampler-knob" id="sampleFilterKnob" data-value="100"></div>
-                    <div class="sampler-value" id="sampleFilterValue">20k</div>
-                </div>
-                <div class="sampler-control-group">
-                    <div class="sampler-label">REV</div>
-                    <div class="sampler-switch" id="sampleReverseSwitch"></div>
-                </div>
-                <div class="sampler-control-group">
-                    <div class="sampler-label">LOOP</div>
-                    <div class="sampler-switch" id="sampleLoopSwitch"></div>
                 </div>
             </div>
         </div>
