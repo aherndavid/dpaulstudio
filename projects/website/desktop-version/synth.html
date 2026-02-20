@@ -686,6 +686,10 @@
             position: relative;
         }
 
+        .step.hidden {
+            display: none;
+        }
+
         .step.active {
             background: #cc5500;
             box-shadow: 0 0 8px rgba(204, 85, 0, 0.6);
@@ -1318,9 +1322,12 @@
 
         <div class="sequencer">
             <div class="sequencer-header">
-                <div class="sequencer-title">32-STEP DRUM SEQUENCER</div>
+                <div class="sequencer-title">DRUM SEQUENCER</div>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <div class="bpm-indicator" id="bpmIndicator"></div>
+                    <div class="seq-btn" id="steps8Btn" data-steps="8">8</div>
+                    <div class="seq-btn" id="steps16Btn" data-steps="16">16</div>
+                    <div class="seq-btn active" id="steps32Btn" data-steps="32">32</div>
                     <div class="sync-btn" id="syncBtn">SYNC</div>
                     <div class="sequencer-controls">
                         <div class="seq-btn" id="playSeq">PLAY</div>
@@ -1628,6 +1635,7 @@
         let currentStep = 0;
         let tempo = 120;
         let tempoLedInterval = null;
+        let sequencerSteps = 32; // 8, 16, or 32 steps
 
         // Note names
         const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -2046,7 +2054,22 @@
             if (command === 9 && velocity > 0) {
                 const frequency = midiNoteToFrequency(note);
                 const noteName = midiNoteToName(note);
-                playNote(frequency, noteName);
+                
+                console.log('MIDI Note On:', noteName, 'arpEnabled:', arpEnabled);
+                
+                if (arpEnabled) {
+                    console.log('Adding note to arp:', noteName);
+                    arpNotes.push({ frequency, noteName });
+                    console.log('Arp notes now:', arpNotes.length, 'interval:', arpInterval);
+                    
+                    // Start arp if not already running
+                    if (!arpInterval) {
+                        console.log('Starting arp...');
+                        startArp();
+                    }
+                } else {
+                    playNote(frequency, noteName);
+                }
                 
                 // Animate the corresponding key if it exists on screen
                 animateKeyForMIDI(noteName, true);
@@ -2054,7 +2077,10 @@
             // Note Off (8) or Note On with velocity 0
             else if (command === 8 || (command === 9 && velocity === 0)) {
                 const noteName = midiNoteToName(note);
-                stopNote(noteName);
+                
+                if (!arpEnabled) {
+                    stopNote(noteName);
+                }
                 
                 // Remove animation from the key
                 animateKeyForMIDI(noteName, false);
@@ -2076,12 +2102,15 @@
                 
                 // Update all active notes
                 activeNotes.forEach((noteData, noteName) => {
-                    if (noteData.osc1 && noteData.osc1.frequency && noteData.baseFrequency) {
-                        const baseFreq = noteData.baseFrequency;
-                        const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
+                    const baseFreq = noteData.baseFrequency;
+                    const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
+                    
+                    if (noteData.osc1 && noteData.osc1.frequency) {
                         noteData.osc1.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
                         noteData.osc2.frequency.setValueAtTime(bendedFreq * 0.995, audioContext.currentTime);
                         noteData.osc3.frequency.setValueAtTime(bendedFreq * 1.005, audioContext.currentTime);
+                    } else if (noteData.noiseFilter && noteData.noiseFilter.frequency) {
+                        noteData.noiseFilter.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
                     }
                 });
             }
@@ -2620,8 +2649,11 @@
         function startArp() {
             // Don't start if no notes
             if (arpNotes.length === 0) {
+                console.log('startArp: No notes, not starting');
                 return;
             }
+            
+            console.log('startArp: Starting with', arpNotes.length, 'notes');
             
             // Clear any existing interval first
             if (arpInterval) {
@@ -2630,20 +2662,26 @@
             }
             
             const stepTime = (60 / tempo) * 1000 / 4; // 16th notes - same as sequencer
+            console.log('startArp: Step time =', stepTime, 'ms');
+            
             arpInterval = setInterval(() => {
                 if (arpNotes.length > 0) {
                     const note = arpNotes[arpIndex % arpNotes.length];
+                    console.log('Arp playing:', note.noteName);
                     playNote(note.frequency, note.noteName);
                     setTimeout(() => stopNote(note.noteName), stepTime * 0.75); // 75% of step time
                     arpIndex++;
                 } else {
                     // No notes left, stop the arp
+                    console.log('Arp stopped: no notes');
                     if (arpInterval) {
                         clearInterval(arpInterval);
                         arpInterval = null;
                     }
                 }
             }, stepTime);
+            
+            console.log('startArp: Interval started, ID =', arpInterval);
         }
 
         function stopArp() {
@@ -3167,8 +3205,11 @@
             currentStep = 0;
             
             const stepTime = (60 / tempo) * 1000 / 4; // 16th notes
+            let nextStepTime = Date.now();
             
-            sequencerInterval = setInterval(() => {
+            function step() {
+                if (!sequencerPlaying) return;
+                
                 // Remove playing class from all steps
                 document.querySelectorAll('.step').forEach(s => s.classList.remove('playing'));
                 
@@ -3177,7 +3218,7 @@
                 stepElements[currentStep].classList.add('playing');
                 
                 // Flash BPM indicator on beat 1
-                if (currentStep === 0 || currentStep === 4 || currentStep === 8 || currentStep === 12) {
+                if (currentStep === 0 || currentStep === 4 || currentStep === 8 || currentStep === 12 || currentStep === 16 || currentStep === 20 || currentStep === 24 || currentStep === 28) {
                     const bpmLed = document.getElementById('bpmIndicator');
                     bpmLed.classList.add('beat');
                     setTimeout(() => bpmLed.classList.remove('beat'), 50);
@@ -3197,16 +3238,22 @@
                     }
                 });
                 
-                currentStep = (currentStep + 1) % 32;
-            }, stepTime);
+                currentStep = (currentStep + 1) % sequencerSteps;
+                
+                // Schedule next step with accurate timing
+                nextStepTime += stepTime;
+                const delay = nextStepTime - Date.now();
+                sequencerInterval = setTimeout(step, Math.max(0, delay));
+            }
             
+            step();
             document.getElementById('playSeq').classList.add('active');
         }
 
         function stopSequencer() {
             sequencerPlaying = false;
             if (sequencerInterval) {
-                clearInterval(sequencerInterval);
+                clearTimeout(sequencerInterval);
                 sequencerInterval = null;
             }
             currentStep = 0;
@@ -3234,6 +3281,37 @@
 
         document.getElementById('stopSeq').addEventListener('click', stopSequencer);
         document.getElementById('clearSeq').addEventListener('click', clearSequencer);
+
+        // Step length selector
+        document.getElementById('steps8Btn').addEventListener('click', () => setSequencerSteps(8));
+        document.getElementById('steps16Btn').addEventListener('click', () => setSequencerSteps(16));
+        document.getElementById('steps32Btn').addEventListener('click', () => setSequencerSteps(32));
+
+        function setSequencerSteps(steps) {
+            const wasPlaying = sequencerPlaying;
+            if (wasPlaying) stopSequencer();
+            
+            sequencerSteps = steps;
+            
+            // Update button states
+            document.querySelectorAll('[data-steps]').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-steps="${steps}"]`).classList.add('active');
+            
+            // Show/hide steps
+            const stepElements = document.querySelectorAll('.step');
+            stepElements.forEach((step, i) => {
+                if (i < steps) {
+                    step.classList.remove('hidden');
+                } else {
+                    step.classList.add('hidden');
+                }
+            });
+            
+            if (wasPlaying) startSequencer();
+        }
+
+        // Initialize step visibility on load
+        setSequencerSteps(32);
 
         // Sync button
         document.getElementById('syncBtn').addEventListener('click', () => {
@@ -3484,12 +3562,15 @@
             
             // Update all active notes in real-time
             activeNotes.forEach((noteData, noteName) => {
-                if (noteData.osc1 && noteData.osc1.frequency && noteData.baseFrequency) {
-                    const baseFreq = noteData.baseFrequency;
-                    const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
+                const baseFreq = noteData.baseFrequency;
+                const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
+                
+                if (noteData.osc1 && noteData.osc1.frequency) {
                     noteData.osc1.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
                     noteData.osc2.frequency.setValueAtTime(bendedFreq * 0.995, audioContext.currentTime);
                     noteData.osc3.frequency.setValueAtTime(bendedFreq * 1.005, audioContext.currentTime);
+                } else if (noteData.noiseFilter && noteData.noiseFilter.frequency) {
+                    noteData.noiseFilter.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
                 }
             });
         }
@@ -3614,83 +3695,105 @@
         });
 
         function saveSong() {
-            const songData = {
-                version: '1.0',
-                timestamp: new Date().toISOString(),
-                
-                // Synth settings
-                settings: {
-                    volume: masterGain ? masterGain.gain.value : 0.7,
-                    drumVolume: drumGain ? drumGain.gain.value : 0.7,
-                    delay: delayNode ? delayNode.delayTime.value : 0.3,
-                    feedback: feedbackGain ? feedbackGain.gain.value : 0.3,
-                    filter: filterNode ? filterNode.frequency.value : 2000,
-                    resonance: filterNode ? filterNode.Q.value : 1,
-                    currentOctave: currentOctave,
-                    currentWaveform: currentWaveform,
-                    arpEnabled: arpEnabled,
-                    syncEnabled: syncEnabled,
-                    tempo: tempo,
-                    pitchHoldEnabled: pitchHoldEnabled
-                },
-                
-                // Drum volumes
-                drumVolumes: drumVolumes,
-                
-                // Sequencer patterns
-                sequencerPattern: sequencerPattern,
-                
-                // Sampler settings
-                sampler: {
-                    pitch: samplePitch,
-                    speed: sampleSpeed,
-                    filter: sampleFilter,
-                    reverse: sampleReverse,
-                    loop: sampleLoop
-                },
-                
-                // Sample data (convert buffers to base64)
-                samples: {}
-            };
-            
-            // Convert loaded samples to exportable format
-            Object.keys(sampleBuffers).forEach(key => {
-                const buffer = sampleBuffers[key];
-                const channelData = [];
-                for (let i = 0; i < buffer.numberOfChannels; i++) {
-                    channelData.push(Array.from(buffer.getChannelData(i)));
-                }
-                songData.samples[key] = {
-                    numberOfChannels: buffer.numberOfChannels,
-                    sampleRate: buffer.sampleRate,
-                    length: buffer.length,
-                    channelData: channelData
+            try {
+                console.log('Saving song...');
+                const songData = {
+                    version: '1.0',
+                    timestamp: new Date().toISOString(),
+                    
+                    // Synth settings
+                    settings: {
+                        volume: masterGain ? masterGain.gain.value : 0.7,
+                        drumVolume: drumGain ? drumGain.gain.value : 0.7,
+                        delay: delayNode ? delayNode.delayTime.value : 0.3,
+                        feedback: feedbackGain ? feedbackGain.gain.value : 0.3,
+                        filter: filterNode ? filterNode.frequency.value : 2000,
+                        resonance: filterNode ? filterNode.Q.value : 1,
+                        currentOctave: currentOctave,
+                        currentWaveform: currentWaveform,
+                        arpEnabled: arpEnabled,
+                        syncEnabled: syncEnabled,
+                        tempo: tempo,
+                        pitchHoldEnabled: pitchHoldEnabled,
+                        sequencerSteps: sequencerSteps
+                    },
+                    
+                    // Drum volumes
+                    drumVolumes: drumVolumes,
+                    
+                    // Sequencer patterns
+                    sequencerPattern: sequencerPattern,
+                    
+                    // Sampler settings
+                    sampler: {
+                        pitch: samplePitch,
+                        speed: sampleSpeed,
+                        filter: sampleFilter,
+                        reverse: sampleReverse,
+                        loop: sampleLoop
+                    },
+                    
+                    // Sample data (convert buffers to base64)
+                    samples: {}
                 };
-            });
-            
-            // Create and download JSON file
-            const json = JSON.stringify(songData, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `dPaul-MKII-Song-${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            updateNoteDisplay('SONG SAVED');
-            setTimeout(() => updateNoteDisplay('---'), 2000);
+                
+                // Convert loaded samples to exportable format
+                Object.keys(sampleBuffers).forEach(key => {
+                    const buffer = sampleBuffers[key];
+                    const channelData = [];
+                    for (let i = 0; i < buffer.numberOfChannels; i++) {
+                        channelData.push(Array.from(buffer.getChannelData(i)));
+                    }
+                    songData.samples[key] = {
+                        numberOfChannels: buffer.numberOfChannels,
+                        sampleRate: buffer.sampleRate,
+                        length: buffer.length,
+                        channelData: channelData
+                    };
+                });
+                
+                // Create and download JSON file
+                const json = JSON.stringify(songData, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `dPaul-MKII-Song-${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('Song saved successfully');
+                updateNoteDisplay('SONG SAVED');
+                setTimeout(() => updateNoteDisplay('---'), 2000);
+            } catch (error) {
+                console.error('Error saving song:', error);
+                updateNoteDisplay('SAVE ERROR');
+                setTimeout(() => updateNoteDisplay('---'), 2000);
+            }
         }
 
         function loadSong(file) {
-            if (!file) return;
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
             
+            console.log('Loading song:', file.name);
             const reader = new FileReader();
+            
+            reader.onerror = (error) => {
+                console.error('FileReader error:', error);
+                updateNoteDisplay('LOAD ERROR');
+                setTimeout(() => updateNoteDisplay('---'), 2000);
+            };
+            
             reader.onload = (e) => {
                 try {
+                    console.log('File read complete, parsing JSON...');
                     const songData = JSON.parse(e.target.result);
+                    console.log('Song data loaded:', songData);
                     
                     initAudio();
                     
@@ -3710,6 +3813,11 @@
                     syncEnabled = songData.settings.syncEnabled || false;
                     tempo = songData.settings.tempo || 120;
                     pitchHoldEnabled = songData.settings.pitchHoldEnabled || false;
+                    
+                    // Load sequencer steps
+                    if (songData.settings.sequencerSteps) {
+                        setSequencerSteps(songData.settings.sequencerSteps);
+                    }
                     
                     // Load drum volumes
                     if (songData.drumVolumes) {
