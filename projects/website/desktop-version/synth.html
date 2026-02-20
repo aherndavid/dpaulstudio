@@ -1265,7 +1265,7 @@
 <body>
     <div class="synth-container powered-on" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dPaul Technologies MKII <span style="font-size: 12px; color: #666;">v2.10</span></div>
+            <div class="synth-title">dPaul Technologies MKII <span style="font-size: 12px; color: #666;">v2.11</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1318,9 +1318,9 @@
             <!-- Section 2: Volume & ARP -->
             <div class="control-section">
                 <div class="control-group">
-                    <div class="control-label">VOLUME</div>
-                    <div class="knob" id="volumeKnob" data-value="70"></div>
-                    <div class="knob-value" id="volumeValue">70%</div>
+                    <div class="control-label">SYNTH VOL</div>
+                    <div class="knob" id="synthVolumeKnob" data-value="70"></div>
+                    <div class="knob-value" id="synthVolumeValue">70%</div>
                 </div>
                 <div class="control-group">
                     <div class="control-label">DRUM VOL</div>
@@ -1328,9 +1328,23 @@
                     <div class="drum-knob-value knob-value" id="drumVolumeValue">70%</div>
                 </div>
                 <div class="control-group">
+                    <div class="control-label">MASTER</div>
+                    <div class="knob" id="masterVolumeKnob" data-value="70"></div>
+                    <div class="knob-value" id="masterVolumeValue">70%</div>
+                </div>
+                <div class="control-group">
                     <div class="control-label">ARP</div>
                     <div class="switch" id="arpSwitch"></div>
                     <div class="status-light" id="arpLight"></div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">ARP MODE</div>
+                    <div style="display: flex; gap: 3px; flex-wrap: wrap; justify-content: center;">
+                        <div class="seq-btn active" id="arpUp" data-mode="up" style="font-size: 7px; padding: 3px 6px;">UP</div>
+                        <div class="seq-btn" id="arpDown" data-mode="down" style="font-size: 7px; padding: 3px 6px;">DN</div>
+                        <div class="seq-btn" id="arpUpDown" data-mode="updown" style="font-size: 7px; padding: 3px 6px;">U/D</div>
+                        <div class="seq-btn" id="arpRandom" data-mode="random" style="font-size: 7px; padding: 3px 6px;">RND</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1486,6 +1500,7 @@
         // Audio Context
         let audioContext;
         let masterGain;
+        let synthGain;
         let drumGain;
         let delayNode;
         let feedbackGain;
@@ -1497,6 +1512,8 @@
         let arpInterval = null;
         let arpNotes = [];
         let arpIndex = 0;
+        let arpMode = 'up'; // 'up', 'down', 'updown', 'random'
+        let arpDirection = 1; // 1 for up, -1 for down (used in updown mode)
         let activeNotes = new Map();
         let pitchBendValue = 0; // -1 to 1
         let pitchHoldEnabled = false; // Pitch hold state
@@ -1573,6 +1590,9 @@
                 masterGain = audioContext.createGain();
                 masterGain.gain.value = 0.7;
                 
+                synthGain = audioContext.createGain();
+                synthGain.gain.value = 0.7;
+                
                 drumGain = audioContext.createGain();
                 drumGain.gain.value = 0.7;
                 
@@ -1587,11 +1607,14 @@
                 filterNode.frequency.value = 2000;
                 filterNode.Q.value = 1;
                 
+                // Routing: synth → delay/filter → synthGain → masterGain → output
+                //          drums → drumGain → masterGain → output
                 delayNode.connect(feedbackGain);
                 feedbackGain.connect(delayNode);
                 delayNode.connect(filterNode);
-                filterNode.connect(masterGain);
+                filterNode.connect(synthGain);
                 
+                synthGain.connect(masterGain);
                 drumGain.connect(masterGain);
                 masterGain.connect(audioContext.destination);
             }
@@ -2126,6 +2149,7 @@
                 currentOctave: currentOctave,
                 currentWaveform: currentWaveform,
                 arpEnabled: arpEnabled,
+                arpMode: arpMode,
                 arpNotes: [...arpNotes],
                 syncEnabled: syncEnabled,
                 pitchHoldEnabled: pitchHoldEnabled,
@@ -2137,8 +2161,9 @@
                     feedback: parseInt(document.getElementById('feedbackKnob').dataset.value),
                     filter: parseInt(document.getElementById('filterKnob').dataset.value),
                     resonance: parseInt(document.getElementById('resonanceKnob').dataset.value),
-                    volume: parseInt(document.getElementById('volumeKnob').dataset.value),
-                    drumVolume: parseInt(document.getElementById('drumVolumeKnob').dataset.value)
+                    synthVolume: parseInt(document.getElementById('synthVolumeKnob').dataset.value),
+                    drumVolume: parseInt(document.getElementById('drumVolumeKnob').dataset.value),
+                    masterVolume: parseInt(document.getElementById('masterVolumeKnob').dataset.value)
                 }
             };
             
@@ -2237,6 +2262,16 @@
             
             // Apply arp state
             arpEnabled = presetData.arpEnabled;
+            if (presetData.arpMode) {
+                arpMode = presetData.arpMode;
+                // Update arp mode button visuals
+                document.querySelectorAll('[data-mode]').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.mode === arpMode) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
             const arpSwitch = document.getElementById('arpSwitch');
             const arpLight = document.getElementById('arpLight');
             if (arpEnabled) {
@@ -2589,7 +2624,7 @@
                 return;
             }
             
-            console.log('startArp: Starting with', arpNotes.length, 'notes');
+            console.log('startArp: Starting with', arpNotes.length, 'notes, mode:', arpMode);
             
             // Clear any existing interval first
             if (arpInterval) {
@@ -2602,8 +2637,37 @@
             
             arpInterval = setInterval(() => {
                 if (arpNotes.length > 0) {
-                    const note = arpNotes[arpIndex % arpNotes.length];
-                    console.log('Arp playing:', note.noteName);
+                    let noteIndex;
+                    
+                    switch(arpMode) {
+                        case 'up':
+                            noteIndex = arpIndex % arpNotes.length;
+                            break;
+                            
+                        case 'down':
+                            noteIndex = (arpNotes.length - 1) - (arpIndex % arpNotes.length);
+                            break;
+                            
+                        case 'updown':
+                            const cycle = (arpNotes.length * 2) - 2;
+                            const pos = arpIndex % cycle;
+                            if (pos < arpNotes.length) {
+                                noteIndex = pos;
+                            } else {
+                                noteIndex = (arpNotes.length * 2 - 2) - pos;
+                            }
+                            break;
+                            
+                        case 'random':
+                            noteIndex = Math.floor(Math.random() * arpNotes.length);
+                            break;
+                            
+                        default:
+                            noteIndex = arpIndex % arpNotes.length;
+                    }
+                    
+                    const note = arpNotes[noteIndex];
+                    console.log('Arp playing:', note.noteName, 'mode:', arpMode);
                     playNote(note.frequency, note.noteName);
                     setTimeout(() => stopNote(note.noteName), stepTime * 0.75); // 75% of step time
                     arpIndex++;
@@ -2707,7 +2771,11 @@
                 filterNode.frequency.value = 200 + (value / 100) * 4800;
             } else if (knob.id === 'resonanceKnob' && filterNode) {
                 filterNode.Q.value = 1 + (value / 100) * 19;
-            } else if (knob.id === 'volumeKnob' && masterGain) {
+            } else if (knob.id === 'synthVolumeKnob' && synthGain) {
+                synthGain.gain.value = value / 100;
+            } else if (knob.id === 'drumVolumeKnob' && drumGain) {
+                drumGain.gain.value = value / 100;
+            } else if (knob.id === 'masterVolumeKnob' && masterGain) {
                 masterGain.gain.value = value / 100;
             }
         }
@@ -2971,6 +3039,21 @@
         }
 
         document.getElementById('arpSwitch').addEventListener('click', toggleArp);
+        
+        // Arp mode buttons
+        document.querySelectorAll('[data-mode]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                arpMode = btn.dataset.mode;
+                document.querySelectorAll('[data-mode]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Restart arp if it's playing to apply new mode
+                if (arpEnabled && arpInterval) {
+                    stopArp();
+                    startArp();
+                }
+            });
+        });
 
         // Sampler controls
         // setupSamplerKnobs(); // REMOVED - sampler controls removed from UI
