@@ -4226,38 +4226,234 @@
 
     <script>
     (function() {
-        var AKRT = 'https://cdn.jsdelivr.net/gh/KristofferKarlAxelEkberg/AKWF-FREE@master/AKWF/';
+
+        // All wavetables are generated mathematically - no internet required, no CORS issues
+        function makeWave(fn, category) {
+            return { gen: fn, category: category || 'Built-in' };
+        }
+
+        var TWO_PI = Math.PI * 2;
+        var N = 2048; // wavetable size
+
+        // Helper: build PeriodicWave from a harmonic recipe { real: [], imag: [] }
+        function buildPeriodicWave(realArr, imagArr) {
+            var ctx = window.audioContext;
+            if (!ctx) { ctx = new AudioContext(); window.audioContext = ctx; }
+            var r = new Float32Array(N);
+            var im = new Float32Array(N);
+            for (var i = 0; i < Math.min(realArr.length, N); i++) r[i] = realArr[i];
+            for (var i = 0; i < Math.min(imagArr.length, N); i++) im[i] = imagArr[i];
+            return ctx.createPeriodicWave(r, im, { disableNormalization: false });
+        }
+
+        // Helper: generate harmonics from a time-domain waveform function
+        function waveformToPeriodicWave(fn) {
+            var ctx = window.audioContext;
+            if (!ctx) { ctx = new AudioContext(); window.audioContext = ctx; }
+            var real = new Float32Array(N);
+            var imag = new Float32Array(N);
+            var samples = new Float32Array(N);
+            for (var i = 0; i < N; i++) samples[i] = fn(i / N);
+            // DFT for first 512 harmonics
+            for (var h = 1; h < 512; h++) {
+                var re = 0, im2 = 0;
+                for (var n = 0; n < N; n++) {
+                    var a = (TWO_PI * h * n) / N;
+                    re += samples[n] * Math.cos(a);
+                    im2 -= samples[n] * Math.sin(a);
+                }
+                real[h] = (re / N) * 2;
+                imag[h] = (im2 / N) * 2;
+            }
+            return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
+        }
+
+        // Wavetable definitions - each has a name, category, and gen() function
         var WAVES = [
-            { name: 'Bright Saw',   url: AKRT+'AKWF_bsaw/AKWF_bsaw_0001.wav' },
-            { name: 'Soft Saw',     url: AKRT+'AKWF_bsaw/AKWF_bsaw_0005.wav' },
-            { name: 'Saw Warm',     url: AKRT+'AKWF_bsaw/AKWF_bsaw_0010.wav' },
-            { name: 'Square Alt',   url: AKRT+'AKWF_bsqr/AKWF_bsqr_0001.wav' },
-            { name: 'Square Soft',  url: AKRT+'AKWF_bsqr/AKWF_bsqr_0005.wav' },
-            { name: 'Sine Harm',    url: AKRT+'AKWF_sin/AKWF_sin_0001.wav' },
-            { name: 'Cello 1',      url: AKRT+'AKWF_cello/AKWF_cello_0001.wav' },
-            { name: 'Cello 2',      url: AKRT+'AKWF_cello/AKWF_cello_0002.wav' },
-            { name: 'Clarinet 1',   url: AKRT+'AKWF_clarinett/AKWF_clarinett_0001.wav' },
-            { name: 'Clarinet 2',   url: AKRT+'AKWF_clarinett/AKWF_clarinett_0005.wav' },
-            { name: 'Flute 1',      url: AKRT+'AKWF_flute/AKWF_flute_0001.wav' },
-            { name: 'Flute 2',      url: AKRT+'AKWF_flute/AKWF_flute_0005.wav' },
-            { name: 'Oboe 1',       url: AKRT+'AKWF_oboe/AKWF_oboe_0001.wav' },
-            { name: 'Guitar 1',     url: AKRT+'AKWF_eguitar/AKWF_eguitar_0001.wav' },
-            { name: 'Guitar 2',     url: AKRT+'AKWF_eguitar/AKWF_eguitar_0005.wav' },
-            { name: 'Piano 1',      url: AKRT+'AKWF_piano/AKWF_piano_0001.wav' },
-            { name: 'Piano 2',      url: AKRT+'AKWF_piano/AKWF_piano_0005.wav' },
-            { name: 'Vocal Ah',     url: AKRT+'AKWF_vowel/AKWF_vowel_0001.wav' },
-            { name: 'Vocal Oh',     url: AKRT+'AKWF_vowel/AKWF_vowel_0005.wav' },
-            { name: 'Overtone 1',   url: AKRT+'AKWF_overtone/AKWF_overtone_0001.wav' },
-            { name: 'Overtone 2',   url: AKRT+'AKWF_overtone/AKWF_overtone_0005.wav' },
-            { name: 'Overtone 3',   url: AKRT+'AKWF_overtone/AKWF_overtone_0010.wav' },
-            { name: 'Bitcrush 1',   url: AKRT+'AKWF_bitreduced/AKWF_bitreduced_0001.wav' },
-            { name: 'Bitcrush 2',   url: AKRT+'AKWF_bitreduced/AKWF_bitreduced_0005.wav' },
-            { name: 'Raw 1',        url: AKRT+'AKWF_raw/AKWF_raw_0001.wav' },
-            { name: 'Raw 2',        url: AKRT+'AKWF_raw/AKWF_raw_0010.wav' },
-            { name: '1Cycle 1',     url: AKRT+'AKWF_1cycle/AKWF_1cycle_0001.wav' },
-            { name: '1Cycle 2',     url: AKRT+'AKWF_1cycle/AKWF_1cycle_0005.wav' },
-            { name: 'Human Voc 1',  url: AKRT+'AKWF_hvoice/AKWF_hvoice_0001.wav' },
-            { name: 'Human Voc 2',  url: AKRT+'AKWF_hvoice/AKWF_hvoice_0005.wav' },
+            // ── Sawtooth variants ──
+            { name: 'Bright Saw',    category: 'Sawtooth',   gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<64;h++){r.push(0);im.push(1/h);}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Soft Saw',      category: 'Sawtooth',   gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<32;h++){r.push(0);im.push(1/(h*h));}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Super Saw',     category: 'Sawtooth',   gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var v=0;
+                    for(var d=-2;d<=2;d++) v+=(((t+d*0.02)%1)*2-1);
+                    return v/5;
+                });
+            }},
+            // ── Square variants ──
+            { name: 'Square Odd',    category: 'Square',     gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<64;h++){r.push(0);im.push(h%2===1?1/h:0);}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Square Soft',   category: 'Square',     gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<16;h++){r.push(0);im.push(h%2===1?1/(h*h):0);}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Pulse 25%',     category: 'Square',     gen: function() {
+                return waveformToPeriodicWave(function(t){ return t<0.25?1:-1; });
+            }},
+            // ── Triangle variants ──
+            { name: 'Triangle',      category: 'Triangle',   gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<64;h++){var s=(h%2===1)?Math.pow(-1,(h-1)/2)/(h*h):0;r.push(s);im.push(0);}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Tri Bright',    category: 'Triangle',   gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    return t<0.5?4*t-1:3-4*t;
+                });
+            }},
+            // ── Organ / Hammond style ──
+            { name: 'Organ 1',       category: 'Organ',      gen: function() {
+                var r=[0,0,0,0,0,0,0,0,0], im=[0,0.8,0,0.5,0,0.3,0,0.2,0.1];
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Organ 2',       category: 'Organ',      gen: function() {
+                var r=[0,0,0,0,0,0,0,0,0], im=[0,1,0,0.8,0,0.5,0,0.1,0.3];
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Drawbar',       category: 'Organ',      gen: function() {
+                var r=[0], im=[0];
+                var drawbars=[0,0.8,1,0.6,0.4,0,0.2,0,0.1];
+                for(var h=1;h<9;h++){r.push(0);im.push(drawbars[h]||0);}
+                return buildPeriodicWave(r,im);
+            }},
+            // ── Bell / Metallic ──
+            { name: 'Bell',          category: 'Bell',       gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    return Math.sin(TWO_PI*t)+0.5*Math.sin(TWO_PI*2.756*t)+
+                           0.25*Math.sin(TWO_PI*5.404*t)+0.1*Math.sin(TWO_PI*8.933*t);
+                });
+            }},
+            { name: 'Marimba',       category: 'Bell',       gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    return Math.sin(TWO_PI*t)+0.4*Math.sin(TWO_PI*4*t)+
+                           0.1*Math.sin(TWO_PI*10*t);
+                });
+            }},
+            // ── Vocal / Formant ──
+            { name: 'Vocal Ah',      category: 'Vocal',      gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    return 0.7*Math.sin(TWO_PI*t)+0.5*Math.sin(TWO_PI*2*t)+
+                           0.8*Math.sin(TWO_PI*3*t)+0.3*Math.sin(TWO_PI*4*t)+
+                           0.6*Math.sin(TWO_PI*8*t)+0.2*Math.sin(TWO_PI*13*t);
+                });
+            }},
+            { name: 'Vocal Ee',      category: 'Vocal',      gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    return 0.5*Math.sin(TWO_PI*t)+0.3*Math.sin(TWO_PI*2*t)+
+                           0.9*Math.sin(TWO_PI*5*t)+0.7*Math.sin(TWO_PI*10*t)+
+                           0.5*Math.sin(TWO_PI*14*t);
+                });
+            }},
+            { name: 'Vocal Oh',      category: 'Vocal',      gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    return 0.9*Math.sin(TWO_PI*t)+0.6*Math.sin(TWO_PI*2*t)+
+                           0.2*Math.sin(TWO_PI*3*t)+0.5*Math.sin(TWO_PI*6*t)+
+                           0.1*Math.sin(TWO_PI*9*t);
+                });
+            }},
+            // ── Strings / Ensemble ──
+            { name: 'Strings',       category: 'Strings',    gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<20;h++){r.push(0);im.push(Math.pow(0.85,h)*( (h%2===1)?1:-0.5 ));}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Cello',         category: 'Strings',    gen: function() {
+                var r=[0], im=[0];
+                var amp=[0,1,0.6,0.4,0.8,0.2,0.5,0.1,0.3,0.05];
+                for(var h=1;h<10;h++){r.push(0);im.push(amp[h]);}
+                return buildPeriodicWave(r,im);
+            }},
+            // ── Wind ──
+            { name: 'Flute',         category: 'Wind',       gen: function() {
+                var r=[0], im=[0,1,0.3,0.05,0.01];
+                r.push(0,0,0,0); 
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Clarinet',      category: 'Wind',       gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<16;h++){r.push(0);im.push(h%2===1?1/h:1/(h*4));}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Oboe',          category: 'Wind',       gen: function() {
+                var r=[0], im=[0];
+                var amp=[0,1,0.8,0.7,0.5,0.6,0.4,0.3,0.2,0.15,0.1];
+                for(var h=1;h<11;h++){r.push(0);im.push(amp[h]);}
+                return buildPeriodicWave(r,im);
+            }},
+            // ── FM / Digital ──
+            { name: 'FM Bass',       category: 'FM',         gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var mod = Math.sin(TWO_PI*2*t)*2.5;
+                    return Math.sin(TWO_PI*t + mod);
+                });
+            }},
+            { name: 'FM Bell',       category: 'FM',         gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var mod = Math.sin(TWO_PI*3.5*t)*3;
+                    return Math.sin(TWO_PI*t + mod);
+                });
+            }},
+            { name: 'FM Growl',      category: 'FM',         gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var mod = Math.sin(TWO_PI*4*t)*5;
+                    return Math.sin(TWO_PI*t + mod);
+                });
+            }},
+            // ── Wavetable morphs ──
+            { name: 'Saw-Sine',      category: 'Morph',      gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var saw = t*2-1;
+                    var sine = Math.sin(TWO_PI*t);
+                    return saw*0.5 + sine*0.5;
+                });
+            }},
+            { name: 'Pulse-Tri',     category: 'Morph',      gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var pulse = t<0.3?1:-1;
+                    var tri = t<0.5?4*t-1:3-4*t;
+                    return pulse*0.5 + tri*0.5;
+                });
+            }},
+            { name: 'Harmonic Odd',  category: 'Additive',   gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<32;h++){r.push(0);im.push(h%2===1?Math.pow(0.7,h):0);}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Harmonic Even', category: 'Additive',   gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<32;h++){r.push(0);im.push(h%2===0?Math.pow(0.7,h):0);}
+                return buildPeriodicWave(r,im);
+            }},
+            { name: 'Overtone Rich', category: 'Additive',   gen: function() {
+                var r=[0], im=[0];
+                for(var h=1;h<48;h++){r.push(0);im.push(1/(Math.pow(h,0.5)));}
+                return buildPeriodicWave(r,im);
+            }},
+            // ── Synth leads ──
+            { name: 'Sync Lead',     category: 'Lead',       gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var ratio=3.5;
+                    return Math.sin(TWO_PI*t)*Math.max(0,Math.cos(TWO_PI*ratio*t));
+                });
+            }},
+            { name: 'Growl Bass',    category: 'Lead',       gen: function() {
+                return waveformToPeriodicWave(function(t){
+                    var v = t*2-1;
+                    return v + 0.3*Math.sin(TWO_PI*7*t) + 0.2*Math.sin(TWO_PI*13*t);
+                });
+            }},
         ];
 
         var allWaves = WAVES.slice();
@@ -4278,13 +4474,13 @@
             list.forEach(function(w) {
                 var card = document.createElement('div');
                 card.className = 'wt-card' + (w.name === activeWtName ? ' active' : '');
-                card.innerHTML = '<div class="wt-name">' + w.name + '</div><div class="wt-sub">' + (w.category || 'AKRT Free') + '</div>';
-                card.addEventListener('click', function() { loadWave(w, card); });
+                card.innerHTML = '<div class="wt-name">' + w.name + '</div><div class="wt-sub">' + (w.category || 'Built-in') + '</div>';
+                card.addEventListener('click', function() { selectWave(w, card); });
                 grid.appendChild(card);
             });
         }
 
-        function wavToPeriodicWave(arrayBuffer) {
+        function wavFileToPeriodicWave(arrayBuffer) {
             var ctx = window.audioContext;
             if (!ctx) { ctx = new AudioContext(); window.audioContext = ctx; }
             return ctx.decodeAudioData(arrayBuffer).then(function(decoded) {
@@ -4296,15 +4492,15 @@
                 }
                 var real = new Float32Array(size);
                 var imag = new Float32Array(size);
-                for (var h = 1; h < 256; h++) {
-                    var re = 0, im = 0;
+                for (var h = 1; h < 512; h++) {
+                    var re = 0, im2 = 0;
                     for (var n = 0; n < size; n++) {
-                        var angle = (2 * Math.PI * h * n) / size;
+                        var angle = (TWO_PI * h * n) / size;
                         re += resampled[n] * Math.cos(angle);
-                        im -= resampled[n] * Math.sin(angle);
+                        im2 -= resampled[n] * Math.sin(angle);
                     }
                     real[h] = (re / size) * 2;
-                    imag[h] = (im / size) * 2;
+                    imag[h] = (im2 / size) * 2;
                 }
                 return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
             });
@@ -4320,32 +4516,27 @@
             label.textContent = 'ACTIVE: ' + name;
         }
 
-        function loadWave(w, card) {
-            var overlay = document.createElement('div');
-            overlay.className = 'wt-loading';
-            overlay.textContent = 'LOADING...';
-            card.appendChild(overlay);
-            fetch(w.url)
-                .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.arrayBuffer(); })
-                .then(wavToPeriodicWave)
-                .then(function(pw) {
-                    applyWavetableToSynth(pw, w.name);
-                    document.querySelectorAll('.wt-card').forEach(function(c) { c.classList.remove('active'); });
-                    card.classList.add('active');
-                    overlay.remove();
-                    setTimeout(function() { modal.style.display = 'none'; }, 300);
-                })
-                .catch(function(err) {
-                    overlay.textContent = 'FAILED';
-                    console.error(err);
-                    setTimeout(function() { overlay.remove(); }, 2500);
-                });
+        function selectWave(w, card) {
+            // Make sure audio context is running
+            if (!window.audioContext) {
+                window.audioContext = new AudioContext();
+            }
+            if (window.audioContext.state === 'suspended') window.audioContext.resume();
+            try {
+                var pw = w.gen();
+                applyWavetableToSynth(pw, w.name);
+                document.querySelectorAll('.wt-card').forEach(function(c) { c.classList.remove('active'); });
+                card.classList.add('active');
+                setTimeout(function() { modal.style.display = 'none'; }, 300);
+            } catch(err) {
+                console.error('Wavetable generation error:', err);
+            }
         }
 
         fileIn.addEventListener('change', function(e) {
             var file = e.target.files[0];
             if (!file) return;
-            file.arrayBuffer().then(wavToPeriodicWave).then(function(pw) {
+            file.arrayBuffer().then(wavFileToPeriodicWave).then(function(pw) {
                 var name = file.name.replace('.wav','');
                 applyWavetableToSynth(pw, name + ' (custom)');
                 var custom = { name: name, url: URL.createObjectURL(file), category: 'Custom' };
