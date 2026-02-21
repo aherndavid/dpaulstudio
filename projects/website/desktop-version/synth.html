@@ -1826,6 +1826,10 @@
                 osc1.setPeriodicWave(wave);
                 osc2.setPeriodicWave(wave);
                 osc3.setPeriodicWave(wave);
+            } else if (currentWaveform === 'wavetable' && window.currentWavetablePeriodicWave) {
+                osc1.setPeriodicWave(window.currentWavetablePeriodicWave);
+                osc2.setPeriodicWave(window.currentWavetablePeriodicWave);
+                osc3.setPeriodicWave(window.currentWavetablePeriodicWave);
             } else {
                 osc1.type = currentWaveform;
                 osc2.type = currentWaveform;
@@ -4216,7 +4220,7 @@
             </div>
             <div class="wt-search-bar">
                 <input type="text" id="wtSearch" placeholder="Search wavetables..." />
-                <label class="wt-upload-label">LOAD .WAV<input type="file" id="wtFileInput" accept=".wav" style="display:none" /></label>
+                <label class="wt-upload-label">LOAD .WAV<input type="file" id="wtFileInput" style="display:none" /></label>
                 <span class="wt-status" id="wtStatus">Ready</span>
             </div>
             <div class="wt-grid" id="wtGrid"></div>
@@ -4578,20 +4582,7 @@
             });
         });
 
-        // Patch AudioContext.createOscillator so wavetable PeriodicWave is applied on start
-        var _origCreate = AudioContext.prototype.createOscillator;
-        AudioContext.prototype.createOscillator = function() {
-            var osc = _origCreate.call(this);
-            var _origStart = osc.start.bind(osc);
-            osc.start = function(when) {
-                var wf = (typeof currentWaveform !== 'undefined') ? currentWaveform : window.currentWaveform;
-                if (wf === 'wavetable' && window.currentWavetablePeriodicWave) {
-                    try { osc.setPeriodicWave(window.currentWavetablePeriodicWave); } catch(e) {}
-                }
-                _origStart(when !== undefined ? when : 0);
-            };
-            return osc;
-        };
+        // Wavetable is applied directly in playNote - no monkey-patch needed
 
         buildGrid(filteredWaves);
     })();
