@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Analog Synth</title>
+    <title>dPaul Technologies MKIII v3.0</title>
     <style>
         * {
             margin: 0;
@@ -1260,12 +1260,153 @@
             background: #cc5500;
             color: white;
         }
+
+        /* ── Wavetable Browser Modal ── */
+        #wavetableModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        #wavetableModal.open { display: flex; }
+        .wt-modal-inner {
+            background: #111;
+            border: 1px solid #cc5500;
+            border-radius: 12px;
+            width: min(720px, 95vw);
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(204,85,0,0.3);
+        }
+        .wt-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid #333;
+            background: #0d0d0d;
+        }
+        .wt-modal-header h2 {
+            color: #cc5500;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+        .wt-close-btn {
+            background: none;
+            border: 1px solid #555;
+            color: #aaa;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .wt-close-btn:hover { border-color: #cc5500; color: #cc5500; }
+        .wt-search-bar {
+            padding: 10px 18px;
+            background: #0d0d0d;
+            border-bottom: 1px solid #222;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .wt-search-bar input {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #eee;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            outline: none;
+        }
+        .wt-search-bar input:focus { border-color: #cc5500; }
+        .wt-status {
+            color: #888;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            min-width: 80px;
+            text-align: right;
+        }
+        .wt-upload-label {
+            background: #1a1a1a;
+            border: 1px solid #555;
+            color: #aaa;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+        .wt-upload-label:hover { border-color: #cc5500; color: #cc5500; }
+        .wt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 8px;
+            padding: 14px 18px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .wt-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            position: relative;
+        }
+        .wt-card:hover { border-color: #cc5500; background: #222; }
+        .wt-card.active { border-color: #cc5500; background: #1f1100; }
+        .wt-card .wt-name {
+            color: #eee;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        .wt-card .wt-sub {
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+        .wt-card .wt-loading {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            color: #cc5500;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+        .wt-current-label {
+            padding: 8px 18px;
+            background: #0d0d0d;
+            border-top: 1px solid #222;
+            color: #cc5500;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
     <div class="synth-container powered-on" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dPaul Technologies MKII <span style="font-size: 12px; color: #666;">v2.11</span></div>
+            <div class="synth-title">dPaul Technologies MKIII <span style="font-size: 12px; color: #666;">v3.0</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1287,6 +1428,7 @@
             <div class="waveform-btn" id="waveSine" data-wave="sine">SIN</div>
             <div class="waveform-btn" id="wavePulse" data-wave="pulse">PULSE</div>
             <div class="waveform-btn" id="waveNoise" data-wave="noise">NOISE</div>
+            <div class="waveform-btn" id="waveWavetable" data-wave="wavetable">WTBL</div>
             <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
         </div>
 
@@ -2171,7 +2313,7 @@
             
             // Save to localStorage
             try {
-                localStorage.setItem('dPaulMKII_presets', JSON.stringify(presets));
+                localStorage.setItem('dPaulMKIII_presets', JSON.stringify(presets));
                 updateNoteDisplay(`M${slot} SAVED`);
                 setTimeout(() => updateNoteDisplay('---'), 1000);
             } catch (e) {
@@ -2294,7 +2436,7 @@
 
         function loadPresetsFromStorage() {
             try {
-                const saved = localStorage.getItem('dPaulMKII_presets');
+                const saved = localStorage.getItem('dPaulMKIII_presets');
                 if (saved) {
                     presets = JSON.parse(saved);
                 }
@@ -2328,7 +2470,7 @@
             };
             
             try {
-                localStorage.setItem('dPaulMKII_settings', JSON.stringify(settings));
+                localStorage.setItem('dPaulMKIII_settings', JSON.stringify(settings));
                 updateNoteDisplay('SAVED');
                 setTimeout(() => updateNoteDisplay('---'), 1000);
                 return true;
@@ -2342,7 +2484,7 @@
 
         function loadSettings() {
             try {
-                const saved = localStorage.getItem('dPaulMKII_settings');
+                const saved = localStorage.getItem('dPaulMKIII_settings');
                 if (!saved) return false;
                 
                 const settings = JSON.parse(saved);
@@ -3740,7 +3882,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `dPaul-MKII-Song-${new Date().toISOString().slice(0,10)}.json`;
+                a.download = `dPaul-MKIII-Song-${new Date().toISOString().slice(0,10)}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -3825,7 +3967,7 @@
                 // Create song data
                 const songData = createSongData();
                 const jsonContent = JSON.stringify(songData, null, 2);
-                const fileName = `dPaul-MKII-${new Date().toISOString().slice(0,10)}.json`;
+                const fileName = `dPaul-MKIII-${new Date().toISOString().slice(0,10)}.json`;
 
                 // Upload to Google Drive
                 const file = new Blob([jsonContent], { type: 'application/json' });
@@ -3890,7 +4032,7 @@
                 const response = await gapi.client.drive.files.list({
                     pageSize: 10,
                     fields: 'files(id, name, modifiedTime)',
-                    q: "name contains 'dPaul-MKII' and mimeType='application/json'"
+                    q: "name contains 'dPaul-MKIII' and mimeType='application/json'"
                 });
 
                 const files = response.result.files;
@@ -4063,6 +4205,205 @@
                 buildKeyboard();
             }
         }, 1000);
+    </script>
+
+    <!-- Wavetable Browser Modal -->
+    <div id="wavetableModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
+        <div class="wt-modal-inner">
+            <div class="wt-modal-header">
+                <h2>WAVETABLE BROWSER</h2>
+                <button class="wt-close-btn" id="wtCloseBtn">X CLOSE</button>
+            </div>
+            <div class="wt-search-bar">
+                <input type="text" id="wtSearch" placeholder="Search wavetables..." />
+                <label class="wt-upload-label">LOAD .WAV<input type="file" id="wtFileInput" accept=".wav" style="display:none" /></label>
+                <span class="wt-status" id="wtStatus">Ready</span>
+            </div>
+            <div class="wt-grid" id="wtGrid"></div>
+            <div class="wt-current-label" id="wtCurrentLabel">ACTIVE: None</div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        var AKRT = 'https://cdn.jsdelivr.net/gh/KristofferKarlAxelEkberg/AKWF-FREE@master/AKWF/';
+        var WAVES = [
+            { name: 'Bright Saw',   url: AKRT+'AKWF_bsaw/AKWF_bsaw_0001.wav' },
+            { name: 'Soft Saw',     url: AKRT+'AKWF_bsaw/AKWF_bsaw_0005.wav' },
+            { name: 'Saw Warm',     url: AKRT+'AKWF_bsaw/AKWF_bsaw_0010.wav' },
+            { name: 'Square Alt',   url: AKRT+'AKWF_bsqr/AKWF_bsqr_0001.wav' },
+            { name: 'Square Soft',  url: AKRT+'AKWF_bsqr/AKWF_bsqr_0005.wav' },
+            { name: 'Sine Harm',    url: AKRT+'AKWF_sin/AKWF_sin_0001.wav' },
+            { name: 'Cello 1',      url: AKRT+'AKWF_cello/AKWF_cello_0001.wav' },
+            { name: 'Cello 2',      url: AKRT+'AKWF_cello/AKWF_cello_0002.wav' },
+            { name: 'Clarinet 1',   url: AKRT+'AKWF_clarinett/AKWF_clarinett_0001.wav' },
+            { name: 'Clarinet 2',   url: AKRT+'AKWF_clarinett/AKWF_clarinett_0005.wav' },
+            { name: 'Flute 1',      url: AKRT+'AKWF_flute/AKWF_flute_0001.wav' },
+            { name: 'Flute 2',      url: AKRT+'AKWF_flute/AKWF_flute_0005.wav' },
+            { name: 'Oboe 1',       url: AKRT+'AKWF_oboe/AKWF_oboe_0001.wav' },
+            { name: 'Guitar 1',     url: AKRT+'AKWF_eguitar/AKWF_eguitar_0001.wav' },
+            { name: 'Guitar 2',     url: AKRT+'AKWF_eguitar/AKWF_eguitar_0005.wav' },
+            { name: 'Piano 1',      url: AKRT+'AKWF_piano/AKWF_piano_0001.wav' },
+            { name: 'Piano 2',      url: AKRT+'AKWF_piano/AKWF_piano_0005.wav' },
+            { name: 'Vocal Ah',     url: AKRT+'AKWF_vowel/AKWF_vowel_0001.wav' },
+            { name: 'Vocal Oh',     url: AKRT+'AKWF_vowel/AKWF_vowel_0005.wav' },
+            { name: 'Overtone 1',   url: AKRT+'AKWF_overtone/AKWF_overtone_0001.wav' },
+            { name: 'Overtone 2',   url: AKRT+'AKWF_overtone/AKWF_overtone_0005.wav' },
+            { name: 'Overtone 3',   url: AKRT+'AKWF_overtone/AKWF_overtone_0010.wav' },
+            { name: 'Bitcrush 1',   url: AKRT+'AKWF_bitreduced/AKWF_bitreduced_0001.wav' },
+            { name: 'Bitcrush 2',   url: AKRT+'AKWF_bitreduced/AKWF_bitreduced_0005.wav' },
+            { name: 'Raw 1',        url: AKRT+'AKWF_raw/AKWF_raw_0001.wav' },
+            { name: 'Raw 2',        url: AKRT+'AKWF_raw/AKWF_raw_0010.wav' },
+            { name: '1Cycle 1',     url: AKRT+'AKWF_1cycle/AKWF_1cycle_0001.wav' },
+            { name: '1Cycle 2',     url: AKRT+'AKWF_1cycle/AKWF_1cycle_0005.wav' },
+            { name: 'Human Voc 1',  url: AKRT+'AKWF_hvoice/AKWF_hvoice_0001.wav' },
+            { name: 'Human Voc 2',  url: AKRT+'AKWF_hvoice/AKWF_hvoice_0005.wav' },
+        ];
+
+        var allWaves = WAVES.slice();
+        var filteredWaves = allWaves.slice();
+        var activeWtName = null;
+        window.currentWavetablePeriodicWave = null;
+
+        var modal  = document.getElementById('wavetableModal');
+        var grid   = document.getElementById('wtGrid');
+        var search = document.getElementById('wtSearch');
+        var status = document.getElementById('wtStatus');
+        var label  = document.getElementById('wtCurrentLabel');
+        var fileIn = document.getElementById('wtFileInput');
+
+        function buildGrid(list) {
+            grid.innerHTML = '';
+            status.textContent = list.length + ' waves';
+            list.forEach(function(w) {
+                var card = document.createElement('div');
+                card.className = 'wt-card' + (w.name === activeWtName ? ' active' : '');
+                card.innerHTML = '<div class="wt-name">' + w.name + '</div><div class="wt-sub">' + (w.category || 'AKRT Free') + '</div>';
+                card.addEventListener('click', function() { loadWave(w, card); });
+                grid.appendChild(card);
+            });
+        }
+
+        function wavToPeriodicWave(arrayBuffer) {
+            var ctx = window.audioContext;
+            if (!ctx) { ctx = new AudioContext(); window.audioContext = ctx; }
+            return ctx.decodeAudioData(arrayBuffer).then(function(decoded) {
+                var raw = decoded.getChannelData(0);
+                var size = 2048;
+                var resampled = new Float32Array(size);
+                for (var i = 0; i < size; i++) {
+                    resampled[i] = raw[Math.floor(i * raw.length / size)];
+                }
+                var real = new Float32Array(size);
+                var imag = new Float32Array(size);
+                for (var h = 1; h < 256; h++) {
+                    var re = 0, im = 0;
+                    for (var n = 0; n < size; n++) {
+                        var angle = (2 * Math.PI * h * n) / size;
+                        re += resampled[n] * Math.cos(angle);
+                        im -= resampled[n] * Math.sin(angle);
+                    }
+                    real[h] = (re / size) * 2;
+                    imag[h] = (im / size) * 2;
+                }
+                return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
+            });
+        }
+
+        function applyWavetableToSynth(pw, name) {
+            window.currentWavetablePeriodicWave = pw;
+            activeWtName = name;
+            document.querySelectorAll('.waveform-btn').forEach(function(b) { b.classList.remove('active'); });
+            var wtBtn = document.getElementById('waveWavetable');
+            if (wtBtn) wtBtn.classList.add('active');
+            if (typeof currentWaveform !== 'undefined') { currentWaveform = 'wavetable'; }
+            label.textContent = 'ACTIVE: ' + name;
+        }
+
+        function loadWave(w, card) {
+            var overlay = document.createElement('div');
+            overlay.className = 'wt-loading';
+            overlay.textContent = 'LOADING...';
+            card.appendChild(overlay);
+            fetch(w.url)
+                .then(function(r) { if (!r.ok) throw new Error('HTTP '+r.status); return r.arrayBuffer(); })
+                .then(wavToPeriodicWave)
+                .then(function(pw) {
+                    applyWavetableToSynth(pw, w.name);
+                    document.querySelectorAll('.wt-card').forEach(function(c) { c.classList.remove('active'); });
+                    card.classList.add('active');
+                    overlay.remove();
+                    setTimeout(function() { modal.style.display = 'none'; }, 300);
+                })
+                .catch(function(err) {
+                    overlay.textContent = 'FAILED';
+                    console.error(err);
+                    setTimeout(function() { overlay.remove(); }, 2500);
+                });
+        }
+
+        fileIn.addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            file.arrayBuffer().then(wavToPeriodicWave).then(function(pw) {
+                var name = file.name.replace('.wav','');
+                applyWavetableToSynth(pw, name + ' (custom)');
+                var custom = { name: name, url: URL.createObjectURL(file), category: 'Custom' };
+                allWaves.unshift(custom);
+                filteredWaves = allWaves.slice();
+                buildGrid(filteredWaves);
+                modal.style.display = 'none';
+            }).catch(function(err) { console.error(err); status.textContent = 'Error!'; });
+        });
+
+        search.addEventListener('input', function() {
+            var q = search.value.toLowerCase();
+            filteredWaves = allWaves.filter(function(w) { return w.name.toLowerCase().indexOf(q) >= 0; });
+            buildGrid(filteredWaves);
+        });
+
+        // Open modal when WTBL button clicked (capture phase beats generic handler)
+        document.addEventListener('DOMContentLoaded', function() {
+            var wtBtn = document.getElementById('waveWavetable');
+            if (wtBtn) {
+                wtBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    modal.style.display = 'flex';
+                    search.value = '';
+                    filteredWaves = allWaves.slice();
+                    buildGrid(filteredWaves);
+                    if (!window.currentWavetablePeriodicWave) wtBtn.classList.remove('active');
+                }, true);
+            }
+            document.getElementById('wtCloseBtn').addEventListener('click', function() {
+                modal.style.display = 'none';
+                if (!window.currentWavetablePeriodicWave) {
+                    var b = document.getElementById('waveWavetable');
+                    if (b) b.classList.remove('active');
+                }
+            });
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+        });
+
+        // Patch AudioContext.createOscillator so wavetable PeriodicWave is applied on start
+        var _origCreate = AudioContext.prototype.createOscillator;
+        AudioContext.prototype.createOscillator = function() {
+            var osc = _origCreate.call(this);
+            var _origStart = osc.start.bind(osc);
+            osc.start = function(when) {
+                var wf = (typeof currentWaveform !== 'undefined') ? currentWaveform : window.currentWaveform;
+                if (wf === 'wavetable' && window.currentWavetablePeriodicWave) {
+                    try { osc.setPeriodicWave(window.currentWavetablePeriodicWave); } catch(e) {}
+                }
+                _origStart(when !== undefined ? when : 0);
+            };
+            return osc;
+        };
+
+        buildGrid(filteredWaves);
+    })();
     </script>
 </body>
 </html>
