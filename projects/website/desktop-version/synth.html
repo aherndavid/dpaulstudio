@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dPaul Technologies MKIII v3.0</title>
+    <title>Retro Analog Synth</title>
     <style>
         * {
             margin: 0;
@@ -1260,153 +1260,12 @@
             background: #cc5500;
             color: white;
         }
-
-        /* ── Wavetable Browser Modal ── */
-        #wavetableModal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-        #wavetableModal.open { display: flex; }
-        .wt-modal-inner {
-            background: #111;
-            border: 1px solid #cc5500;
-            border-radius: 12px;
-            width: min(720px, 95vw);
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(204,85,0,0.3);
-        }
-        .wt-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 18px;
-            border-bottom: 1px solid #333;
-            background: #0d0d0d;
-        }
-        .wt-modal-header h2 {
-            color: #cc5500;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin: 0;
-        }
-        .wt-close-btn {
-            background: none;
-            border: 1px solid #555;
-            color: #aaa;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-        }
-        .wt-close-btn:hover { border-color: #cc5500; color: #cc5500; }
-        .wt-search-bar {
-            padding: 10px 18px;
-            background: #0d0d0d;
-            border-bottom: 1px solid #222;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        .wt-search-bar input {
-            flex: 1;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #eee;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            outline: none;
-        }
-        .wt-search-bar input:focus { border-color: #cc5500; }
-        .wt-status {
-            color: #888;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            min-width: 80px;
-            text-align: right;
-        }
-        .wt-upload-label {
-            background: #1a1a1a;
-            border: 1px solid #555;
-            color: #aaa;
-            padding: 6px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            white-space: nowrap;
-        }
-        .wt-upload-label:hover { border-color: #cc5500; color: #cc5500; }
-        .wt-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 8px;
-            padding: 14px 18px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .wt-card {
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            border-radius: 6px;
-            padding: 10px;
-            cursor: pointer;
-            transition: border-color 0.15s, background 0.15s;
-            position: relative;
-        }
-        .wt-card:hover { border-color: #cc5500; background: #222; }
-        .wt-card.active { border-color: #cc5500; background: #1f1100; }
-        .wt-card .wt-name {
-            color: #eee;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            font-weight: bold;
-            margin-bottom: 4px;
-            word-break: break-word;
-        }
-        .wt-card .wt-sub {
-            color: #666;
-            font-family: 'Courier New', monospace;
-            font-size: 10px;
-        }
-        .wt-card .wt-loading {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            color: #cc5500;
-            font-family: 'Courier New', monospace;
-            font-size: 10px;
-        }
-        .wt-current-label {
-            padding: 8px 18px;
-            background: #0d0d0d;
-            border-top: 1px solid #222;
-            color: #cc5500;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            letter-spacing: 1px;
-        }
     </style>
 </head>
 <body>
     <div class="synth-container powered-on" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dPaul Technologies MKIII <span style="font-size: 12px; color: #666;">v3.0</span></div>
+            <div class="synth-title">dPaul Technologies MKII <span style="font-size: 12px; color: #666;">v2.11</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1428,7 +1287,6 @@
             <div class="waveform-btn" id="waveSine" data-wave="sine">SIN</div>
             <div class="waveform-btn" id="wavePulse" data-wave="pulse">PULSE</div>
             <div class="waveform-btn" id="waveNoise" data-wave="noise">NOISE</div>
-            <div class="waveform-btn" id="waveWavetable" data-wave="wavetable">WTBL</div>
             <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
         </div>
 
@@ -1660,6 +1518,7 @@
         let pitchBendValue = 0; // -1 to 1
         let pitchHoldEnabled = false; // Pitch hold state
         let synthPowered = true; // Synth power state
+        let powerHumPlayed = false;
         let syncEnabled = false;
         let midiAccess = null;
         let midiInputs = [];
@@ -1759,7 +1618,127 @@
                 synthGain.connect(masterGain);
                 drumGain.connect(masterGain);
                 masterGain.connect(audioContext.destination);
+
+                // Play amp power-on hum on first init
+                if (!powerHumPlayed) {
+                    powerHumPlayed = true;
+                    setTimeout(() => playPowerOnHum(), 50);
+                }
             }
+        }
+
+        function playPowerOnHum() {
+            if (!audioContext) return;
+            const now = audioContext.currentTime;
+
+            // Low transformer hum - fundamental 50Hz
+            const humOsc = audioContext.createOscillator();
+            const humOsc2 = audioContext.createOscillator();
+            const humOsc3 = audioContext.createOscillator();
+            const humGain = audioContext.createGain();
+
+            humOsc.type = 'sine';
+            humOsc.frequency.setValueAtTime(50, now);
+            humOsc.frequency.linearRampToValueAtTime(52, now + 1.2);
+
+            humOsc2.type = 'sine';
+            humOsc2.frequency.setValueAtTime(100, now);
+            humOsc2.frequency.linearRampToValueAtTime(104, now + 1.2);
+
+            humOsc3.type = 'sine';
+            humOsc3.frequency.setValueAtTime(150, now);
+
+            // Noise burst - the "thwump" of the amp coming alive
+            const bufferSize = audioContext.sampleRate * 0.3;
+            const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+            }
+            const noiseSource = audioContext.createBufferSource();
+            noiseSource.buffer = noiseBuffer;
+            const noiseFilter = audioContext.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.value = 200;
+            const noiseGain = audioContext.createGain();
+            noiseGain.gain.setValueAtTime(0.4, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+            // Envelope: ramp up then slowly fade to a gentle idle hum
+            humGain.gain.setValueAtTime(0, now);
+            humGain.gain.linearRampToValueAtTime(0.18, now + 0.15);
+            humGain.gain.linearRampToValueAtTime(0.22, now + 0.5);
+            humGain.gain.linearRampToValueAtTime(0.06, now + 1.2);
+            humGain.gain.linearRampToValueAtTime(0.02, now + 2.0);
+            humGain.gain.linearRampToValueAtTime(0.0, now + 3.0);
+
+            humOsc.connect(humGain);
+            humOsc2.connect(humGain);
+            humOsc3.connect(humGain);
+            noiseSource.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioContext.destination);
+            humGain.connect(audioContext.destination);
+
+            humOsc.start(now);
+            humOsc2.start(now);
+            humOsc3.start(now);
+            humOsc.stop(now + 3.0);
+            humOsc2.stop(now + 3.0);
+            humOsc3.stop(now + 3.0);
+            noiseSource.start(now);
+            noiseSource.stop(now + 0.4);
+        }
+
+        function playPowerOffHum() {
+            if (!audioContext) return;
+            const now = audioContext.currentTime;
+
+            const humOsc = audioContext.createOscillator();
+            const humOsc2 = audioContext.createOscillator();
+            const humGain = audioContext.createGain();
+
+            humOsc.type = 'sine';
+            humOsc.frequency.setValueAtTime(52, now);
+            humOsc.frequency.exponentialRampToValueAtTime(20, now + 1.5);
+
+            humOsc2.type = 'sine';
+            humOsc2.frequency.setValueAtTime(104, now);
+            humOsc2.frequency.exponentialRampToValueAtTime(40, now + 1.5);
+
+            // Thump noise on power off
+            const bufferSize = audioContext.sampleRate * 0.25;
+            const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+            }
+            const noiseSource = audioContext.createBufferSource();
+            noiseSource.buffer = noiseBuffer;
+            const noiseFilter = audioContext.createBiquadFilter();
+            noiseFilter.type = 'lowpass';
+            noiseFilter.frequency.value = 180;
+            const noiseGain = audioContext.createGain();
+            noiseGain.gain.setValueAtTime(0.35, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+            humGain.gain.setValueAtTime(0.06, now);
+            humGain.gain.linearRampToValueAtTime(0.10, now + 0.1);
+            humGain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+
+            humOsc.connect(humGain);
+            humOsc2.connect(humGain);
+            noiseSource.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioContext.destination);
+            humGain.connect(audioContext.destination);
+
+            humOsc.start(now);
+            humOsc2.start(now);
+            humOsc.stop(now + 1.6);
+            humOsc2.stop(now + 1.6);
+            noiseSource.start(now);
+            noiseSource.stop(now + 0.3);
         }
 
         function getNoteFrequency(noteIndex, octave) {
@@ -1826,10 +1805,6 @@
                 osc1.setPeriodicWave(wave);
                 osc2.setPeriodicWave(wave);
                 osc3.setPeriodicWave(wave);
-            } else if (currentWaveform === 'wavetable' && window.currentWavetablePeriodicWave) {
-                osc1.setPeriodicWave(window.currentWavetablePeriodicWave);
-                osc2.setPeriodicWave(window.currentWavetablePeriodicWave);
-                osc3.setPeriodicWave(window.currentWavetablePeriodicWave);
             } else {
                 osc1.type = currentWaveform;
                 osc2.type = currentWaveform;
@@ -2317,7 +2292,7 @@
             
             // Save to localStorage
             try {
-                localStorage.setItem('dPaulMKIII_presets', JSON.stringify(presets));
+                localStorage.setItem('dPaulMKII_presets', JSON.stringify(presets));
                 updateNoteDisplay(`M${slot} SAVED`);
                 setTimeout(() => updateNoteDisplay('---'), 1000);
             } catch (e) {
@@ -2440,7 +2415,7 @@
 
         function loadPresetsFromStorage() {
             try {
-                const saved = localStorage.getItem('dPaulMKIII_presets');
+                const saved = localStorage.getItem('dPaulMKII_presets');
                 if (saved) {
                     presets = JSON.parse(saved);
                 }
@@ -2474,7 +2449,7 @@
             };
             
             try {
-                localStorage.setItem('dPaulMKIII_settings', JSON.stringify(settings));
+                localStorage.setItem('dPaulMKII_settings', JSON.stringify(settings));
                 updateNoteDisplay('SAVED');
                 setTimeout(() => updateNoteDisplay('---'), 1000);
                 return true;
@@ -2488,7 +2463,7 @@
 
         function loadSettings() {
             try {
-                const saved = localStorage.getItem('dPaulMKIII_settings');
+                const saved = localStorage.getItem('dPaulMKII_settings');
                 if (!saved) return false;
                 
                 const settings = JSON.parse(saved);
@@ -3822,6 +3797,10 @@
                 synthContainer.classList.remove('powered-off');
                 synthContainer.classList.add('powered-on');
                 
+                // Play amp power-on hum
+                initAudio();
+                playPowerOnHum();
+                
                 // Restart tempo LED
                 startTempoLed();
             } else {
@@ -3830,6 +3809,9 @@
                 powerBtn.textContent = 'OFF';
                 synthContainer.classList.remove('powered-on');
                 synthContainer.classList.add('powered-off');
+                
+                // Play amp power-off hum
+                playPowerOffHum();
                 
                 // Stop tempo LED
                 if (tempoLedInterval) {
@@ -3886,7 +3868,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `dPaul-MKIII-Song-${new Date().toISOString().slice(0,10)}.json`;
+                a.download = `dPaul-MKII-Song-${new Date().toISOString().slice(0,10)}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -3971,7 +3953,7 @@
                 // Create song data
                 const songData = createSongData();
                 const jsonContent = JSON.stringify(songData, null, 2);
-                const fileName = `dPaul-MKIII-${new Date().toISOString().slice(0,10)}.json`;
+                const fileName = `dPaul-MKII-${new Date().toISOString().slice(0,10)}.json`;
 
                 // Upload to Google Drive
                 const file = new Blob([jsonContent], { type: 'application/json' });
@@ -4036,7 +4018,7 @@
                 const response = await gapi.client.drive.files.list({
                     pageSize: 10,
                     fields: 'files(id, name, modifiedTime)',
-                    q: "name contains 'dPaul-MKIII' and mimeType='application/json'"
+                    q: "name contains 'dPaul-MKII' and mimeType='application/json'"
                 });
 
                 const files = response.result.files;
@@ -4209,383 +4191,6 @@
                 buildKeyboard();
             }
         }, 1000);
-    </script>
-
-    <!-- Wavetable Browser Modal -->
-    <div id="wavetableModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
-        <div class="wt-modal-inner">
-            <div class="wt-modal-header">
-                <h2>WAVETABLE BROWSER</h2>
-                <button class="wt-close-btn" id="wtCloseBtn">X CLOSE</button>
-            </div>
-            <div class="wt-search-bar">
-                <input type="text" id="wtSearch" placeholder="Search wavetables..." />
-                <label class="wt-upload-label">LOAD .WAV<input type="file" id="wtFileInput" style="display:none" /></label>
-                <span class="wt-status" id="wtStatus">Ready</span>
-            </div>
-            <div class="wt-grid" id="wtGrid"></div>
-            <div class="wt-current-label" id="wtCurrentLabel">ACTIVE: None</div>
-        </div>
-    </div>
-
-    <script>
-    (function() {
-
-        // All wavetables are generated mathematically - no internet required, no CORS issues
-        function makeWave(fn, category) {
-            return { gen: fn, category: category || 'Built-in' };
-        }
-
-        var TWO_PI = Math.PI * 2;
-        var N = 2048; // wavetable size
-
-        // Helper: build PeriodicWave from a harmonic recipe { real: [], imag: [] }
-        function buildPeriodicWave(realArr, imagArr) {
-            var ctx = window.audioContext;
-            if (!ctx) { ctx = new AudioContext(); window.audioContext = ctx; }
-            var r = new Float32Array(N);
-            var im = new Float32Array(N);
-            for (var i = 0; i < Math.min(realArr.length, N); i++) r[i] = realArr[i];
-            for (var i = 0; i < Math.min(imagArr.length, N); i++) im[i] = imagArr[i];
-            return ctx.createPeriodicWave(r, im, { disableNormalization: false });
-        }
-
-        // Helper: generate harmonics from a time-domain waveform function
-        function waveformToPeriodicWave(fn) {
-            var ctx = window.audioContext;
-            if (!ctx) { ctx = new AudioContext(); window.audioContext = ctx; }
-            var real = new Float32Array(N);
-            var imag = new Float32Array(N);
-            var samples = new Float32Array(N);
-            for (var i = 0; i < N; i++) samples[i] = fn(i / N);
-            // DFT for first 512 harmonics
-            for (var h = 1; h < 512; h++) {
-                var re = 0, im2 = 0;
-                for (var n = 0; n < N; n++) {
-                    var a = (TWO_PI * h * n) / N;
-                    re += samples[n] * Math.cos(a);
-                    im2 -= samples[n] * Math.sin(a);
-                }
-                real[h] = (re / N) * 2;
-                imag[h] = (im2 / N) * 2;
-            }
-            return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
-        }
-
-        // Wavetable definitions - each has a name, category, and gen() function
-        var WAVES = [
-            // ── Sawtooth variants ──
-            { name: 'Bright Saw',    category: 'Sawtooth',   gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<64;h++){r.push(0);im.push(1/h);}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Soft Saw',      category: 'Sawtooth',   gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<32;h++){r.push(0);im.push(1/(h*h));}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Super Saw',     category: 'Sawtooth',   gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var v=0;
-                    for(var d=-2;d<=2;d++) v+=(((t+d*0.02)%1)*2-1);
-                    return v/5;
-                });
-            }},
-            // ── Square variants ──
-            { name: 'Square Odd',    category: 'Square',     gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<64;h++){r.push(0);im.push(h%2===1?1/h:0);}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Square Soft',   category: 'Square',     gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<16;h++){r.push(0);im.push(h%2===1?1/(h*h):0);}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Pulse 25%',     category: 'Square',     gen: function() {
-                return waveformToPeriodicWave(function(t){ return t<0.25?1:-1; });
-            }},
-            // ── Triangle variants ──
-            { name: 'Triangle',      category: 'Triangle',   gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<64;h++){var s=(h%2===1)?Math.pow(-1,(h-1)/2)/(h*h):0;r.push(s);im.push(0);}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Tri Bright',    category: 'Triangle',   gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    return t<0.5?4*t-1:3-4*t;
-                });
-            }},
-            // ── Organ / Hammond style ──
-            { name: 'Organ 1',       category: 'Organ',      gen: function() {
-                var r=[0,0,0,0,0,0,0,0,0], im=[0,0.8,0,0.5,0,0.3,0,0.2,0.1];
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Organ 2',       category: 'Organ',      gen: function() {
-                var r=[0,0,0,0,0,0,0,0,0], im=[0,1,0,0.8,0,0.5,0,0.1,0.3];
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Drawbar',       category: 'Organ',      gen: function() {
-                var r=[0], im=[0];
-                var drawbars=[0,0.8,1,0.6,0.4,0,0.2,0,0.1];
-                for(var h=1;h<9;h++){r.push(0);im.push(drawbars[h]||0);}
-                return buildPeriodicWave(r,im);
-            }},
-            // ── Bell / Metallic ──
-            { name: 'Bell',          category: 'Bell',       gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    return Math.sin(TWO_PI*t)+0.5*Math.sin(TWO_PI*2.756*t)+
-                           0.25*Math.sin(TWO_PI*5.404*t)+0.1*Math.sin(TWO_PI*8.933*t);
-                });
-            }},
-            { name: 'Marimba',       category: 'Bell',       gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    return Math.sin(TWO_PI*t)+0.4*Math.sin(TWO_PI*4*t)+
-                           0.1*Math.sin(TWO_PI*10*t);
-                });
-            }},
-            // ── Vocal / Formant ──
-            { name: 'Vocal Ah',      category: 'Vocal',      gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    return 0.7*Math.sin(TWO_PI*t)+0.5*Math.sin(TWO_PI*2*t)+
-                           0.8*Math.sin(TWO_PI*3*t)+0.3*Math.sin(TWO_PI*4*t)+
-                           0.6*Math.sin(TWO_PI*8*t)+0.2*Math.sin(TWO_PI*13*t);
-                });
-            }},
-            { name: 'Vocal Ee',      category: 'Vocal',      gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    return 0.5*Math.sin(TWO_PI*t)+0.3*Math.sin(TWO_PI*2*t)+
-                           0.9*Math.sin(TWO_PI*5*t)+0.7*Math.sin(TWO_PI*10*t)+
-                           0.5*Math.sin(TWO_PI*14*t);
-                });
-            }},
-            { name: 'Vocal Oh',      category: 'Vocal',      gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    return 0.9*Math.sin(TWO_PI*t)+0.6*Math.sin(TWO_PI*2*t)+
-                           0.2*Math.sin(TWO_PI*3*t)+0.5*Math.sin(TWO_PI*6*t)+
-                           0.1*Math.sin(TWO_PI*9*t);
-                });
-            }},
-            // ── Strings / Ensemble ──
-            { name: 'Strings',       category: 'Strings',    gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<20;h++){r.push(0);im.push(Math.pow(0.85,h)*( (h%2===1)?1:-0.5 ));}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Cello',         category: 'Strings',    gen: function() {
-                var r=[0], im=[0];
-                var amp=[0,1,0.6,0.4,0.8,0.2,0.5,0.1,0.3,0.05];
-                for(var h=1;h<10;h++){r.push(0);im.push(amp[h]);}
-                return buildPeriodicWave(r,im);
-            }},
-            // ── Wind ──
-            { name: 'Flute',         category: 'Wind',       gen: function() {
-                var r=[0], im=[0,1,0.3,0.05,0.01];
-                r.push(0,0,0,0); 
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Clarinet',      category: 'Wind',       gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<16;h++){r.push(0);im.push(h%2===1?1/h:1/(h*4));}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Oboe',          category: 'Wind',       gen: function() {
-                var r=[0], im=[0];
-                var amp=[0,1,0.8,0.7,0.5,0.6,0.4,0.3,0.2,0.15,0.1];
-                for(var h=1;h<11;h++){r.push(0);im.push(amp[h]);}
-                return buildPeriodicWave(r,im);
-            }},
-            // ── FM / Digital ──
-            { name: 'FM Bass',       category: 'FM',         gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var mod = Math.sin(TWO_PI*2*t)*2.5;
-                    return Math.sin(TWO_PI*t + mod);
-                });
-            }},
-            { name: 'FM Bell',       category: 'FM',         gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var mod = Math.sin(TWO_PI*3.5*t)*3;
-                    return Math.sin(TWO_PI*t + mod);
-                });
-            }},
-            { name: 'FM Growl',      category: 'FM',         gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var mod = Math.sin(TWO_PI*4*t)*5;
-                    return Math.sin(TWO_PI*t + mod);
-                });
-            }},
-            // ── Wavetable morphs ──
-            { name: 'Saw-Sine',      category: 'Morph',      gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var saw = t*2-1;
-                    var sine = Math.sin(TWO_PI*t);
-                    return saw*0.5 + sine*0.5;
-                });
-            }},
-            { name: 'Pulse-Tri',     category: 'Morph',      gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var pulse = t<0.3?1:-1;
-                    var tri = t<0.5?4*t-1:3-4*t;
-                    return pulse*0.5 + tri*0.5;
-                });
-            }},
-            { name: 'Harmonic Odd',  category: 'Additive',   gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<32;h++){r.push(0);im.push(h%2===1?Math.pow(0.7,h):0);}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Harmonic Even', category: 'Additive',   gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<32;h++){r.push(0);im.push(h%2===0?Math.pow(0.7,h):0);}
-                return buildPeriodicWave(r,im);
-            }},
-            { name: 'Overtone Rich', category: 'Additive',   gen: function() {
-                var r=[0], im=[0];
-                for(var h=1;h<48;h++){r.push(0);im.push(1/(Math.pow(h,0.5)));}
-                return buildPeriodicWave(r,im);
-            }},
-            // ── Synth leads ──
-            { name: 'Sync Lead',     category: 'Lead',       gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var ratio=3.5;
-                    return Math.sin(TWO_PI*t)*Math.max(0,Math.cos(TWO_PI*ratio*t));
-                });
-            }},
-            { name: 'Growl Bass',    category: 'Lead',       gen: function() {
-                return waveformToPeriodicWave(function(t){
-                    var v = t*2-1;
-                    return v + 0.3*Math.sin(TWO_PI*7*t) + 0.2*Math.sin(TWO_PI*13*t);
-                });
-            }},
-        ];
-
-        var allWaves = WAVES.slice();
-        var filteredWaves = allWaves.slice();
-        var activeWtName = null;
-        window.currentWavetablePeriodicWave = null;
-
-        var modal  = document.getElementById('wavetableModal');
-        var grid   = document.getElementById('wtGrid');
-        var search = document.getElementById('wtSearch');
-        var status = document.getElementById('wtStatus');
-        var label  = document.getElementById('wtCurrentLabel');
-        var fileIn = document.getElementById('wtFileInput');
-
-        function buildGrid(list) {
-            grid.innerHTML = '';
-            status.textContent = list.length + ' waves';
-            list.forEach(function(w) {
-                var card = document.createElement('div');
-                card.className = 'wt-card' + (w.name === activeWtName ? ' active' : '');
-                card.innerHTML = '<div class="wt-name">' + w.name + '</div><div class="wt-sub">' + (w.category || 'Built-in') + '</div>';
-                card.addEventListener('click', function() { selectWave(w, card); });
-                grid.appendChild(card);
-            });
-        }
-
-        function wavFileToPeriodicWave(arrayBuffer) {
-            var ctx = window.audioContext;
-            if (!ctx) { ctx = new AudioContext(); window.audioContext = ctx; }
-            return ctx.decodeAudioData(arrayBuffer).then(function(decoded) {
-                var raw = decoded.getChannelData(0);
-                var size = 2048;
-                var resampled = new Float32Array(size);
-                for (var i = 0; i < size; i++) {
-                    resampled[i] = raw[Math.floor(i * raw.length / size)];
-                }
-                var real = new Float32Array(size);
-                var imag = new Float32Array(size);
-                for (var h = 1; h < 512; h++) {
-                    var re = 0, im2 = 0;
-                    for (var n = 0; n < size; n++) {
-                        var angle = (TWO_PI * h * n) / size;
-                        re += resampled[n] * Math.cos(angle);
-                        im2 -= resampled[n] * Math.sin(angle);
-                    }
-                    real[h] = (re / size) * 2;
-                    imag[h] = (im2 / size) * 2;
-                }
-                return ctx.createPeriodicWave(real, imag, { disableNormalization: false });
-            });
-        }
-
-        function applyWavetableToSynth(pw, name) {
-            window.currentWavetablePeriodicWave = pw;
-            activeWtName = name;
-            document.querySelectorAll('.waveform-btn').forEach(function(b) { b.classList.remove('active'); });
-            var wtBtn = document.getElementById('waveWavetable');
-            if (wtBtn) wtBtn.classList.add('active');
-            if (typeof currentWaveform !== 'undefined') { currentWaveform = 'wavetable'; }
-            label.textContent = 'ACTIVE: ' + name;
-        }
-
-        function selectWave(w, card) {
-            // Make sure audio context is running
-            if (!window.audioContext) {
-                window.audioContext = new AudioContext();
-            }
-            if (window.audioContext.state === 'suspended') window.audioContext.resume();
-            try {
-                var pw = w.gen();
-                applyWavetableToSynth(pw, w.name);
-                document.querySelectorAll('.wt-card').forEach(function(c) { c.classList.remove('active'); });
-                card.classList.add('active');
-                setTimeout(function() { modal.style.display = 'none'; }, 300);
-            } catch(err) {
-                console.error('Wavetable generation error:', err);
-            }
-        }
-
-        fileIn.addEventListener('change', function(e) {
-            var file = e.target.files[0];
-            if (!file) return;
-            file.arrayBuffer().then(wavFileToPeriodicWave).then(function(pw) {
-                var name = file.name.replace('.wav','');
-                applyWavetableToSynth(pw, name + ' (custom)');
-                var custom = { name: name, url: URL.createObjectURL(file), category: 'Custom' };
-                allWaves.unshift(custom);
-                filteredWaves = allWaves.slice();
-                buildGrid(filteredWaves);
-                modal.style.display = 'none';
-            }).catch(function(err) { console.error(err); status.textContent = 'Error!'; });
-        });
-
-        search.addEventListener('input', function() {
-            var q = search.value.toLowerCase();
-            filteredWaves = allWaves.filter(function(w) { return w.name.toLowerCase().indexOf(q) >= 0; });
-            buildGrid(filteredWaves);
-        });
-
-        // Open modal when WTBL button clicked (capture phase beats generic handler)
-        document.addEventListener('DOMContentLoaded', function() {
-            var wtBtn = document.getElementById('waveWavetable');
-            if (wtBtn) {
-                wtBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    modal.style.display = 'flex';
-                    search.value = '';
-                    filteredWaves = allWaves.slice();
-                    buildGrid(filteredWaves);
-                    if (!window.currentWavetablePeriodicWave) wtBtn.classList.remove('active');
-                }, true);
-            }
-            document.getElementById('wtCloseBtn').addEventListener('click', function() {
-                modal.style.display = 'none';
-                if (!window.currentWavetablePeriodicWave) {
-                    var b = document.getElementById('waveWavetable');
-                    if (b) b.classList.remove('active');
-                }
-            });
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) modal.style.display = 'none';
-            });
-        });
-
-        // Wavetable is applied directly in playNote - no monkey-patch needed
-
-        buildGrid(filteredWaves);
-    })();
     </script>
 </body>
 </html>
