@@ -17,10 +17,9 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            min-height: -webkit-fill-available;
             padding: 15px;
             font-family: Verdana, Geneva, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .synth-container {
@@ -28,14 +27,13 @@
             border-radius: 8px;
             padding: 15px 20px 20px 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-            width: 1400px;
-            max-width: 100%;
+            width: 100%;
+            max-width: 1600px;
             border: 1px solid #1a1a1a;
             position: relative;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            /* Scale down uniformly on smaller viewports */
             transform-origin: top center;
         }
 
@@ -3730,17 +3728,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM Content Loaded - Initializing synth...');
 
-            // Uniform scaling across all browsers - prevents Safari stretching
+            // Scale synth to fit iframe container uniformly
             function scaleSynth() {
                 const container = document.getElementById('synthContainer');
                 if (!container) return;
-                const synthWidth = 1400;
-                const availableWidth = window.innerWidth - 30; // account for body padding
-                const scale = Math.min(1, availableWidth / synthWidth);
-                container.style.transform = scale < 1 ? `scale(${scale})` : '';
-                // Collapse the scaled whitespace so page height stays correct
-                const scaledHeight = container.offsetHeight * scale;
-                container.style.marginBottom = scale < 1 ? `${scaledHeight - container.offsetHeight}px` : '';
+                // Temporarily remove scale to measure natural size
+                container.style.transform = '';
+                const naturalWidth = container.scrollWidth;
+                const naturalHeight = container.scrollHeight;
+                const availW = window.innerWidth;
+                const availH = window.innerHeight;
+                const scaleX = availW / naturalWidth;
+                const scaleY = availH / naturalHeight;
+                const scale = Math.min(scaleX, scaleY, 1);
+                if (scale < 1) {
+                    container.style.transform = `scale(${scale})`;
+                    container.style.marginBottom = `${(naturalHeight * scale) - naturalHeight}px`;
+                } else {
+                    container.style.transform = '';
+                    container.style.marginBottom = '';
+                }
             }
             scaleSynth();
             window.addEventListener('resize', scaleSynth);
