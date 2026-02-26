@@ -7,11 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --green: #4dff91;
@@ -20,22 +16,16 @@
         }
 
         html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        body {
+            width: 100%; height: 100%; overflow: hidden;
             background: var(--bg);
             font-family: 'Courier Prime', 'Courier New', monospace;
         }
 
-        /* Full-screen CRT */
         .screen {
             width: 100vw;
             height: 100vh;
             background: var(--bg);
-            padding: 48px 28px 40px 28px;
+            padding: 44px 28px 44px 28px;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -50,10 +40,8 @@
             inset: 0;
             background: repeating-linear-gradient(
                 to bottom,
-                transparent 0px,
-                transparent 3px,
-                rgba(0,0,0,0.2) 3px,
-                rgba(0,0,0,0.2) 4px
+                transparent 0px, transparent 3px,
+                rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px
             );
             pointer-events: none;
             z-index: 10;
@@ -64,36 +52,26 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(
-                ellipse at center,
-                transparent 45%,
-                rgba(0,0,0,0.65) 100%
-            );
+            background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.65) 100%);
             pointer-events: none;
             z-index: 11;
         }
 
-        /* Ambient glow behind text */
         .screen-glow {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%;
-            height: 70%;
+            width: 90%; height: 70%;
             background: radial-gradient(ellipse, rgba(77,255,145,0.05) 0%, transparent 70%);
             pointer-events: none;
             z-index: 1;
         }
 
-        /* Drifting scan artifact */
         .scan-line {
             position: absolute;
-            width: 100%;
-            height: 3px;
+            width: 100%; height: 3px;
             background: linear-gradient(to right, transparent, rgba(77,255,145,0.12), transparent);
-            left: 0;
-            top: 0;
+            left: 0; top: 0;
             animation: scanArtifact 8s linear infinite;
             z-index: 12;
             pointer-events: none;
@@ -106,7 +84,6 @@
             100% { top: 105%; opacity: 0; }
         }
 
-        /* CRT flicker */
         @keyframes flicker {
             0%   { opacity: 1; }
             2%   { opacity: 0.96; }
@@ -119,7 +96,6 @@
 
         .screen { animation: flicker 6s ease-in-out infinite; }
 
-        /* Content */
         .terminal-content {
             position: relative;
             z-index: 5;
@@ -129,15 +105,15 @@
             color: var(--green-dim);
             font-size: 10px;
             letter-spacing: 2px;
-            margin-bottom: 32px;
+            margin-bottom: 30px;
             opacity: 0.6;
             text-shadow: 0 0 8px var(--green-dim);
             line-height: 1.6;
         }
 
-        .terminal-text {
+        #output {
             color: var(--green);
-            font-size: clamp(16px, 4.5vw, 21px);
+            font-size: clamp(17px, 4.8vw, 22px);
             line-height: 1.85;
             text-shadow:
                 0 0 8px rgba(77,255,145,0.9),
@@ -145,21 +121,19 @@
                 0 0 35px rgba(77,255,145,0.15);
             letter-spacing: 0.3px;
             word-break: break-word;
-            transition: opacity 0.06s;
         }
 
         .url-line {
             font-weight: 700;
             text-decoration: underline;
-            text-decoration-color: rgba(77,255,145,0.45);
+            text-decoration-color: rgba(77,255,145,0.5);
             letter-spacing: 1px;
         }
 
-        /* Blinking block cursor */
         .cursor {
             display: inline-block;
-            width: 11px;
-            height: 1.1em;
+            width: 12px;
+            height: 1em;
             background: var(--green);
             margin-left: 2px;
             vertical-align: text-bottom;
@@ -172,12 +146,9 @@
             50%, 100% { opacity: 0; }
         }
 
-        /* Status bar */
         .status-bar {
             position: absolute;
-            bottom: 16px;
-            left: 28px;
-            right: 28px;
+            bottom: 16px; left: 28px; right: 28px;
             display: flex;
             justify-content: space-between;
             z-index: 5;
@@ -198,10 +169,8 @@
         <div class="screen-glow"></div>
 
         <div class="terminal-content">
-            <div class="terminal-header">
-                dPAUL TECHNOLOGIES MKII — SYSTEM TERMINAL v1.0 — 1972
-            </div>
-            <div class="terminal-text" id="output"></div>
+            <div class="terminal-header">dPAUL TECHNOLOGIES MKII — SYSTEM TERMINAL v1.0 — 1972</div>
+            <div id="output"></div>
         </div>
 
         <div class="status-bar">
@@ -210,127 +179,150 @@
         </div>
     </div>
 
-    <script>
-        // ── Audio ─────────────────────────────────────────────────────────────
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+<script>
+    // ── Clock ──────────────────────────────────────────────────────────────────
+    function updateClock() {
+        var now = new Date();
+        var pad = function(n) { return String(n).padStart(2, '0'); };
+        document.getElementById('clock').textContent =
+            pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-        function playClick(isReturn = false) {
-            const osc    = audioCtx.createOscillator();
-            const gain   = audioCtx.createGain();
-            const filter = audioCtx.createBiquadFilter();
+    // ── Audio ──────────────────────────────────────────────────────────────────
+    var audioCtx = null;
 
-            filter.type          = 'bandpass';
+    function initAudio() {
+        if (!audioCtx) {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            } catch(e) { audioCtx = null; }
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function playClick(isReturn) {
+        if (!audioCtx || audioCtx.state !== 'running') return;
+        try {
+            var osc    = audioCtx.createOscillator();
+            var gain   = audioCtx.createGain();
+            var filter = audioCtx.createBiquadFilter();
+
+            filter.type = 'bandpass';
             filter.frequency.value = isReturn ? 600 : 3000 + Math.random() * 2000;
-            filter.Q.value       = 0.8;
+            filter.Q.value = 0.8;
 
-            osc.type           = 'square';
+            osc.type = 'square';
             osc.frequency.value = isReturn ? 200 : 1200 + Math.random() * 800;
 
-            const dur = isReturn ? 0.12 : 0.04;
+            var dur = isReturn ? 0.12 : 0.04;
             gain.gain.setValueAtTime(isReturn ? 0.18 : 0.09, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
 
             osc.connect(filter);
             filter.connect(gain);
             gain.connect(audioCtx.destination);
-
             osc.start();
             osc.stop(audioCtx.currentTime + dur);
-        }
+        } catch(e) {}
+    }
 
-        // ── Clock ─────────────────────────────────────────────────────────────
-        function updateClock() {
-            const now = new Date();
-            const pad = n => String(n).padStart(2,'0');
-            document.getElementById('clock').textContent =
-                `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+    document.addEventListener('click',      initAudio);
+    document.addEventListener('touchstart', initAudio);
+    initAudio();
 
-        // ── Lines ─────────────────────────────────────────────────────────────
-        const lines = [
-            { text: 'To enjoy these free Synths',                 delay: 58  },
-            { text: 'and Tools head over to your',                delay: 58  },
-            { text: 'nearest Laptop or Desktop',                  delay: 58  },
-            { text: 'computer to enjoy properly',                 delay: 58  },
-            { text: 'due to their size',                          delay: 58  },
-            { text: 'and complexity.',                            delay: 58  },
-            { text: '',                                            pause: 500 },
-            { text: '> dpaul.studio', cssClass: 'url-line',       delay: 80  },
-        ];
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    var output   = document.getElementById('output');
+    var statusEl = document.getElementById('statusLeft');
 
-        // ── Typewriter ────────────────────────────────────────────────────────
-        const output = document.getElementById('output');
-        const cursor = document.createElement('span');
-        cursor.className = 'cursor';
+    var cursorEl = document.createElement('span');
+    cursorEl.className = 'cursor';
 
-        const sleep = ms => new Promise(r => setTimeout(r, ms));
+    function sleep(ms) {
+        return new Promise(function(resolve) { setTimeout(resolve, ms); });
+    }
 
-        async function typeLine({ text = '', delay = 50, pause = 0, cssClass } = {}) {
-            if (!text) {
-                output.appendChild(document.createElement('br'));
-                if (pause) await sleep(pause);
-                return;
-            }
+    // ── Lines to type ──────────────────────────────────────────────────────────
+    var lines = [
+        { text: 'To enjoy these free Synths',    delay: 60 },
+        { text: 'and Tools head over to your',   delay: 60 },
+        { text: 'nearest Laptop or Desktop',     delay: 60 },
+        { text: 'computer to enjoy properly',    delay: 60 },
+        { text: 'due to their size',             delay: 60 },
+        { text: 'and complexity.',               delay: 60 },
+        { text: '',                              pause: 600 },
+        { text: '> dpaul.studio', cls: 'url-line', delay: 85 }
+    ];
 
-            const span = document.createElement('span');
-            if (cssClass) span.className = cssClass;
-            output.appendChild(span);
+    // ── Type one line ──────────────────────────────────────────────────────────
+    async function typeLine(lineObj) {
+        var text  = lineObj.text  !== undefined ? lineObj.text  : '';
+        var delay = lineObj.delay !== undefined ? lineObj.delay : 60;
+        var pause = lineObj.pause !== undefined ? lineObj.pause : 0;
+        var cls   = lineObj.cls   !== undefined ? lineObj.cls   : '';
 
-            for (const ch of text) {
-                span.textContent += ch;
-                playClick(false);
-                await sleep(delay + (Math.random() - 0.5) * delay * 0.4);
-            }
-
-            playClick(true);
+        if (text === '') {
             output.appendChild(document.createElement('br'));
-            if (pause) await sleep(pause);
+            if (pause > 0) { await sleep(pause); }
+            return;
         }
 
-        async function clearScreen() {
-            // Quick flicker before wipe
-            output.style.opacity = '0.3';
-            await sleep(80);
-            output.style.opacity = '1';
-            await sleep(60);
-            output.style.opacity = '0.1';
-            await sleep(60);
-            output.innerHTML = '';
-            output.style.opacity = '1';
+        var span = document.createElement('span');
+        if (cls) { span.className = cls; }
+        output.appendChild(span);
+
+        for (var i = 0; i < text.length; i++) {
+            span.textContent += text[i];
+            output.appendChild(cursorEl);
+            playClick(false);
+            var jitter = (Math.random() - 0.5) * delay * 0.35;
+            await sleep(Math.max(20, delay + jitter));
         }
 
-        async function run() {
-            while (true) {
-                // Initial pause before typing starts
-                await sleep(2500);
-                document.getElementById('statusLeft').textContent = 'WRITING';
+        playClick(true);
+        output.appendChild(document.createElement('br'));
+    }
 
-                for (const line of lines) {
-                    output.appendChild(cursor);
-                    await typeLine(line);
-                }
+    // ── Clear with flicker ─────────────────────────────────────────────────────
+    async function clearScreen() {
+        output.style.opacity = '0.4';
+        await sleep(70);
+        output.style.opacity = '1';
+        await sleep(50);
+        output.style.opacity = '0.1';
+        await sleep(80);
+        output.innerHTML = '';
+        output.style.opacity = '1';
+    }
 
-                output.appendChild(cursor);
-                document.getElementById('statusLeft').textContent = 'READY';
+    // ── Main loop ──────────────────────────────────────────────────────────────
+    async function run() {
+        while (true) {
+            statusEl.textContent = 'READY';
+            await sleep(2500);
 
-                // Hold for 15 seconds then clear and loop
-                await sleep(15000);
-                document.getElementById('statusLeft').textContent = 'CLEARING';
-                await clearScreen();
-                await sleep(600);
+            statusEl.textContent = 'WRITING';
+
+            for (var i = 0; i < lines.length; i++) {
+                await typeLine(lines[i]);
             }
+
+            output.appendChild(cursorEl);
+            statusEl.textContent = 'READY';
+
+            await sleep(15000);
+
+            statusEl.textContent = 'CLEARING';
+            await clearScreen();
+            await sleep(500);
         }
+    }
 
-        // Unlock audio on first tap (mobile requirement)
-        document.addEventListener('touchstart', () => {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-        }, { once: true });
-
-        window.addEventListener('load', () => {
-            audioCtx.resume().then(run);
-        });
-    </script>
+    // Kick off as soon as DOM is ready — no audio dependency
+    run();
+</script>
 </body>
 </html>
