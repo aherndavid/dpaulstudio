@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David Ahern — CV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --red: #C8102E;
+    --cream: #F5F0E8;
+    --mid: #666666;
+    --light: #EDEBE3;
+    --ink: #1a1a1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 60px 80px;
+    position: relative;
+  }
+
+  /* Print button */
+  .print-btn {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    padding: 10px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s;
+    z-index: 100;
+  }
+  .print-btn:hover { background: var(--red); }
+
+  /* Header */
+  header {
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 24px;
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-family: 'Special Elite', serif;
+    font-size: 52px;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--red);
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .contact {
+    font-size: 11.5px;
+    color: var(--mid);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+  }
+
+  .contact a {
+    color: var(--mid);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .contact a:hover { color: var(--red); }
+
+  .contact span { margin: 0 10px; color: #bbb; }
+
+  /* Sections */
+  section {
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(3) { animation-delay: 0.15s; }
+  section:nth-child(4) { animation-delay: 0.2s; }
+  section:nth-child(5) { animation-delay: 0.25s; }
+  section:nth-child(6) { animation-delay: 0.3s; }
+  section:nth-child(7) { animation-delay: 0.35s; }
+  section:nth-child(8) { animation-delay: 0.4s; }
+
+  h2 {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--navy);
+    border-bottom: 2px solid var(--red);
+    padding-bottom: 6px;
+    margin-bottom: 18px;
+  }
+
+  /* Profile */
+  .profile p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #2a2a2a;
+    max-width: 720px;
+  }
+
+  /* Skills table */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 2px;
+  }
+
+  .skill-label {
+    background: var(--light);
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+  }
+
+  .skill-value {
+    background: white;
+    padding: 8px 14px 8px 16px;
+    font-size: 12px;
+    color: #333;
+    line-height: 1.6;
+    border-left: 2px solid var(--light);
+  }
+
+  /* Jobs */
+  .job { margin-bottom: 22px; }
+
+  .job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .job-title {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--navy);
+  }
+
+  .job-company {
+    font-size: 11.5px;
+    color: var(--mid);
+    margin-left: 8px;
+  }
+
+  .job-dates {
+    font-size: 11px;
+    color: var(--mid);
+    font-style: italic;
+    white-space: nowrap;
+  }
+
+  .job ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .job ul li {
+    font-size: 12.5px;
+    padding: 2px 0 2px 18px;
+    position: relative;
+    color: #2a2a2a;
+    line-height: 1.65;
+  }
+
+  .job ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--red);
+    font-size: 11px;
+  }
+
+  /* Achievements */
+  .achievements ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .achievements ul li {
+    padding: 4px 0 4px 18px;
+    position: relative;
+    font-size: 12.5px;
+    color: #2a2a2a;
+    line-height: 1.65;
+  }
+
+  .achievements ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--red);
+    font-size: 10px;
+    top: 6px;
+  }
+
+  /* Development */
+  .dev-intro {
+    font-size: 12.5px;
+    color: #444;
+    font-style: italic;
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+
+  .current-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--navy);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* Availability */
+  .availability p {
+    font-size: 12.5px;
+    color: #444;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+    font-size: 10.5px;
+    color: #aaa;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Print styles */
+  @media print {
+    body { background: white; font-size: 11px; }
+    body::before { display: none; }
+    .print-btn { display: none; }
+    .page { padding: 20px 30px; max-width: 100%; }
+    section { animation: none; }
+    header { animation: none; }
+    h1 { font-size: 36px; }
+    .skill-value { background: #fafafa; }
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 30px 24px; }
+    h1 { font-size: 36px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .skill-label { padding-bottom: 4px; }
+    .job-header { flex-direction: column; }
+    footer { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">⬇ Print / Save PDF</button>
+
+<div class="page">
+
+  <header>
+    <h1>DAVID AHERN</h1>
+    <p class="subtitle">IT Professional &nbsp;|&nbsp; Creative Technologist</p>
+    <div class="contact">
+      <span>Maidenhead, UK</span>
+      <span>·</span>
+      <a href="tel:07304088384">07304 088384</a>
+      <span>·</span>
+      <a href="mailto:davidpaulahern@gmail.com">davidpaulahern@gmail.com</a>
+      <span>·</span>
+      <a href="https://www.dpaul.studio" target="_blank">www.dpaul.studio</a>
+      <span>·</span>
+      <a href="https://github.com/aherndavid" target="_blank">github.com/aherndavid</a>
+      <span>·</span>
+      <a href="https://instagram.com/dpaul" target="_blank">Instagram: @dpaul</a>
+    </div>
+  </header>
+
+  <section class="profile">
+    <h2>Profile</h2>
+    <p>A rare combination: 30+ years of hands-on IT infrastructure experience fused with genuine creative knowledge. I've built deep technical expertise across Mac and Windows environments, systems administration, workflow automation, and end-user support — while developing real-world skills in video production, web development, audio production, and emerging AI tools. I understand both the language of IT and the language of design, which means I can bridge the gap between technical teams and creative ones. Whether supporting users, building tools, automating workflows, or picking up new technology, I get things done quietly and reliably.</p>
+  </section>
+
+  <section>
+    <h2>Core Skills &amp; Technical Expertise</h2>
+    <div class="skills-grid">
+      <div class="skill-label">Studio &amp; Mac Support</div>
+      <div class="skill-value">macOS (all recent versions), Mac troubleshooting &amp; rebuilds, Adobe Creative Suite (Photoshop, Illustrator, Premiere Pro), colour workflows, prepress concepts</div>
+
+      <div class="skill-label">Workflow &amp; Automation</div>
+      <div class="skill-value">macOS Automator, PowerShell, Batch &amp; shell scripting, folder-based automation logic, API integration</div>
+
+      <div class="skill-label">HTML Tools &amp; Creative Dev</div>
+      <div class="skill-value">Built custom HTML-based tools including a text-to-speech application and multiple synthesisers; responsive web design, JavaScript, CSS, API integration</div>
+
+      <div class="skill-label">AI &amp; Emerging Tools</div>
+      <div class="skill-value">Adobe Firefly, AI text-to-voice, photo-recognition API development, hands-on testing and adoption of AI-assisted creative tools</div>
+
+      <div class="skill-label">AV &amp; Hardware</div>
+      <div class="skill-value">Boardroom AV systems, Cisco Telephony, PC/Mac builds &amp; repairs, mobile device MDM (Intune, BetterCloud), iPhone/iPad provisioning</div>
+
+      <div class="skill-label">Cloud &amp; IT Systems</div>
+      <div class="skill-value">Microsoft 365, Azure, Google Workspace (G Suite), Active Directory, ServiceNow, user/permission management</div>
+
+      <div class="skill-label">Documentation &amp; Training</div>
+      <div class="skill-value">Training videos &amp; help guides reducing support calls by 20%; clear technical writer for both technical and non-technical audiences</div>
+
+      <div class="skill-label">Motion &amp; Audio</div>
+      <div class="skill-value">Adobe Premiere Pro, After Effects, Logic Pro X, GarageBand — end-to-end creative production experience</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Professional Experience</h2>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">IT Support Specialist</span><span class="job-company">Prosource (Neso), Wokingham/Reading</span></div>
+        <span class="job-dates">Apr 2025 – Aug 2025</span>
+      </div>
+      <ul>
+        <li>Led Tech Bar initiative supporting users through a full M365 migration</li>
+        <li>Provisioned and configured MacBook, iPad and iPhone fleets via MDM</li>
+        <li>Collaborated across 5 teams post-acquisition to streamline IT operations</li>
+        <li>Delivered hands-on macOS troubleshooting and end-user training</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">Helpdesk Manager / Migration Support</span><span class="job-company">The Fontaine Group, London</span></div>
+        <span class="job-dates">Jul 2024 – Feb 2025</span>
+      </div>
+      <ul>
+        <li>Managed a team of three engineers supporting boutiques across Central London</li>
+        <li>Led company-wide domain migration from Creed to Kering, managing Windows 11 environment transitions</li>
+        <li>Produced training videos and help guides that reduced inbound support calls by 20%</li>
+        <li>Maintained SLA compliance via ServiceNow across multiple locations</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">On-site &amp; VIP Service Analyst</span><span class="job-company">BMI Group, London / Reading / Milton Keynes</span></div>
+        <span class="job-dates">Sep 2019 – Feb 2024</span>
+      </div>
+      <ul>
+        <li>Provided 1st/2nd line desktop support for 200+ users including C-level executives</li>
+        <li>Coordinated Windows 10 rollout and large-scale hardware refresh projects</li>
+        <li>Maintained full IT operations throughout the COVID-19 pandemic including device distribution and remote MDM management</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">Onsite IT Manager</span><span class="job-company">Oxford University Press, Northamptonshire</span></div>
+        <span class="job-dates">Nov 2017 – Jul 2019</span>
+      </div>
+      <ul>
+        <li>Managed 1st and 2nd line engineers, providing guidance and performance evaluations</li>
+        <li>Developed escalation processes and coordinated with remote IT teams for consistent multi-site support</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">Desktop / Contact Centre Support</span><span class="job-company">Novacroft, Northamptonshire</span></div>
+        <span class="job-dates">Mar 2015 – Jan 2017</span>
+      </div>
+      <ul>
+        <li>On-site desktop support for 100+ users and contact centre staff</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">Remote Desktop Support</span><span class="job-company">NHS, Wellingborough</span></div>
+        <span class="job-dates">Jan 2014 – Mar 2015</span>
+      </div>
+      <ul>
+        <li>Remote desktop support for surgeries and hospitals across the UK</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">Banking &amp; Financial Services IT Operations</span><span class="job-company">Various Institutions</span></div>
+        <span class="job-dates">1990 – 2012</span>
+      </div>
+      <ul>
+        <li>Senior Computer Operator, Santander, Milton Keynes &amp; London — mainframe systems and banking infrastructure (2007–2012)</li>
+        <li>Senior AS/400 Operator, Sky UK, Glasgow — broadcast operations (2006–2007)</li>
+        <li>AS/400 Operator, Citibank, London — consumer financial services (2000–2002)</li>
+        <li>Computer Operator, NatWest Markets, London — trading floor, IBM System 38/AS/400, Reuters/Bloomberg, Cisco Telephony (1990–1994)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Creative &amp; Studio Projects</h2>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">Founder &amp; Multimedia Producer</span><span class="job-company">Autofacts Videography, Maidenhead</span></div>
+        <span class="job-dates">2023 – Present</span>
+      </div>
+      <ul>
+        <li>Conceived and launched <a href="https://www.dpaul.studio" target="_blank">www.dpaul.studio</a> — cinematic automotive video content for YouTube</li>
+        <li>End-to-end production: filming (Sony mirrorless), editing (Premiere Pro), colour grading, audio, motion graphics</li>
+        <li>Manages all production workflows, equipment setup, and content strategy independently</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div class="job-header">
+        <div><span class="job-title">Freelance Multimedia &amp; Web Producer</span><span class="job-company">Self-Employed</span></div>
+        <span class="job-dates">2020 – Present</span>
+      </div>
+      <ul>
+        <li>Designed and developed multimedia websites and marketing content for small businesses</li>
+        <li>Built and integrated an AI-based photo-recognition API — self-directed technical project</li>
+        <li>Created branded assets, promotional videos, and optimised digital content</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="achievements">
+    <h2>Selected Achievements</h2>
+    <ul>
+      <li>Reduced first-line support volume by 20% through proactive training video production and documentation</li>
+      <li>Maintained 99% user satisfaction rating across VIP/executive support roles</li>
+      <li>Integrated AI photo-recognition API into a live website — self-directed technical project</li>
+      <li>Led IT continuity throughout the COVID-19 pandemic across a 200+ user environment</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Ongoing Professional Development</h2>
+    <p class="dev-intro">Self-directed learning in Adobe Creative Suite, Logic Pro, AI-assisted creative tools, workflow automation, and web technologies. Practical skills built through real-world production projects.</p>
+    <p class="current-label">Current Projects</p>
+    <div class="job">
+      <ul>
+        <li>Currently learning Blender — exploring 3D modelling, animation and rendering as an extension of existing motion and visual design skills</li>
+        <li>Life 2.0 — an all-in-one web tool currently in development, designed to consolidate everyday digital tasks into a single, unified platform</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="availability">
+    <h2>Availability &amp; References</h2>
+    <p>Available immediately. Portfolio and video samples at <a href="https://www.dpaul.studio" target="_blank">www.dpaul.studio</a> and YouTube. References available on request.</p>
+  </section>
+
+  <footer>
+    <span>David Ahern — CV — March 2026</span>
+    <span><a href="https://www.dpaul.studio" style="color:#aaa; text-decoration:none;">www.dpaul.studio</a></span>
+  </footer>
+
+</div>
+</body>
+</html>
