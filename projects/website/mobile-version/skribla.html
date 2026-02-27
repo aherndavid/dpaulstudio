@@ -19,16 +19,16 @@
       --col3: #4caf50;
       --col4: #ff9800;
       --col5: #ffffff;
-      --bg: #000000;
-      --toolbar-h: 72px;
+      --sidebar-w: 60px;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-right:  env(safe-area-inset-right,  0px);
     }
 
     html, body {
       width: 100%;
       height: 100dvh;
       overflow: hidden;
-      background: var(--bg);
+      background: #000;
       touch-action: none;
     }
 
@@ -37,98 +37,103 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: calc(100dvh - var(--toolbar-h) - var(--safe-bottom));
+      /* leave room for the side palette */
+      width: calc(100% - var(--sidebar-w) - var(--safe-right));
+      height: 100dvh;
       cursor: crosshair;
       touch-action: none;
       background: #000;
     }
 
-    .toolbar {
+    /* ── Side palette ── */
+    .sidebar {
       position: fixed;
-      bottom: 0;
-      left: 0;
+      top: 0;
       right: 0;
-      height: calc(var(--toolbar-h) + var(--safe-bottom));
-      padding-bottom: var(--safe-bottom);
-      background: #1a1a1a;
+      width: calc(var(--sidebar-w) + var(--safe-right));
+      height: 100dvh;
+      padding-right: var(--safe-right);
+      background: #000;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: clamp(8px, 3vw, 16px);
-      padding-left: 16px;
-      padding-right: 16px;
+      gap: clamp(10px, 2.5vh, 20px);
       z-index: 10;
+      /* subtle separator line */
+      border-left: 1px solid rgba(255,255,255,0.08);
     }
 
     .color-btn {
-      width: clamp(32px, 9vw, 44px);
-      height: clamp(32px, 9vw, 44px);
+      width: clamp(34px, 7vw, 42px);
+      height: clamp(34px, 7vw, 42px);
       border-radius: 50%;
       border: 3px solid transparent;
       cursor: pointer;
-      transition: transform 0.15s, border-color 0.15s;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
       flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
       position: relative;
     }
 
+    /* bigger invisible tap area */
     .color-btn::after {
       content: '';
       position: absolute;
-      inset: -8px;
+      inset: -10px;
     }
 
-    .color-btn:active { transform: scale(0.9); }
+    .color-btn:active { transform: scale(0.88); }
 
     .color-btn.active {
       border-color: #fff;
-      transform: scale(1.15);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+      transform: scale(1.18);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.25);
     }
 
     .divider {
-      width: 1px;
-      height: 28px;
-      background: rgba(255,255,255,0.15);
+      width: 28px;
+      height: 1px;
+      background: rgba(255,255,255,0.12);
       flex-shrink: 0;
     }
 
     .clear-btn {
       font-family: 'Caveat', cursive;
-      font-size: clamp(16px, 4.5vw, 20px);
-      color: rgba(255,255,255,0.6);
+      font-size: clamp(13px, 3.5vw, 16px);
+      color: rgba(255,255,255,0.5);
       background: none;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.15);
       cursor: pointer;
-      padding: 6px 14px;
-      border-radius: 20px;
+      padding: 5px 8px;
+      border-radius: 14px;
       transition: color 0.15s, background 0.15s, border-color 0.15s;
       -webkit-tap-highlight-color: transparent;
-      white-space: nowrap;
-      flex-shrink: 0;
+      line-height: 1;
+      text-align: center;
+      writing-mode: horizontal-tb;
     }
 
     .clear-btn:active {
       color: #fff;
       background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.5);
+      border-color: rgba(255,255,255,0.45);
     }
 
+    /* watermark hint */
     .hint {
       position: fixed;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, -65%);
+      left: calc(50% - var(--sidebar-w) / 2);
+      transform: translate(-50%, -60%);
       font-family: 'Caveat', cursive;
-      font-size: clamp(28px, 8vw, 48px);
-      color: rgba(255,255,255,0.18);
+      font-size: clamp(26px, 7vw, 46px);
+      color: rgba(255,255,255,0.15);
       pointer-events: none;
       user-select: none;
       text-align: center;
       line-height: 1.4;
       transition: opacity 0.5s;
-      max-width: 80vw;
     }
   </style>
 </head>
@@ -137,12 +142,12 @@
 <canvas id="c"></canvas>
 <p class="hint" id="hint">◉‿◉<br>dPaul Skribla</p>
 
-<div class="toolbar">
-  <button class="color-btn active" id="btn1" style="background:var(--col1)" data-color="#e63946" aria-label="Red"></button>
-  <button class="color-btn"        id="btn2" style="background:var(--col2)" data-color="#2196f3" aria-label="Blue"></button>
-  <button class="color-btn"        id="btn3" style="background:var(--col3)" data-color="#4caf50" aria-label="Green"></button>
-  <button class="color-btn"        id="btn4" style="background:var(--col4)" data-color="#ff9800" aria-label="Orange"></button>
-  <button class="color-btn"        id="btn5" style="background:var(--col5); border-color:rgba(255,255,255,0.3);" data-color="#ffffff" aria-label="White"></button>
+<div class="sidebar">
+  <button class="color-btn active" data-color="#e63946" style="background:var(--col1)" aria-label="Red"></button>
+  <button class="color-btn"        data-color="#2196f3" style="background:var(--col2)" aria-label="Blue"></button>
+  <button class="color-btn"        data-color="#4caf50" style="background:var(--col3)" aria-label="Green"></button>
+  <button class="color-btn"        data-color="#ff9800" style="background:var(--col4)" aria-label="Orange"></button>
+  <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" aria-label="White"></button>
   <div class="divider"></div>
   <button class="clear-btn" id="clearBtn">clear</button>
 </div>
@@ -153,13 +158,17 @@
   const hint   = document.getElementById('hint');
 
   let currentColor = '#e63946';
-  let drawing = false;
+  let drawing  = false;
   let lastX = 0, lastY = 0;
   let hasDrawn = false;
 
+  function sidebarW() {
+    return document.querySelector('.sidebar').getBoundingClientRect().width;
+  }
+
   function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight - document.querySelector('.toolbar').getBoundingClientRect().height;
+    const w = window.innerWidth - sidebarW();
+    const h = window.innerHeight;
     const imgData = (canvas.width > 0 && canvas.height > 0)
       ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
     canvas.width  = w;
@@ -179,7 +188,7 @@
   window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', () => setTimeout(resize, 300));
 
-  // Pointer events — works for both mouse and touch
+  // Drawing
   canvas.addEventListener('pointerdown', e => {
     e.preventDefault();
     drawing = true;
