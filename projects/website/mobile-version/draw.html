@@ -18,7 +18,8 @@
       --col2: #2196f3;
       --col3: #4caf50;
       --col4: #ff9800;
-      --bg: #fdf8f0;
+      --col5: #ffffff;
+      --bg: #000000;
       --toolbar-h: 72px;
     }
 
@@ -117,7 +118,7 @@
       transform: translate(-50%, -60%);
       font-family: 'Caveat', cursive;
       font-size: clamp(24px, 6vw, 40px);
-      color: rgba(0,0,0,0.12);
+      color: rgba(255,255,255,0.15);
       pointer-events: none;
       user-select: none;
       text-align: center;
@@ -136,6 +137,7 @@
   <button class="color-btn"        id="btn2" style="background:var(--col2)" data-color="#2196f3" aria-label="Blue"></button>
   <button class="color-btn"        id="btn3" style="background:var(--col3)" data-color="#4caf50" aria-label="Green"></button>
   <button class="color-btn"        id="btn4" style="background:var(--col4)" data-color="#ff9800" aria-label="Orange"></button>
+  <button class="color-btn"        id="btn5" style="background:var(--col5); border-color: rgba(255,255,255,0.3);" data-color="#ffffff" aria-label="White"></button>
   <div class="divider"></div>
   <button class="clear-btn" id="clearBtn">clear</button>
 </div>
