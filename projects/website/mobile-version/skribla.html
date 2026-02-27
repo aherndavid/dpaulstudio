@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>dPaul Skribla</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --col1: #e63946;
+      --col2: #2196f3;
+      --col3: #4caf50;
+      --col4: #ff9800;
+      --col5: #ffffff;
+      --bg: #000000;
+      --toolbar-h: 72px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background: var(--bg);
+      touch-action: none;
+    }
+
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: calc(100dvh - var(--toolbar-h) - var(--safe-bottom));
+      cursor: crosshair;
+      touch-action: none;
+      background: #000;
+    }
+
+    .toolbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(var(--toolbar-h) + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(8px, 3vw, 16px);
+      padding-left: 16px;
+      padding-right: 16px;
+      z-index: 10;
+    }
+
+    .color-btn {
+      width: clamp(32px, 9vw, 44px);
+      height: clamp(32px, 9vw, 44px);
+      border-radius: 50%;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+
+    .color-btn::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+    }
+
+    .color-btn:active { transform: scale(0.9); }
+
+    .color-btn.active {
+      border-color: #fff;
+      transform: scale(1.15);
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+    }
+
+    .divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+
+    .clear-btn {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(16px, 4.5vw, 20px);
+      color: rgba(255,255,255,0.6);
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: color 0.15s, background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .clear-btn:active {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .hint {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -65%);
+      font-family: 'Caveat', cursive;
+      font-size: clamp(28px, 8vw, 48px);
+      color: rgba(255,255,255,0.18);
+      pointer-events: none;
+      user-select: none;
+      text-align: center;
+      line-height: 1.4;
+      transition: opacity 0.5s;
+      max-width: 80vw;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<p class="hint" id="hint">◉‿◉<br>dPaul Skribla</p>
+
+<div class="toolbar">
+  <button class="color-btn active" id="btn1" style="background:var(--col1)" data-color="#e63946" aria-label="Red"></button>
+  <button class="color-btn"        id="btn2" style="background:var(--col2)" data-color="#2196f3" aria-label="Blue"></button>
+  <button class="color-btn"        id="btn3" style="background:var(--col3)" data-color="#4caf50" aria-label="Green"></button>
+  <button class="color-btn"        id="btn4" style="background:var(--col4)" data-color="#ff9800" aria-label="Orange"></button>
+  <button class="color-btn"        id="btn5" style="background:var(--col5); border-color:rgba(255,255,255,0.3);" data-color="#ffffff" aria-label="White"></button>
+  <div class="divider"></div>
+  <button class="clear-btn" id="clearBtn">clear</button>
+</div>
+
+<script>
+  const canvas = document.getElementById('c');
+  const ctx    = canvas.getContext('2d');
+  const hint   = document.getElementById('hint');
+
+  let currentColor = '#e63946';
+  let drawing = false;
+  let lastX = 0, lastY = 0;
+  let hasDrawn = false;
+
+  function resize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight - document.querySelector('.toolbar').getBoundingClientRect().height;
+    const imgData = (canvas.width > 0 && canvas.height > 0)
+      ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+    canvas.width  = w;
+    canvas.height = h;
+    setupCtx();
+    if (imgData) ctx.putImageData(imgData, 0, 0);
+  }
+
+  function setupCtx() {
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'round';
+    ctx.lineWidth   = 5;
+    ctx.strokeStyle = currentColor;
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 300));
+
+  // Pointer events — works for both mouse and touch
+  canvas.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    drawing = true;
+    canvas.setPointerCapture(e.pointerId);
+    const {x, y} = pos(e);
+    lastX = x; lastY = y;
+    ctx.fillStyle = currentColor;
+    ctx.beginPath();
+    ctx.arc(x, y, ctx.lineWidth / 2, 0, Math.PI * 2);
+    ctx.fill();
+    if (!hasDrawn) { hasDrawn = true; hint.style.opacity = '0'; }
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    if (!drawing) return;
+    e.preventDefault();
+    const {x, y} = pos(e);
+    ctx.strokeStyle = currentColor;
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastX = x; lastY = y;
+  });
+
+  const stopDraw = () => { drawing = false; };
+  canvas.addEventListener('pointerup',     stopDraw);
+  canvas.addEventListener('pointercancel', stopDraw);
+
+  function pos(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  // Colour buttons
+  document.querySelectorAll('.color-btn').forEach(btn => {
+    btn.addEventListener('pointerdown', e => e.stopPropagation());
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentColor = btn.dataset.color;
+    });
+  });
+
+  // Clear
+  document.getElementById('clearBtn').addEventListener('pointerdown', e => e.stopPropagation());
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasDrawn = false;
+    hint.style.opacity = '1';
+  });
+</script>
+</body>
+</html>
