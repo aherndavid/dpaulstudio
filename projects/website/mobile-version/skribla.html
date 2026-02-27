@@ -322,15 +322,45 @@
   document.getElementById('shareBtn').addEventListener('pointerdown', e => e.stopPropagation());
   document.getElementById('shareBtn').addEventListener('click', async () => {
     const url = window.location.href;
+    const toast = document.getElementById('toast');
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // 1. Try native share sheet (works on HTTPS mobile)
     if (navigator.share) {
-      try { await navigator.share({ title: 'dPaul Skribla', url }); } catch(_) {}
-    } else {
+      try {
+        await navigator.share({ title: 'dPaul Skribla', url });
+        return;
+      } catch(_) {}
+    }
+
+    // 2. Try clipboard API (works on HTTPS desktop/mobile)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
       try {
         await navigator.clipboard.writeText(url);
-        const toast = document.getElementById('toast');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
+        showToast('link copied!');
+        return;
       } catch(_) {}
+    }
+
+    // 3. Fallback: old-school execCommand copy
+    try {
+      const el = document.createElement('textarea');
+      el.value = url;
+      el.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      showToast('link copied!');
+    } catch(_) {
+      // 4. Last resort: show URL in prompt so user can copy it
+      window.prompt('Copy this link:', url);
     }
   });
 
