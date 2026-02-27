@@ -280,10 +280,6 @@
         for (var i = 0; i < lines.length; i++) await typeLine(lines[i]);
         output.appendChild(cursorEl);
         statusEl.textContent = 'READY';
-
-        // Countdown then open dpaul.studio
-        await sleep(10000);
-        window.location.href = 'https://www.dpaul.studio';
     }
 
     run();
