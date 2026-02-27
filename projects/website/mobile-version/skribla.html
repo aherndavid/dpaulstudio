@@ -149,6 +149,39 @@
       display: block;
     }
 
+    .size-btn {
+      background: none;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.15s, transform 0.15s;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .size-btn::after {
+      content: '';
+      position: absolute;
+      inset: -10px;
+    }
+
+    .size-btn.active {
+      border-color: #fff;
+      transform: scale(1.15);
+    }
+
+    .size-btn:active { transform: scale(0.88); }
+
+    .size-dot {
+      background: #fff;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
     .toast {
       position: fixed;
       bottom: 30px;
@@ -223,6 +256,10 @@
   <button class="color-btn"        data-color="#ff9800" style="background:var(--col4)" aria-label="Orange"></button>
   <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" aria-label="White"></button>
   <div class="divider"></div>
+  <button class="size-btn active" data-size="3"  style="width:30px;height:30px;" aria-label="Small"><span class="size-dot" style="width:5px;height:5px;"></span></button>
+  <button class="size-btn"        data-size="8"  style="width:30px;height:30px;" aria-label="Medium"><span class="size-dot" style="width:10px;height:10px;"></span></button>
+  <button class="size-btn"        data-size="18" style="width:30px;height:30px;" aria-label="Large"><span class="size-dot" style="width:18px;height:18px;"></span></button>
+  <div class="divider"></div>
   <button class="clear-btn" id="clearBtn">clear</button>
   <div class="divider"></div>
   <button class="share-btn" id="shareBtn" aria-label="Share">
@@ -243,6 +280,7 @@
   const hint   = document.getElementById('hint');
 
   let currentColor = '#e63946';
+  let currentSize  = 3;
   let drawing  = false;
   let lastX = 0, lastY = 0;
   let hasDrawn = false;
@@ -265,7 +303,7 @@
   function setupCtx() {
     ctx.lineJoin    = 'round';
     ctx.lineCap     = 'round';
-    ctx.lineWidth   = 5;
+    ctx.lineWidth   = currentSize;
     ctx.strokeStyle = currentColor;
   }
 
@@ -280,9 +318,10 @@
     canvas.setPointerCapture(e.pointerId);
     const {x, y} = pos(e);
     lastX = x; lastY = y;
+    ctx.lineWidth = currentSize;
     ctx.fillStyle = currentColor;
     ctx.beginPath();
-    ctx.arc(x, y, ctx.lineWidth / 2, 0, Math.PI * 2);
+    ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
     ctx.fill();
     if (!hasDrawn) { hasDrawn = true; hint.style.opacity = '0'; }
   });
@@ -291,6 +330,7 @@
     if (!drawing) return;
     e.preventDefault();
     const {x, y} = pos(e);
+    ctx.lineWidth = currentSize;
     ctx.strokeStyle = currentColor;
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -315,6 +355,16 @@
       document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentColor = btn.dataset.color;
+    });
+  });
+
+  // Size buttons
+  document.querySelectorAll('.size-btn').forEach(btn => {
+    btn.addEventListener('pointerdown', e => e.stopPropagation());
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentSize = parseInt(btn.dataset.size);
     });
   });
 
