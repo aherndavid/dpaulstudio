@@ -3,701 +3,253 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital VU</title>
+<title>dPaul Technologies VU Meter</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-:root {
-  --cyan:   #00e8ff;
-  --green:  #00ff88;
-  --yellow: #ffdd00;
-  --red:    #ff2244;
-  --dim:    #003a44;
-  --bg:     #131413;
-  --panel:  #131413;
-  --border: #0a2028;
-  --text:   #00c8e0;
-  --glow-c: rgba(0,232,255,0.18);
-  --glow-g: rgba(0,255,136,0.18);
-}
-
-* { margin:0; padding:0; box-sizing:border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: var(--bg);
+  background: #131413;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: 'Share Tech Mono', monospace;
-  /* Subtle scanline overlay on body */
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.18) 2px,
-      rgba(0,0,0,0.18) 4px
-    ),
-    radial-gradient(ellipse at 50% 40%, #1a1c1a 0%, #0e0f0e 100%);
-}
-
-/* ── Rack unit chassis ── */
-.rack {
-  width: 500px;
-  background: #0c1214;
-  border: 1px solid #1a2e34;
-  border-radius: 4px;
-  padding: 20px 24px 22px;
-  box-shadow:
-    0 0 0 1px #0a1e24,
-    0 0 60px rgba(0,200,220,0.06),
-    0 20px 60px rgba(0,0,0,0.95),
-    inset 0 1px 0 rgba(0,200,220,0.08);
-  position: relative;
-}
-
-/* Rack ears */
-.rack::before, .rack::after {
-  content: '';
-  position: absolute;
-  top: 8px; bottom: 8px;
-  width: 14px;
-  background: #141e20;
-  border: 1px solid #1a2e34;
-  border-radius: 2px;
-}
-.rack::before { left: -16px; }
-.rack::after  { right: -16px; }
-
-/* ── Top strip ── */
-.top-strip {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
+  gap: 32px;
 }
 
 .brand {
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 5px;
-  color: var(--text);
-  text-transform: uppercase;
-  opacity: 0.7;
-}
-
-.model {
   font-size: 9px;
-  letter-spacing: 3px;
-  color: var(--dim);
+  letter-spacing: 5px;
+  color: #2e2a26;
+  text-transform: uppercase;
 }
 
-/* ── OLED display window ── */
-.display {
-  background: #020c0e;
-  border: 1px solid #0d2228;
-  border-radius: 3px;
-  padding: 0;
+/* ── Main display panel ── */
+.panel {
+  width: 360px;
+  background: #0a0804;
+  border: 1px solid #221408;
+  border-radius: 6px;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,0.7),
+    0 0 40px rgba(255,90,10,0.04);
   position: relative;
   overflow: hidden;
-  height: 260px;
-  box-shadow:
-    inset 0 0 40px rgba(0,0,0,0.8),
-    inset 0 0 2px rgba(0,200,220,0.15),
-    0 0 20px rgba(0,180,210,0.08);
 }
 
-/* Scanlines over display */
-.display::after {
+/* Scanlines */
+.panel::after {
   content: '';
   position: absolute;
   inset: 0;
   background: repeating-linear-gradient(
     0deg,
-    transparent,
+    transparent 0px,
     transparent 3px,
-    rgba(0,0,0,0.22) 3px,
-    rgba(0,0,0,0.22) 4px
+    rgba(0,0,0,0.2) 3px,
+    rgba(0,0,0,0.2) 4px
   );
   pointer-events: none;
   z-index: 10;
 }
 
-/* Screen glare */
-.display::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 40%;
-  background: linear-gradient(180deg,
-    rgba(0,200,230,0.04) 0%,
-    transparent 100%);
-  pointer-events: none;
-  z-index: 11;
+/* ── Big dB readout ── */
+.db-display {
+  font-size: 80px;
+  line-height: 1;
+  color: #ff6010;
+  letter-spacing: -3px;
+  text-shadow:
+    0 0 20px rgba(255,96,16,0.7),
+    0 0 60px rgba(255,96,16,0.2);
+  position: relative;
+  z-index: 2;
+  transition: color 0.1s, text-shadow 0.1s;
+  min-width: 240px;
+  text-align: center;
+}
+.db-display.peak {
+  color: #ff1830;
+  text-shadow: 0 0 20px rgba(255,24,48,0.9), 0 0 60px rgba(255,24,48,0.4);
+}
+.db-unit {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: #4a2808;
+  position: relative;
+  z-index: 2;
+  margin-top: -6px;
 }
 
-.display svg {
-  display: block;
+/* ── Segment bar ── */
+.bar-wrap {
   width: 100%;
-  height: 100%;
-}
-
-/* ── Digital readout strip ── */
-.readout-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 12px;
-  padding: 8px 12px;
-  background: #030d10;
-  border: 1px solid #0d2228;
-  border-radius: 3px;
-}
-
-.db-readout {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 28px;
-  color: var(--cyan);
-  letter-spacing: 2px;
-  text-shadow: 0 0 12px rgba(0,232,255,0.6), 0 0 30px rgba(0,232,255,0.25);
-  min-width: 100px;
-}
-
-.db-readout.in-music { color: var(--green);  text-shadow: 0 0 12px rgba(0,255,136,0.6), 0 0 30px rgba(0,255,136,0.25); }
-.db-readout.in-peak  { color: var(--red);    text-shadow: 0 0 12px rgba(255,34,68,0.7),  0 0 30px rgba(255,34,68,0.3); }
-
-.readout-meta {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 4px;
+  position: relative;
+  z-index: 2;
 }
 
-.readout-label {
-  font-size: 8px;
-  letter-spacing: 3px;
-  color: var(--dim);
-  text-transform: uppercase;
-}
-
-.leds {
+.segments {
   display: flex;
-  gap: 8px;
-}
-
-.led-dot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: 3px;
+  height: 28px;
 }
 
-.led-dot span:first-child {
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  transition: all 0.08s;
-}
-.led-dot span:last-child {
-  font-size: 7px;
-  letter-spacing: 1px;
-  color: #1a3840;
-  text-transform: uppercase;
-}
-
-.led-g span:first-child { background: #061a0e; border: 1px solid #0a3018; }
-.led-g.on span:first-child {
-  background: var(--green);
-  border-color: #80ffcc;
-  box-shadow: 0 0 8px var(--green), 0 0 18px rgba(0,255,136,0.5);
-}
-.led-g.on span:last-child { color: var(--green); }
-
-.led-r span:first-child { background: #1a060a; border: 1px solid #3a0e16; }
-.led-r.on span:first-child {
-  background: var(--red);
-  border-color: #ff8899;
-  box-shadow: 0 0 8px var(--red), 0 0 18px rgba(255,34,68,0.5);
-}
-.led-r.on span:last-child { color: var(--red); }
-
-/* ── Controls ── */
-.controls {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.slider-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ctrl-lbl {
-  font-size: 8px;
-  letter-spacing: 2px;
-  color: var(--dim);
-  text-transform: uppercase;
-  width: 44px;
-}
-
-input[type=range] {
-  -webkit-appearance: none;
+.seg {
   flex: 1;
-  height: 3px;
-  background: linear-gradient(to right, var(--cyan) var(--pct,40%), #0a2028 var(--pct,40%));
-  border-radius: 1px;
-  outline: none;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 14px; height: 14px;
-  background: var(--cyan);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(0,232,255,0.8);
+  border-radius: 2px;
+  background: #120a04;
+  transition: background 0.05s, box-shadow 0.05s;
 }
 
-.btn-row {
+/* Colours when lit */
+.seg.lit-orange {
+  background: #ff6010;
+  box-shadow: 0 0 6px rgba(255,96,16,0.7);
+}
+.seg.lit-yellow {
+  background: #ffaa00;
+  box-shadow: 0 0 6px rgba(255,170,0,0.7);
+}
+.seg.lit-red {
+  background: #ff1830;
+  box-shadow: 0 0 8px rgba(255,24,48,0.8);
+}
+
+/* Scale labels under bar */
+.bar-scale {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 1px;
+  font-size: 8px;
+  color: #2a1a08;
+  letter-spacing: 0;
+}
+
+/* ── Buttons ── */
+.btns {
+  display: flex;
+  gap: 10px;
 }
 
 button {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 2px;
+  font-size: 9px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   background: transparent;
-  color: var(--dim);
-  border: 1px solid #0d2228;
-  padding: 6px 12px;
-  border-radius: 2px;
+  color: #4a2c10;
+  border: 1px solid #221408;
+  padding: 10px 20px;
+  border-radius: 3px;
   cursor: pointer;
   transition: all 0.12s;
 }
-button:hover  { color: var(--cyan); border-color: var(--cyan); background: rgba(0,232,255,0.06); }
-button.active { color: var(--cyan); border-color: var(--cyan); background: rgba(0,232,255,0.12);
-                box-shadow: 0 0 10px rgba(0,232,255,0.2); }
+button:hover {
+  color: #ff6010;
+  border-color: #ff6010;
+  background: rgba(255,96,16,0.05);
+  box-shadow: 0 0 12px rgba(255,96,16,0.12);
+}
+button.active {
+  color: #ff6010;
+  border-color: #ff6010;
+  background: rgba(255,96,16,0.1);
+  box-shadow: 0 0 16px rgba(255,96,16,0.2);
+}
 </style>
 </head>
 <body>
 
-<div class="rack">
-  <div class="top-strip">
-    <span class="brand">dPaul Technologies</span>
-    <span class="model">VU METER · 9000</span>
-  </div>
+<span class="brand">dPaul Technologies · VU Meter</span>
 
-  <div class="display">
-    <!--
-      SVG: 500×260 viewBox (same as display px size)
-      Pivot: (250, 430) — 170px below display bottom
-      Arc radius: 340px → arc top at y = 430-340 = 90 ... hmm too low
-      Let's use R=400, pivot at (250, 480)
-      Arc top: 480-400 = 80
-      Sweep +-60: endpoint x = 250 ± 400*sin(60) = 250 ± 346 → clips
-      Sweep +-50: endpoint x = 250 ± 400*sin(50) = 250 ± 306 → still clips at 500px wide
-      Sweep +-38: 400*sin(38) = 246 → endpoints at x=4 and x=496. 
-      Arc height = 400 - 400*cos(38) = 400 - 315 = 85px. Too flat.
+<div class="panel">
+  <div class="db-display" id="dbDisplay">—</div>
+  <div class="db-unit">DECIBELS</div>
 
-      Better: R=320, sweep +-50
-      endpoint x offset = 320*sin(50) = 245 → x = 5 to 495 ✓
-      arc top: PY - 320
-      want top at y=20: PY = 340
-      arc ends y = 340 - 320*cos(50) = 340 - 205 = 135
-      arc height = 135 - 20 = 115px — good!
-
-      R=320, PY=340, sweep=+-50
-    -->
-    <svg viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg" id="vuSvg">
-      <defs>
-        <!-- Glow filters -->
-        <filter id="glow-c" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <filter id="glow-g" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="4" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <filter id="glow-r" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="5" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <filter id="needle-glow" x="-60%" y="-10%" width="220%" height="120%">
-          <feGaussianBlur stdDeviation="2.5" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <!-- Radial gradient for arc glow bloom -->
-        <radialGradient id="pivGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%"   stop-color="#00e8ff" stop-opacity="0.4"/>
-          <stop offset="100%" stop-color="#00e8ff" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-
-      <!-- Background grid lines (subtle) -->
-      <g stroke="rgba(0,180,200,0.05)" stroke-width="0.5">
-        <!-- Radial grid lines from pivot -->
-        <g id="gridLines"></g>
-      </g>
-
-      <!-- ── Arc track (dim background rail) ── -->
-      <path id="trackArc" fill="none" stroke="#0a2228" stroke-width="3" stroke-linecap="butt"/>
-
-      <!-- ── Filled active arc (from min to current level) ── -->
-      <!-- Low zone: -40 to -20 (dim cyan) -->
-      <path id="activeLow"    fill="none" stroke="#005060" stroke-width="6" stroke-linecap="butt" opacity="0"/>
-      <!-- Music zone: -20 to -6 (bright green) -->
-      <path id="activeMusic"  fill="none" stroke="#00ff88" stroke-width="6" stroke-linecap="butt" opacity="0"
-            filter="url(#glow-g)"/>
-      <!-- Caution: -6 to 0 (yellow) -->
-      <path id="activeCaution" fill="none" stroke="#ffdd00" stroke-width="6" stroke-linecap="butt" opacity="0"/>
-      <!-- Peak: 0 to +3 (red) -->
-      <path id="activePeak"   fill="none" stroke="#ff2244" stroke-width="6" stroke-linecap="butt" opacity="0"
-            filter="url(#glow-r)"/>
-
-      <!-- ── Scale zone colour bands (thin, always visible) ── -->
-      <path id="bandLow"     fill="none" stroke="#003848" stroke-width="2" stroke-linecap="butt"/>
-      <path id="bandMusic"   fill="none" stroke="#00602a" stroke-width="2" stroke-linecap="butt"/>
-      <path id="bandCaution" fill="none" stroke="#604800" stroke-width="2" stroke-linecap="butt"/>
-      <path id="bandPeak"    fill="none" stroke="#601020" stroke-width="2" stroke-linecap="butt"/>
-
-      <!-- Tick marks (JS) -->
-      <g id="ticks"></g>
-      <!-- Labels (JS) -->
-      <g id="labels" font-family="'Share Tech Mono', monospace" text-anchor="middle"></g>
-
-      <!-- Music range label text -->
-      <text id="musicLabel" font-family="'Share Tech Mono', monospace"
-            font-size="7" fill="#00804a" letter-spacing="1.5"
-            text-anchor="middle" opacity="0.8"></text>
-
-      <!-- Needle glow halo -->
-      <line id="needleHalo"
-            x1="250" y1="340" x2="250" y2="28"
-            stroke="rgba(0,232,255,0.12)" stroke-width="12" stroke-linecap="round"
-            style="transform-origin:250px 340px;"/>
-
-      <!-- Needle -->
-      <g id="needle" style="transform-origin:250px 340px;">
-        <!-- Main needle line -->
-        <line x1="250" y1="330" x2="250" y2="28"
-              stroke="#00e8ff" stroke-width="1.5" stroke-linecap="round"
-              filter="url(#needle-glow)"/>
-        <!-- Bright tip -->
-        <circle cx="250" cy="28" r="2.5" fill="#00e8ff"
-                filter="url(#glow-c)"/>
-      </g>
-
-      <!-- Pivot glow circle -->
-      <circle cx="250" cy="340" r="28" fill="url(#pivGlow)" id="pivGlowCircle"/>
-      <!-- Pivot rings -->
-      <circle cx="250" cy="340" r="10" fill="none" stroke="#00e8ff" stroke-width="1" opacity="0.4"/>
-      <circle cx="250" cy="340" r="6"  fill="#020e10" stroke="#00e8ff" stroke-width="1.5" opacity="0.7"/>
-      <circle cx="250" cy="340" r="2.5" fill="#00e8ff" opacity="0.9"/>
-    </svg>
-  </div>
-
-  <div class="readout-strip">
-    <div>
-      <div class="readout-label" style="margin-bottom:4px;">Level</div>
-      <div class="db-readout" id="dbReadout">-13.0 dB</div>
-    </div>
-    <div class="readout-meta">
-      <div class="readout-label">Status</div>
-      <div class="leds">
-        <div class="led-dot led-g" id="musicLed">
-          <span></span><span>Music</span>
-        </div>
-        <div class="led-dot led-r" id="peakLed">
-          <span></span><span>Peak</span>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:right">
-      <div class="readout-label" style="margin-bottom:4px;">Range</div>
-      <div style="font-size:9px; color:#004458; letter-spacing:1px;" id="zoneLabel">LOW</div>
-    </div>
-  </div>
-
-  <div class="controls">
-    <div class="slider-row">
-      <span class="ctrl-lbl">Input</span>
-      <input type="range" id="slider" min="-40" max="3" value="-13" step="0.1">
-    </div>
-    <div class="btn-row">
-      <button id="btnTest">Test Tone</button>
-      <button id="btnMusic">Simulate Music</button>
-      <button id="btnMic">Mic Input</button>
-      <button id="btnReset">Reset</button>
+  <div class="bar-wrap">
+    <div class="segments" id="segments"></div>
+    <div class="bar-scale">
+      <span>-40</span>
+      <span>-30</span>
+      <span>-20</span>
+      <span>-10</span>
+      <span>-5</span>
+      <span>0</span>
+      <span>+3</span>
     </div>
   </div>
 </div>
 
+<div class="btns">
+  <button id="btnMic">Mic Input</button>
+  <button id="btnTest">Test</button>
+  <button id="btnReset">Reset</button>
+</div>
+
 <script>
 'use strict';
-const NS = 'http://www.w3.org/2000/svg';
-
-// ── Geometry ─────────────────────────────────────────────
-const PX = 250, PY = 340;
-const R     = 320;
-const SWEEP = 50;  // degrees each side of 12 o'clock
-const T_OUT = 312;
-const T_MAJ = 292;
-const T_MED = 300;
-const T_MIN = 306;
-const LBL_R = 272;
 
 const MIN_DB = -40, MAX_DB = 3;
+const NUM_SEGS = 40;
 
-function db2a(db) {
-  const c = Math.max(MIN_DB, Math.min(MAX_DB, db));
-  return -SWEEP + ((c - MIN_DB) / (MAX_DB - MIN_DB)) * (SWEEP * 2);
+// Build segments
+const segsEl = document.getElementById('segments');
+for (let i = 0; i < NUM_SEGS; i++) {
+  const d = document.createElement('div');
+  d.className = 'seg';
+  segsEl.appendChild(d);
 }
+const segs = Array.from(segsEl.children);
 
-function pol(a, r) {
-  const rad = (a - 90) * Math.PI / 180;
-  return { x: PX + r * Math.cos(rad), y: PY + r * Math.sin(rad) };
-}
+// Which segment index corresponds to 0dB and +2dB
+const idx0  = Math.round((0  - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idx2  = Math.round((2  - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
 
-function arcP(a1, a2, r) {
-  const s = pol(a1, r), e = pol(a2, r);
-  const lg = Math.abs(a2 - a1) > 180 ? 1 : 0;
-  return `M${s.x.toFixed(2)} ${s.y.toFixed(2)} A${r} ${r} 0 ${lg} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)}`;
-}
-
-// Arc path from min to a given db, clipped to a zone
-function zoneArc(zoneStart, zoneEnd, currentDb, r) {
-  if (currentDb <= zoneStart) return '';
-  const a1 = db2a(zoneStart);
-  const a2 = db2a(Math.min(currentDb, zoneEnd));
-  return arcP(a1, a2, r);
-}
-
-// ── Static arcs ──────────────────────────────────────────
-const fullArcPath = arcP(db2a(-40), db2a(3), R);
-document.getElementById('trackArc').setAttribute('d', fullArcPath);
-
-// Thin band markers
-document.getElementById('bandLow').setAttribute('d',     arcP(db2a(-40), db2a(-20), R + 8));
-document.getElementById('bandMusic').setAttribute('d',   arcP(db2a(-20), db2a(-6),  R + 8));
-document.getElementById('bandCaution').setAttribute('d', arcP(db2a(-6),  db2a(0),   R + 8));
-document.getElementById('bandPeak').setAttribute('d',    arcP(db2a(0),   db2a(3),   R + 8));
-
-// Grid lines from pivot
-const gridG = document.getElementById('gridLines');
-for (let db = -40; db <= 3; db += 5) {
-  const a = db2a(db);
-  const p1 = pol(a, R - 60), p2 = pol(a, R + 30);
-  const ln = document.createElementNS(NS, 'line');
-  ln.setAttribute('x1', p1.x); ln.setAttribute('y1', p1.y);
-  ln.setAttribute('x2', p2.x); ln.setAttribute('y2', p2.y);
-  gridG.appendChild(ln);
-}
-
-// ── Scale ticks & labels ─────────────────────────────────
-const SCALE = [
-  {db:-40, lbl:'-40', sz:'major'},
-  {db:-35, lbl:'',    sz:'minor'},
-  {db:-30, lbl:'-30', sz:'major'},
-  {db:-25, lbl:'',    sz:'minor'},
-  {db:-20, lbl:'-20', sz:'major'},
-  {db:-15, lbl:'',    sz:'medium'},
-  {db:-10, lbl:'-10', sz:'major'},
-  {db:-7,  lbl:'-7',  sz:'medium'},
-  {db:-5,  lbl:'-5',  sz:'medium'},
-  {db:-3,  lbl:'-3',  sz:'medium'},
-  {db:0,   lbl:'0',   sz:'major'},
-  {db:1,   lbl:'+1',  sz:'medium'},
-  {db:2,   lbl:'+2',  sz:'medium'},
-  {db:3,   lbl:'+3',  sz:'major'},
-];
-
-const ticksG  = document.getElementById('ticks');
-const labelsG = document.getElementById('labels');
-
-function zoneColor(db) {
-  if (db >= 0)   return '#ff2244';
-  if (db >= -6)  return '#ffdd00';
-  if (db >= -20) return '#00ff88';
-  return '#005570';
-}
-function zoneDimColor(db) {
-  if (db >= 0)   return '#3a0810';
-  if (db >= -6)  return '#3a3000';
-  if (db >= -20) return '#003820';
-  return '#001c24';
-}
-
-SCALE.forEach(({db, lbl, sz}) => {
-  const a = db2a(db);
-  const inR = sz === 'major' ? T_MAJ : sz === 'medium' ? T_MED : T_MIN;
-  const p1  = pol(a, inR), p2 = pol(a, T_OUT);
-
-  const ln = document.createElementNS(NS, 'line');
-  ln.setAttribute('x1', p1.x); ln.setAttribute('y1', p1.y);
-  ln.setAttribute('x2', p2.x); ln.setAttribute('y2', p2.y);
-  ln.setAttribute('stroke', zoneDimColor(db));
-  ln.setAttribute('stroke-width', sz === 'major' ? '2' : sz === 'medium' ? '1.4' : '0.9');
-  ticksG.appendChild(ln);
-
-  if (lbl) {
-    const lp = pol(a, LBL_R);
-    const t = document.createElementNS(NS, 'text');
-    t.setAttribute('x', lp.x);
-    t.setAttribute('y', lp.y + 4);
-    t.setAttribute('fill', zoneDimColor(db));
-    t.setAttribute('font-size', sz === 'major' ? '10' : '8');
-    t.textContent = lbl;
-    labelsG.appendChild(t);
-  }
-});
-
-// Minor 1dB ticks
-for (let db = MIN_DB; db <= MAX_DB; db++) {
-  if (SCALE.find(s => s.db === db)) continue;
-  const a = db2a(db);
-  const p1 = pol(a, T_MIN), p2 = pol(a, T_OUT);
-  const ln = document.createElementNS(NS, 'line');
-  ln.setAttribute('x1', p1.x); ln.setAttribute('y1', p1.y);
-  ln.setAttribute('x2', p2.x); ln.setAttribute('y2', p2.y);
-  ln.setAttribute('stroke', '#001c24');
-  ln.setAttribute('stroke-width', '0.7');
-  ticksG.appendChild(ln);
-}
-
-// Music range label
-const mla = db2a(-13);
-const mlp = pol(mla, LBL_R - 22);
-const mlEl = document.getElementById('musicLabel');
-mlEl.setAttribute('x', mlp.x);
-mlEl.setAttribute('y', mlp.y + 3);
-mlEl.setAttribute('transform', `rotate(${mla}, ${mlp.x}, ${mlp.y})`);
-mlEl.textContent = '◄ MUSIC RANGE ►';
-
-// ── Needle & active arc update ───────────────────────────
-const needle      = document.getElementById('needle');
-const needleHalo  = document.getElementById('needleHalo');
-const pivGlowEl   = document.getElementById('pivGlowCircle');
-const dbReadout   = document.getElementById('dbReadout');
-const zoneLabel   = document.getElementById('zoneLabel');
-const musicLed    = document.getElementById('musicLed');
-const peakLed     = document.getElementById('peakLed');
-
-let peakTimer = null;
-let currentDb = -13;
-
-function lerp(a, b, t) { return a + (b - a) * t; }
+const dbDisplay = document.getElementById('dbDisplay');
 
 function setLevel(db) {
-  currentDb = db;
-  const a = db2a(db);
+  const filled = Math.round(((db - MIN_DB) / (MAX_DB - MIN_DB)) * (NUM_SEGS - 1));
 
-  // Needle
-  needle.style.transform     = `rotate(${a}deg)`;
-  needleHalo.style.transform = `rotate(${a}deg)`;
-
-  // Update needle colour by zone
-  const nColor = zoneColor(db);
-  needle.querySelector('line').setAttribute('stroke', nColor);
-  needle.querySelector('circle').setAttribute('fill', nColor);
-
-  // Needle halo colour
-  if (db >= 0) {
-    needleHalo.setAttribute('stroke', 'rgba(255,34,68,0.15)');
-  } else if (db >= -6) {
-    needleHalo.setAttribute('stroke', 'rgba(255,221,0,0.12)');
-  } else if (db >= -20) {
-    needleHalo.setAttribute('stroke', 'rgba(0,255,136,0.1)');
-  } else {
-    needleHalo.setAttribute('stroke', 'rgba(0,232,255,0.08)');
-  }
-
-  // Active fill arcs
-  const AL = document.getElementById('activeLow');
-  const AM = document.getElementById('activeMusic');
-  const AC = document.getElementById('activeCaution');
-  const AP = document.getElementById('activePeak');
-
-  if (db > -40) {
-    AL.setAttribute('d', zoneArc(-40, -20, db, R - 2));
-    AL.setAttribute('opacity', '0.8');
-  } else { AL.setAttribute('opacity', '0'); }
-
-  if (db > -20) {
-    AM.setAttribute('d', zoneArc(-20, -6, db, R - 2));
-    AM.setAttribute('opacity', '1');
-  } else { AM.setAttribute('opacity', '0'); }
-
-  if (db > -6) {
-    AC.setAttribute('d', zoneArc(-6, 0, db, R - 2));
-    AC.setAttribute('opacity', '0.9');
-  } else { AC.setAttribute('opacity', '0'); }
-
-  if (db > 0) {
-    AP.setAttribute('d', zoneArc(0, 3, db, R - 2));
-    AP.setAttribute('opacity', '1');
-  } else { AP.setAttribute('opacity', '0'); }
-
-  // Light up active scale ticks
-  const allTicks  = ticksG.querySelectorAll('line');
-  const allLabels = labelsG.querySelectorAll('text');
-  SCALE.forEach(({db: sdb, sz}, i) => {
-    const active = sdb <= db;
-    if (allTicks[i]) {
-      allTicks[i].setAttribute('stroke', active ? zoneColor(sdb) : zoneDimColor(sdb));
-      allTicks[i].setAttribute('stroke-width',
-        active ? (sz === 'major' ? '2.5' : '1.8') : (sz === 'major' ? '2' : sz === 'medium' ? '1.4' : '0.9'));
-    }
-    if (allLabels[i]) {
-      allLabels[i].setAttribute('fill', active ? zoneColor(sdb) : zoneDimColor(sdb));
+  segs.forEach((s, i) => {
+    if (i <= filled) {
+      if (i >= idx2)      s.className = 'seg lit-red';
+      else if (i >= idx0) s.className = 'seg lit-yellow';
+      else                s.className = 'seg lit-orange';
+    } else {
+      s.className = 'seg';
     }
   });
 
-  // dB readout
-  dbReadout.textContent = (db >= 0 ? '+' : '') + db.toFixed(1) + ' dB';
-  dbReadout.className = 'db-readout' + (db >= 0 ? ' in-peak' : db >= -20 && db <= -6 ? ' in-music' : '');
-
-  // Zone label
-  if (db >= 0)         { zoneLabel.textContent = 'PEAK';  zoneLabel.style.color = '#ff2244'; }
-  else if (db >= -6)   { zoneLabel.textContent = 'HOT';   zoneLabel.style.color = '#ffdd00'; }
-  else if (db >= -20)  { zoneLabel.textContent = 'MUSIC'; zoneLabel.style.color = '#00ff88'; }
-  else                 { zoneLabel.textContent = 'LOW';   zoneLabel.style.color = '#004458'; }
-
-  // LEDs
-  if (db >= -20 && db <= -6) musicLed.classList.add('on');
-  else musicLed.classList.remove('on');
-
-  if (db >= 0) {
-    peakLed.classList.add('on');
-    clearTimeout(peakTimer);
-    peakTimer = setTimeout(() => peakLed.classList.remove('on'), 700);
+  // dB number
+  if (db <= MIN_DB) {
+    dbDisplay.textContent = '—';
+    dbDisplay.className = 'db-display';
+  } else {
+    dbDisplay.textContent = (db >= 0 ? '+' : '') + db.toFixed(1);
+    dbDisplay.className = 'db-display' + (db >= 0 ? ' peak' : '');
   }
 }
 
-// ── Slider ───────────────────────────────────────────────
-const slider = document.getElementById('slider');
-
-function updateSlider(db) {
-  slider.style.setProperty('--pct',
-    ((db - MIN_DB) / (MAX_DB - MIN_DB) * 100).toFixed(1) + '%');
-  // Slider thumb colour matches zone
-  const c = zoneColor(db);
-  slider.style.setProperty('--thumb-color', c);
+function resetMeter() {
+  segs.forEach(s => s.className = 'seg');
+  dbDisplay.textContent = '—';
+  dbDisplay.className = 'db-display';
 }
 
-slider.addEventListener('input', () => {
-  const db = parseFloat(slider.value);
-  updateSlider(db); setLevel(db); stopSim();
-});
+resetMeter();
 
-setLevel(-13); updateSlider(-13);
-
-// ── Simulation ───────────────────────────────────────────
+// ── Simulation ────────────────────────────────────────────
 let simInterval = null, simMode = null;
 
 function stopSim() {
@@ -705,37 +257,25 @@ function stopSim() {
   document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
 }
 
-function startSim(mode) {
-  stopSim(); simMode = mode;
-  document.getElementById('btn' + mode[0].toUpperCase() + mode.slice(1)).classList.add('active');
+document.getElementById('btnTest').addEventListener('click', () => {
+  if (simMode === 'test') { stopSim(); resetMeter(); return; }
+  stopSim(); simMode = 'test';
+  document.getElementById('btnTest').classList.add('active');
   let ph = 0;
   simInterval = setInterval(() => {
     ph++;
-    let db;
-    if (mode === 'test') {
-      db = -8 + Math.sin(ph * 0.065) * 12 + Math.sin(ph * 0.028) * 5;
-    } else {
-      const base  = -13 + Math.sin(ph * 0.038) * 6;
-      const noise = (Math.random() - 0.5) * 7;
-      const spike = Math.random() > 0.96 ? 10 : 0;
-      db = base + noise + spike;
-    }
+    let db = -8 + Math.sin(ph * 0.065) * 14 + Math.sin(ph * 0.028) * 6;
     db = Math.max(MIN_DB, Math.min(MAX_DB, db));
-    slider.value = db; updateSlider(db); setLevel(db);
+    setLevel(db);
   }, 55);
-}
+});
 
-document.getElementById('btnTest').addEventListener('click',
-  () => simMode === 'test'  ? stopSim() : startSim('test'));
-document.getElementById('btnMusic').addEventListener('click',
-  () => simMode === 'music' ? stopSim() : startSim('music'));
 document.getElementById('btnReset').addEventListener('click', () => {
-  stopSim(); slider.value = MIN_DB; updateSlider(MIN_DB); setLevel(MIN_DB);
-  peakLed.classList.remove('on'); musicLed.classList.remove('on');
+  stopSim(); resetMeter();
 });
 
 document.getElementById('btnMic').addEventListener('click', async () => {
-  if (simMode === 'mic') { stopSim(); return; }
+  if (simMode === 'mic') { stopSim(); resetMeter(); return; }
   try {
     const stream   = await navigator.mediaDevices.getUserMedia({ audio: true });
     stopSim(); simMode = 'mic';
@@ -753,7 +293,7 @@ document.getElementById('btnMic').addEventListener('click', async () => {
       const db  = rms > 0
         ? Math.max(MIN_DB, Math.min(MAX_DB, 20 * Math.log10(rms) + 28))
         : MIN_DB;
-      slider.value = db; updateSlider(db); setLevel(db);
+      setLevel(db);
     }, 55);
   } catch(e) { alert('Microphone access denied.'); }
 });
