@@ -40,28 +40,73 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: calc(100dvh - var(--toolbar-h) - var(--space-below) - var(--safe-bottom) - 16px);
+      /* two rows (54+38+6 gap) + space below + safe area */
+      height: calc(100dvh - var(--toolbar-h) - 44px - var(--space-below) - var(--safe-bottom) - 12px);
       cursor: crosshair;
       touch-action: none;
       background: #131413;
     }
 
     /* ── Bottom toolbar ── */
-    .sidebar {
+    .toolbar-wrap {
       position: fixed;
       bottom: calc(var(--space-below) + var(--safe-bottom));
       left: 0;
       right: 0;
-      width: 100%;
-      height: var(--toolbar-h);
-      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      z-index: 10;
+    }
+
+    .toolbar-row {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 0 12px;
-      z-index: 10;
+      width: 100%;
+    }
+
+    .top-row {
+      width: 100%;
+    }
+
+    .main-row {
+      width: 100%;
+    }
+
+    /* action-btn: clear + undo — each takes half the row */
+    .action-btn {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(14px, 3.8vw, 18px);
+      color: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      cursor: pointer;
+      padding: 8px 12px;
+      flex: 1;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+
+    .action-btn:active {
+      color: #fff;
+      background: rgba(255,255,255,0.14);
+    }
+
+    .sidebar {
+      background: transparent;
+      border: none;
+      height: var(--toolbar-h);
     }
 
     .color-btn {
@@ -228,7 +273,7 @@
     body.whiteboard .sidebar { background: transparent; }
     body.whiteboard { background: #e8e8e4; }
     body.whiteboard .divider { background: rgba(0,0,0,0.12); }
-    body.whiteboard .clear-btn { color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); }
+    body.whiteboard .clear-btn { color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); } body.whiteboard .action-btn { color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); } body.whiteboard .action-btn:active { color: #000; background: rgba(0,0,0,0.12); }
     body.whiteboard .clear-btn:active { color: #000; background: rgba(0,0,0,0.08); }
     body.whiteboard .share-btn { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); } body.whiteboard .share-btn svg { stroke: #333; }
     body.whiteboard .board-btn svg { stroke: #333; }
@@ -310,36 +355,43 @@
   <span class="hint-label">dPaul Skribla</span>
 </div>
 
-<div class="sidebar">
-  <button class="share-btn" id="shareBtn" aria-label="Share">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="18" cy="5" r="3"/>
-      <circle cx="6" cy="12" r="3"/>
-      <circle cx="18" cy="19" r="3"/>
-      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-    </svg>
-  </button>
-  <button class="clear-btn" id="clearBtn">clear</button>
-  <div class="divider"></div>
-  <button class="color-btn active" data-color="#e63946" style="background:var(--col1)" aria-label="Red"></button>
-  <button class="color-btn"        data-color="#2196f3" style="background:var(--col2)" aria-label="Blue"></button>
-  <button class="color-btn"        data-color="#4caf50" style="background:var(--col3)" aria-label="Green"></button>
-  <button class="color-btn"        data-color="#ff9800" style="background:var(--col4)" aria-label="Orange"></button>
-  <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" aria-label="White" id="whitePen"></button>
-  <button class="color-btn" id="blackPen" data-color="#111111" style="background:#111111; border-color:rgba(0,0,0,0.4); display:none;" aria-label="Black"></button>
-  <div class="divider"></div>
-  <button class="size-btn active" data-size="3"  style="width:30px;height:30px;" aria-label="Small"><span class="size-dot" style="width:5px;height:5px;"></span></button>
-  <button class="size-btn"        data-size="8"  style="width:30px;height:30px;" aria-label="Medium"><span class="size-dot" style="width:10px;height:10px;"></span></button>
-  <button class="size-btn"        data-size="18" style="width:30px;height:30px;" aria-label="Large"><span class="size-dot" style="width:18px;height:18px;"></span></button>
-  <div class="divider"></div>
-  <button class="board-btn" id="boardBtn" aria-label="Toggle whiteboard">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2"/>
-      <line x1="8" y1="21" x2="16" y2="21"/>
-      <line x1="12" y1="17" x2="12" y2="21"/>
-    </svg>
-  </button>
+<div class="toolbar-wrap">
+  <!-- Row 1: clear + undo taking half width each -->
+  <div class="toolbar-row top-row">
+    <button class="action-btn" id="undoBtn">↩ undo</button>
+    <button class="action-btn" id="clearBtn">✕ clear</button>
+  </div>
+  <!-- Row 2: main controls -->
+  <div class="toolbar-row main-row sidebar">
+    <button class="share-btn" id="shareBtn" aria-label="Share">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"/>
+        <circle cx="6" cy="12" r="3"/>
+        <circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+    </button>
+    <div class="divider"></div>
+    <button class="color-btn active" data-color="#e63946" style="background:var(--col1)" aria-label="Red"></button>
+    <button class="color-btn"        data-color="#2196f3" style="background:var(--col2)" aria-label="Blue"></button>
+    <button class="color-btn"        data-color="#4caf50" style="background:var(--col3)" aria-label="Green"></button>
+    <button class="color-btn"        data-color="#ff9800" style="background:var(--col4)" aria-label="Orange"></button>
+    <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" aria-label="White" id="whitePen"></button>
+    <button class="color-btn" id="blackPen" data-color="#111111" style="background:#111111; border-color:rgba(0,0,0,0.4); display:none;" aria-label="Black"></button>
+    <div class="divider"></div>
+    <button class="size-btn active" data-size="3"  style="width:30px;height:30px;" aria-label="Small"><span class="size-dot" style="width:5px;height:5px;"></span></button>
+    <button class="size-btn"        data-size="8"  style="width:30px;height:30px;" aria-label="Medium"><span class="size-dot" style="width:10px;height:10px;"></span></button>
+    <button class="size-btn"        data-size="18" style="width:30px;height:30px;" aria-label="Large"><span class="size-dot" style="width:18px;height:18px;"></span></button>
+    <div class="divider"></div>
+    <button class="board-btn" id="boardBtn" aria-label="Toggle whiteboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2"/>
+        <line x1="8" y1="21" x2="16" y2="21"/>
+        <line x1="12" y1="17" x2="12" y2="21"/>
+      </svg>
+    </button>
+  </div>
 </div>
 <div class="toast" id="toast">link copied!</div>
 
@@ -353,11 +405,14 @@
   let drawing  = false;
   let lastX = 0, lastY = 0;
   let hasDrawn = false;
+  const undoStack = [];
+  const MAX_UNDO = 20;
 
   function toolbarH() {
-    const tb = document.querySelector('.sidebar').getBoundingClientRect().height;
-    const spaceBelow = 24 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom')) || 0);
-    return tb + spaceBelow + 16;
+    const wrap = document.querySelector('.toolbar-wrap');
+    const tb = wrap ? wrap.getBoundingClientRect().height : 100;
+    const spaceBelow = 48 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom')) || 0);
+    return tb + spaceBelow + 12;
   }
 
   function resize() {
@@ -387,6 +442,9 @@
     e.preventDefault();
     drawing = true;
     canvas.setPointerCapture(e.pointerId);
+    // save snapshot for undo
+    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
     const {x, y} = pos(e);
     lastX = x; lastY = y;
     ctx.lineWidth = currentSize;
@@ -485,9 +543,19 @@
     }
   });
 
+  // Undo
+  document.getElementById('undoBtn').addEventListener('pointerdown', e => e.stopPropagation());
+  document.getElementById('undoBtn').addEventListener('click', () => {
+    if (undoStack.length > 0) {
+      ctx.putImageData(undoStack.pop(), 0, 0);
+      if (undoStack.length === 0) { hasDrawn = false; hint.style.opacity = '1'; }
+    }
+  });
+
   // Clear
   document.getElementById('clearBtn').addEventListener('pointerdown', e => e.stopPropagation());
   document.getElementById('clearBtn').addEventListener('click', () => {
+    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     hasDrawn = false;
     hint.style.opacity = '1';
