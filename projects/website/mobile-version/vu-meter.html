@@ -162,10 +162,10 @@ button.active {
   <div class="bar-scale">
     <span>-40</span>
     <span>-20</span>
-    <span>-10</span>
-    <span>-5</span>
     <span>0</span>
-    <span>+3</span>
+    <span>20</span>
+    <span>50</span>
+    <span>100</span>
   </div>
 </div>
 
@@ -178,7 +178,7 @@ button.active {
 <script>
 'use strict';
 
-const MIN_DB = -40, MAX_DB = 3;
+const MIN_DB = -40, MAX_DB = 100;
 const NUM_SEGS = 36;
 
 // Build segments
@@ -190,8 +190,8 @@ for (let i = 0; i < NUM_SEGS; i++) {
 }
 const segs = Array.from(segsEl.children);
 
-const idx0 = Math.round((0 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
-const idx2 = Math.round((2 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idx0 = Math.round((80 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idx2 = Math.round((90 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
 
 const dbDisplay = document.getElementById('dbDisplay');
 
@@ -208,8 +208,8 @@ function setLevel(db) {
     dbDisplay.textContent = '—';
     dbDisplay.className = 'db-display';
   } else {
-    dbDisplay.textContent = (db >= 0 ? '+' : '') + db.toFixed(1);
-    dbDisplay.className = 'db-display' + (db >= 0 ? ' peak' : '');
+    dbDisplay.textContent = db.toFixed(1);
+    dbDisplay.className = 'db-display' + (db >= 90 ? ' peak' : '');
   }
 }
 
@@ -236,7 +236,7 @@ document.getElementById('btnTest').addEventListener('click', () => {
   let ph = 0;
   simInterval = setInterval(() => {
     ph++;
-    let db = -8 + Math.sin(ph * 0.065) * 14 + Math.sin(ph * 0.028) * 6;
+    let db = 30 + Math.sin(ph * 0.065) * 40 + Math.sin(ph * 0.028) * 20;
     db = Math.max(MIN_DB, Math.min(MAX_DB, db));
     setLevel(db);
   }, 55);
@@ -263,7 +263,7 @@ document.getElementById('btnMic').addEventListener('click', async () => {
       let sum = 0; buf.forEach(v => sum += v * v);
       const rms = Math.sqrt(sum / buf.length);
       const db  = rms > 0
-        ? Math.max(MIN_DB, Math.min(MAX_DB, 20 * Math.log10(rms) + 28))
+        ? Math.max(MIN_DB, Math.min(MAX_DB, 20 * Math.log10(rms) + 90))
         : MIN_DB;
       setLevel(db);
     }, 55);
