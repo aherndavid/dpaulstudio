@@ -2,91 +2,74 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>dPaul Technologies VU Meter</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 
 body {
   background: #131413;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   font-family: 'Share Tech Mono', monospace;
-  gap: 32px;
+  padding: 32px 20px 40px;
 }
 
+/* ── Brand ── */
 .brand {
   font-size: 9px;
-  letter-spacing: 5px;
+  letter-spacing: 4px;
   color: #2e2a26;
   text-transform: uppercase;
+  text-align: center;
 }
 
-/* ── Main display panel ── */
-.panel {
-  width: 360px;
-  background: #0a0804;
-  border: 1px solid #221408;
-  border-radius: 6px;
-  padding: 28px 24px 24px;
+/* ── dB readout ── */
+.db-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  box-shadow:
-    inset 0 0 80px rgba(0,0,0,0.7),
-    0 0 40px rgba(255,90,10,0.04);
-  position: relative;
-  overflow: hidden;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
 }
 
-/* Scanlines */
-.panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    transparent 3px,
-    rgba(0,0,0,0.2) 3px,
-    rgba(0,0,0,0.2) 4px
-  );
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* ── Big dB readout ── */
 .db-display {
-  font-size: 80px;
+  font-size: clamp(80px, 26vw, 130px);
   line-height: 1;
   color: #ff6010;
-  letter-spacing: -3px;
+  letter-spacing: -4px;
   text-shadow:
-    0 0 20px rgba(255,96,16,0.7),
-    0 0 60px rgba(255,96,16,0.2);
-  position: relative;
-  z-index: 2;
-  transition: color 0.1s, text-shadow 0.1s;
-  min-width: 240px;
+    0 0 24px rgba(255,96,16,0.7),
+    0 0 70px rgba(255,96,16,0.2);
   text-align: center;
+  transition: color 0.08s, text-shadow 0.08s;
 }
+
 .db-display.peak {
   color: #ff1830;
-  text-shadow: 0 0 20px rgba(255,24,48,0.9), 0 0 60px rgba(255,24,48,0.4);
+  text-shadow:
+    0 0 24px rgba(255,24,48,0.9),
+    0 0 70px rgba(255,24,48,0.4);
 }
+
 .db-unit {
-  font-size: 11px;
-  letter-spacing: 4px;
-  color: #4a2808;
-  position: relative;
-  z-index: 2;
-  margin-top: -6px;
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: #3a2008;
+  text-align: center;
 }
 
 /* ── Segment bar ── */
@@ -94,78 +77,74 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  position: relative;
-  z-index: 2;
+  gap: 6px;
 }
 
 .segments {
   display: flex;
   gap: 3px;
-  height: 28px;
+  height: 36px;
+  width: 100%;
 }
 
 .seg {
   flex: 1;
-  border-radius: 2px;
-  background: #120a04;
-  transition: background 0.05s, box-shadow 0.05s;
+  border-radius: 3px;
+  background: #100804;
+  transition: background 0.04s, box-shadow 0.04s;
 }
 
-/* Colours when lit */
 .seg.lit-orange {
   background: #ff6010;
-  box-shadow: 0 0 6px rgba(255,96,16,0.7);
+  box-shadow: 0 0 8px rgba(255,96,16,0.65);
 }
 .seg.lit-yellow {
   background: #ffaa00;
-  box-shadow: 0 0 6px rgba(255,170,0,0.7);
+  box-shadow: 0 0 8px rgba(255,170,0,0.65);
 }
 .seg.lit-red {
   background: #ff1830;
-  box-shadow: 0 0 8px rgba(255,24,48,0.8);
+  box-shadow: 0 0 10px rgba(255,24,48,0.75);
 }
 
-/* Scale labels under bar */
 .bar-scale {
   display: flex;
   justify-content: space-between;
-  padding: 0 1px;
-  font-size: 8px;
+  font-size: 9px;
   color: #2a1a08;
-  letter-spacing: 0;
+  padding: 0 1px;
 }
 
 /* ── Buttons ── */
 .btns {
   display: flex;
   gap: 10px;
+  width: 100%;
 }
 
 button {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 3px;
+  font-size: 11px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   background: transparent;
   color: #4a2c10;
   border: 1px solid #221408;
-  padding: 10px 20px;
-  border-radius: 3px;
+  padding: 16px 0;
+  border-radius: 4px;
   cursor: pointer;
+  flex: 1;
   transition: all 0.12s;
+  /* Larger touch target */
+  min-height: 52px;
 }
-button:hover {
-  color: #ff6010;
-  border-color: #ff6010;
-  background: rgba(255,96,16,0.05);
-  box-shadow: 0 0 12px rgba(255,96,16,0.12);
-}
+
+button:active,
 button.active {
   color: #ff6010;
   border-color: #ff6010;
   background: rgba(255,96,16,0.1);
-  box-shadow: 0 0 16px rgba(255,96,16,0.2);
+  box-shadow: 0 0 16px rgba(255,96,16,0.18);
 }
 </style>
 </head>
@@ -173,26 +152,25 @@ button.active {
 
 <span class="brand">dPaul Technologies · VU Meter</span>
 
-<div class="panel">
+<div class="db-wrap">
   <div class="db-display" id="dbDisplay">—</div>
   <div class="db-unit">DECIBELS</div>
+</div>
 
-  <div class="bar-wrap">
-    <div class="segments" id="segments"></div>
-    <div class="bar-scale">
-      <span>-40</span>
-      <span>-30</span>
-      <span>-20</span>
-      <span>-10</span>
-      <span>-5</span>
-      <span>0</span>
-      <span>+3</span>
-    </div>
+<div class="bar-wrap">
+  <div class="segments" id="segments"></div>
+  <div class="bar-scale">
+    <span>-40</span>
+    <span>-20</span>
+    <span>-10</span>
+    <span>-5</span>
+    <span>0</span>
+    <span>+3</span>
   </div>
 </div>
 
 <div class="btns">
-  <button id="btnMic">Mic Input</button>
+  <button id="btnMic">Mic</button>
   <button id="btnTest">Test</button>
   <button id="btnReset">Reset</button>
 </div>
@@ -201,7 +179,7 @@ button.active {
 'use strict';
 
 const MIN_DB = -40, MAX_DB = 3;
-const NUM_SEGS = 40;
+const NUM_SEGS = 36;
 
 // Build segments
 const segsEl = document.getElementById('segments');
@@ -212,26 +190,20 @@ for (let i = 0; i < NUM_SEGS; i++) {
 }
 const segs = Array.from(segsEl.children);
 
-// Which segment index corresponds to 0dB and +2dB
-const idx0  = Math.round((0  - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
-const idx2  = Math.round((2  - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idx0 = Math.round((0 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idx2 = Math.round((2 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
 
 const dbDisplay = document.getElementById('dbDisplay');
 
 function setLevel(db) {
   const filled = Math.round(((db - MIN_DB) / (MAX_DB - MIN_DB)) * (NUM_SEGS - 1));
-
   segs.forEach((s, i) => {
     if (i <= filled) {
-      if (i >= idx2)      s.className = 'seg lit-red';
-      else if (i >= idx0) s.className = 'seg lit-yellow';
-      else                s.className = 'seg lit-orange';
+      s.className = i >= idx2 ? 'seg lit-red' : i >= idx0 ? 'seg lit-yellow' : 'seg lit-orange';
     } else {
       s.className = 'seg';
     }
   });
-
-  // dB number
   if (db <= MIN_DB) {
     dbDisplay.textContent = '—';
     dbDisplay.className = 'db-display';
