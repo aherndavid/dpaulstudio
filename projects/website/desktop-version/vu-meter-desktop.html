@@ -7,36 +7,48 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-html, body { width: 100%; height: 100%; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
 
 body {
   background: #131413;
-  min-height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Share Tech Mono', monospace;
+  padding: 24px 20px 28px;
+  gap: 16px;
 }
 
-/* ── Centred column ── */
-.container {
-  width: 560px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: 48px 40px 40px;
-  gap: 20px;
+/* ── Menu button ── */
+.menu-btn {
+  display: block;
+  width: 100%;
+  background: #ff6010;
+  color: #000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: none;
+  text-decoration: none;
+  padding: 9px 16px;
+  border-radius: 4px;
+  text-align: left;
+  flex-shrink: 0;
+  margin-top: 12px;
 }
 
 /* ── Brand ── */
 .brand {
-  font-size: 18px;
-  letter-spacing: 5px;
-  color: #2e2a26;
-  text-transform: uppercase;
+  font-size: 22px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  letter-spacing: 4px;
+  color: #ff7a30;
+  text-shadow: 0 0 12px rgba(255,96,16,0.4);
+  text-transform: none;
   text-align: center;
   flex-shrink: 0;
 }
@@ -46,17 +58,17 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   flex-shrink: 0;
 }
 
 .db-display {
-  font-size: 180px;
+  font-size: clamp(96px, 30vw, 148px);
   line-height: 1;
-  color: #ff6010;
-  letter-spacing: -6px;
+  color: #20e060;
+  letter-spacing: -4px;
   text-align: center;
-  text-shadow: 0 0 30px rgba(255,96,16,0.65), 0 0 80px rgba(255,96,16,0.18);
+  text-shadow: 0 0 30px rgba(32,224,96,0.65), 0 0 80px rgba(32,224,96,0.18);
   transition: color 0.08s, text-shadow 0.08s;
 }
 .db-display.peak {
@@ -65,9 +77,9 @@ body {
 }
 
 .db-unit {
-  font-size: 16px;
-  letter-spacing: 8px;
-  color: #3a2008;
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: #4a7a5a;
   text-align: center;
 }
 
@@ -76,22 +88,22 @@ body {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .segments {
   display: flex;
-  gap: 4px;
-  height: 48px;
+  gap: 3px;
+  height: 40px;
 }
 
 .seg {
   flex: 1;
   border-radius: 3px;
-  background: #100804;
+  background: #061008;
   transition: background 0.04s, box-shadow 0.04s;
 }
-.seg.lit-orange { background: #ff6010; box-shadow: 0 0 8px rgba(255,96,16,0.6); }
+.seg.lit-orange { background: #20e060; box-shadow: 0 0 8px rgba(32,224,96,0.6); }
 .seg.lit-yellow { background: #ffaa00; box-shadow: 0 0 8px rgba(255,170,0,0.6); }
 .seg.lit-red    { background: #ff1830; box-shadow: 0 0 10px rgba(255,24,48,0.7); }
 
@@ -99,8 +111,8 @@ body {
   display: flex;
   justify-content: space-between;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 13px;
-  color: #2a1a08;
+  font-size: 11px;
+  color: #4a6a50;
   padding: 0 1px;
 }
 
@@ -109,7 +121,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   overflow: hidden;
   min-height: 0;
 }
@@ -122,20 +134,20 @@ body {
 }
 
 .peak-title {
-  font-size: 13px;
+  font-size: 11px;
   letter-spacing: 3px;
-  color: #2e2a26;
+  color: #5a8060;
   text-transform: uppercase;
 }
 
 .peak-max {
-  font-size: 15px;
+  font-size: 13px;
   letter-spacing: 2px;
-  color: #4a2c10;
+  color: #5a8060;
 }
 .peak-max span {
-  color: #ff6010;
-  text-shadow: 0 0 12px rgba(255,96,16,0.5);
+  color: #20e060;
+  text-shadow: 0 0 12px rgba(32,224,96,0.5);
 }
 
 .peak-list {
@@ -143,7 +155,7 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   scrollbar-width: none;
 }
 .peak-list::-webkit-scrollbar { display: none; }
@@ -152,15 +164,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
-  background: #0e0a06;
+  padding: 8px 12px;
+  background: #060e08;
   border-radius: 4px;
-  border-left: 3px solid #ff6010;
+  border-left: 3px solid #20e060;
   animation: fadeIn 0.2s ease;
   flex-shrink: 0;
 }
-.peak-row.high    { border-left-color: #ffaa00; }
-.peak-row.danger  { border-left-color: #ff1830; }
+.peak-row.high { border-left-color: #ffaa00; }
+.peak-row.danger { border-left-color: #ff1830; }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-4px); }
@@ -168,79 +180,58 @@ body {
 }
 
 .peak-row-db {
-  font-size: 24px;
+  font-size: 20px;
   letter-spacing: 1px;
-  color: #ff6010;
+  color: #20e060;
 }
-.peak-row.high   .peak-row-db { color: #ffaa00; }
-.peak-row.danger .peak-row-db { color: #ff1830; }
+.peak-row.high    .peak-row-db { color: #ffaa00; }
+.peak-row.danger  .peak-row-db { color: #ff1830; }
 
 .peak-row-time {
-  font-size: 13px;
-  color: #2a1a08;
+  font-size: 11px;
+  color: #4a7a5a;
   letter-spacing: 1px;
 }
 
 .peak-empty {
-  font-size: 13px;
-  color: #1e1208;
+  font-size: 11px;
+  color: #3a5a42;
   letter-spacing: 2px;
   text-align: center;
-  padding: 20px 0;
+  padding: 16px 0;
 }
 
 /* ── Buttons ── */
 .btns {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 button {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 15px;
-  letter-spacing: 3px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   background: transparent;
-  color: #4a2c10;
-  border: 1px solid #221408;
+  color: #3a6a48;
+  border: 1px solid #1a3a24;
   padding: 0;
   border-radius: 4px;
   cursor: pointer;
   flex: 1;
-  min-height: 60px;
+  min-height: 54px;
   transition: all 0.12s;
 }
-button:hover { color: #ff6010; border-color: #ff6010; background: rgba(255,96,16,0.05); }
 button:active, button.active {
-  color: #ff6010;
-  border-color: #ff6010;
-  background: rgba(255,96,16,0.1);
-  box-shadow: 0 0 16px rgba(255,96,16,0.18);
-}
-
-/* ── Menu button ── */
-.menu-btn {
-  display: block;
-  width: 100%;
-  background: #ff6010;
-  color: #000;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 36px;
-  font-weight: bold;
-  letter-spacing: 3px;
-  text-transform: none;
-  text-decoration: none;
-  padding: 16px 24px;
-  border-radius: 4px;
-  text-align: left;
-  flex-shrink: 0;
-  margin-top: 8px;
+  color: #20e060;
+  border-color: #20e060;
+  background: rgba(32,224,96,0.1);
+  box-shadow: 0 0 16px rgba(32,224,96,0.18);
 }
 </style>
 </head>
 <body>
-<div class="container">
 
 <span class="brand">dPaul Technologies · VU Meter</span>
 
@@ -277,6 +268,7 @@ button:active, button.active {
   </div>
 </div>
 
+<a href="https://www.dpaul.studio/" class="menu-btn">Menu</a>
 
 <script>
 'use strict';
@@ -447,12 +439,5 @@ document.getElementById('btnMic').addEventListener('click', async () => {
   } catch(e) { alert('Microphone access denied.'); }
 });
 </script>
-</div><!-- /container -->
-</div><!-- /body flex wrapper -->
-
-<div style="width:100%; display:flex; justify-content:center; padding: 0 20px 40px;">
-  <a href="https://www.dpaul.studio/" class="menu-btn" style="width:100%;">Menu</a>
-</div>
-
 </body>
 </html>
