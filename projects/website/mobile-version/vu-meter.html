@@ -21,6 +21,23 @@ body {
   gap: 16px;
 }
 
+/* ── Menu button ── */
+.menu-btn {
+  display: block;
+  width: 100%;
+  background: #ff6010;
+  color: #000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 20px;
+  border-radius: 4px;
+  text-align: left;
+  flex-shrink: 0;
+}
+
 /* ── Brand ── */
 .brand {
   font-size: 22px;
@@ -88,6 +105,7 @@ body {
 .bar-scale {
   display: flex;
   justify-content: space-between;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 11px;
   color: #2a1a08;
   padding: 0 1px;
@@ -217,18 +235,6 @@ button:active, button.active {
   <div class="db-unit">DECIBELS</div>
 </div>
 
-<div class="bar-wrap">
-  <div class="segments" id="segments"></div>
-  <div class="bar-scale">
-    <span>-40</span>
-    <span>-20</span>
-    <span>0</span>
-    <span>20</span>
-    <span>50</span>
-    <span>100</span>
-  </div>
-</div>
-
 <div class="peak-section">
   <div class="peak-header">
     <span class="peak-title">Peak History</span>
@@ -244,6 +250,20 @@ button:active, button.active {
   <button id="btnTest">Test</button>
   <button id="btnReset">Reset</button>
 </div>
+
+<div class="bar-wrap">
+  <div class="segments" id="segments"></div>
+  <div class="bar-scale">
+    <span>-40</span>
+    <span>-20</span>
+    <span>0</span>
+    <span>20</span>
+    <span>50</span>
+    <span>100</span>
+  </div>
+</div>
+
+<a href="https://www.dpaul.studio/" class="menu-btn">Menu</a>
 
 <script>
 'use strict';
