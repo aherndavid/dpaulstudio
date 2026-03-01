@@ -7,42 +7,33 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body { width: 100%; height: 100%; overflow: hidden; }
+html, body { width: 100%; height: 100%; }
 
 body {
   background: #131413;
-  height: 100dvh;
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  font-family: 'Share Tech Mono', monospace;
-  padding: 24px 20px 28px;
-  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-/* ── Menu button ── */
-.menu-btn {
-  display: block;
-  width: 100%;
-  background: #ff6010;
-  color: #000;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 14px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: 9px 16px;
-  border-radius: 4px;
-  text-align: left;
-  flex-shrink: 0;
-  margin-top: 12px;
+/* ── Centred column ── */
+.container {
+  width: 560px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 48px 40px 40px;
+  gap: 20px;
 }
 
 /* ── Brand ── */
 .brand {
-  font-size: 22px;
-  letter-spacing: 4px;
+  font-size: 18px;
+  letter-spacing: 5px;
   color: #2e2a26;
   text-transform: uppercase;
   text-align: center;
@@ -54,15 +45,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
 .db-display {
-  font-size: clamp(96px, 30vw, 148px);
+  font-size: 180px;
   line-height: 1;
   color: #ff6010;
-  letter-spacing: -4px;
+  letter-spacing: -6px;
   text-align: center;
   text-shadow: 0 0 30px rgba(255,96,16,0.65), 0 0 80px rgba(255,96,16,0.18);
   transition: color 0.08s, text-shadow 0.08s;
@@ -73,8 +64,8 @@ body {
 }
 
 .db-unit {
-  font-size: 13px;
-  letter-spacing: 6px;
+  font-size: 16px;
+  letter-spacing: 8px;
   color: #3a2008;
   text-align: center;
 }
@@ -84,13 +75,13 @@ body {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
 
 .segments {
   display: flex;
-  gap: 3px;
-  height: 40px;
+  gap: 4px;
+  height: 48px;
 }
 
 .seg {
@@ -107,7 +98,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 11px;
+  font-size: 13px;
   color: #2a1a08;
   padding: 0 1px;
 }
@@ -117,7 +108,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   overflow: hidden;
   min-height: 0;
 }
@@ -130,14 +121,14 @@ body {
 }
 
 .peak-title {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 3px;
   color: #2e2a26;
   text-transform: uppercase;
 }
 
 .peak-max {
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 2px;
   color: #4a2c10;
 }
@@ -151,7 +142,7 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   scrollbar-width: none;
 }
 .peak-list::-webkit-scrollbar { display: none; }
@@ -160,15 +151,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 10px 16px;
   background: #0e0a06;
   border-radius: 4px;
   border-left: 3px solid #ff6010;
   animation: fadeIn 0.2s ease;
   flex-shrink: 0;
 }
-.peak-row.high { border-left-color: #ffaa00; }
-.peak-row.danger { border-left-color: #ff1830; }
+.peak-row.high    { border-left-color: #ffaa00; }
+.peak-row.danger  { border-left-color: #ff1830; }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-4px); }
@@ -176,38 +167,38 @@ body {
 }
 
 .peak-row-db {
-  font-size: 20px;
+  font-size: 24px;
   letter-spacing: 1px;
   color: #ff6010;
 }
-.peak-row.high    .peak-row-db { color: #ffaa00; }
-.peak-row.danger  .peak-row-db { color: #ff1830; }
+.peak-row.high   .peak-row-db { color: #ffaa00; }
+.peak-row.danger .peak-row-db { color: #ff1830; }
 
 .peak-row-time {
-  font-size: 11px;
+  font-size: 13px;
   color: #2a1a08;
   letter-spacing: 1px;
 }
 
 .peak-empty {
-  font-size: 11px;
+  font-size: 13px;
   color: #1e1208;
   letter-spacing: 2px;
   text-align: center;
-  padding: 16px 0;
+  padding: 20px 0;
 }
 
 /* ── Buttons ── */
 .btns {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
 button {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
-  letter-spacing: 2px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 15px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   background: transparent;
   color: #4a2c10;
@@ -216,18 +207,39 @@ button {
   border-radius: 4px;
   cursor: pointer;
   flex: 1;
-  min-height: 54px;
+  min-height: 60px;
   transition: all 0.12s;
 }
+button:hover { color: #ff6010; border-color: #ff6010; background: rgba(255,96,16,0.05); }
 button:active, button.active {
   color: #ff6010;
   border-color: #ff6010;
   background: rgba(255,96,16,0.1);
   box-shadow: 0 0 16px rgba(255,96,16,0.18);
 }
+
+/* ── Menu button ── */
+.menu-btn {
+  display: block;
+  width: 100%;
+  background: #ff6010;
+  color: #000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: none;
+  text-decoration: none;
+  padding: 20px 24px;
+  border-radius: 4px;
+  text-align: left;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
 </style>
 </head>
 <body>
+<div class="container">
 
 <span class="brand">dPaul Technologies · VU Meter</span>
 
@@ -435,5 +447,6 @@ document.getElementById('btnMic').addEventListener('click', async () => {
   } catch(e) { alert('Microphone access denied.'); }
 });
 </script>
+</div>
 </body>
 </html>
