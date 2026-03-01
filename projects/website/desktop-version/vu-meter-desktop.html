@@ -15,8 +15,9 @@ body {
   background: #131413;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-family: 'Courier New', Courier, monospace;
 }
 
@@ -225,12 +226,12 @@ button:active, button.active {
   background: #ff6010;
   color: #000;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: bold;
   letter-spacing: 3px;
   text-transform: none;
   text-decoration: none;
-  padding: 20px 24px;
+  padding: 14px 24px;
   border-radius: 4px;
   text-align: left;
   flex-shrink: 0;
@@ -276,7 +277,6 @@ button:active, button.active {
   </div>
 </div>
 
-<a href="https://www.dpaul.studio/" class="menu-btn">Menu</a>
 
 <script>
 'use strict';
@@ -447,6 +447,12 @@ document.getElementById('btnMic').addEventListener('click', async () => {
   } catch(e) { alert('Microphone access denied.'); }
 });
 </script>
+</div><!-- /container -->
+</div><!-- /body flex wrapper -->
+
+<div style="width:100%; display:flex; justify-content:center; padding: 0 20px 40px;">
+  <a href="https://www.dpaul.studio/" class="menu-btn" style="width:100%;">Menu</a>
 </div>
+
 </body>
 </html>
