@@ -30,7 +30,7 @@ body {
   font-family: 'Courier New', Courier, monospace;
   font-size: 16px;
   letter-spacing: 3px;
-  text-transform: uppercase;
+  text-transform: none;
   text-decoration: none;
   padding: 14px 20px;
   border-radius: 4px;
@@ -43,7 +43,7 @@ body {
   font-size: 22px;
   letter-spacing: 4px;
   color: #2e2a26;
-  text-transform: uppercase;
+  text-transform: none;
   text-align: center;
   flex-shrink: 0;
 }
@@ -132,7 +132,7 @@ body {
   font-size: 11px;
   letter-spacing: 3px;
   color: #2e2a26;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .peak-max {
@@ -207,7 +207,7 @@ button {
   font-family: 'Share Tech Mono', monospace;
   font-size: 13px;
   letter-spacing: 2px;
-  text-transform: uppercase;
+  text-transform: none;
   background: transparent;
   color: #4a2c10;
   border: 1px solid #221408;
@@ -263,7 +263,10 @@ button:active, button.active {
   </div>
 </div>
 
-<a href="https://www.dpaul.studio/" class="menu-btn">Menu</a>
+<div style="display:flex; gap:6px; margin-top:12px;">
+  <a class="menu-btn" href="https://www.dpaul.studio/creative" target="_blank">Menu</a>
+  <button class="menu-btn" style="width:25%; flex-shrink:0; background:#F2F2F2;" onclick="window.history.back()">&#8592; Back</button>
+</div>
 
 <script>
 'use strict';
