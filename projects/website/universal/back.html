@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Back</title>
   <script>
-    window.history.back();
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = 'https://www.dpaul.studio';
+    }
   </script>
 </head>
 <body>
