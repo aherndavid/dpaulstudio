@@ -260,10 +260,12 @@
 
   <!-- Toolbar -->
   <div class="toolbar-wrap">
+    <!-- Row 1: undo + clear -->
     <div class="toolbar-row">
       <button class="action-btn" id="undoBtn">↩ undo</button>
       <button class="action-btn" id="clearBtn">✕ clear</button>
     </div>
+    <!-- Row 2: share + colours + board -->
     <div class="toolbar-row">
       <button class="share-btn" id="shareBtn" aria-label="Share">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -280,10 +282,6 @@
       <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" id="whitePen"></button>
       <button class="color-btn" id="blackPen" data-color="#111111" style="background:#111111; border-color:rgba(0,0,0,0.4); display:none;"></button>
       <div class="divider"></div>
-      <button class="size-btn active" data-size="3"  aria-label="Small"><span class="size-dot" style="width:5px;height:5px;"></span></button>
-      <button class="size-btn"        data-size="8"  aria-label="Medium"><span class="size-dot" style="width:10px;height:10px;"></span></button>
-      <button class="size-btn"        data-size="18" aria-label="Large"><span class="size-dot" style="width:18px;height:18px;"></span></button>
-      <div class="divider"></div>
       <button class="board-btn" id="boardBtn" aria-label="Toggle whiteboard">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -291,6 +289,12 @@
           <line x1="12" y1="17" x2="12" y2="21"/>
         </svg>
       </button>
+    </div>
+    <!-- Row 3: thickness -->
+    <div class="toolbar-row">
+      <button class="size-btn active" data-size="3"  aria-label="Small" style="flex:1;width:auto;"><span class="size-dot" style="width:5px;height:5px;"></span></button>
+      <button class="size-btn"        data-size="8"  aria-label="Medium" style="flex:1;width:auto;"><span class="size-dot" style="width:10px;height:10px;"></span></button>
+      <button class="size-btn"        data-size="18" aria-label="Large" style="flex:1;width:auto;"><span class="size-dot" style="width:18px;height:18px;"></span></button>
     </div>
   </div>
 
