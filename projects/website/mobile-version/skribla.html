@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>dPaul Skribla</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
 
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --col1: #e63946;
@@ -19,46 +15,73 @@
       --col3: #4caf50;
       --col4: #ff9800;
       --col5: #ffffff;
-      --sidebar-w: 0px;
       --toolbar-h: 54px;
-      --space-below: 72px;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --safe-right:  env(safe-area-inset-right,  0px);
     }
 
     html, body {
       width: 100%;
-      height: 100dvh;
-      overflow: hidden;
+      height: 100%;
+      overflow-x: hidden;
       background: #131413;
-      touch-action: none;
+      touch-action: pan-y;
+    }
+
+    /* ── Layout wrapper ── */
+    .app-wrap {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* ── Canvas section ── */
+    .canvas-section {
+      position: relative;
+      width: 100%;
+      /* square-ish canvas: use aspect ratio */
+      aspect-ratio: 1 / 1;
+      max-height: 70vh;
+      flex-shrink: 0;
+      background: #131413;
     }
 
     canvas {
       display: block;
-      position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
-      /* two rows (54+38+6 gap) + space below + safe area */
-      height: calc(100dvh - var(--toolbar-h) - 44px - var(--space-below) - var(--safe-bottom) - 12px);
+      height: 100%;
       cursor: crosshair;
       touch-action: none;
-      background: #131413;
     }
 
-    /* ── Bottom toolbar ── */
+    /* hint watermark */
+    .hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      pointer-events: none;
+      user-select: none;
+      text-align: center;
+      transition: opacity 0.5s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .hint svg { width: clamp(40px, 10vw, 60px); height: clamp(40px, 10vw, 60px); opacity: 0.18; }
+    .hint-label { font-family: 'Caveat', cursive; font-size: clamp(16px, 5vw, 26px); color: rgba(255,255,255,0.18); line-height: 1; }
+
+    /* ── Toolbar ── */
     .toolbar-wrap {
-      position: fixed;
-      bottom: calc(var(--space-below) + var(--safe-bottom));
-      left: 0;
-      right: 0;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 6px;
-      padding: 0 12px;
-      z-index: 10;
+      padding: 8px 12px;
+      background: #131413;
+      flex-shrink: 0;
     }
 
     .toolbar-row {
@@ -70,18 +93,9 @@
       width: 100%;
     }
 
-    .top-row {
-      width: 100%;
-    }
-
-    .main-row {
-      width: 100%;
-    }
-
-    /* action-btn: clear + undo — each takes half the row */
     .action-btn {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: clamp(14px, 3.8vw, 18px);
+      font-family: 'Courier New', monospace;
+      font-size: clamp(13px, 3.5vw, 17px);
       color: rgba(255,255,255,0.65);
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.15);
@@ -97,21 +111,11 @@
       -webkit-tap-highlight-color: transparent;
       white-space: nowrap;
     }
-
-    .action-btn:active {
-      color: #fff;
-      background: rgba(255,255,255,0.14);
-    }
-
-    .sidebar {
-      background: transparent;
-      border: none;
-      height: var(--toolbar-h);
-    }
+    .action-btn:active { color: #fff; background: rgba(255,255,255,0.14); }
 
     .color-btn {
-      width: clamp(28px, 6vw, 36px);
-      height: clamp(28px, 6vw, 36px);
+      width: clamp(26px, 6vw, 34px);
+      height: clamp(26px, 6vw, 34px);
       border-radius: 8px;
       border: 3px solid transparent;
       cursor: pointer;
@@ -120,88 +124,30 @@
       -webkit-tap-highlight-color: transparent;
       position: relative;
     }
-
-    /* bigger invisible tap area */
-    .color-btn::after {
-      content: '';
-      position: absolute;
-      inset: -10px;
-    }
-
+    .color-btn::after { content: ''; position: absolute; inset: -10px; }
     .color-btn:active { transform: scale(0.88); }
+    .color-btn.active { border-color: #fff; transform: scale(1.08); box-shadow: 0 0 0 2px rgba(255,255,255,0.25); }
 
-    .color-btn.active {
-      border-color: #fff;
-      transform: scale(1.08);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.25);
-    }
+    .divider { width: 1px; height: 22px; background: rgba(255,255,255,0.12); flex-shrink: 0; margin: 0 2px; }
 
-    .divider {
-      width: 1px;
-      height: 24px;
-      background: rgba(255,255,255,0.12);
-      flex-shrink: 0;
-      margin: 0 2px;
-    }
-
-    .clear-btn {
-      font-family: 'Caveat', cursive;
-      font-size: clamp(13px, 3.5vw, 16px);
-      color: rgba(255,255,255,0.6);
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
-      cursor: pointer;
-      padding: 7px 10px;
-      border-radius: 8px;
-      transition: color 0.15s, background 0.15s, border-color 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      line-height: 1;
-      text-align: center;
-      white-space: nowrap;
-      height: clamp(28px, 6vw, 36px);
-      display: flex;
-      align-items: center;
-    }
-
-    .clear-btn:active {
-      color: #fff;
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.45);
-    }
-
-    .share-btn {
+    .share-btn, .board-btn {
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.15);
       border-radius: 8px;
       cursor: pointer;
-      padding: 6px 8px;
+      padding: 5px 7px;
       -webkit-tap-highlight-color: transparent;
-      opacity: 0.8;
       transition: opacity 0.15s, background 0.15s;
-      position: relative;
       flex-shrink: 0;
-      height: clamp(28px, 6vw, 36px);
+      height: clamp(26px, 6vw, 34px);
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
-
-    .share-btn::after {
-      content: '';
-      position: absolute;
-      inset: -10px;
-    }
-
-    .share-btn:active {
-      opacity: 1;
-      transform: scale(0.9);
-    }
-
-    .share-btn svg {
-      width: 22px;
-      height: 22px;
-      display: block;
-    }
+    .share-btn::after, .board-btn::after { content: ''; position: absolute; inset: -10px; }
+    .share-btn:active, .board-btn:active { opacity: 1; transform: scale(0.9); }
+    .share-btn svg, .board-btn svg { width: 20px; height: 20px; display: block; }
 
     .size-btn {
       background: rgba(255,255,255,0.07);
@@ -215,78 +161,62 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 30px; height: 30px;
     }
-
-    .size-btn::after {
-      content: '';
-      position: absolute;
-      inset: -10px;
-    }
-
-    .size-btn.active {
-      border-color: #fff;
-      transform: scale(1.15);
-    }
-
+    .size-btn::after { content: ''; position: absolute; inset: -10px; }
+    .size-btn.active { border-color: #fff; transform: scale(1.15); }
     .size-btn:active { transform: scale(0.88); }
+    .size-dot { background: #fff; border-radius: 50%; pointer-events: none; }
 
-    .size-dot {
-      background: #fff;
-      border-radius: 50%;
-      pointer-events: none;
+    /* ── Text area below ── */
+    .text-section {
+      width: 100%;
+      padding: 16px 16px calc(16px + var(--safe-bottom));
+      background: #131413;
     }
 
-    .board-btn {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 8px;
-      cursor: pointer;
+    .text-field {
+      width: 100%;
+      min-height: 80px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.85);
+      font-family: 'Caveat', cursive;
+      font-size: clamp(18px, 5vw, 22px);
+      line-height: 1.5;
+      padding: 12px 14px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
       -webkit-tap-highlight-color: transparent;
-      padding: 0 8px;
-      transition: border-color 0.15s, background 0.15s;
-      flex-shrink: 0;
-      position: relative;
-      height: clamp(28px, 6vw, 36px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      /* allow scrolling inside textarea */
+      touch-action: pan-y;
     }
+    .text-field::placeholder { color: rgba(255,255,255,0.22); }
+    .text-field:focus { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
 
-    .board-btn::after {
-      content: '';
-      position: absolute;
-      inset: -10px;
-    }
-
-    .board-btn:active {
-      background: rgba(255,255,255,0.1);
-    }
-
-    .board-btn svg {
-      width: 20px;
-      height: 20px;
-      display: block;
-    }
-
-    /* Whiteboard mode */
-    body.whiteboard canvas { background: #f5f5f0; }
-    body.whiteboard .sidebar { background: transparent; }
+    /* ── Whiteboard overrides ── */
     body.whiteboard { background: #e8e8e4; }
+    body.whiteboard canvas { background: #f5f5f0; }
+    body.whiteboard .canvas-section { background: #f5f5f0; }
+    body.whiteboard .toolbar-wrap { background: #e8e8e4; }
+    body.whiteboard .text-section { background: #e8e8e4; }
     body.whiteboard .divider { background: rgba(0,0,0,0.12); }
-    body.whiteboard .clear-btn { color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); } body.whiteboard .action-btn { color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); } body.whiteboard .action-btn:active { color: #000; background: rgba(0,0,0,0.12); }
-    body.whiteboard .clear-btn:active { color: #000; background: rgba(0,0,0,0.08); }
-    body.whiteboard .share-btn { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); } body.whiteboard .share-btn svg { stroke: #333; }
-    body.whiteboard .board-btn svg { stroke: #333; }
-    body.whiteboard .board-btn { border-color: rgba(0,0,0,0.15); background: rgba(0,0,0,0.06); }
+    body.whiteboard .action-btn { color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); }
+    body.whiteboard .action-btn:active { color: #000; background: rgba(0,0,0,0.12); }
+    body.whiteboard .share-btn, body.whiteboard .board-btn { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); }
+    body.whiteboard .share-btn svg, body.whiteboard .board-btn svg { stroke: #333; }
     body.whiteboard .size-btn { border-color: rgba(0,0,0,0.15); background: rgba(0,0,0,0.06); }
     body.whiteboard .size-btn.active { border-color: #111; }
     body.whiteboard .size-dot { background: #111; }
     body.whiteboard .color-btn.active { border-color: #111; }
     body.whiteboard .hint-label { color: rgba(0,0,0,0.15); }
     body.whiteboard .hint svg { opacity: 0.12; }
-    body.whiteboard .hint svg path,
-    body.whiteboard .hint svg circle { stroke: #000; }
-    body.whiteboard .hint svg path:last-child { stroke: #000; }
+    body.whiteboard .hint svg path, body.whiteboard .hint svg circle { stroke: #000; }
+    body.whiteboard .text-field { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); color: rgba(0,0,0,0.75); }
+    body.whiteboard .text-field::placeholder { color: rgba(0,0,0,0.25); }
+    body.whiteboard .text-field:focus { border-color: rgba(0,0,0,0.25); background: rgba(0,0,0,0.07); }
 
     .toast {
       position: fixed;
@@ -304,95 +234,78 @@
       opacity: 0;
       transition: opacity 0.3s, transform 0.3s;
       white-space: nowrap;
+      z-index: 100;
     }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* watermark hint */
-    .hint {
-      position: fixed;
-      top: 45%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      user-select: none;
-      text-align: center;
-      transition: opacity 0.5s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .hint svg {
-      width: clamp(44px, 11vw, 66px);
-      height: clamp(44px, 11vw, 66px);
-      opacity: 0.18;
-    }
-
-    .hint-label {
-      font-family: 'Caveat', cursive;
-      font-size: clamp(18px, 5vw, 30px);
-      color: rgba(255,255,255,0.18);
-      line-height: 1;
-    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
 
-<canvas id="c"></canvas>
-<div class="hint" id="hint">
-  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 8 C74 7, 94 26, 93 50 C92 74, 74 93, 50 93 C26 93, 7 74, 7 50 C7 26, 26 9, 50 8 Z"
-          stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="35" cy="40" r="4.5" fill="white"/>
-    <circle cx="65" cy="40" r="4.5" fill="white"/>
-    <path d="M32 60 C38 72, 62 72, 68 60" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
-  </svg>
-  <span class="hint-label">dPaul Skribla</span>
+<div class="app-wrap">
+
+  <!-- Canvas -->
+  <div class="canvas-section">
+    <canvas id="c"></canvas>
+    <div class="hint" id="hint">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 8 C74 7, 94 26, 93 50 C92 74, 74 93, 50 93 C26 93, 7 74, 7 50 C7 26, 26 9, 50 8 Z"
+              stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="35" cy="40" r="4.5" fill="white"/>
+        <circle cx="65" cy="40" r="4.5" fill="white"/>
+        <path d="M32 60 C38 72, 62 72, 68 60" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
+      </svg>
+      <span class="hint-label">dPaul Skribla</span>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar-wrap">
+    <div class="toolbar-row">
+      <button class="action-btn" id="undoBtn">↩ undo</button>
+      <button class="action-btn" id="clearBtn">✕ clear</button>
+    </div>
+    <div class="toolbar-row">
+      <button class="share-btn" id="shareBtn" aria-label="Share">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
+      <div class="divider"></div>
+      <button class="color-btn active" data-color="#e63946" style="background:var(--col1)"></button>
+      <button class="color-btn"        data-color="#2196f3" style="background:var(--col2)"></button>
+      <button class="color-btn"        data-color="#4caf50" style="background:var(--col3)"></button>
+      <button class="color-btn"        data-color="#ff9800" style="background:var(--col4)"></button>
+      <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" id="whitePen"></button>
+      <button class="color-btn" id="blackPen" data-color="#111111" style="background:#111111; border-color:rgba(0,0,0,0.4); display:none;"></button>
+      <div class="divider"></div>
+      <button class="size-btn active" data-size="3"  aria-label="Small"><span class="size-dot" style="width:5px;height:5px;"></span></button>
+      <button class="size-btn"        data-size="8"  aria-label="Medium"><span class="size-dot" style="width:10px;height:10px;"></span></button>
+      <button class="size-btn"        data-size="18" aria-label="Large"><span class="size-dot" style="width:18px;height:18px;"></span></button>
+      <div class="divider"></div>
+      <button class="board-btn" id="boardBtn" aria-label="Toggle whiteboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Editable text below -->
+  <div class="text-section">
+    <textarea
+      class="text-field"
+      id="textField"
+      placeholder="add your text here…"
+      rows="3"
+    ></textarea>
+  </div>
+
 </div>
 
-<div class="toolbar-wrap">
-  <!-- Row 1: clear + undo taking half width each -->
-  <div class="toolbar-row top-row">
-    <button class="action-btn" id="undoBtn">↩ undo</button>
-    <button class="action-btn" id="clearBtn">✕ clear</button>
-  </div>
-  <!-- Row 2: main controls -->
-  <div class="toolbar-row main-row sidebar">
-    <button class="share-btn" id="shareBtn" aria-label="Share">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="18" cy="5" r="3"/>
-        <circle cx="6" cy="12" r="3"/>
-        <circle cx="18" cy="19" r="3"/>
-        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-      </svg>
-    </button>
-    <div class="divider"></div>
-    <button class="color-btn active" data-color="#e63946" style="background:var(--col1)" aria-label="Red"></button>
-    <button class="color-btn"        data-color="#2196f3" style="background:var(--col2)" aria-label="Blue"></button>
-    <button class="color-btn"        data-color="#4caf50" style="background:var(--col3)" aria-label="Green"></button>
-    <button class="color-btn"        data-color="#ff9800" style="background:var(--col4)" aria-label="Orange"></button>
-    <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" aria-label="White" id="whitePen"></button>
-    <button class="color-btn" id="blackPen" data-color="#111111" style="background:#111111; border-color:rgba(0,0,0,0.4); display:none;" aria-label="Black"></button>
-    <div class="divider"></div>
-    <button class="size-btn active" data-size="3"  style="width:30px;height:30px;" aria-label="Small"><span class="size-dot" style="width:5px;height:5px;"></span></button>
-    <button class="size-btn"        data-size="8"  style="width:30px;height:30px;" aria-label="Medium"><span class="size-dot" style="width:10px;height:10px;"></span></button>
-    <button class="size-btn"        data-size="18" style="width:30px;height:30px;" aria-label="Large"><span class="size-dot" style="width:18px;height:18px;"></span></button>
-    <div class="divider"></div>
-    <button class="board-btn" id="boardBtn" aria-label="Toggle whiteboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2"/>
-        <line x1="8" y1="21" x2="16" y2="21"/>
-        <line x1="12" y1="17" x2="12" y2="21"/>
-      </svg>
-    </button>
-  </div>
-</div>
 <div class="toast" id="toast">link copied!</div>
 
 <script>
@@ -408,16 +321,10 @@
   const undoStack = [];
   const MAX_UNDO = 20;
 
-  function toolbarH() {
-    const wrap = document.querySelector('.toolbar-wrap');
-    const tb = wrap ? wrap.getBoundingClientRect().height : 100;
-    const spaceBelow = 48 + (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom')) || 0);
-    return tb + spaceBelow + 12;
-  }
-
   function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight - toolbarH();
+    const section = canvas.parentElement;
+    const w = section.offsetWidth;
+    const h = section.offsetHeight;
     const imgData = (canvas.width > 0 && canvas.height > 0)
       ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
     canvas.width  = w;
@@ -437,12 +344,10 @@
   window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', () => setTimeout(resize, 300));
 
-  // Drawing
   canvas.addEventListener('pointerdown', e => {
     e.preventDefault();
     drawing = true;
     canvas.setPointerCapture(e.pointerId);
-    // save snapshot for undo
     undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
     if (undoStack.length > MAX_UNDO) undoStack.shift();
     const {x, y} = pos(e);
@@ -459,7 +364,7 @@
     if (!drawing) return;
     e.preventDefault();
     const {x, y} = pos(e);
-    ctx.lineWidth = currentSize;
+    ctx.lineWidth   = currentSize;
     ctx.strokeStyle = currentColor;
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
@@ -474,10 +379,12 @@
 
   function pos(e) {
     const r = canvas.getBoundingClientRect();
-    return { x: e.clientX - r.left, y: e.clientY - r.top };
+    const scaleX = canvas.width  / r.width;
+    const scaleY = canvas.height / r.height;
+    return { x: (e.clientX - r.left) * scaleX, y: (e.clientY - r.top) * scaleY };
   }
 
-  // Colour buttons
+  // Colour
   document.querySelectorAll('.color-btn').forEach(btn => {
     btn.addEventListener('pointerdown', e => e.stopPropagation());
     btn.addEventListener('click', () => {
@@ -487,7 +394,7 @@
     });
   });
 
-  // Size buttons
+  // Size
   document.querySelectorAll('.size-btn').forEach(btn => {
     btn.addEventListener('pointerdown', e => e.stopPropagation());
     btn.addEventListener('click', () => {
@@ -497,7 +404,7 @@
     });
   });
 
-  // Share — open WhatsApp share link directly
+  // Share
   document.getElementById('shareBtn').addEventListener('pointerdown', e => e.stopPropagation());
   document.getElementById('shareBtn').addEventListener('click', () => {
     const url = encodeURIComponent(window.location.href);
@@ -510,37 +417,28 @@
   document.getElementById('boardBtn').addEventListener('click', () => {
     isWhiteboard = !isWhiteboard;
     document.body.classList.toggle('whiteboard', isWhiteboard);
-
     const blackPen = document.getElementById('blackPen');
     const whitePen = document.getElementById('whitePen');
-
     if (isWhiteboard) {
       blackPen.style.display = '';
       whitePen.style.display = 'none';
-      // if white was selected, switch to black automatically
       if (currentColor === '#ffffff') {
         currentColor = '#111111';
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
         blackPen.classList.add('active');
       }
-      // clear canvas for fresh whiteboard
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      hasDrawn = false;
-      hint.style.opacity = '1';
     } else {
       blackPen.style.display = 'none';
       whitePen.style.display = '';
-      // if black was selected, switch to white
       if (currentColor === '#111111') {
         currentColor = '#ffffff';
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
         whitePen.classList.add('active');
       }
-      // clear canvas for fresh dark board
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      hasDrawn = false;
-      hint.style.opacity = '1';
     }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasDrawn = false;
+    hint.style.opacity = '1';
   });
 
   // Undo
@@ -559,6 +457,13 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     hasDrawn = false;
     hint.style.opacity = '1';
+  });
+
+  // Auto-grow textarea
+  const tf = document.getElementById('textField');
+  tf.addEventListener('input', () => {
+    tf.style.height = 'auto';
+    tf.style.height = tf.scrollHeight + 'px';
   });
 </script>
 </body>
