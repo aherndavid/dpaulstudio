@@ -7,40 +7,49 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-  body {
-    background: #111;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    font-family: 'Courier New', Courier, monospace;
+  html, body {
+    width: 100%;
+    height: 100%;
     overflow: hidden;
+    background: #111;
+    font-family: 'Courier New', Courier, monospace;
     user-select: none;
   }
 
-  #toolbar {
+  #app {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
+  #toolbar {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     padding: 10px 14px;
     background: #1a1a1a;
     border-bottom: 1px solid #333;
     width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
   }
 
-  .section {
+  .toolbar-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .toolbar-row.full {
+    width: 100%;
   }
 
   .section-divider {
     width: 1px;
     height: 48px;
     background: #444;
+    flex-shrink: 0;
   }
 
   .colour {
@@ -52,8 +61,8 @@
     transition: transform 0.15s, border-color 0.15s;
     flex-shrink: 0;
   }
-  .colour:hover { transform: scale(1.15); }
-  .colour.active { border-color: #fff; transform: scale(1.15); }
+  .colour:hover { transform: scale(1.1); }
+  .colour.active { border-color: #fff; transform: scale(1.1); }
 
   #bgToggle {
     width: 42px;
@@ -65,7 +74,7 @@
     flex-shrink: 0;
     transition: transform 0.15s;
   }
-  #bgToggle:hover { transform: scale(1.15); }
+  #bgToggle:hover { transform: scale(1.1); }
 
   .size-btn {
     display: flex;
@@ -85,76 +94,86 @@
   .size-dot { background: #fff; border-radius: 50%; pointer-events: none; }
 
   .action-btn {
-    padding: 10px 0;
-    border-radius: 4px;
     flex: 1;
+    padding: 11px 0;
+    border-radius: 4px;
     border: 2px solid #444;
     background: #2a2a2a;
     color: #ccc;
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    font-weight: 700;
     letter-spacing: 0.5px;
     transition: all 0.15s;
     white-space: nowrap;
+    text-align: center;
   }
   .action-btn:hover { border-color: #aaa; color: #fff; background: #333; }
-  .action-btn:active { transform: scale(0.95); }
+  .action-btn:active { transform: scale(0.97); }
   .action-btn.danger:hover { border-color: #ff5555; color: #ff5555; }
   .action-btn.save:hover { border-color: #55cc88; color: #55cc88; }
 
+  #canvas-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
   #canvas {
-    display: block;
+    position: absolute;
+    top: 0; left: 0;
     cursor: crosshair;
     touch-action: none;
+    display: block;
   }
 </style>
 </head>
 <body>
+<div id="app">
 
-<div id="toolbar">
-  <div class="section">
-    <div class="colour active" data-color="#FF3B5C" style="background:#FF3B5C;" title="Red"></div>
-    <div class="colour" data-color="#FFD600" style="background:#FFD600;" title="Yellow"></div>
-    <div class="colour" data-color="#00E5A0" style="background:#00E5A0;" title="Green"></div>
-    <div class="colour" data-color="#3B9FFF" style="background:#3B9FFF;" title="Blue"></div>
-    <div class="colour" data-color="#CC55FF" style="background:#CC55FF;" title="Purple"></div>
-  </div>
+  <div id="toolbar">
+    <div class="toolbar-row">
+      <div class="colour active" data-color="#FF3B5C" style="background:#FF3B5C;" title="Red"></div>
+      <div class="colour" data-color="#FFD600" style="background:#FFD600;" title="Yellow"></div>
+      <div class="colour" data-color="#00E5A0" style="background:#00E5A0;" title="Green"></div>
+      <div class="colour" data-color="#3B9FFF" style="background:#3B9FFF;" title="Blue"></div>
+      <div class="colour" data-color="#CC55FF" style="background:#CC55FF;" title="Purple"></div>
 
-  <div class="section-divider"></div>
+      <div class="section-divider"></div>
 
-  <div class="section">
-    <div id="bgToggle" title="Toggle Background"></div>
-  </div>
+      <div id="bgToggle" title="Toggle Background"></div>
 
-  <div class="section-divider"></div>
+      <div class="section-divider"></div>
 
-  <div class="section">
-    <div class="size-btn active" data-size="4" title="Small">
-      <div class="size-dot" style="width:5px;height:5px;"></div>
+      <div class="size-btn active" data-size="4" title="Small">
+        <div class="size-dot" style="width:5px;height:5px;"></div>
+      </div>
+      <div class="size-btn" data-size="14" title="Medium">
+        <div class="size-dot" style="width:11px;height:11px;"></div>
+      </div>
+      <div class="size-btn" data-size="30" title="Large">
+        <div class="size-dot" style="width:19px;height:19px;"></div>
+      </div>
     </div>
-    <div class="size-btn" data-size="12" title="Medium">
-      <div class="size-dot" style="width:10px;height:10px;"></div>
-    </div>
-    <div class="size-btn" data-size="28" title="Large">
-      <div class="size-dot" style="width:18px;height:18px;"></div>
+
+    <div class="toolbar-row full">
+      <button class="action-btn" id="undoBtn">↩ Undo</button>
+      <button class="action-btn danger" id="clearBtn">✕ Clear</button>
+      <button class="action-btn save" id="saveBtn">⬇ Save</button>
     </div>
   </div>
 
-  <div class="section-divider"></div>
-
-  <div class="section" style="width:100%; padding: 0 14px;">
-    <button class="action-btn" id="undoBtn">↩ Undo</button>
-    <button class="action-btn danger" id="clearBtn">✕ Clear</button>
-    <button class="action-btn save" id="saveBtn">⬇ Save</button>
+  <div id="canvas-wrap">
+    <canvas id="canvas"></canvas>
   </div>
+
 </div>
-
-<canvas id="canvas"></canvas>
 
 <script>
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('canvas-wrap');
 
   let currentColor = '#FF3B5C';
   let currentSize = 4;
@@ -164,16 +183,17 @@
   let snapshots = [];
 
   function resize() {
-    const tb = document.getElementById('toolbar');
-    const w = window.innerWidth;
-    const h = window.innerHeight - tb.offsetHeight;
-    const snap = canvas.toDataURL();
+    const w = wrap.clientWidth;
+    const h = wrap.clientHeight;
+    const snap = (canvas.width > 0 && canvas.height > 0) ? canvas.toDataURL() : null;
     canvas.width = w;
     canvas.height = h;
     fillBackground();
-    const img = new Image();
-    img.onload = () => ctx.drawImage(img, 0, 0);
-    img.src = snap;
+    if (snap) {
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.src = snap;
+    }
   }
 
   function fillBackground() {
@@ -181,17 +201,17 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
+  window.addEventListener('load', resize);
   window.addEventListener('resize', resize);
-  resize();
 
   document.getElementById('bgToggle').addEventListener('click', () => {
     const snap = canvas.toDataURL();
+    snapshots = [];
     bgColor = bgColor === '#000000' ? '#ffffff' : '#000000';
     fillBackground();
     const img = new Image();
     img.onload = () => ctx.drawImage(img, 0, 0);
     img.src = snap;
-    snapshots = [];
   });
 
   document.querySelectorAll('.colour').forEach(el => {
@@ -216,10 +236,10 @@
   }
 
   document.getElementById('undoBtn').addEventListener('click', () => {
-    if (snapshots.length === 0) return;
+    if (!snapshots.length) return;
     const prev = snapshots.pop();
     const img = new Image();
-    img.onload = () => { fillBackground(); ctx.drawImage(img, 0, 0); };
+    img.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
     img.src = prev;
   });
 
@@ -270,13 +290,12 @@
     lastX = x; lastY = y;
   }
 
-  function endDraw(e) { isDrawing = false; }
+  function endDraw() { isDrawing = false; }
 
   canvas.addEventListener('mousedown', startDraw);
   canvas.addEventListener('mousemove', draw);
   canvas.addEventListener('mouseup', endDraw);
   canvas.addEventListener('mouseleave', endDraw);
-
   canvas.addEventListener('touchstart', startDraw, { passive: false });
   canvas.addEventListener('touchmove', draw, { passive: false });
   canvas.addEventListener('touchend', endDraw);
