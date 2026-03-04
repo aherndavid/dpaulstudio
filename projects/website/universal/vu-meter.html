@@ -21,23 +21,6 @@ body {
   gap: 16px;
 }
 
-/* ── Menu button ── */
-.menu-btn {
-  display: block;
-  width: 100%;
-  background: #ff6010;
-  color: #000;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
-  letter-spacing: 3px;
-  text-transform: none;
-  text-decoration: none;
-  padding: 14px 20px;
-  border-radius: 4px;
-  text-align: left;
-  flex-shrink: 0;
-}
-
 /* ── Brand ── */
 .brand {
   font-size: 22px;
@@ -263,20 +246,14 @@ button:active, button.active {
   </div>
 </div>
 
-<div style="display:flex; gap:6px; margin-top:12px;">
-  <a class="menu-btn" style="width:75%;" href="https://www.dpaul.studio/creative" target="_blank">Menu</a>
-  <button class="menu-btn" style="width:25%; background:#F2F2F2; justify-content:center;" onclick="window.history.back()">&#8592; Back</button>
-</div>
-
 <script>
 'use strict';
 
 const MIN_DB = -40, MAX_DB = 100;
 const NUM_SEGS = 36;
-const PEAK_THRESHOLD = 80;   // record a peak when level exceeds this
-const PEAK_HOLD_MS   = 1200; // min gap between recorded peaks
+const PEAK_THRESHOLD = 80;
+const PEAK_HOLD_MS   = 1200;
 
-// ── Build segments ────────────────────────────────────────
 const segsEl = document.getElementById('segments');
 for (let i = 0; i < NUM_SEGS; i++) {
   const d = document.createElement('div');
@@ -288,18 +265,17 @@ const segs = Array.from(segsEl.children);
 const idxYellow = Math.round((80 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
 const idxRed    = Math.round((90 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
 
-// ── State ─────────────────────────────────────────────────
 const dbDisplay  = document.getElementById('dbDisplay');
 const peakList   = document.getElementById('peakList');
 const peakEmpty  = document.getElementById('peakEmpty');
 const peakMaxVal = document.getElementById('peakMaxVal');
 
-let peakHistory  = [];   // [{db, time}]
+let peakHistory  = [];
 let allTimePeak  = null;
 let lastPeakTime = 0;
 let lastDb       = MIN_DB;
 let peakHoldTimer = null;
-let peakHoldDb   = null;  // for the rising-then-falling peak detection
+let peakHoldDb   = null;
 
 function now() {
   return new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
@@ -324,13 +300,11 @@ function recordPeak(db) {
 function renderPeakList() {
   if (peakHistory.length === 0) {
     peakEmpty.style.display = 'block';
-    // remove all rows
     Array.from(peakList.children).forEach(c => { if (c !== peakEmpty) c.remove(); });
     return;
   }
   peakEmpty.style.display = 'none';
 
-  // rebuild list
   const existing = Array.from(peakList.querySelectorAll('.peak-row'));
   existing.forEach(r => r.remove());
 
@@ -355,7 +329,6 @@ function setLevel(db) {
     }
   });
 
-  // dB number
   if (db <= MIN_DB) {
     dbDisplay.textContent = '—';
     dbDisplay.className = 'db-display';
@@ -364,7 +337,6 @@ function setLevel(db) {
     dbDisplay.className = 'db-display' + (db >= 90 ? ' peak' : '');
   }
 
-  // Peak detection: record when level was rising and now falls
   if (db > lastDb) {
     peakHoldDb = db;
   } else if (peakHoldDb !== null && db < peakHoldDb - 3 && peakHoldDb >= PEAK_THRESHOLD) {
@@ -388,7 +360,6 @@ function resetMeter() {
 
 resetMeter();
 
-// ── Simulation ────────────────────────────────────────────
 let simInterval = null, simMode = null;
 
 function stopSim() {
