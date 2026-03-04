@@ -1,474 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>dPaul Skribla</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Skribble Pad</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
 
-    :root {
-      --col1: #e63946;
-      --col2: #2196f3;
-      --col3: #4caf50;
-      --col4: #ff9800;
-      --col5: #ffffff;
-      --toolbar-h: 54px;
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
+  #toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      background: #131413;
-      touch-action: pan-y;
-    }
+  .section {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-    /* ── Layout wrapper ── */
-    .app-wrap {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      min-height: 100vh;
-    }
+  .section-divider {
+    width: 1px;
+    height: 32px;
+    background: #444;
+  }
 
-    /* ── Canvas section ── */
-    .canvas-section {
-      position: relative;
-      width: 100%;
-      /* square-ish canvas: use aspect ratio */
-      aspect-ratio: 1 / 1;
-      max-height: 70vh;
-      flex-shrink: 0;
-      background: #131413;
-    }
+  .colour {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .colour:hover { transform: scale(1.15); }
+  .colour.active { border-color: #fff; transform: scale(1.15); }
 
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      cursor: crosshair;
-      touch-action: none;
-    }
+  #bgToggle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 3px solid #555;
+    background: linear-gradient(135deg, #fff 50%, #000 50%);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  #bgToggle:hover { transform: scale(1.15); }
 
-    /* hint watermark */
-    .hint {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -60%);
-      pointer-events: none;
-      user-select: none;
-      text-align: center;
-      transition: opacity 0.5s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-    .hint svg { width: clamp(40px, 10vw, 60px); height: clamp(40px, 10vw, 60px); opacity: 0.18; }
-    .hint-label { font-family: 'Caveat', cursive; font-size: clamp(16px, 5vw, 26px); color: rgba(255,255,255,0.18); line-height: 1; }
+  .size-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    border: 2px solid #444;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+  .size-btn:hover { transform: scale(1.1); }
+  .size-btn.active { border-color: #fff; }
+  .size-dot { background: #fff; border-radius: 50%; pointer-events: none; }
 
-    /* ── Toolbar ── */
-    .toolbar-wrap {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      background: #131413;
-      flex-shrink: 0;
-    }
+  .action-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 2px solid #444;
+    background: #2a2a2a;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .action-btn:hover { border-color: #aaa; color: #fff; background: #333; }
+  .action-btn:active { transform: scale(0.95); }
+  .action-btn.danger:hover { border-color: #ff5555; color: #ff5555; }
+  .action-btn.save:hover { border-color: #55cc88; color: #55cc88; }
 
-    .toolbar-row {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      width: 100%;
-    }
-
-    .action-btn {
-      font-family: 'Courier New', monospace;
-      font-size: clamp(13px, 3.5vw, 17px);
-      color: rgba(255,255,255,0.65);
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
-      cursor: pointer;
-      padding: 8px 12px;
-      flex: 1;
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.15s, background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      white-space: nowrap;
-    }
-    .action-btn:active { color: #fff; background: rgba(255,255,255,0.14); }
-
-    .color-btn {
-      width: clamp(26px, 6vw, 34px);
-      height: clamp(26px, 6vw, 34px);
-      border-radius: 8px;
-      border: 3px solid transparent;
-      cursor: pointer;
-      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-      flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
-    }
-    .color-btn::after { content: ''; position: absolute; inset: -10px; }
-    .color-btn:active { transform: scale(0.88); }
-    .color-btn.active { border-color: #fff; transform: scale(1.08); box-shadow: 0 0 0 2px rgba(255,255,255,0.25); }
-
-    .divider { width: 1px; height: 22px; background: rgba(255,255,255,0.12); flex-shrink: 0; margin: 0 2px; }
-
-    .share-btn, .board-btn {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 8px;
-      cursor: pointer;
-      padding: 5px 7px;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.15s, background 0.15s;
-      flex-shrink: 0;
-      height: clamp(26px, 6vw, 34px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-    .share-btn::after, .board-btn::after { content: ''; position: absolute; inset: -10px; }
-    .share-btn:active, .board-btn:active { opacity: 1; transform: scale(0.9); }
-    .share-btn svg, .board-btn svg { width: 20px; height: 20px; display: block; }
-
-    .size-btn {
-      background: rgba(255,255,255,0.07);
-      border: 2px solid rgba(255,255,255,0.15);
-      border-radius: 8px;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      transition: border-color 0.15s, background 0.15s;
-      flex-shrink: 0;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px; height: 30px;
-    }
-    .size-btn::after { content: ''; position: absolute; inset: -10px; }
-    .size-btn.active { border-color: #fff; transform: scale(1.15); }
-    .size-btn:active { transform: scale(0.88); }
-    .size-dot { background: #fff; border-radius: 50%; pointer-events: none; }
-
-    /* ── Text area below ── */
-    .text-section {
-      width: 100%;
-      padding: 16px 16px calc(16px + var(--safe-bottom));
-      background: #131413;
-    }
-
-    .text-field {
-      width: 100%;
-      min-height: 80px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
-      color: rgba(255,255,255,0.85);
-      font-family: 'Caveat', cursive;
-      font-size: clamp(18px, 5vw, 22px);
-      line-height: 1.5;
-      padding: 12px 14px;
-      resize: none;
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      -webkit-tap-highlight-color: transparent;
-      /* allow scrolling inside textarea */
-      touch-action: pan-y;
-    }
-    .text-field::placeholder { color: rgba(255,255,255,0.22); }
-    .text-field:focus { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); }
-
-    /* ── Whiteboard overrides ── */
-    body.whiteboard { background: #e8e8e4; }
-    body.whiteboard canvas { background: #f5f5f0; }
-    body.whiteboard .canvas-section { background: #f5f5f0; }
-    body.whiteboard .toolbar-wrap { background: #e8e8e4; }
-    body.whiteboard .text-section { background: #e8e8e4; }
-    body.whiteboard .divider { background: rgba(0,0,0,0.12); }
-    body.whiteboard .action-btn { color: rgba(0,0,0,0.6); background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); }
-    body.whiteboard .action-btn:active { color: #000; background: rgba(0,0,0,0.12); }
-    body.whiteboard .share-btn, body.whiteboard .board-btn { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.15); }
-    body.whiteboard .share-btn svg, body.whiteboard .board-btn svg { stroke: #333; }
-    body.whiteboard .size-btn { border-color: rgba(0,0,0,0.15); background: rgba(0,0,0,0.06); }
-    body.whiteboard .size-btn.active { border-color: #111; }
-    body.whiteboard .size-dot { background: #111; }
-    body.whiteboard .color-btn.active { border-color: #111; }
-    body.whiteboard .hint-label { color: rgba(0,0,0,0.15); }
-    body.whiteboard .hint svg { opacity: 0.12; }
-    body.whiteboard .hint svg path, body.whiteboard .hint svg circle { stroke: #000; }
-    body.whiteboard .text-field { background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.12); color: rgba(0,0,0,0.75); }
-    body.whiteboard .text-field::placeholder { color: rgba(0,0,0,0.25); }
-    body.whiteboard .text-field:focus { border-color: rgba(0,0,0,0.25); background: rgba(0,0,0,0.07); }
-
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(10px);
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(8px);
-      color: #fff;
-      font-family: 'Caveat', cursive;
-      font-size: 18px;
-      padding: 8px 20px;
-      border-radius: 20px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s, transform 0.3s;
-      white-space: nowrap;
-      z-index: 100;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  </style>
+  #canvas {
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+  }
+</style>
 </head>
 <body>
 
-<div class="app-wrap">
+<div id="toolbar">
+  <div class="section">
+    <div class="colour active" data-color="#FF3B5C" style="background:#FF3B5C;" title="Red"></div>
+    <div class="colour" data-color="#FFD600" style="background:#FFD600;" title="Yellow"></div>
+    <div class="colour" data-color="#00E5A0" style="background:#00E5A0;" title="Green"></div>
+    <div class="colour" data-color="#3B9FFF" style="background:#3B9FFF;" title="Blue"></div>
+    <div class="colour" data-color="#CC55FF" style="background:#CC55FF;" title="Purple"></div>
+  </div>
 
-  <!-- Canvas -->
-  <div class="canvas-section">
-    <canvas id="c"></canvas>
-    <div class="hint" id="hint">
-      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M50 8 C74 7, 94 26, 93 50 C92 74, 74 93, 50 93 C26 93, 7 74, 7 50 C7 26, 26 9, 50 8 Z"
-              stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="35" cy="40" r="4.5" fill="white"/>
-        <circle cx="65" cy="40" r="4.5" fill="white"/>
-        <path d="M32 60 C38 72, 62 72, 68 60" stroke="white" stroke-width="4.5" stroke-linecap="round"/>
-      </svg>
-      <span class="hint-label">dPaul Skribla</span>
+  <div class="section-divider"></div>
+
+  <div class="section">
+    <div id="bgToggle" title="Toggle Background"></div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <div class="section">
+    <div class="size-btn active" data-size="4" title="Small">
+      <div class="size-dot" style="width:5px;height:5px;"></div>
+    </div>
+    <div class="size-btn" data-size="12" title="Medium">
+      <div class="size-dot" style="width:10px;height:10px;"></div>
+    </div>
+    <div class="size-btn" data-size="28" title="Large">
+      <div class="size-dot" style="width:18px;height:18px;"></div>
     </div>
   </div>
 
-  <!-- Toolbar -->
-  <div class="toolbar-wrap">
-    <!-- Row 1: undo + clear -->
-    <div class="toolbar-row">
-      <button class="action-btn" id="undoBtn">↩ undo</button>
-      <button class="action-btn" id="clearBtn">✕ clear</button>
-    </div>
-    <!-- Row 2: share + colours + board -->
-    <div class="toolbar-row">
-      <button class="share-btn" id="shareBtn" aria-label="Share">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-        </svg>
-      </button>
-      <div class="divider"></div>
-      <button class="color-btn active" data-color="#e63946" style="background:var(--col1)"></button>
-      <button class="color-btn"        data-color="#2196f3" style="background:var(--col2)"></button>
-      <button class="color-btn"        data-color="#4caf50" style="background:var(--col3)"></button>
-      <button class="color-btn"        data-color="#ff9800" style="background:var(--col4)"></button>
-      <button class="color-btn"        data-color="#ffffff" style="background:var(--col5); border-color:rgba(255,255,255,0.25);" id="whitePen"></button>
-      <button class="color-btn" id="blackPen" data-color="#111111" style="background:#111111; border-color:rgba(0,0,0,0.4); display:none;"></button>
-      <div class="divider"></div>
-      <button class="board-btn" id="boardBtn" aria-label="Toggle whiteboard">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2"/>
-          <line x1="8" y1="21" x2="16" y2="21"/>
-          <line x1="12" y1="17" x2="12" y2="21"/>
-        </svg>
-      </button>
-    </div>
-    <!-- Row 3: thickness -->
-    <div class="toolbar-row">
-      <button class="size-btn active" data-size="3"  aria-label="Small" style="flex:1;width:auto;"><span class="size-dot" style="width:5px;height:5px;"></span></button>
-      <button class="size-btn"        data-size="8"  aria-label="Medium" style="flex:1;width:auto;"><span class="size-dot" style="width:10px;height:10px;"></span></button>
-      <button class="size-btn"        data-size="18" aria-label="Large" style="flex:1;width:auto;"><span class="size-dot" style="width:18px;height:18px;"></span></button>
-    </div>
-  </div>
+  <div class="section-divider"></div>
 
-  <!-- Editable text below -->
-  <div class="text-section">
-    <textarea
-      class="text-field"
-      id="textField"
-      placeholder="add your text here…"
-      rows="3"
-    ></textarea>
+  <div class="section">
+    <button class="action-btn" id="undoBtn">↩ Undo</button>
+    <button class="action-btn danger" id="clearBtn">✕ Clear</button>
+    <button class="action-btn save" id="saveBtn">⬇ Save</button>
   </div>
-
 </div>
 
-<div class="toast" id="toast">link copied!</div>
+<canvas id="canvas"></canvas>
 
 <script>
-  const canvas = document.getElementById('c');
-  const ctx    = canvas.getContext('2d');
-  const hint   = document.getElementById('hint');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
 
-  let currentColor = '#e63946';
-  let currentSize  = 3;
-  let drawing  = false;
+  let currentColor = '#FF3B5C';
+  let currentSize = 4;
+  let bgColor = '#000000';
+  let isDrawing = false;
   let lastX = 0, lastY = 0;
-  let hasDrawn = false;
-  const undoStack = [];
-  const MAX_UNDO = 20;
+  let snapshots = [];
 
   function resize() {
-    const section = canvas.parentElement;
-    const w = section.offsetWidth;
-    const h = section.offsetHeight;
-    const imgData = (canvas.width > 0 && canvas.height > 0)
-      ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
-    canvas.width  = w;
+    const tb = document.getElementById('toolbar');
+    const w = window.innerWidth;
+    const h = window.innerHeight - tb.offsetHeight;
+    const snap = canvas.toDataURL();
+    canvas.width = w;
     canvas.height = h;
-    setupCtx();
-    if (imgData) ctx.putImageData(imgData, 0, 0);
+    fillBackground();
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = snap;
   }
 
-  function setupCtx() {
-    ctx.lineJoin    = 'round';
-    ctx.lineCap     = 'round';
-    ctx.lineWidth   = currentSize;
-    ctx.strokeStyle = currentColor;
+  function fillBackground() {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  resize();
   window.addEventListener('resize', resize);
-  window.addEventListener('orientationchange', () => setTimeout(resize, 300));
+  resize();
 
-  canvas.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    drawing = true;
-    canvas.setPointerCapture(e.pointerId);
-    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    if (undoStack.length > MAX_UNDO) undoStack.shift();
-    const {x, y} = pos(e);
-    lastX = x; lastY = y;
-    ctx.lineWidth = currentSize;
-    ctx.fillStyle = currentColor;
-    ctx.beginPath();
-    ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
-    ctx.fill();
-    if (!hasDrawn) { hasDrawn = true; hint.style.opacity = '0'; }
+  document.getElementById('bgToggle').addEventListener('click', () => {
+    const snap = canvas.toDataURL();
+    bgColor = bgColor === '#000000' ? '#ffffff' : '#000000';
+    fillBackground();
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = snap;
+    snapshots = [];
   });
 
-  canvas.addEventListener('pointermove', e => {
-    if (!drawing) return;
+  document.querySelectorAll('.colour').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.colour').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      currentColor = el.dataset.color;
+    });
+  });
+
+  document.querySelectorAll('.size-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      currentSize = parseInt(el.dataset.size);
+    });
+  });
+
+  function saveSnapshot() {
+    snapshots.push(canvas.toDataURL());
+    if (snapshots.length > 40) snapshots.shift();
+  }
+
+  document.getElementById('undoBtn').addEventListener('click', () => {
+    if (snapshots.length === 0) return;
+    const prev = snapshots.pop();
+    const img = new Image();
+    img.onload = () => { fillBackground(); ctx.drawImage(img, 0, 0); };
+    img.src = prev;
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    saveSnapshot();
+    fillBackground();
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'skribble-' + Date.now() + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    if (e.touches) {
+      return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+    }
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function startDraw(e) {
     e.preventDefault();
-    const {x, y} = pos(e);
-    ctx.lineWidth   = currentSize;
-    ctx.strokeStyle = currentColor;
+    saveSnapshot();
+    isDrawing = true;
+    const { x, y } = getPos(e);
+    lastX = x; lastY = y;
+    ctx.beginPath();
+    ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
+    ctx.fillStyle = currentColor;
+    ctx.fill();
+  }
+
+  function draw(e) {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const { x, y } = getPos(e);
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = currentSize;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.stroke();
     lastX = x; lastY = y;
-  });
-
-  const stopDraw = () => { drawing = false; };
-  canvas.addEventListener('pointerup',     stopDraw);
-  canvas.addEventListener('pointercancel', stopDraw);
-
-  function pos(e) {
-    const r = canvas.getBoundingClientRect();
-    const scaleX = canvas.width  / r.width;
-    const scaleY = canvas.height / r.height;
-    return { x: (e.clientX - r.left) * scaleX, y: (e.clientY - r.top) * scaleY };
   }
 
-  // Colour
-  document.querySelectorAll('.color-btn').forEach(btn => {
-    btn.addEventListener('pointerdown', e => e.stopPropagation());
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentColor = btn.dataset.color;
-    });
-  });
+  function endDraw(e) { isDrawing = false; }
 
-  // Size
-  document.querySelectorAll('.size-btn').forEach(btn => {
-    btn.addEventListener('pointerdown', e => e.stopPropagation());
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentSize = parseInt(btn.dataset.size);
-    });
-  });
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
 
-  // Share
-  document.getElementById('shareBtn').addEventListener('pointerdown', e => e.stopPropagation());
-  document.getElementById('shareBtn').addEventListener('click', () => {
-    const url = encodeURIComponent(window.location.href);
-    window.open('https://wa.me/?text=' + url, '_blank');
-  });
-
-  // Board toggle
-  let isWhiteboard = false;
-  document.getElementById('boardBtn').addEventListener('pointerdown', e => e.stopPropagation());
-  document.getElementById('boardBtn').addEventListener('click', () => {
-    isWhiteboard = !isWhiteboard;
-    document.body.classList.toggle('whiteboard', isWhiteboard);
-    const blackPen = document.getElementById('blackPen');
-    const whitePen = document.getElementById('whitePen');
-    if (isWhiteboard) {
-      blackPen.style.display = '';
-      whitePen.style.display = 'none';
-      if (currentColor === '#ffffff') {
-        currentColor = '#111111';
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-        blackPen.classList.add('active');
-      }
-    } else {
-      blackPen.style.display = 'none';
-      whitePen.style.display = '';
-      if (currentColor === '#111111') {
-        currentColor = '#ffffff';
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
-        whitePen.classList.add('active');
-      }
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    hasDrawn = false;
-    hint.style.opacity = '1';
-  });
-
-  // Undo
-  document.getElementById('undoBtn').addEventListener('pointerdown', e => e.stopPropagation());
-  document.getElementById('undoBtn').addEventListener('click', () => {
-    if (undoStack.length > 0) {
-      ctx.putImageData(undoStack.pop(), 0, 0);
-      if (undoStack.length === 0) { hasDrawn = false; hint.style.opacity = '1'; }
-    }
-  });
-
-  // Clear
-  document.getElementById('clearBtn').addEventListener('pointerdown', e => e.stopPropagation());
-  document.getElementById('clearBtn').addEventListener('click', () => {
-    undoStack.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    hasDrawn = false;
-    hint.style.opacity = '1';
-  });
-
-  // Auto-grow textarea
-  const tf = document.getElementById('textField');
-  tf.addEventListener('input', () => {
-    tf.style.height = 'auto';
-    tf.style.height = tf.scrollHeight + 'px';
-  });
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
 </script>
 </body>
 </html>
