@@ -1459,7 +1459,9 @@
                 <div class="song-btn" id="loadLocalBtn">LOAD LOCAL</div>
                 <div class="song-btn" id="saveDriveBtn">SAVE DRIVE</div>
                 <div class="song-btn" id="loadDriveBtn">LOAD DRIVE</div>
+                <div class="song-btn" id="loadWavBtn">LOAD WAV</div>
                 <input type="file" id="loadSongFile" accept=".json" style="display:none">
+                <input type="file" id="wavFileInput" accept=".wav,.mp3,.ogg,.flac,.aiff" multiple style="display:none">
             </div>
             <div class="clear-midi-btn" id="clearMidiBtn">CLEAR MIDI</div>
             <div class="octave-controls">
@@ -1879,7 +1881,15 @@
 
         function playDrum(type) {
             initAudio();
-            
+
+            // If a WAV has been loaded for this drum slot, play it instead of synthesis
+            const drumOrder = ['kick','snare','hihat','clap','tom1','tom2','cymbal','perc','shaker'];
+            const slotIndex = drumOrder.indexOf(type);
+            if (slotIndex !== -1 && sampleBuffers[slotIndex]) {
+                playSample(slotIndex);
+                return;
+            }
+
             const now = audioContext.currentTime;
             
             switch(type) {
@@ -2534,8 +2544,9 @@
                 updateTempoDisplay();
                 
                 // Update knobs
-                document.getElementById('volumeKnob').dataset.value = Math.round(settings.volume * 100);
-                document.getElementById('drumVolumeKnob').dataset.value = Math.round(settings.drumVolume * 100);
+                document.getElementById('synthVolumeKnob').dataset.value = Math.round((settings.synthVolume || settings.volume || 0.7) * 100);
+                document.getElementById('drumVolumeKnob').dataset.value = Math.round((settings.drumVolume || 0.7) * 100);
+                document.getElementById('masterVolumeKnob').dataset.value = Math.round((settings.volume || 0.7) * 100);
                 
                 // Update ARP and SYNC switches
                 // Reset arp to off on page load to prevent confusion
@@ -3881,6 +3892,59 @@
         document.getElementById('loadDriveBtn').addEventListener('click', loadFromDrive);
         document.getElementById('loadSongFile').addEventListener('change', (e) => {
             loadSong(e.target.files[0]);
+        });
+
+        // WAV file loader - maps up to 9 files onto drum pad slots
+        document.getElementById('loadWavBtn').addEventListener('click', () => {
+            document.getElementById('wavFileInput').click();
+        });
+
+        document.getElementById('wavFileInput').addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            initAudio();
+
+            const drumOrder = ['kick','snare','hihat','clap','tom1','tom2','cymbal','perc','shaker'];
+
+            files.forEach((file, index) => {
+                if (index >= drumOrder.length) return; // max 9 slots
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const arrayBuffer = ev.target.result.slice(0);
+                    audioContext.decodeAudioData(arrayBuffer, (buffer) => {
+                        // Store in sampleBuffers keyed by slot index
+                        sampleBuffers[index] = buffer;
+
+                        // Patch playDrum for this slot so the pad plays the WAV
+                        const slotName = drumOrder[index];
+                        const shortName = file.name.replace(/\.[^.]+$/, '').slice(0, 6).toUpperCase();
+
+                        // Update pad label to show file loaded
+                        const pad = document.querySelector(`.pad[data-sound="${slotName}"]`);
+                        if (pad) {
+                            pad.style.border = '2px solid #00ff00';
+                            pad.style.boxShadow = '0 0 6px rgba(0,255,0,0.4)';
+                            pad.title = file.name;
+                        }
+
+                        updateNoteDisplay(`${shortName} OK`);
+                        setTimeout(() => updateNoteDisplay('---'), 1500);
+
+                        // Play it immediately as confirmation
+                        playSample(index);
+
+                    }, (err) => {
+                        console.error('WAV decode error:', err);
+                        updateNoteDisplay('WAV ERR');
+                        setTimeout(() => updateNoteDisplay('---'), 1500);
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            });
+
+            // Reset input so same file can be reloaded
+            e.target.value = '';
         });
 
         function saveLocal() {
