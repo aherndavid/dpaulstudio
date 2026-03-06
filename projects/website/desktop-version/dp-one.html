@@ -4076,129 +4076,184 @@
             }
         }
 
-        // Helper function to create song data
+        // Helper function to create song data object
         function createSongData() {
+            const songData = {
+                version: '3.3',
+                savedAt: new Date().toISOString(),
+                settings: {
+                    volume:           masterGain   ? masterGain.gain.value         : 0.7,
+                    synthVolume:      synthGain    ? synthGain.gain.value           : 0.7,
+                    drumVolume:       drumGain     ? drumGain.gain.value            : 0.7,
+                    delay:            delayNode    ? delayNode.delayTime.value      : 0.3,
+                    feedback:         feedbackGain ? feedbackGain.gain.value        : 0.3,
+                    filter:           filterNode   ? filterNode.frequency.value     : 2000,
+                    resonance:        filterNode   ? filterNode.Q.value             : 1,
+                    currentOctave:    currentOctave,
+                    currentWaveform:  currentWaveform,
+                    arpEnabled:       arpEnabled,
+                    arpMode:          arpMode,
+                    syncEnabled:      syncEnabled,
+                    pitchHoldEnabled: pitchHoldEnabled,
+                    tempo:            tempo,
+                    sequencerSteps:   sequencerSteps
+                },
+                drumVolumes:      { ...drumVolumes },
+                sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
+                sampler: {
+                    pitch:   samplePitch,
+                    speed:   sampleSpeed,
+                    filter:  sampleFilter,
+                    reverse: sampleReverse,
+                    loop:    sampleLoop
+                },
+                samples: {}
+            };
+
+            // Serialise loaded sample buffers
+            Object.keys(sampleBuffers).forEach(key => {
+                const buffer = sampleBuffers[key];
+                const channelData = [];
+                for (let i = 0; i < buffer.numberOfChannels; i++) {
+                    channelData.push(Array.from(buffer.getChannelData(i)));
+                }
+                songData.samples[key] = {
+                    numberOfChannels: buffer.numberOfChannels,
+                    length:           buffer.length,
+                    sampleRate:       buffer.sampleRate,
+                    channelData:      channelData
+                };
+            });
+
+            return songData;
+        }
+
+        // Load a song from a JSON File object
+        function loadSong(file) {
             if (!file) {
                 console.log('No file selected');
                 return;
             }
-            
+
             console.log('Loading song:', file.name);
             const reader = new FileReader();
-            
+
             reader.onerror = (error) => {
                 console.error('FileReader error:', error);
                 updateNoteDisplay('LOAD ERROR');
                 setTimeout(() => updateNoteDisplay('---'), 2000);
             };
-            
+
             reader.onload = (e) => {
                 try {
-                    console.log('File read complete, parsing JSON...');
                     const songData = JSON.parse(e.target.result);
-                    console.log('Song data loaded:', songData);
-                    
                     initAudio();
-                    
-                    // Load settings
-                    if (masterGain) masterGain.gain.value = songData.settings.volume || 0.7;
-                    if (drumGain) drumGain.gain.value = songData.settings.drumVolume || 0.7;
-                    if (delayNode) delayNode.delayTime.value = songData.settings.delay || 0.3;
-                    if (feedbackGain) feedbackGain.gain.value = songData.settings.feedback || 0.3;
-                    if (filterNode) {
-                        filterNode.frequency.value = songData.settings.filter || 2000;
-                        filterNode.Q.value = songData.settings.resonance || 1;
-                    }
-                    
-                    currentOctave = songData.settings.currentOctave || 4;
-                    currentWaveform = songData.settings.currentWaveform || 'sawtooth';
-                    arpEnabled = songData.settings.arpEnabled || false;
-                    syncEnabled = songData.settings.syncEnabled || false;
-                    tempo = songData.settings.tempo || 120;
-                    pitchHoldEnabled = songData.settings.pitchHoldEnabled || false;
-                    
-                    // Load sequencer steps
-                    if (songData.settings.sequencerSteps) {
-                        setSequencerSteps(songData.settings.sequencerSteps);
-                    }
-                    
-                    // Load drum volumes
-                    if (songData.drumVolumes) {
-                        drumVolumes = songData.drumVolumes;
-                    }
-                    
-                    // Load sequencer patterns
-                    if (songData.sequencerPattern) {
-                        sequencerPattern = songData.sequencerPattern;
-                    }
-                    
-                    // Load sampler settings
-                    if (songData.sampler) {
-                        samplePitch = songData.sampler.pitch || 0;
-                        sampleSpeed = songData.sampler.speed || 1.0;
-                        sampleFilter = songData.sampler.filter || 20000;
-                        sampleReverse = songData.sampler.reverse || false;
-                        sampleLoop = songData.sampler.loop || false;
-                    }
-                    
-                    // Load samples
-                    if (songData.samples) {
-                        Object.keys(songData.samples).forEach(key => {
-                            const sampleData = songData.samples[key];
-                            const buffer = audioContext.createBuffer(
-                                sampleData.numberOfChannels,
-                                sampleData.length,
-                                sampleData.sampleRate
-                            );
-                            
-                            for (let i = 0; i < sampleData.numberOfChannels; i++) {
-                                buffer.getChannelData(i).set(sampleData.channelData[i]);
-                            }
-                            
-                            sampleBuffers[key] = buffer;
-                            
-                            // Update visual
-                            const pad = document.querySelector(`.sample-pad[data-sample="${key}"]`);
-                            if (pad) pad.classList.add('loaded');
-                        });
-                    }
-                    
-                    // Update all UI elements
-                    updateOctaveDisplay();
-                    updateTempoDisplay();
-                    updateSequencerDisplay();
-                    
-                    // Update waveform buttons
-                    document.querySelectorAll('.waveform-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                        if (btn.dataset.waveform === currentWaveform) {
-                            btn.classList.add('active');
-                        }
-                    });
-                    
-                    // Update knobs
-                    document.querySelectorAll('.knob').forEach(updateKnob);
-                    
-                    // Update switches
-                    document.getElementById('arpSwitch').classList.toggle('active', arpEnabled);
-                    document.getElementById('arpLight').classList.toggle('active', arpEnabled);
-                    document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
-                    document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
-                    // Sampler switches removed from UI
-                    
-                    updateNoteDisplay('SONG LOADED');
-                    setTimeout(() => updateNoteDisplay('---'), 2000);
-                    
+                    applySongData(songData);
                 } catch (error) {
-                    console.error('Error loading song:', error);
+                    console.error('Error parsing song file:', error);
                     updateNoteDisplay('LOAD ERROR');
                     setTimeout(() => updateNoteDisplay('---'), 2000);
                 }
             };
-            
+
             reader.readAsText(file);
         }
 
+        // Apply a loaded song data object to the synth state and UI
+        function applySongData(songData) {
+            try {
+                console.log('Applying song data:', songData);
+
+                if (masterGain)   masterGain.gain.value        = songData.settings.volume       || 0.7;
+                if (synthGain)    synthGain.gain.value          = songData.settings.synthVolume  || 0.7;
+                if (drumGain)     drumGain.gain.value           = songData.settings.drumVolume   || 0.7;
+                if (delayNode)    delayNode.delayTime.value     = songData.settings.delay        || 0.3;
+                if (feedbackGain) feedbackGain.gain.value       = songData.settings.feedback     || 0.3;
+                if (filterNode) {
+                    filterNode.frequency.value = songData.settings.filter    || 2000;
+                    filterNode.Q.value         = songData.settings.resonance || 1;
+                }
+
+                currentOctave     = songData.settings.currentOctave     || 4;
+                currentWaveform   = songData.settings.currentWaveform   || 'sawtooth';
+                arpEnabled        = songData.settings.arpEnabled        || false;
+                arpMode           = songData.settings.arpMode           || 'up';
+                syncEnabled       = songData.settings.syncEnabled       || false;
+                pitchHoldEnabled  = songData.settings.pitchHoldEnabled  || false;
+                tempo             = songData.settings.tempo             || 120;
+
+                if (songData.settings.sequencerSteps) {
+                    setSequencerSteps(songData.settings.sequencerSteps);
+                }
+
+                if (songData.drumVolumes) {
+                    drumVolumes = songData.drumVolumes;
+                    Object.keys(drumVolumes).forEach(drumName => {
+                        const level = drumVolumes[drumName];
+                        document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`).forEach(dot => {
+                            dot.classList.remove('active');
+                            if (parseFloat(dot.dataset.level) === level) dot.classList.add('active');
+                        });
+                    });
+                }
+
+                if (songData.sequencerPattern) {
+                    sequencerPattern = songData.sequencerPattern;
+                }
+
+                if (songData.sampler) {
+                    samplePitch   = songData.sampler.pitch   || 0;
+                    sampleSpeed   = songData.sampler.speed   || 1.0;
+                    sampleFilter  = songData.sampler.filter  || 20000;
+                    sampleReverse = songData.sampler.reverse || false;
+                    sampleLoop    = songData.sampler.loop    || false;
+                }
+
+                if (songData.samples && audioContext) {
+                    Object.keys(songData.samples).forEach(key => {
+                        const s = songData.samples[key];
+                        const buffer = audioContext.createBuffer(s.numberOfChannels, s.length, s.sampleRate);
+                        for (let i = 0; i < s.numberOfChannels; i++) {
+                            buffer.getChannelData(i).set(s.channelData[i]);
+                        }
+                        sampleBuffers[key] = buffer;
+                        const pad = document.querySelector(`.sample-pad[data-sample="${key}"]`);
+                        if (pad) pad.classList.add('loaded');
+                    });
+                }
+
+                // Update all UI
+                updateOctaveDisplay();
+                rebuildKeyboard();
+                updateTempoDisplay();
+                updateSequencerDisplay();
+
+                document.querySelectorAll('.waveform-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.wave === currentWaveform) btn.classList.add('active');
+                });
+
+                document.querySelectorAll('[data-mode]').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.mode === arpMode) btn.classList.add('active');
+                });
+
+                document.getElementById('arpSwitch').classList.toggle('active', arpEnabled);
+                document.getElementById('arpLight').classList.toggle('active', arpEnabled);
+                document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
+                document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
+
+                document.querySelectorAll('.knob').forEach(updateKnob);
+
+                updateNoteDisplay('SONG LOADED');
+                setTimeout(() => updateNoteDisplay('---'), 2000);
+
+            } catch (error) {
+                console.error('Error applying song data:', error);
+                updateNoteDisplay('APPLY ERROR');
+                setTimeout(() => updateNoteDisplay('---'), 2000);
+            }
+        }
         // Load saved settings
         loadSettings();
         
