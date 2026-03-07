@@ -104,10 +104,9 @@
             transition: opacity 0.3s ease;
         }
 
-        /* Slow warm fade-in on power on */
+        /* Slow warm fade-in on power on - handled via JS */
         .synth-container.powered-on {
             opacity: 1;
-            transition: opacity 3.5s ease-in;
         }
 
         /* Stop all flashing animations when powered off */
@@ -2512,6 +2511,11 @@
                 if (synthPowered) {
                     powerBtn.classList.add('on'); powerBtn.textContent = 'ON';
                     synthContainer.classList.remove('powered-off'); synthContainer.classList.add('powered-on');
+                    // Slow warm fade-in
+                    synthContainer.style.opacity = '0.4';
+                    synthContainer.style.transition = 'opacity 3.5s ease-in';
+                    setTimeout(() => { synthContainer.style.opacity = '1'; }, 50);
+                    setTimeout(() => { synthContainer.style.transition = ''; }, 4000);
                     initAudio(); playPowerOnHum(); startTempoLed();
                 } else {
                     powerBtn.classList.remove('on'); powerBtn.textContent = 'OFF';
