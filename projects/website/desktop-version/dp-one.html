@@ -116,9 +116,12 @@
             color: #333 !important;
         }
 
-        .synth-container.powered-off .power-btn {
-            pointer-events: all;
-            opacity: 1;
+        .synth-container.powered-off .power-btn,
+        .synth-container.powered-off #powerBtn {
+            pointer-events: all !important;
+            opacity: 1 !important;
+            cursor: pointer !important;
+            color: #ff0000 !important;
         }
 
         .synth-container.powered-off .pad,
