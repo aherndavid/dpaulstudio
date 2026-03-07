@@ -1313,7 +1313,7 @@
     </style>
 </head>
 <body>
-    <div class="synth-container powered-on" id="synthContainer">
+    <div class="synth-container powered-off" id="synthContainer">
         <div class="synth-header">
             <div class="synth-title">dp-one MkIV</div>
             <div style="display: flex; gap: 12px; align-items: center;">
@@ -1321,7 +1321,7 @@
                     <div class="tempo-led-label">TEMPO</div>
                     <div class="tempo-led" id="tempoLed"></div>
                 </div>
-                <div class="power-btn on" id="powerBtn">ON</div>
+                <div class="power-btn" id="powerBtn">OFF</div>
             </div>
         </div>
 
@@ -1569,7 +1569,7 @@
         let activeNotes = new Map();
         let pitchBendValue = 0;
         let pitchHoldEnabled = false;
-        let synthPowered = true;
+        let synthPowered = false;
         let powerHumPlayed = false;
         let syncEnabled = false;
         let midiAccess = null;
@@ -2516,7 +2516,15 @@
                     synthContainer.style.transition = 'opacity 3.5s ease-in';
                     setTimeout(() => { synthContainer.style.opacity = '1'; }, 50);
                     setTimeout(() => { synthContainer.style.transition = ''; }, 4000);
-                    initAudio(); playPowerOnHum(); startTempoLed();
+                    initAudio();
+                    // Resume audio context (browser autoplay policy) then play hum
+                    const resumeAndPlay = () => {
+                        audioContext.resume().then(() => {
+                            playPowerOnHum();
+                        });
+                    };
+                    setTimeout(resumeAndPlay, 80);
+                    startTempoLed();
                 } else {
                     powerBtn.classList.remove('on'); powerBtn.textContent = 'OFF';
                     synthContainer.classList.remove('powered-on'); synthContainer.classList.add('powered-off');
