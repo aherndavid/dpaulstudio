@@ -105,6 +105,14 @@
             transition: opacity 0.3s ease;
         }
 
+        /* Allow piano keys when sampler is active even if powered off */
+        .synth-container.powered-off.sampler-active .white-key,
+        .synth-container.powered-off.sampler-active .black-key {
+            pointer-events: all !important;
+            opacity: 1 !important;
+            cursor: pointer !important;
+        }
+
         /* Slow warm fade-in on power on - handled via JS */
         .synth-container.powered-on {
             opacity: 1;
@@ -1612,7 +1620,7 @@
 
         <div class="sequencer">
             <div class="sequencer-header">
-                <div class="sequencer-title">DRUM SEQUENCER</div>
+                <div class="sequencer-title">DRUM SEQUENCER <span id="seqTrackIndicator" style="font-size:8px; color:#ff6600; letter-spacing:1px; margin-left:6px;"></span></div>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <div class="bpm-indicator" id="bpmIndicator"></div>
                     <div class="seq-btn" id="steps8Btn" data-steps="8">8</div>
@@ -2449,6 +2457,9 @@
             pad.addEventListener('click', () => {
                 document.querySelectorAll('.pad').forEach(p => p.classList.remove('selected'));
                 pad.classList.add('selected'); selectedDrum = pad.dataset.sound;
+                selectedSample = null;
+                document.querySelectorAll('.sampler-seq-btn').forEach(b => b.classList.remove('active'));
+                const ind = document.getElementById('seqTrackIndicator'); if (ind) ind.textContent = '';
                 updateSequencerDisplay(); playDrum(pad.dataset.sound);
             });
         });
@@ -2978,10 +2989,12 @@
             const btn = document.getElementById('samplerToggleBtn');
             const screen = document.getElementById('samplerScreen');
             const btns = document.getElementById('samplerSection').querySelector('.sampler-btns');
+            const container = document.getElementById('synthContainer');
             btn.textContent = samplerEnabled ? 'ON' : 'OFF';
             btn.classList.toggle('on', samplerEnabled);
             screen.classList.toggle('active', samplerEnabled);
             btns.classList.toggle('active', samplerEnabled);
+            container.classList.toggle('sampler-active', samplerEnabled);
         }
 
 
@@ -3037,6 +3050,7 @@
                     if (selectedSample === trackName) {
                         selectedSample = null;
                         btn.classList.remove('active');
+                        document.getElementById('seqTrackIndicator').textContent = '';
                         updateNoteDisplay('SEQ OFF'); setTimeout(() => updateNoteDisplay('---'), 1000);
                     } else {
                         // Deactivate all other SEQ buttons
@@ -3049,7 +3063,8 @@
                         btn.classList.add('active');
                         updateSamplerScreen();
                         updateSequencerDisplay();
-                        updateNoteDisplay(`SEQ S${slot + 1}`); setTimeout(() => updateNoteDisplay('---'), 1000);
+                        document.getElementById('seqTrackIndicator').textContent = `▶ SAMPLE ${slot + 1}`;
+                        updateNoteDisplay(`TAP STEPS ↑`); setTimeout(() => updateNoteDisplay('---'), 2000);
                     }
                 });
             });
