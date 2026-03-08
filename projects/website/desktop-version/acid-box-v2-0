@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACID-Box - dPaul Technologies</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(ellipse at center, #1a1a1a 0%, #0a0a0a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Main enclosure */
+        .synth-container {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,215,0,0.015) 2px,
+                    rgba(255,215,0,0.015) 4px
+                ),
+                linear-gradient(160deg, #2a2600 0%, #1a1800 30%, #0e0c00 60%, #1a1800 100%);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 420px;
+            width: 100%;
+            position: relative;
+            /* Deep 3D border effect */
+            border: 1px solid #5a4e00;
+            box-shadow:
+                0 0 0 1px #000,
+                0 0 0 2px #3a3200,
+                inset 0 1px 0 rgba(255,215,0,0.15),
+                inset 0 -1px 0 rgba(0,0,0,0.8),
+                0 20px 60px rgba(0,0,0,0.9),
+                0 0 40px rgba(255,215,0,0.08);
+        }
+
+        /* Brushed metal top edge highlight */
+        .synth-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 10px; right: 10px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.5), rgba(255,255,200,0.8), rgba(255,215,0,0.5), transparent);
+            border-radius: 50%;
+        }
+
+        /* Screw corners */
+        .screw {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #5a5000, #2a2800, #1a1600);
+            box-shadow:
+                inset 0 1px 2px rgba(255,215,0,0.3),
+                inset 0 -1px 2px rgba(0,0,0,0.8),
+                0 1px 3px rgba(0,0,0,0.9);
+            z-index: 10;
+        }
+        .screw::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 15%; right: 15%;
+            height: 1px;
+            background: rgba(0,0,0,0.6);
+            transform: translateY(-50%);
+        }
+        .screw-tl { top: 8px; left: 8px; }
+        .screw-tr { top: 8px; right: 8px; }
+        .screw-bl { bottom: 8px; left: 8px; }
+        .screw-br { bottom: 8px; right: 8px; }
+
+        /* Header */
+        .synth-header {
+            text-align: center;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+            position: relative;
+        }
+
+        .synth-title {
+            color: #FFD700;
+            font-size: 28px;
+            font-weight: 900;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            text-shadow:
+                0 0 10px rgba(255,215,0,0.8),
+                0 0 20px rgba(255,215,0,0.4),
+                0 0 40px rgba(255,215,0,0.2),
+                2px 2px 0 rgba(0,0,0,0.8);
+        }
+
+        .synth-subtitle {
+            color: #7a6800;
+            font-size: 8px;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 2px;
+        }
+
+        /* Inset panel base style */
+        .panel {
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            position: relative;
+            /* Recessed/inset panel effect */
+            background: linear-gradient(160deg, #0a0900 0%, #111000 50%, #0d0c00 100%);
+            border: 1px solid #2a2400;
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.9),
+                inset 0 0 20px rgba(0,0,0,0.5),
+                0 1px 0 rgba(255,215,0,0.1);
+        }
+
+        .panel-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 7px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6a5800;
+            position: absolute;
+            top: -5px;
+            left: 12px;
+            background: #161200;
+            padding: 0 4px;
+        }
+
+        /* Controls */
+        .controls-row {
+            display: flex;
+            gap: 8px;
+            justify-content: space-around;
+            margin-bottom: 10px;
+        }
+        .controls-row:last-child { margin-bottom: 0; }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .control-label {
+            color: #8a7200;
+            font-size: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: bold;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Realistic knob */
+        .knob-mount {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, #2a2400 0%, #1a1800 40%, #0a0800 100%);
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.9),
+                inset 0 -1px 2px rgba(255,215,0,0.05),
+                0 1px 3px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Knob tick marks */
+        .knob-mount::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: rgba(255,215,0,0.15);
+            border-right-color: rgba(255,215,0,0.08);
+        }
+
+        .knob {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            /* Multi-layer metallic knob */
+            background:
+                radial-gradient(circle at 38% 32%, rgba(255,230,100,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #3a3200 0%, #252000 40%, #0f0d00 70%, #1a1800 100%);
+            box-shadow:
+                0 3px 8px rgba(0,0,0,0.9),
+                0 1px 3px rgba(0,0,0,0.7),
+                inset 0 1px 2px rgba(255,215,0,0.2),
+                inset 0 -2px 4px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(255,215,0,0.25),
+                0 0 0 2px rgba(0,0,0,0.6);
+            transition: box-shadow 0.1s;
+            /* Knurling texture simulation */
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .knob:hover {
+            box-shadow:
+                0 3px 8px rgba(0,0,0,0.9),
+                0 1px 3px rgba(0,0,0,0.7),
+                inset 0 1px 2px rgba(255,215,0,0.3),
+                inset 0 -2px 4px rgba(0,0,0,0.7),
+                0 0 0 1px rgba(255,215,0,0.4),
+                0 0 8px rgba(255,215,0,0.15);
+        }
+
+        /* Knob indicator dot */
+        .knob::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 10px;
+            background: linear-gradient(to bottom, #FFD700, #b8960a);
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            box-shadow: 0 0 4px rgba(255,215,0,0.9);
+        }
+
+        /* Center shine spot */
+        .knob::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 6px;
+            background: radial-gradient(ellipse, rgba(255,230,150,0.3) 0%, transparent 100%);
+            top: 8px;
+            left: 7px;
+            border-radius: 50%;
+        }
+
+        .knob-value {
+            font-family: 'Share Tech Mono', monospace;
+            color: #000;
+            background: linear-gradient(to bottom, #FFD700, #e6c200);
+            font-size: 7px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 2px;
+            min-width: 32px;
+            text-align: center;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                0 1px 3px rgba(0,0,0,0.7);
+            border: 1px solid #b8960a;
+        }
+
+        /* ARP section */
+        .arp-section {
+            border-radius: 6px;
+            padding: 10px 12px;
+            border: 1px solid #2a2400;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            background: linear-gradient(160deg, #0a0900 0%, #111000 50%, #0d0c00 100%);
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.9),
+                0 1px 0 rgba(255,215,0,0.1);
+            position: relative;
+        }
+
+        .arp-label {
+            color: #8a7200;
+            font-size: 7px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* Toggle switch */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .switch {
+            width: 42px;
+            height: 22px;
+            background: linear-gradient(to bottom, #0a0800, #161200);
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #3a3000;
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.9),
+                inset 0 0 8px rgba(0,0,0,0.5),
+                0 1px 0 rgba(255,215,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 40% 35%, #4a4a4a, #1a1a1a);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.8),
+                inset 0 1px 2px rgba(255,255,255,0.1);
+            border: 1px solid rgba(0,0,0,0.5);
+        }
+
+        .switch.active {
+            background: linear-gradient(to bottom, #4a3a00, #2a2200);
+            border-color: #FFD700;
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.5),
+                0 0 8px rgba(255,215,0,0.3),
+                0 1px 0 rgba(255,215,0,0.2);
+        }
+
+        .switch.active::after {
+            transform: translateX(20px);
+            background: radial-gradient(circle at 40% 35%, #FFE55C, #c8a200);
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.8),
+                0 0 6px rgba(255,215,0,0.5);
+        }
+
+        /* Tempo control */
+        .tempo-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tempo-led {
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle at 40% 35%, #0a2a0a, #041004);
+            border-radius: 50%;
+            border: 1px solid #0a1a0a;
+            box-shadow:
+                inset 0 1px 2px rgba(0,0,0,0.8),
+                0 1px 2px rgba(0,0,0,0.6);
+            transition: all 0.08s;
+            position: relative;
+        }
+
+        .tempo-led::after {
+            content: '';
+            position: absolute;
+            inset: 2px 2px auto auto;
+            width: 3px;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .tempo-led.blink {
+            background: radial-gradient(circle at 40% 35%, #88ff88, #00dd00);
+            box-shadow:
+                0 0 8px rgba(0,255,0,0.9),
+                0 0 16px rgba(0,255,0,0.4),
+                inset 0 1px 2px rgba(200,255,200,0.5);
+            border-color: #00aa00;
+        }
+        .tempo-led.blink::after {
+            background: rgba(255,255,255,0.5);
+        }
+
+        /* Buttons */
+        .tempo-btn {
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(160deg, #2a2400 0%, #1a1800 50%, #0e0c00 100%);
+            border: 1px solid #4a4000;
+            border-radius: 4px;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,215,0,0.15),
+                inset 0 -1px 0 rgba(0,0,0,0.5);
+            transition: all 0.08s;
+            font-family: 'Share Tech Mono', monospace;
+            user-select: none;
+        }
+
+        .tempo-btn:active {
+            transform: translateY(1px);
+            background: linear-gradient(160deg, #FFD700, #c8a200);
+            color: #000;
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.8),
+                inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .tempo-display {
+            color: #000;
+            background: linear-gradient(to bottom, #FFD700, #e6c200);
+            font-size: 9px;
+            font-weight: bold;
+            min-width: 54px;
+            text-align: center;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                inset 0 -1px 0 rgba(0,0,0,0.2),
+                0 1px 3px rgba(0,0,0,0.7);
+            border: 1px solid #b8960a;
+            letter-spacing: 0.5px;
+        }
+
+        /* Preset section */
+        .preset-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: linear-gradient(160deg, #0a0900 0%, #111000 50%, #0d0c00 100%);
+            border-radius: 6px;
+            border: 1px solid #2a2400;
+            margin-bottom: 10px;
+            gap: 8px;
+            box-shadow:
+                inset 0 2px 4px rgba(0,0,0,0.9),
+                0 1px 0 rgba(255,215,0,0.1);
+            position: relative;
+        }
+
+        .preset-label {
+            color: #8a7200;
+            font-size: 7px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .preset-btn {
+            width: 38px;
+            height: 26px;
+            background: linear-gradient(160deg, #3a0000, #200000, #150000);
+            border: 1px solid #6a0000;
+            border-radius: 4px;
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 8px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,80,80,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.5);
+            transition: all 0.08s;
+            font-family: 'Share Tech Mono', monospace;
+            user-select: none;
+        }
+
+        .preset-btn:active {
+            transform: translateY(1px);
+        }
+
+        .preset-btn.selected {
+            background: linear-gradient(160deg, #cc0000, #990000);
+            color: #000;
+            border-color: #ff0000;
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.8),
+                0 0 10px rgba(255,0,0,0.4),
+                inset 0 1px 0 rgba(255,150,150,0.3);
+        }
+
+        .preset-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .preset-action-btn {
+            padding: 5px 8px;
+            background: linear-gradient(160deg, #2a2400, #1a1800, #0e0c00);
+            border: 1px solid #4a4000;
+            border-radius: 4px;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 7px;
+            font-weight: bold;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,215,0,0.15);
+            transition: all 0.08s;
+            font-family: 'Share Tech Mono', monospace;
+            user-select: none;
+        }
+
+        .preset-action-btn:active {
+            transform: translateY(1px);
+            background: linear-gradient(160deg, #FFD700, #c8a200);
+            color: #000;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Keyboard section */
+        .keyboard {
+            position: relative;
+            margin-top: 10px;
+            background: linear-gradient(to bottom, #080700, #0d0c00);
+            padding: 8px 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #2a2400;
+            box-shadow:
+                inset 0 3px 6px rgba(0,0,0,0.9),
+                inset 0 0 20px rgba(0,0,0,0.5),
+                0 1px 0 rgba(255,215,0,0.1);
+            display: flex;
+            justify-content: center;
+        }
+
+        .piano-keys {
+            position: relative;
+            display: inline-block;
+        }
+
+        .white-key {
+            width: 18px;
+            height: 44px;
+            background: linear-gradient(to bottom,
+                #1a1800 0%,
+                #141200 30%,
+                #0e0c00 60%,
+                #141200 100%
+            );
+            border: 1px solid #3a3200;
+            border-top: 1px solid #4a4000;
+            border-bottom: 2px solid #2a2800;
+            border-radius: 0 0 3px 3px;
+            box-shadow:
+                inset 0 -2px 3px rgba(255,215,0,0.05),
+                0 2px 4px rgba(0,0,0,0.8),
+                inset 1px 0 0 rgba(255,215,0,0.03);
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            vertical-align: top;
+            margin-right: 2px;
+            transition: all 0.04s ease;
+        }
+
+        .white-key::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(255,215,0,0.08);
+        }
+
+        .white-key:active,
+        .white-key.playing {
+            background: linear-gradient(to bottom, #FFD700 0%, #e6c200 50%, #c8a800 100%);
+            box-shadow:
+                0 1px 2px rgba(0,0,0,0.8),
+                inset 0 2px 4px rgba(0,0,0,0.2),
+                0 0 8px rgba(255,215,0,0.5);
+            border-color: #b8960a;
+            transform: scaleY(0.97);
+            transform-origin: top center;
+        }
+
+        .white-key.playing::after {
+            background: rgba(0,0,0,0.2);
+        }
+
+        .black-key {
+            width: 12px;
+            height: 28px;
+            background: linear-gradient(to bottom,
+                #FFD700 0%,
+                #e6c200 20%,
+                #c8a800 50%,
+                #aa8a00 80%,
+                #8a6e00 100%
+            );
+            border: 1px solid #8a7200;
+            border-bottom: 2px solid #5a4e00;
+            border-radius: 0 0 3px 3px;
+            position: absolute;
+            z-index: 10;
+            box-shadow:
+                0 3px 6px rgba(0,0,0,0.9),
+                inset 0 1px 0 rgba(255,255,200,0.4),
+                inset -1px 0 0 rgba(0,0,0,0.3),
+                inset 1px 0 0 rgba(255,255,200,0.1);
+            cursor: pointer;
+            top: 0;
+            transition: all 0.04s ease;
+        }
+
+        .black-key:active,
+        .black-key.playing {
+            background: linear-gradient(to bottom, #fff 0%, #eeeecc 50%, #ddd9aa 100%);
+            box-shadow:
+                0 1px 3px rgba(0,0,0,0.8),
+                inset 0 2px 4px rgba(0,0,0,0.1),
+                0 0 8px rgba(255,255,200,0.6);
+            transform: scaleY(0.97);
+            transform-origin: top center;
+        }
+
+        /* MIDI indicator */
+        .midi-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            color: #000;
+            background: linear-gradient(to bottom, #FFD700, #e6c200);
+            font-size: 7px;
+            font-weight: bold;
+            padding: 3px 7px;
+            border-radius: 3px;
+            display: none;
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.5px;
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                0 1px 3px rgba(0,0,0,0.7);
+            border: 1px solid #b8960a;
+        }
+
+        .midi-indicator.connected {
+            display: block;
+        }
+
+        /* Large action buttons */
+        .action-btn-large {
+            padding: 4px 7px;
+            background: linear-gradient(160deg, #2a2400, #1a1800, #0e0c00);
+            border: 1px solid #4a4000;
+            border-radius: 4px;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 8px;
+            font-weight: bold;
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,215,0,0.15);
+            transition: all 0.08s;
+            user-select: none;
+        }
+        .action-btn-large:active {
+            transform: translateY(1px);
+            background: linear-gradient(160deg, #FFD700, #c8a200);
+            color: #000;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .clr-btn {
+            background: linear-gradient(160deg, #3a0000, #200000, #150000) !important;
+            border-color: #6a0000 !important;
+            color: #ff4444 !important;
+        }
+        .clr-btn:active {
+            background: linear-gradient(160deg, #cc0000, #990000) !important;
+            color: #000 !important;
+        }
+
+        /* Divider lines */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent);
+            margin: 2px 0 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="synth-container">
+        <!-- Corner screws -->
+        <div class="screw screw-tl"></div>
+        <div class="screw screw-tr"></div>
+        <div class="screw screw-bl"></div>
+        <div class="screw screw-br"></div>
+
+        <div class="midi-indicator" id="midiIndicator">MIDI IN</div>
+        
+        <div class="synth-header">
+            <div class="synth-title">ACID-BOX</div>
+            <div class="synth-subtitle">dPaul Technologies &nbsp;v2.0</div>
+        </div>
+
+        <!-- Preset / Memory section -->
+        <div class="preset-section">
+            <div class="preset-label">MEM</div>
+            <div class="preset-buttons">
+                <div class="preset-btn" id="preset1" data-preset="1">M1</div>
+                <div class="preset-btn" id="preset2" data-preset="2">M2</div>
+                <div class="preset-btn" id="preset3" data-preset="3">M3</div>
+            </div>
+            <div class="preset-actions">
+                <div class="preset-action-btn" id="savePreset">SAVE</div>
+                <div class="preset-action-btn" id="loadPreset">LOAD</div>
+            </div>
+        </div>
+
+        <!-- Main controls -->
+        <div class="panel">
+            <div class="panel-label">SYNTHESIS</div>
+            <div class="controls-row">
+                <div class="control-group">
+                    <div class="control-label">CUTOFF</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="cutoffKnob" data-value="50"></div>
+                    </div>
+                    <div class="knob-value" id="cutoffValue">50%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">RESON</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="resonanceKnob" data-value="70"></div>
+                    </div>
+                    <div class="knob-value" id="resonanceValue">70%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">DECAY</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="decayKnob" data-value="40"></div>
+                    </div>
+                    <div class="knob-value" id="decayValue">40%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">ACCENT</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="accentKnob" data-value="60"></div>
+                    </div>
+                    <div class="knob-value" id="accentValue">60%</div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="controls-row">
+                <div class="control-group">
+                    <div class="control-label">DELAY</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="delayKnob" data-value="30"></div>
+                    </div>
+                    <div class="knob-value" id="delayValue">30%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">RPTS</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="feedbackKnob" data-value="25"></div>
+                    </div>
+                    <div class="knob-value" id="feedbackValue">25%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">DIST</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="distortionKnob" data-value="20"></div>
+                    </div>
+                    <div class="knob-value" id="distortionValue">20%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">VOL</div>
+                    <div class="knob-mount">
+                        <div class="knob" id="volumeKnob" data-value="70"></div>
+                    </div>
+                    <div class="knob-value" id="volumeValue">70%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ARP / Tempo -->
+        <div class="arp-section">
+            <div class="arp-label">ARP</div>
+            <div class="switch-container">
+                <div class="switch" id="arpSwitch"></div>
+            </div>
+            <div class="tempo-control">
+                <div class="tempo-led" id="tempoLed"></div>
+                <div class="tempo-btn" id="tempoDown">−</div>
+                <div class="tempo-display" id="tempoDisplay">120 BPM</div>
+                <div class="tempo-btn" id="tempoUp">+</div>
+            </div>
+            <div class="action-btn-large clr-btn" id="midiClear">CLR</div>
+            <div class="action-btn-large" id="midiToggle">MIDI</div>
+        </div>
+
+        <!-- Piano keyboard -->
+        <div class="keyboard">
+            <div class="piano-keys" id="pianoKeys"></div>
+        </div>
+    </div>
+
+    <script>
+        // Audio Context
+        let audioContext;
+        let masterGain;
+        let delayNode;
+        let feedbackGain;
+        let filter;
+        let distortion;
+
+        let arpEnabled = false;
+        let arpInterval = null;
+        let arpNotes = [];
+        let arpIndex = 0;
+        let activeNotes = new Map();
+        let tempo = 120;
+        let midiEnabled = true;
+        let midiInputs = [];
+        let selectedPreset = 1;
+        let tempoLedInterval = null;
+        let presets = { 1: null, 2: null, 3: null };
+
+        let cutoff = 50, resonance = 70, decay = 40, accent = 60;
+        let delayAmount = 30, feedbackAmount = 25, distortionAmount = 20;
+
+        const notes = [
+            { name: 'C3', freq: 130.81 }, { name: 'C#3', freq: 138.59 },
+            { name: 'D3', freq: 146.83 }, { name: 'D#3', freq: 155.56 },
+            { name: 'E3', freq: 164.81 }, { name: 'F3', freq: 174.61 },
+            { name: 'F#3', freq: 185.00 }, { name: 'G3', freq: 196.00 },
+            { name: 'G#3', freq: 207.65 }, { name: 'A3', freq: 220.00 },
+            { name: 'A#3', freq: 233.08 }, { name: 'B3', freq: 246.94 },
+            { name: 'C4', freq: 261.63 }, { name: 'C#4', freq: 277.18 },
+            { name: 'D4', freq: 293.66 }, { name: 'D#4', freq: 311.13 },
+            { name: 'E4', freq: 329.63 }, { name: 'F4', freq: 349.23 },
+            { name: 'F#4', freq: 369.99 }, { name: 'G4', freq: 392.00 }
+        ];
+
+        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+        function buildPianoKeyboard() {
+            const container = document.getElementById('pianoKeys');
+            container.innerHTML = '';
+            const blackKeyOffsets = { 0: 12, 1: 32, 3: 72, 4: 92, 5: 112 };
+            let whiteKeyIndex = 0;
+
+            for (let i = 0; i < 20; i++) {
+                const note = notes[i];
+                const isBlack = note.name.includes('#');
+
+                if (!isBlack) {
+                    const key = document.createElement('div');
+                    key.className = 'white-key';
+                    key.dataset.note = i;
+                    key.dataset.noteName = note.name;
+                    key.addEventListener('mousedown', () => handleKeyPress(key));
+                    key.addEventListener('mouseup', () => handleKeyRelease(key));
+                    key.addEventListener('mouseleave', () => handleKeyRelease(key));
+                    container.appendChild(key);
+
+                    const whiteKeyInOctave = whiteKeyIndex % 7;
+                    const nextIndex = i + 1;
+                    if (blackKeyOffsets[whiteKeyInOctave] !== undefined && nextIndex < 20 && notes[nextIndex].name.includes('#')) {
+                        const blackKey = document.createElement('div');
+                        blackKey.className = 'black-key';
+                        blackKey.dataset.note = nextIndex;
+                        blackKey.dataset.noteName = notes[nextIndex].name;
+                        const octaveOffset = Math.floor(whiteKeyIndex / 7);
+                        blackKey.style.left = blackKeyOffsets[whiteKeyInOctave] + (octaveOffset * 140) + 'px';
+                        blackKey.addEventListener('mousedown', () => handleKeyPress(blackKey));
+                        blackKey.addEventListener('mouseup', () => handleKeyRelease(blackKey));
+                        blackKey.addEventListener('mouseleave', () => handleKeyRelease(blackKey));
+                        container.appendChild(blackKey);
+                    }
+                    whiteKeyIndex++;
+                }
+            }
+        }
+
+        function initMIDI() {
+            if (navigator.requestMIDIAccess) {
+                navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+            }
+        }
+
+        function onMIDISuccess(midiAccess) {
+            for (let input of midiAccess.inputs.values()) {
+                midiInputs.push(input);
+                input.onmidimessage = handleMIDIMessage;
+                document.getElementById('midiIndicator').classList.add('connected');
+            }
+        }
+
+        function onMIDIFailure() {}
+
+        function disconnectMIDI() {
+            midiInputs.forEach(input => { input.onmidimessage = null; });
+        }
+
+        function reconnectMIDI() {
+            midiInputs.forEach(input => { input.onmidimessage = handleMIDIMessage; });
+        }
+
+        function handleMIDIMessage(message) {
+            if (!midiEnabled) return;
+            const command = message.data[0] >> 4;
+            const note = message.data[1];
+            const velocity = message.data.length > 2 ? message.data[2] : 0;
+
+            if (command === 9 && velocity > 0) {
+                const frequency = midiNoteToFrequency(note);
+                const noteName = midiNoteToName(note);
+                const noteIndex = notes.findIndex(n => n.name === noteName);
+                if (noteIndex !== -1) {
+                    if (!arpEnabled) {
+                        playAcidNote(frequency, noteName);
+                        animateKeyForMIDI(noteName, true);
+                    } else {
+                        if (arpNotes.includes(noteIndex)) {
+                            arpNotes.splice(arpNotes.indexOf(noteIndex), 1);
+                            animateKeyForMIDI(noteName, false);
+                            if (arpNotes.length === 0) stopArp();
+                        } else {
+                            arpNotes.push(noteIndex);
+                            arpNotes.sort((a, b) => a - b);
+                            animateKeyForMIDI(noteName, true);
+                            if (!arpInterval) startArp();
+                        }
+                        autoSave();
+                    }
+                }
+            } else if (command === 8 || (command === 9 && velocity === 0)) {
+                if (!arpEnabled) animateKeyForMIDI(midiNoteToName(note), false);
+            }
+        }
+
+        function midiNoteToFrequency(midiNote) { return 440 * Math.pow(2, (midiNote - 69) / 12); }
+        function midiNoteToName(midiNote) { return noteNames[midiNote % 12] + (Math.floor(midiNote / 12) - 1); }
+
+        function animateKeyForMIDI(noteName, isPressed) {
+            document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                if (key.dataset.noteName === noteName) {
+                    isPressed ? key.classList.add('playing') : (!arpEnabled && key.classList.remove('playing'));
+                }
+            });
+        }
+
+        document.getElementById('midiClear').addEventListener('click', () => {
+            if (arpInterval) { clearInterval(arpInterval); arpInterval = null; arpIndex = 0; }
+            arpNotes = [];
+            activeNotes.forEach((_, noteName) => stopNote(noteName));
+            activeNotes.clear();
+            document.querySelectorAll('.white-key, .black-key').forEach(key => key.classList.remove('playing'));
+            updateNoteDisplay('CLEARED');
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+            autoSave();
+        });
+
+        document.getElementById('midiToggle').addEventListener('click', () => {
+            midiEnabled = !midiEnabled;
+            const btn = document.getElementById('midiToggle');
+            if (midiEnabled) {
+                btn.style.background = 'linear-gradient(160deg, #FFD700, #c8a200)';
+                btn.style.color = '#000';
+                reconnectMIDI();
+                updateNoteDisplay('MIDI ON');
+            } else {
+                btn.style.background = '';
+                btn.style.color = '#FFD700';
+                disconnectMIDI();
+                updateNoteDisplay('MIDI OFF');
+                activeNotes.forEach((_, n) => stopNote(n));
+                activeNotes.clear();
+                document.querySelectorAll('.white-key, .black-key').forEach(k => k.classList.remove('playing'));
+            }
+            setTimeout(() => updateNoteDisplay('---'), 1000);
+        });
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioContext.createGain(); masterGain.gain.value = 0.7;
+                delayNode = audioContext.createDelay(); delayNode.delayTime.value = 0.3;
+                feedbackGain = audioContext.createGain(); feedbackGain.gain.value = 0.25;
+                filter = audioContext.createBiquadFilter();
+                filter.type = 'lowpass'; filter.frequency.value = 1000; filter.Q.value = 15;
+                distortion = audioContext.createWaveShaper();
+                distortion.curve = makeDistortionCurve(20);
+                delayNode.connect(feedbackGain);
+                feedbackGain.connect(delayNode);
+                delayNode.connect(distortion);
+                distortion.connect(masterGain);
+                masterGain.connect(audioContext.destination);
+            }
+        }
+
+        function makeDistortionCurve(amount) {
+            const samples = 44100, curve = new Float32Array(samples), deg = Math.PI / 180;
+            for (let i = 0; i < samples; i++) {
+                const x = (i * 2) / samples - 1;
+                curve[i] = (3 + amount) * x * 20 * deg / (Math.PI + amount * Math.abs(x));
+            }
+            return curve;
+        }
+
+        function playAcidNote(frequency, noteName) {
+            initAudio();
+            const now = audioContext.currentTime;
+            const osc = audioContext.createOscillator();
+            osc.type = 'sawtooth';
+            osc.frequency.value = frequency;
+            const envelope = audioContext.createGain();
+            envelope.gain.value = 0;
+            envelope.gain.setValueAtTime(0, now);
+            envelope.gain.linearRampToValueAtTime(accent / 100, now + 0.001);
+            envelope.gain.exponentialRampToValueAtTime(0.01, now + (decay / 100) * 2);
+            const filterFreq = 200 + (cutoff / 100) * 3800;
+            filter.frequency.setValueAtTime(filterFreq, now);
+            filter.frequency.exponentialRampToValueAtTime(filterFreq + (resonance / 100) * 4000, now + 0.001);
+            filter.frequency.exponentialRampToValueAtTime(filterFreq, now + (decay / 100) * 1.5);
+            filter.Q.value = 5 + (resonance / 100) * 25;
+            osc.connect(envelope);
+            envelope.connect(filter);
+            filter.connect(delayNode);
+            filter.connect(distortion);
+            osc.start(now);
+            osc.stop(now + (decay / 100) * 2);
+            activeNotes.set(noteName, { osc, envelope });
+            updateNoteDisplay(noteName);
+            setTimeout(() => { if (!arpEnabled) updateNoteDisplay('---'); }, (decay / 100) * 2000);
+            return { osc, envelope };
+        }
+
+        function stopNote(noteName) {
+            if (activeNotes.has(noteName)) {
+                const { envelope } = activeNotes.get(noteName);
+                if (envelope) {
+                    const now = audioContext.currentTime;
+                    envelope.gain.cancelScheduledValues(now);
+                    envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.01);
+                }
+                activeNotes.delete(noteName);
+            }
+        }
+
+        function updateNoteDisplay(note) {
+            const d = document.getElementById('tempoDisplay');
+            const orig = d.textContent;
+            d.textContent = note;
+            setTimeout(() => { d.textContent = orig; }, 1000);
+        }
+
+        function saveSettings() {
+            const settings = {
+                cutoff, resonance, decay, accent, delayAmount, feedbackAmount, distortionAmount, tempo,
+                arpEnabled, arpNotes, midiEnabled,
+                knobValues: {
+                    cutoff: parseInt(document.getElementById('cutoffKnob').dataset.value),
+                    resonance: parseInt(document.getElementById('resonanceKnob').dataset.value),
+                    decay: parseInt(document.getElementById('decayKnob').dataset.value),
+                    accent: parseInt(document.getElementById('accentKnob').dataset.value),
+                    delay: parseInt(document.getElementById('delayKnob').dataset.value),
+                    feedback: parseInt(document.getElementById('feedbackKnob').dataset.value),
+                    distortion: parseInt(document.getElementById('distortionKnob').dataset.value),
+                    volume: parseInt(document.getElementById('volumeKnob').dataset.value)
+                }
+            };
+            try { localStorage.setItem('acidBox_settings', JSON.stringify(settings)); } catch(e) {}
+        }
+
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem('acidBox_settings');
+                if (!saved) return false;
+                const s = JSON.parse(saved);
+                cutoff = s.cutoff||50; resonance = s.resonance||70; decay = s.decay||40;
+                accent = s.accent||60; delayAmount = s.delayAmount||30;
+                feedbackAmount = s.feedbackAmount||25; distortionAmount = s.distortionAmount||20;
+                tempo = s.tempo||120;
+                if (s.knobValues) Object.keys(s.knobValues).forEach(k => {
+                    const knob = document.getElementById(k+'Knob');
+                    if (knob) { knob.dataset.value = s.knobValues[k]; updateKnob(knob); }
+                });
+                if (s.arpEnabled) { arpEnabled = true; document.getElementById('arpSwitch').classList.add('active'); }
+                if (s.midiEnabled !== undefined) {
+                    midiEnabled = s.midiEnabled;
+                    const btn = document.getElementById('midiToggle');
+                    if (midiEnabled) { btn.style.background = 'linear-gradient(160deg, #FFD700, #c8a200)'; btn.style.color = '#000'; reconnectMIDI(); }
+                    else { btn.style.background = ''; btn.style.color = '#FFD700'; disconnectMIDI(); }
+                }
+                if (s.arpNotes && s.arpNotes.length > 0) {
+                    arpNotes = s.arpNotes;
+                    document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                        if (arpNotes.includes(parseInt(key.dataset.note))) key.classList.add('playing');
+                    });
+                    if (arpEnabled) startArp();
+                }
+                updateTempoDisplay();
+                return true;
+            } catch(e) { return false; }
+        }
+
+        function savePreset(slot) {
+            presets[slot] = {
+                cutoff, resonance, decay, accent, delayAmount, feedbackAmount, distortionAmount, tempo,
+                arpEnabled, arpNotes: [...arpNotes],
+                knobValues: {
+                    cutoff: parseInt(document.getElementById('cutoffKnob').dataset.value),
+                    resonance: parseInt(document.getElementById('resonanceKnob').dataset.value),
+                    decay: parseInt(document.getElementById('decayKnob').dataset.value),
+                    accent: parseInt(document.getElementById('accentKnob').dataset.value),
+                    delay: parseInt(document.getElementById('delayKnob').dataset.value),
+                    feedback: parseInt(document.getElementById('feedbackKnob').dataset.value),
+                    distortion: parseInt(document.getElementById('distortionKnob').dataset.value),
+                    volume: parseInt(document.getElementById('volumeKnob').dataset.value)
+                }
+            };
+            try { localStorage.setItem('acidBox_presets', JSON.stringify(presets)); updateNoteDisplay(`M${slot} SAVED`); }
+            catch(e) { updateNoteDisplay('SAVE FAIL'); }
+        }
+
+        function loadPreset(slot) {
+            const p = presets[slot];
+            if (!p) { updateNoteDisplay(`M${slot} EMPTY`); return; }
+            cutoff=p.cutoff; resonance=p.resonance; decay=p.decay; accent=p.accent;
+            delayAmount=p.delayAmount; feedbackAmount=p.feedbackAmount;
+            distortionAmount=p.distortionAmount; tempo=p.tempo;
+            Object.keys(p.knobValues).forEach(k => {
+                const knob = document.getElementById(k+'Knob');
+                if (knob) { knob.dataset.value = p.knobValues[k]; updateKnob(knob); }
+            });
+            arpEnabled = p.arpEnabled;
+            const sw = document.getElementById('arpSwitch');
+            arpEnabled ? sw.classList.add('active') : sw.classList.remove('active');
+            arpNotes = [];
+            document.querySelectorAll('.white-key, .black-key').forEach(k => k.classList.remove('playing'));
+            if (p.arpNotes && p.arpNotes.length > 0) {
+                arpNotes = [...p.arpNotes];
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    if (arpNotes.includes(parseInt(key.dataset.note))) key.classList.add('playing');
+                });
+                if (arpEnabled) { stopArp(); startArp(); }
+            }
+            updateTempoDisplay();
+            updateNoteDisplay(`M${slot} LOAD`);
+        }
+
+        function loadPresetsFromStorage() {
+            try { const s = localStorage.getItem('acidBox_presets'); if (s) presets = JSON.parse(s); } catch(e) {}
+        }
+
+        function autoSave() { saveSettings(); }
+
+        function handleKeyPress(key) {
+            const index = parseInt(key.dataset.note);
+            const note = notes[index];
+            if (!arpEnabled) {
+                key.classList.add('playing');
+                playAcidNote(note.freq, note.name);
+            } else {
+                if (arpNotes.includes(index)) {
+                    arpNotes.splice(arpNotes.indexOf(index), 1);
+                    key.classList.remove('playing');
+                    if (arpNotes.length === 0) stopArp();
+                } else {
+                    arpNotes.push(index);
+                    arpNotes.sort((a, b) => a - b);
+                    key.classList.add('playing');
+                    if (!arpInterval) startArp();
+                }
+                autoSave();
+            }
+        }
+
+        function handleKeyRelease(key) {
+            if (!arpEnabled) key.classList.remove('playing');
+        }
+
+        function startArp() {
+            if (arpInterval) return;
+            const stepTime = (60 / tempo) * 1000 / 4;
+            arpInterval = setInterval(() => {
+                if (arpNotes.length === 0) { stopArp(); return; }
+                const noteIndex = arpNotes[arpIndex % arpNotes.length];
+                const note = notes[noteIndex];
+                playAcidNote(note.freq, note.name);
+                document.querySelectorAll('.white-key, .black-key').forEach(key => {
+                    if (parseInt(key.dataset.note) === noteIndex) {
+                        key.classList.add('playing');
+                        setTimeout(() => key.classList.remove('playing'), 100);
+                    }
+                });
+                arpIndex++;
+            }, stepTime);
+        }
+
+        function stopArp() {
+            if (arpInterval) { clearInterval(arpInterval); arpInterval = null; arpIndex = 0; }
+            updateNoteDisplay('---');
+        }
+
+        function toggleArp() {
+            arpEnabled = !arpEnabled;
+            const sw = document.getElementById('arpSwitch');
+            if (arpEnabled) {
+                sw.classList.add('active');
+            } else {
+                sw.classList.remove('active');
+                arpNotes = [];
+                stopArp();
+                document.querySelectorAll('.white-key, .black-key').forEach(k => k.classList.remove('playing'));
+            }
+            autoSave();
+        }
+
+        function setupKnobs() {
+            document.querySelectorAll('.knob').forEach(knob => {
+                let isDragging = false, startY = 0, startValue = parseInt(knob.dataset.value);
+                knob.addEventListener('mousedown', e => {
+                    isDragging = true; startY = e.clientY; startValue = parseInt(knob.dataset.value);
+                    e.preventDefault();
+                });
+                document.addEventListener('mousemove', e => {
+                    if (!isDragging) return;
+                    let newValue = Math.max(0, Math.min(100, startValue + (startY - e.clientY)));
+                    knob.dataset.value = newValue;
+                    updateKnob(knob);
+                });
+                document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; autoSave(); } });
+            });
+        }
+
+        function updateKnob(knob) {
+            const value = parseInt(knob.dataset.value);
+            const rotation = (value / 100) * 270 - 135;
+            knob.style.transform = `rotate(${rotation}deg)`;
+            const valueDisplay = document.getElementById(knob.id.replace('Knob', 'Value'));
+            if (valueDisplay) valueDisplay.textContent = value + '%';
+            if (knob.id === 'cutoffKnob') cutoff = value;
+            else if (knob.id === 'resonanceKnob') resonance = value;
+            else if (knob.id === 'decayKnob') decay = value;
+            else if (knob.id === 'accentKnob') accent = value;
+            else if (knob.id === 'delayKnob') { delayAmount = value; if (delayNode) delayNode.delayTime.value = (value/100)*0.5; }
+            else if (knob.id === 'feedbackKnob') { feedbackAmount = value; if (feedbackGain) feedbackGain.gain.value = value/100; }
+            else if (knob.id === 'distortionKnob') { distortionAmount = value; if (distortion) distortion.curve = makeDistortionCurve(value); }
+            else if (knob.id === 'volumeKnob') { if (masterGain) masterGain.gain.value = value/100; }
+        }
+
+        document.getElementById('tempoUp').addEventListener('click', () => {
+            tempo = Math.min(300, tempo + 5); updateTempoDisplay();
+            if (arpEnabled && arpNotes.length > 0) { stopArp(); startArp(); }
+            autoSave();
+        });
+        document.getElementById('tempoDown').addEventListener('click', () => {
+            tempo = Math.max(5, tempo - 5); updateTempoDisplay();
+            if (arpEnabled && arpNotes.length > 0) { stopArp(); startArp(); }
+            autoSave();
+        });
+
+        function updateTempoDisplay() {
+            document.getElementById('tempoDisplay').textContent = tempo + ' BPM';
+            startTempoLed();
+        }
+
+        function startTempoLed() {
+            if (tempoLedInterval) clearInterval(tempoLedInterval);
+            const led = document.getElementById('tempoLed');
+            const beatInterval = (60 / tempo) * 1000;
+            led.classList.add('blink');
+            setTimeout(() => led.classList.remove('blink'), 80);
+            tempoLedInterval = setInterval(() => {
+                led.classList.add('blink');
+                setTimeout(() => led.classList.remove('blink'), 80);
+            }, beatInterval);
+        }
+
+        document.getElementById('arpSwitch').addEventListener('click', toggleArp);
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedPreset = parseInt(btn.dataset.preset);
+            });
+        });
+        document.getElementById('preset1').classList.add('selected');
+        document.getElementById('savePreset').addEventListener('click', () => savePreset(selectedPreset));
+        document.getElementById('loadPreset').addEventListener('click', () => loadPreset(selectedPreset));
+
+        // Init
+        buildPianoKeyboard();
+        setupKnobs();
+        initMIDI();
+        document.querySelectorAll('.knob').forEach(updateKnob);
+
+        const midiBtn = document.getElementById('midiToggle');
+        if (midiEnabled) { midiBtn.style.background = 'linear-gradient(160deg, #FFD700, #c8a200)'; midiBtn.style.color = '#000'; }
+
+        loadPresetsFromStorage();
+        loadSettings();
+        startTempoLed();
+        document.body.addEventListener('click', initAudio, { once: true });
+    </script>
+</body>
+</html>
