@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>ACID-Box - dPaul Technologies</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
@@ -11,6 +11,13 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        html {
+            height: -webkit-fill-available;
+            height: 100%;
         }
 
         body {
@@ -19,8 +26,11 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             padding: 20px;
             font-family: 'Share Tech Mono', monospace;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
 
         /* Main enclosure */
@@ -36,8 +46,10 @@
                 linear-gradient(160deg, #2a2600 0%, #1a1800 30%, #0e0c00 60%, #1a1800 100%);
             border-radius: 10px;
             padding: 20px;
-            max-width: 420px;
-            width: 100%;
+            width: 420px;
+            max-width: calc(100vw - 40px);
+            min-width: 320px;
+            flex-shrink: 0;
             position: relative;
             /* Deep 3D border effect */
             border: 1px solid #5a4e00;
