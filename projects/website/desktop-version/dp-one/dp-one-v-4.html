@@ -113,15 +113,17 @@
         .preset-btn.selected { animation: textFlash 0.8s ease-in-out infinite !important; background: #000000 !important; border: 2px solid #ff0000 !important; }
 
         /* ===== SAMPLE KEY MODE ===== */
-        .sample-key-section { display: flex; align-items: center; gap: 8px; padding: 5px 10px; background: #7a7e80; border-radius: 6px; border: 1px solid #c0c2c3; flex-wrap: wrap; }
-        .sample-key-label { color: #1a1a1a; font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px; font-family: Verdana, Geneva, sans-serif; }
-        .sample-key-btn { padding: 4px 12px; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border: 1px solid #444; border-radius: 4px; color: #666; cursor: pointer; font-size: 9px; font-weight: bold; font-family: Verdana, Geneva, sans-serif; text-transform: uppercase; transition: all 0.1s; }
+        .sample-key-section { display: flex; align-items: center; gap: 8px; padding: 5px 10px; background: #7a7e80; border-radius: 6px; border: 1px solid #c0c2c3; flex-wrap: nowrap; }
+        .sample-key-label { color: #1a1a1a; font-size: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px; font-family: Verdana, Geneva, sans-serif; white-space: nowrap; }
+        .sample-key-btn { padding: 4px 12px; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border: 1px solid #444; border-radius: 4px; color: #666; cursor: pointer; font-size: 9px; font-weight: bold; font-family: Verdana, Geneva, sans-serif; text-transform: uppercase; transition: all 0.1s; white-space: nowrap; }
         .sample-key-btn.active { animation: textFlash 0.8s ease-in-out infinite !important; background: #1a1a1a !important; border: 1px solid #ff0000 !important; }
-        .sample-slot-btn { width: 30px; height: 22px; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border: 1px solid #333; border-radius: 3px; color: #555; cursor: pointer; font-size: 7px; font-weight: bold; font-family: Verdana, Geneva, sans-serif; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
-        .sample-slot-btn.has-sample { border-color: #006600 !important; color: #00aa00 !important; box-shadow: 0 0 4px rgba(0,100,0,0.4); }
-        .sample-slot-btn.selected-slot { border-color: #cc5500 !important; color: #ff8800 !important; box-shadow: 0 0 6px rgba(200,80,0,0.5) !important; }
-        .sample-slot-btn:active { transform: scale(0.95); }
-        .sample-root-indicator { color: #2a1a00; font-size: 7px; font-weight: bold; font-family: Verdana, Geneva, sans-serif; min-width: 150px; }
+        .sample-lcd { background: #000; border: 1px solid #1a1a1a; border-radius: 4px; padding: 4px 8px; min-width: 220px; height: 52px; display: flex; flex-direction: column; justify-content: flex-start; gap: 1px; overflow: hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,0.8); flex-shrink: 0; }
+        .sample-lcd-row { display: flex; align-items: center; gap: 6px; height: 9px; }
+        .sample-lcd-slot { color: #440000; font-size: 8px; font-family: 'Courier New', monospace; font-weight: bold; width: 16px; flex-shrink: 0; cursor: pointer; transition: color 0.1s; }
+        .sample-lcd-slot.active { color: #ff0000; }
+        .sample-lcd-name { color: #330000; font-size: 8px; font-family: 'Courier New', monospace; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sample-lcd-name.loaded { color: #cc0000; }
+        .sample-lcd-name.selected { color: #ff4400; font-weight: bold; }
         /* Orange-tinted keys in sample key mode */
         .keyboard.sample-key-active .white-key { background: linear-gradient(180deg, #fff8ee 0%, #d4c090 100%); }
         .keyboard.sample-key-active .black-key { background: linear-gradient(180deg, #261600 0%, #0a0500 100%); }
@@ -243,12 +245,16 @@
 
     <!-- SAMPLE KEY MODE BAR -->
     <div class="sample-key-section">
-        <div class="sample-key-label">SAMPLE KEY</div>
+        <div class="sample-key-label">SAMPLER</div>
         <div class="sample-key-btn" id="sampleKeyModeBtn">OFF</div>
-        <div class="sample-key-btn" id="loadWavBtn" style="color:#00aa00;border-color:#004400;">LOAD SAMPLE</div>
-        <div class="sample-key-label" style="margin-left:4px;">SLOT</div>
-        <div id="sampleSlotBtns" style="display:flex;gap:4px;"></div>
-        <div class="sample-root-indicator" id="sampleRootIndicator" style="margin-left:10px;"></div>
+        <div class="sample-key-btn" id="loadWavBtn" style="color:#006600;border-color:#003300;">LOAD SAMPLE</div>
+        <div class="sample-lcd" id="sampleLcd">
+            <div class="sample-lcd-row"><span class="sample-lcd-slot" data-slot="0">S1</span><span class="sample-lcd-name" id="lcdName0">-- EMPTY --</span></div>
+            <div class="sample-lcd-row"><span class="sample-lcd-slot" data-slot="1">S2</span><span class="sample-lcd-name" id="lcdName1">-- EMPTY --</span></div>
+            <div class="sample-lcd-row"><span class="sample-lcd-slot" data-slot="2">S3</span><span class="sample-lcd-name" id="lcdName2">-- EMPTY --</span></div>
+            <div class="sample-lcd-row"><span class="sample-lcd-slot" data-slot="3">S4</span><span class="sample-lcd-name" id="lcdName3">-- EMPTY --</span></div>
+            <div class="sample-lcd-row"><span class="sample-lcd-slot" data-slot="4">S5</span><span class="sample-lcd-name" id="lcdName4">-- EMPTY --</span></div>
+        </div>
     </div>
 
     <div class="keyboard" id="keyboardDiv">
@@ -669,30 +675,49 @@ document.querySelectorAll('[data-mode]').forEach(function(b){b.addEventListener(
 document.querySelectorAll('.waveform-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.waveform-btn').forEach(function(x){x.classList.remove('active');});b.classList.add('active');currentWaveform=b.dataset.wave;autoSave();});});
 document.getElementById('clearArpBtn').addEventListener('click',function(){arpNotes=[];arpIndex=0;document.querySelectorAll('.white-key,.black-key').forEach(function(k){k.classList.remove('playing');});if(arpInterval)pauseArp();updateNoteDisplay('ARP CLEARED');setTimeout(function(){updateNoteDisplay('---');},1000);});
 
-// ======= SAMPLE KEY MODE CONTROLS =======
-function buildSampleSlotBtns(){
-    var c=document.getElementById('sampleSlotBtns');c.innerHTML='';
-    for(var i=0;i<9;i++){
-        var b=document.createElement('div');
-        b.className='sample-slot-btn'+(sampleBuffers[i]?' has-sample':'')+(i===selectedSampleSlot?' selected-slot':'');
-        b.textContent='S'+(i+1);b.title=drumOrder[i].toUpperCase();
-        (function(idx){b.addEventListener('click',function(){selectedSampleSlot=idx;buildSampleSlotBtns();updateSampleRootIndicator();});})(i);
-        c.appendChild(b);
+// ======= SAMPLE LCD DISPLAY =======
+var sampleNames=['','','','','']; // display names for 5 slots
+var MAX_SLOTS=5;
+
+function buildSampleSlotBtns(){updateSampleLcd();} // keep old call sites working
+
+function updateSampleLcd(){
+    for(var i=0;i<MAX_SLOTS;i++){
+        var slotEl=document.querySelector('.sample-lcd-slot[data-slot="'+i+'"]');
+        var nameEl=document.getElementById('lcdName'+i);
+        if(!slotEl||!nameEl)continue;
+        var isSelected=(i===selectedSampleSlot);
+        var hasBuffer=!!sampleBuffers[i];
+        // Slot label
+        slotEl.className='sample-lcd-slot'+(isSelected?' active':'');
+        // Name
+        if(hasBuffer){
+            nameEl.textContent=sampleNames[i]||'LOADED';
+            nameEl.className='sample-lcd-name loaded'+(isSelected?' selected':'');
+        }else{
+            nameEl.textContent='-- EMPTY --';
+            nameEl.className='sample-lcd-name'+(isSelected?' selected':'');
+        }
     }
 }
 
-function updateSampleRootIndicator(){
-    var el=document.getElementById('sampleRootIndicator');
-    if(sampleKeyMode&&sampleBuffers[selectedSampleSlot])el.textContent='ROOT: C'+currentOctave+'  ['+drumOrder[selectedSampleSlot].toUpperCase()+']';
-    else if(sampleKeyMode)el.textContent='NO SAMPLE IN SLOT S'+(selectedSampleSlot+1);
-    else el.textContent='';
-}
+function updateSampleRootIndicator(){updateSampleLcd();} // keep old call sites working
+
+// Wire up LCD slot clicks for selection
+document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.sample-lcd-slot').forEach(function(el){
+        el.addEventListener('click',function(){
+            selectedSampleSlot=parseInt(el.dataset.slot);
+            updateSampleLcd();
+        });
+    });
+});
 
 document.getElementById('sampleKeyModeBtn').addEventListener('click',function(){
     sampleKeyMode=!sampleKeyMode;
     var btn=document.getElementById('sampleKeyModeBtn'),kbd=document.getElementById('keyboardDiv');
     btn.textContent=sampleKeyMode?'ON':'OFF';btn.classList.toggle('active',sampleKeyMode);kbd.classList.toggle('sample-key-active',sampleKeyMode);
-    updateSampleRootIndicator();
+    updateSampleLcd();
     if(!sampleKeyMode){activeSampleSources.forEach(function(s){try{s.stop();}catch(e){}});activeSampleSources.clear();}
 });
 
@@ -740,7 +765,7 @@ function autoSave(){saveSettings();}
 document.addEventListener('DOMContentLoaded',function(){
     function scaleSynth(){var c=document.getElementById('synthContainer');if(!c)return;c.style.transform='';c.style.width='';void c.offsetWidth;var nw=c.offsetWidth,nh=c.offsetHeight,sc=Math.min(window.innerWidth/nw,window.innerHeight/nh,1);if(sc<1){c.style.transform='scale('+sc+')';c.style.transformOrigin='top left';c.style.marginBottom=((nh*sc)-nh)+'px';}else{c.style.transform='';c.style.transformOrigin='';c.style.marginBottom='';}}
     scaleSynth();window.addEventListener('resize',scaleSynth);setTimeout(scaleSynth,300);
-    buildKeyboard();setupKnobs();initSequencer();initMIDI();loadPresetsFromStorage();buildSampleSlotBtns();
+    buildKeyboard();setupKnobs();initSequencer();initMIDI();loadPresetsFromStorage();updateSampleLcd();
 
     document.querySelectorAll('.preset-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.preset-btn').forEach(function(x){x.classList.remove('selected');});b.classList.add('selected');selectedPreset=parseInt(b.dataset.preset);});});
     document.getElementById('preset1').classList.add('selected');
@@ -776,29 +801,31 @@ document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('loadDriveBtn').addEventListener('click',loadFromDrive);
     document.getElementById('loadSongFile').addEventListener('change',function(e){loadSong(e.target.files[0]);});
 
-    document.getElementById('loadWavBtn').addEventListener('click',function(){document.getElementById('wavFileInput').click();});
+    document.getElementById('loadWavBtn').addEventListener('click',function(){
+        if(!synthPowered){updateNoteDisplay('POWER ON FIRST');setTimeout(function(){updateNoteDisplay('---');},1500);return;}
+        if(!sampleKeyMode){updateNoteDisplay('SAMPLER OFF');setTimeout(function(){updateNoteDisplay('---');},1500);return;}
+        document.getElementById('wavFileInput').click();
+    });
     document.getElementById('wavFileInput').addEventListener('change',function(e){
         var files=Array.from(e.target.files);if(!files.length)return;
         initAudioForWav(function(){
             files.forEach(function(file,fileIdx){
-                // Each file loads into slots starting at selectedSampleSlot
-                var index=(selectedSampleSlot+fileIdx)%drumOrder.length;
+                var index=(selectedSampleSlot+fileIdx)%MAX_SLOTS;
                 var reader=new FileReader();
                 reader.onload=function(ev){
                     var arrayBuffer=ev.target.result.slice(0);
                     audioContext.decodeAudioData(arrayBuffer,function(buffer){
                         sampleBuffers[index]=buffer;
-                        var slotName=drumOrder[index];
-                        var shortName=file.name.replace(/\.[^.]+$/,'').slice(0,6).toUpperCase();
-                        // Update drum pad label
-                        var pad=document.querySelector('.pad[data-sound="'+slotName+'"]');
-                        if(pad){pad.style.border='2px solid #00aa00';pad.style.boxShadow='0 0 8px rgba(0,170,0,0.5)';pad.style.color='#00aa00';pad.textContent=shortName;pad.title=file.name;}
-                        // Refresh slot buttons AFTER buffer is stored
-                        buildSampleSlotBtns();
-                        updateSampleRootIndicator();
-                        updateNoteDisplay(shortName+' S'+(index+1));
+                        var shortName=file.name.replace(/\.[^.]+$/,'').slice(0,14).toUpperCase();
+                        sampleNames[index]=shortName;
+                        // Also update drum pad if slot maps to one
+                        if(index<drumOrder.length){
+                            var pad=document.querySelector('.pad[data-sound="'+drumOrder[index]+'"]');
+                            if(pad){pad.style.border='2px solid #00aa00';pad.style.boxShadow='0 0 8px rgba(0,170,0,0.5)';pad.style.color='#00aa00';pad.textContent=shortName.slice(0,6);pad.title=file.name;}
+                        }
+                        updateSampleLcd();
+                        updateNoteDisplay('S'+(index+1)+' LOADED');
                         setTimeout(function(){updateNoteDisplay('---');},2000);
-                        // Play preview only if powered on
                         if(synthPowered)playSample(index);
                     },function(err){
                         console.error('decodeAudioData error:',err,file.name);
