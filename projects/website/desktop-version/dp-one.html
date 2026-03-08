@@ -2577,7 +2577,7 @@
                             sampleBuffers[index] = buffer;
                             const slotName = drumOrder[index]; const shortName = file.name.replace(/\.[^.]+$/, '').slice(0, 6).toUpperCase();
                             const pad = document.querySelector(`.pad[data-sound="${slotName}"]`);
-                            if (pad) { pad.style.border = '2px solid #006600'; pad.style.boxShadow = '0 0 6px rgba(0,100,0,0.4)'; pad.title = file.name; }
+                            if (pad) { pad.style.border = '2px solid #00aa00'; pad.style.boxShadow = '0 0 8px rgba(0,170,0,0.5)'; pad.style.color = '#00aa00'; pad.textContent = shortName; pad.title = file.name; }
                             updateNoteDisplay(`${shortName} OK`); setTimeout(() => updateNoteDisplay('---'), 1500);
                             playSample(index);
                         }, (err) => { updateNoteDisplay('WAV ERR'); setTimeout(() => updateNoteDisplay('---'), 1500); });
