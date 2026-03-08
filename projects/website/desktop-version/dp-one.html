@@ -668,6 +668,10 @@
             letter-spacing: 1px;
             font-weight: bold;
             font-family: Verdana, Geneva, sans-serif;
+            text-shadow: none;
+            background: #000;
+            border-radius: 3px;
+            padding: 3px 8px;
         }
 
         .sequencer-controls {
@@ -1318,7 +1322,7 @@
 <body>
     <div class="synth-container powered-off" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.01</span></div>
+            <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.02</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -2620,7 +2624,7 @@
 
             function createSongData() {
                 const songData = {
-                    version: '4.0-MKIV', savedAt: new Date().toISOString(),
+                    version: '4.02-MKIV', savedAt: new Date().toISOString(),
                     settings: { volume: masterGain ? masterGain.gain.value : 0.7, synthVolume: synthGain ? synthGain.gain.value : 0.7, drumVolume: drumGain ? drumGain.gain.value : 0.7, delay: delayNode ? delayNode.delayTime.value : 0.3, feedback: feedbackGain ? feedbackGain.gain.value : 0.3, filter: filterNode ? filterNode.frequency.value : 2000, resonance: filterNode ? filterNode.Q.value : 1, currentOctave, currentWaveform, arpEnabled, arpMode, syncEnabled, pitchHoldEnabled, tempo, sequencerSteps },
                     drumVolumes: { ...drumVolumes }, sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
                     sampler: { pitch: samplePitch, speed: sampleSpeed, filter: sampleFilter, reverse: sampleReverse, loop: sampleLoop }, samples: {}
