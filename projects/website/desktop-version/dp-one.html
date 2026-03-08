@@ -17,7 +17,8 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            padding: 15px;
+            padding: 0;
+            margin: 0;
             font-family: Verdana, Geneva, sans-serif;
             overflow: hidden;
         }
@@ -660,7 +661,7 @@
         }
 
         .sequencer-title {
-            color: #666;
+            color: #8B0000;
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -1637,7 +1638,6 @@
             const humOsc2 = audioContext.createOscillator();
             const humOsc3 = audioContext.createOscillator();
             const humGain = audioContext.createGain();
-            // Deeper frequencies — 30Hz fundamental, 60Hz second harmonic, 90Hz third
             humOsc.type = 'sine'; humOsc.frequency.setValueAtTime(30, now); humOsc.frequency.linearRampToValueAtTime(32, now + 3.0);
             humOsc2.type = 'sine'; humOsc2.frequency.setValueAtTime(60, now); humOsc2.frequency.linearRampToValueAtTime(62, now + 3.0);
             humOsc3.type = 'sine'; humOsc3.frequency.setValueAtTime(90, now);
@@ -1648,16 +1648,13 @@
             const noiseSource = audioContext.createBufferSource(); noiseSource.buffer = noiseBuffer;
             const noiseFilter = audioContext.createBiquadFilter(); noiseFilter.type = 'lowpass'; noiseFilter.frequency.value = 80;
             const noiseGain = audioContext.createGain();
-            // Quiet noise thump
             noiseGain.gain.setValueAtTime(0.12, now); noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-            // Slow swell — quiet, deep, gradual
             humGain.gain.setValueAtTime(0, now);
             humGain.gain.linearRampToValueAtTime(0.09, now + 1.0);
             humGain.gain.linearRampToValueAtTime(0.14, now + 2.5);
             humGain.gain.linearRampToValueAtTime(0.07, now + 4.0);
             humGain.gain.linearRampToValueAtTime(0.02, now + 5.5);
             humGain.gain.linearRampToValueAtTime(0.0, now + 7.0);
-            // Two soft muted blips midway through warm-up (~2.5s in)
             [2.5, 2.85].forEach(offset => {
                 const blip = audioContext.createOscillator();
                 const blipGain = audioContext.createGain();
@@ -2511,13 +2508,11 @@
                 if (synthPowered) {
                     powerBtn.classList.add('on'); powerBtn.textContent = 'ON';
                     synthContainer.classList.remove('powered-off'); synthContainer.classList.add('powered-on');
-                    // Slow warm fade-in
                     synthContainer.style.opacity = '0.4';
                     synthContainer.style.transition = 'opacity 3.5s ease-in';
                     setTimeout(() => { synthContainer.style.opacity = '1'; }, 50);
                     setTimeout(() => { synthContainer.style.transition = ''; }, 4000);
                     initAudio();
-                    // Resume audio context (browser autoplay policy) then play hum
                     const resumeAndPlay = () => {
                         audioContext.resume().then(() => {
                             playPowerOnHum();
