@@ -1036,7 +1036,7 @@
         .visualizer {
             width: 180px;
             flex-shrink: 0;
-            height: 70px;
+            align-self: stretch;
             background: #000;
             border-radius: 6px;
             border: 1px solid #c0c2c3;
@@ -1046,7 +1046,7 @@
 
         .controls-row {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             gap: 10px;
             margin-bottom: 6px;
         }
@@ -1071,10 +1071,9 @@
 
         .wave-bar {
             width: 2px;
-            background: #000000;
+            background: #00cc44;
             margin: 0 1px;
             border-radius: 1px;
-            box-shadow: none;
             transition: height 0.1s;
         }
 
@@ -2001,43 +2000,46 @@
 
         function playNote(frequency, noteName) {
             initAudio();
-            const now = audioContext.currentTime;
-            const bendedFrequency = frequency * Math.pow(2, (pitchBendValue * 2) / 12);
-            if (currentWaveform === 'noise') {
-                const bufferSize = audioContext.sampleRate * 0.5;
-                const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-                const output = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
-                const noise = audioContext.createBufferSource(); noise.buffer = buffer; noise.loop = true;
-                const noiseFilter = audioContext.createBiquadFilter(); noiseFilter.type = 'bandpass';
-                noiseFilter.frequency.value = bendedFrequency; noiseFilter.Q.value = 10;
+            const doPlay = () => {
+                const now = audioContext.currentTime;
+                const bendedFrequency = frequency * Math.pow(2, (pitchBendValue * 2) / 12);
+                if (currentWaveform === 'noise') {
+                    const bufferSize = audioContext.sampleRate * 0.5;
+                    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                    const output = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+                    const noise = audioContext.createBufferSource(); noise.buffer = buffer; noise.loop = true;
+                    const noiseFilter = audioContext.createBiquadFilter(); noiseFilter.type = 'bandpass';
+                    noiseFilter.frequency.value = bendedFrequency; noiseFilter.Q.value = 10;
+                    const envelope = audioContext.createGain(); envelope.gain.value = 0;
+                    envelope.gain.setValueAtTime(0, now); envelope.gain.linearRampToValueAtTime(0.2, now + 0.02); envelope.gain.linearRampToValueAtTime(0.15, now + 0.15);
+                    noise.connect(noiseFilter); noiseFilter.connect(envelope);
+                    envelope.connect(filterNode); envelope.connect(delayNode);
+                    noise.start(now);
+                    activeNotes.set(noteName, { noise, envelope, baseFrequency: frequency, noiseFilter });
+                    animateVisualizer(); updateNoteDisplay(noteName);
+                    return { noise, envelope };
+                }
+                const osc1 = audioContext.createOscillator(); const osc2 = audioContext.createOscillator(); const osc3 = audioContext.createOscillator();
+                if (currentWaveform === 'pulse') {
+                    const real = new Float32Array([0, 0, 1, 0, 0.5, 0, 0.3]); const imag = new Float32Array(real.length);
+                    const wave = audioContext.createPeriodicWave(real, imag);
+                    osc1.setPeriodicWave(wave); osc2.setPeriodicWave(wave); osc3.setPeriodicWave(wave);
+                } else { osc1.type = currentWaveform; osc2.type = currentWaveform; osc3.type = currentWaveform; }
+                osc1.frequency.value = bendedFrequency; osc2.frequency.value = bendedFrequency * 0.995; osc3.frequency.value = bendedFrequency * 1.005;
                 const envelope = audioContext.createGain(); envelope.gain.value = 0;
-                envelope.gain.setValueAtTime(0, now); envelope.gain.linearRampToValueAtTime(0.2, now + 0.02); envelope.gain.linearRampToValueAtTime(0.15, now + 0.15);
-                noise.connect(noiseFilter); noiseFilter.connect(envelope);
+                envelope.gain.setValueAtTime(0, now); envelope.gain.linearRampToValueAtTime(0.3, now + 0.02); envelope.gain.linearRampToValueAtTime(0.2, now + 0.15);
+                const oscGain1 = audioContext.createGain(); const oscGain2 = audioContext.createGain(); const oscGain3 = audioContext.createGain();
+                oscGain1.gain.value = 0.4; oscGain2.gain.value = 0.3; oscGain3.gain.value = 0.3;
+                osc1.connect(oscGain1); osc2.connect(oscGain2); osc3.connect(oscGain3);
+                oscGain1.connect(envelope); oscGain2.connect(envelope); oscGain3.connect(envelope);
                 envelope.connect(filterNode); envelope.connect(delayNode);
-                noise.start(now);
-                activeNotes.set(noteName, { noise, envelope, baseFrequency: frequency, noiseFilter });
+                osc1.start(now); osc2.start(now); osc3.start(now);
+                activeNotes.set(noteName, { osc1, osc2, osc3, envelope, baseFrequency: frequency });
                 animateVisualizer(); updateNoteDisplay(noteName);
-                return { noise, envelope };
-            }
-            const osc1 = audioContext.createOscillator(); const osc2 = audioContext.createOscillator(); const osc3 = audioContext.createOscillator();
-            if (currentWaveform === 'pulse') {
-                const real = new Float32Array([0, 0, 1, 0, 0.5, 0, 0.3]); const imag = new Float32Array(real.length);
-                const wave = audioContext.createPeriodicWave(real, imag);
-                osc1.setPeriodicWave(wave); osc2.setPeriodicWave(wave); osc3.setPeriodicWave(wave);
-            } else { osc1.type = currentWaveform; osc2.type = currentWaveform; osc3.type = currentWaveform; }
-            osc1.frequency.value = bendedFrequency; osc2.frequency.value = bendedFrequency * 0.995; osc3.frequency.value = bendedFrequency * 1.005;
-            const envelope = audioContext.createGain(); envelope.gain.value = 0;
-            envelope.gain.setValueAtTime(0, now); envelope.gain.linearRampToValueAtTime(0.3, now + 0.02); envelope.gain.linearRampToValueAtTime(0.2, now + 0.15);
-            const oscGain1 = audioContext.createGain(); const oscGain2 = audioContext.createGain(); const oscGain3 = audioContext.createGain();
-            oscGain1.gain.value = 0.4; oscGain2.gain.value = 0.3; oscGain3.gain.value = 0.3;
-            osc1.connect(oscGain1); osc2.connect(oscGain2); osc3.connect(oscGain3);
-            oscGain1.connect(envelope); oscGain2.connect(envelope); oscGain3.connect(envelope);
-            envelope.connect(filterNode); envelope.connect(delayNode);
-            osc1.start(now); osc2.start(now); osc3.start(now);
-            activeNotes.set(noteName, { osc1, osc2, osc3, envelope, baseFrequency: frequency });
-            animateVisualizer(); updateNoteDisplay(noteName);
-            return { osc1, osc2, osc3, envelope };
+                return { osc1, osc2, osc3, envelope };
+            };
+            if (audioContext.state === 'suspended') { audioContext.resume().then(doPlay); } else { doPlay(); }
         }
 
         function stopNote(noteName) {
@@ -2376,6 +2378,8 @@
         function handleKeyPress(key) {
             if (key.classList.contains('playing')) return;
             key.classList.add('playing');
+            initAudio();
+            if (audioContext && audioContext.state === 'suspended') audioContext.resume();
             const noteIndex = parseInt(key.dataset.note); const noteName = key.dataset.noteName;
             const frequency = getNoteFrequency(noteIndex, currentOctave);
             // If sampler is on and selected slot has a buffer, play it pitched
