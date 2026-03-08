@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DP-ONE MKIV (DP-ONE MKIV)</title>
     <style>
         * {
@@ -13,9 +13,7 @@
 
         body {
             background: #131413;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            display: block;
             min-height: 100vh;
             padding: 0;
             margin: 0;
@@ -35,7 +33,9 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            transform-origin: top center;
+            transform-origin: top left;
+            flex-shrink: 0;
+            box-sizing: border-box;
         }
 
         .synth-header {
@@ -2467,15 +2467,34 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             function scaleSynth() {
-                const container = document.getElementById('synthContainer'); if (!container) return;
+                const container = document.getElementById('synthContainer');
+                if (!container) return;
+                // Reset transforms first so we can measure natural size
                 container.style.transform = '';
-                const naturalWidth = container.scrollWidth; const naturalHeight = container.scrollHeight;
-                const availW = window.innerWidth; const availH = window.innerHeight;
-                const scale = Math.min(availW / naturalWidth, availH / naturalHeight, 1);
-                if (scale < 1) { container.style.transform = `scale(${scale})`; container.style.marginBottom = `${(naturalHeight * scale) - naturalHeight}px`; }
-                else { container.style.transform = ''; container.style.marginBottom = ''; }
+                container.style.width = '';
+                // Force layout recalc
+                void container.offsetWidth;
+                const naturalWidth = container.offsetWidth;
+                const naturalHeight = container.offsetHeight;
+                const availW = window.innerWidth;
+                const availH = window.innerHeight;
+                const scaleX = availW / naturalWidth;
+                const scaleY = availH / naturalHeight;
+                const scale = Math.min(scaleX, scaleY, 1);
+                if (scale < 1) {
+                    container.style.transform = `scale(${scale})`;
+                    container.style.transformOrigin = 'top left';
+                    container.style.marginBottom = `${(naturalHeight * scale) - naturalHeight}px`;
+                } else {
+                    container.style.transform = '';
+                    container.style.transformOrigin = '';
+                    container.style.marginBottom = '';
+                }
             }
-            scaleSynth(); window.addEventListener('resize', scaleSynth);
+            scaleSynth();
+            window.addEventListener('resize', scaleSynth);
+            // Safari fires resize late — run again after a short delay
+            setTimeout(scaleSynth, 300);
 
             buildKeyboard(); setupKnobs(); initSequencer(); initMIDI();
             loadPresetsFromStorage();
