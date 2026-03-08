@@ -211,12 +211,12 @@
             position: absolute;
             width: 2px;
             height: 12px;
-            background: #ff6b6b;
+            background: #000000;
             top: 3px;
             left: 50%;
             transform: translateX(-50%);
             border-radius: 1px;
-            box-shadow: 0 0 4px rgba(255,107,107,0.8);
+            box-shadow: none;
         }
 
         .knob-value {
@@ -580,41 +580,71 @@
         .pitch-bend {
             width: 40px;
             height: 100px;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 1px solid #444;
             border-radius: 20px;
             position: relative;
             cursor: pointer;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.04);
+        }
+
+        /* Track groove showing travel range */
+        .pitch-bend::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 70px;
+            background: linear-gradient(180deg, #555 0%, #333 50%, #555 100%);
+            border-radius: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
         }
 
         .pitch-bend-thumb {
-            width: 36px;
-            height: 25px;
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border: 1px solid #c0c2c3;
-            border-radius: 13px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 35% 35%, #d0d0d0, #909090);
+            border: 1px solid #aaa;
+            border-radius: 50%;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            top: 37.5px;
+            top: 35px;
             cursor: grab;
-            box-shadow: 0 2px 6px rgba(100,50,0,0.4);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.3);
             transition: background 0.1s;
+            z-index: 2;
+        }
+
+        /* Centre dot on thumb */
+        .pitch-bend-thumb::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #333;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
 
         .pitch-bend-thumb:active {
             cursor: grabbing;
-            background: #131413;
+            background: radial-gradient(circle at 35% 35%, #b0b0b0, #707070);
         }
 
         .pitch-bend-center {
             position: absolute;
-            width: 100%;
-            height: 2px;
-            background: #131413;
+            width: 60%;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
             top: 50%;
-            left: 0;
-            opacity: 0.3;
+            left: 20%;
+            z-index: 1;
         }
 
         .pitch-hold-btn {
@@ -649,7 +679,7 @@
         .sequencer {
             margin-bottom: 6px;
             padding: 8px;
-            background: #7a7e80;
+            background: #d0d0d0;
             border-radius: 6px;
             border: 1px solid #c0c2c3;
         }
@@ -662,7 +692,7 @@
         }
 
         .sequencer-title {
-            color: #8B0000;
+            color: #000000;
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -672,6 +702,9 @@
             background: #000;
             border-radius: 3px;
             padding: 3px 8px;
+            color: #000000;
+            background: #d0d0d0;
+            border: 1px solid #aaaaaa;
         }
 
         .sequencer-controls {
@@ -912,12 +945,12 @@
             position: absolute;
             width: 2px;
             height: 15px;
-            background: #ff6b6b;
+            background: #000000;
             top: 4px;
             left: 50%;
             transform: translateX(-50%);
             border-radius: 1px;
-            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            box-shadow: none;
         }
 
         .drum-knob-value {
@@ -1008,10 +1041,10 @@
 
         .wave-bar {
             width: 2px;
-            background: #ff6b6b;
+            background: #000000;
             margin: 0 1px;
             border-radius: 1px;
-            box-shadow: 0 0 4px rgba(0,0,0,0.4);
+            box-shadow: none;
             transition: height 0.1s;
         }
 
@@ -1227,7 +1260,7 @@
         }
 
         .waveform-label {
-            color: #666;
+            color: #000000;
             font-size: 8px;
             font-weight: bold;
             text-transform: uppercase;
@@ -1239,7 +1272,7 @@
             background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
             border: 1px solid #1a1a1a;
             border-radius: 4px;
-            color: #ffffff;
+            color: #000000;
             cursor: pointer;
             font-size: 9px;
             box-shadow: 0 2px 6px rgba(100,50,0,0.3);
@@ -1317,12 +1350,171 @@
             border: 2px solid #ff0000 !important;
             box-shadow: none !important;
         }
+        .sampler-section {
+            padding: 6px 10px 8px 10px;
+            background: #4a4c4d;
+            border-radius: 6px;
+            border: 1px solid #333;
+            margin-top: 4px;
+        }
+
+        .sampler-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .sampler-section-title {
+            color: #cccccc;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: Verdana, Geneva, sans-serif;
+        }
+
+        .sampler-toggle-btn {
+            padding: 3px 10px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 8px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+            transition: all 0.1s;
+        }
+
+        .sampler-toggle-btn.on {
+            animation: textFlash 0.8s ease-in-out infinite;
+            background: #1a1a1a;
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .sampler-screen {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+            opacity: 0.4;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .sampler-screen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .sampler-screen-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .sampler-slot {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .sampler-slot:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .sampler-slot.selected {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sampler-slot.playing {
+            background: rgba(255,107,107,0.15);
+        }
+
+        .sampler-slot-num {
+            color: #444;
+            font-size: 8px;
+            min-width: 16px;
+        }
+
+        /* lit up when active */
+        .sampler-screen.active .sampler-slot-num {
+            color: #888;
+        }
+
+        .sampler-slot-name {
+            color: #00cc00;
+            font-size: 8px;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sampler-slot-name.empty {
+            color: #333;
+        }
+
+        /* empty slots glow amber when sampler is on */
+        .sampler-screen.active .sampler-slot-name.empty {
+            color: #cc8800;
+            text-shadow: 0 0 6px rgba(200, 140, 0, 0.7);
+        }
+
+        .sampler-slot-status {
+            color: #006600;
+            font-size: 7px;
+            min-width: 20px;
+            text-align: right;
+        }
+
+        .sampler-btns {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            opacity: 0.4;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .sampler-btns.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .sampler-load-btn, .sampler-clear-btn {
+            padding: 4px 10px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            color: #666;
+            cursor: pointer;
+            font-size: 8px;
+            font-weight: bold;
+            font-family: Verdana, Geneva, sans-serif;
+            transition: all 0.1s;
+        }
+
+        .sampler-load-btn:active, .sampler-clear-btn:active {
+            transform: scale(0.95);
+            background: #7a7e80;
+            color: #7a7e80;
+        }
+
     </style>
 </head>
 <body>
     <div class="synth-container powered-off" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.02</span></div>
+            <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.05</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1536,6 +1728,27 @@
                 <div class="seq-btn" id="arpDown" data-mode="down" style="font-size: 7px; padding: 3px 6px;">DN</div>
                 <div class="seq-btn" id="arpUpDown" data-mode="updown" style="font-size: 7px; padding: 3px 6px;">U/D</div>
                 <div class="seq-btn" id="arpRandom" data-mode="random" style="font-size: 7px; padding: 3px 6px;">RND</div>
+            </div>
+        </div>
+
+        <div class="sampler-section" id="samplerSection">
+            <div class="sampler-section-header">
+                <div class="sampler-section-title">SAMPLER</div>
+                <div class="sampler-toggle-btn" id="samplerToggleBtn">OFF</div>
+            </div>
+            <div class="sampler-screen" id="samplerScreen">
+                <div class="sampler-screen-inner" id="samplerScreenInner">
+                    <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span></div>
+                    <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span></div>
+                    <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span></div>
+                    <div class="sampler-slot" data-slot="3"><span class="sampler-slot-num">04</span><span class="sampler-slot-name" id="slotName3">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus3"></span></div>
+                    <div class="sampler-slot" data-slot="4"><span class="sampler-slot-num">05</span><span class="sampler-slot-name" id="slotName4">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus4"></span></div>
+                </div>
+            </div>
+            <div class="sampler-btns">
+                <div class="sampler-load-btn" id="samplerLoadBtn">LOAD SAMPLE</div>
+                <div class="sampler-clear-btn" id="samplerClearBtn">CLEAR</div>
+                <input type="file" id="samplerFileInput" accept=".wav,.mp3,.ogg,.flac,audio/*" style="display:none">
             </div>
         </div>
 
@@ -1884,7 +2097,7 @@
                 const bendValue = (note | (velocity << 7)) - 8192;
                 pitchBendValue = bendValue / 8192;
                 const pitchBendThumb = document.getElementById('pitchBendThumb');
-                const range = 100 - 25; const centerPos = range / 2;
+                const range = 100 - 30; const centerPos = range / 2;
                 pitchBendThumb.style.top = (centerPos - (pitchBendValue * centerPos)) + 'px';
                 activeNotes.forEach((noteData, noteName) => {
                     const baseFreq = noteData.baseFrequency; const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
@@ -2435,7 +2648,7 @@
             if (isDraggingPitch) {
                 isDraggingPitch = false;
                 if (!pitchHoldEnabled) {
-                    pitchBendValue = 0; pitchBendThumb.style.top = '37.5px';
+                    pitchBendValue = 0; pitchBendThumb.style.top = '35px';
                     activeNotes.forEach((noteData) => {
                         if (noteData.osc1 && noteData.osc1.frequency) {
                             const baseFreq = noteData.baseFrequency;
@@ -2450,9 +2663,9 @@
 
         function updatePitchBend(e) {
             const rect = pitchBend.getBoundingClientRect();
-            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 25));
+            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 30));
             pitchBendThumb.style.top = y + 'px';
-            const center = (rect.height - 25) / 2; pitchBendValue = -(y - center) / center;
+            const center = (rect.height - 30) / 2; pitchBendValue = -(y - center) / center;
             activeNotes.forEach((noteData) => {
                 const baseFreq = noteData.baseFrequency; const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
                 if (noteData.osc1 && noteData.osc1.frequency) {
@@ -2513,7 +2726,7 @@
                 pitchHoldEnabled = !pitchHoldEnabled;
                 document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
                 if (!pitchHoldEnabled) {
-                    pitchBendValue = 0; document.getElementById('pitchBendThumb').style.top = '37.5px';
+                    pitchBendValue = 0; document.getElementById('pitchBendThumb').style.top = '35px';
                     activeNotes.forEach((noteData) => {
                         if (noteData.osc1 && noteData.osc1.frequency) {
                             const baseFreq = noteData.baseFrequency;
@@ -2643,7 +2856,7 @@
 
             function createSongData() {
                 const songData = {
-                    version: '4.02-MKIV', savedAt: new Date().toISOString(),
+                    version: '4.05-MKIV', savedAt: new Date().toISOString(),
                     settings: { volume: masterGain ? masterGain.gain.value : 0.7, synthVolume: synthGain ? synthGain.gain.value : 0.7, drumVolume: drumGain ? drumGain.gain.value : 0.7, delay: delayNode ? delayNode.delayTime.value : 0.3, feedback: feedbackGain ? feedbackGain.gain.value : 0.3, filter: filterNode ? filterNode.frequency.value : 2000, resonance: filterNode ? filterNode.Q.value : 1, currentOctave, currentWaveform, arpEnabled, arpMode, syncEnabled, pitchHoldEnabled, tempo, sequencerSteps },
                     drumVolumes: { ...drumVolumes }, sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
                     sampler: { pitch: samplePitch, speed: sampleSpeed, filter: sampleFilter, reverse: sampleReverse, loop: sampleLoop }, samples: {}
@@ -2698,7 +2911,91 @@
                 } catch (error) { updateNoteDisplay('APPLY ERROR'); setTimeout(() => updateNoteDisplay('---'), 2000); }
             }
 
-            loadSettings();
+        // ── SAMPLER ──────────────────────────────────────────
+        let samplerEnabled = false;
+        let samplerSlots = [null, null, null, null, null]; // { name, buffer }
+        let selectedSamplerSlot = 0;
+
+        function updateSamplerScreen() {
+            for (let i = 0; i < 5; i++) {
+                const nameEl = document.getElementById(`slotName${i}`);
+                const statusEl = document.getElementById(`slotStatus${i}`);
+                if (samplerSlots[i]) {
+                    nameEl.textContent = samplerSlots[i].name;
+                    nameEl.classList.remove('empty');
+                    statusEl.textContent = '●';
+                } else {
+                    nameEl.textContent = '— EMPTY —';
+                    nameEl.classList.add('empty');
+                    statusEl.textContent = '';
+                }
+            }
+            document.querySelectorAll('.sampler-slot').forEach((el, i) => {
+                el.classList.toggle('selected', i === selectedSamplerSlot);
+            });
+        }
+
+        function toggleSampler() {
+            samplerEnabled = !samplerEnabled;
+            const btn = document.getElementById('samplerToggleBtn');
+            const screen = document.getElementById('samplerScreen');
+            const btns = document.getElementById('samplerSection').querySelector('.sampler-btns');
+            btn.textContent = samplerEnabled ? 'ON' : 'OFF';
+            btn.classList.toggle('on', samplerEnabled);
+            screen.classList.toggle('active', samplerEnabled);
+            btns.classList.toggle('active', samplerEnabled);
+        }
+
+
+        function playSamplerSlot(i) {
+            if (!samplerSlots[i] || !samplerSlots[i].buffer) return;
+            initAudio();
+            const source = audioContext.createBufferSource();
+            source.buffer = samplerSlots[i].buffer;
+            source.connect(drumGain);
+            source.start(audioContext.currentTime);
+            const el = document.querySelector(`.sampler-slot[data-slot="${i}"]`);
+            if (el) { el.classList.add('playing'); source.onended = () => el.classList.remove('playing'); }
+            animateVisualizer();
+        }
+        // ─────────────────────────────────────────────────────
+
+            // Sampler init
+            document.getElementById('samplerToggleBtn').addEventListener('click', toggleSampler);
+            document.querySelectorAll('.sampler-slot').forEach((el, i) => {
+                el.addEventListener('click', () => {
+                    if (!samplerEnabled) return;
+                    selectedSamplerSlot = i;
+                    updateSamplerScreen();
+                    if (samplerSlots[i] && samplerSlots[i].buffer) playSamplerSlot(i);
+                });
+            });
+            document.getElementById('samplerLoadBtn').addEventListener('click', () => {
+                document.getElementById('samplerFileInput').click();
+            });
+            document.getElementById('samplerFileInput').addEventListener('change', (e) => {
+                const file = e.target.files[0]; if (!file) return;
+                initAudio();
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    audioContext.decodeAudioData(ev.target.result.slice(0), (buffer) => {
+                        const name = file.name.replace(/\.[^.]+$/, '').slice(0, 18).toUpperCase();
+                        samplerSlots[selectedSamplerSlot] = { name, buffer };
+                        updateSamplerScreen();
+                        updateNoteDisplay(`S${selectedSamplerSlot + 1} LOADED`);
+                        setTimeout(() => updateNoteDisplay('---'), 1500);
+                        playSamplerSlot(selectedSamplerSlot);
+                    }, () => { updateNoteDisplay('DECODE ERR'); setTimeout(() => updateNoteDisplay('---'), 1500); });
+                };
+                reader.readAsArrayBuffer(file); e.target.value = '';
+            });
+            document.getElementById('samplerClearBtn').addEventListener('click', () => {
+                samplerSlots[selectedSamplerSlot] = null;
+                updateSamplerScreen();
+            });
+            updateSamplerScreen();
+
+        loadSettings();
             document.querySelectorAll('.knob').forEach(updateKnob);
         });
 
