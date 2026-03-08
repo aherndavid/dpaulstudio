@@ -1469,6 +1469,32 @@
             text-shadow: 0 0 6px rgba(200, 140, 0, 0.7);
         }
 
+        .sampler-seq-btn {
+            font-size: 7px;
+            font-family: Verdana, Geneva, sans-serif;
+            font-weight: bold;
+            color: #444;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 2px;
+            padding: 1px 4px;
+            cursor: pointer;
+            transition: all 0.1s;
+            white-space: nowrap;
+        }
+
+        .sampler-seq-btn:hover {
+            color: #888;
+            border-color: #555;
+        }
+
+        .sampler-seq-btn.active {
+            color: #ff6600;
+            border-color: #ff6600;
+            background: #1a0a00;
+            box-shadow: 0 0 4px rgba(255,100,0,0.4);
+        }
+
         .sampler-slot-status {
             color: #006600;
             font-size: 7px;
@@ -1738,11 +1764,11 @@
             </div>
             <div class="sampler-screen" id="samplerScreen">
                 <div class="sampler-screen-inner" id="samplerScreenInner">
-                    <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span></div>
-                    <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span></div>
-                    <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span></div>
-                    <div class="sampler-slot" data-slot="3"><span class="sampler-slot-num">04</span><span class="sampler-slot-name" id="slotName3">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus3"></span></div>
-                    <div class="sampler-slot" data-slot="4"><span class="sampler-slot-num">05</span><span class="sampler-slot-name" id="slotName4">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus4"></span></div>
+                    <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span><span class="sampler-seq-btn" id="seqBtn0" data-slot="0">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span><span class="sampler-seq-btn" id="seqBtn1" data-slot="1">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span><span class="sampler-seq-btn" id="seqBtn2" data-slot="2">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="3"><span class="sampler-slot-num">04</span><span class="sampler-slot-name" id="slotName3">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus3"></span><span class="sampler-seq-btn" id="seqBtn3" data-slot="3">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="4"><span class="sampler-slot-num">05</span><span class="sampler-slot-name" id="slotName4">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus4"></span><span class="sampler-seq-btn" id="seqBtn4" data-slot="4">SEQ</span></div>
                 </div>
             </div>
             <div class="sampler-btns">
@@ -2306,6 +2332,14 @@
             key.classList.add('playing');
             const noteIndex = parseInt(key.dataset.note); const noteName = key.dataset.noteName;
             const frequency = getNoteFrequency(noteIndex, currentOctave);
+            // If sampler is on and selected slot has a buffer, play it pitched
+            if (samplerEnabled && samplerSlots[selectedSamplerSlot] && samplerSlots[selectedSamplerSlot].buffer) {
+                const rootNoteIndex = 0; // C of current octave = root (semitone 0)
+                const semitones = noteIndex - rootNoteIndex;
+                playSamplerSlotPitched(selectedSamplerSlot, semitones);
+                updateNoteDisplay(noteName);
+                return;
+            }
             if (arpEnabled) { arpNotes.push({ frequency, noteName }); if (!arpInterval) startArp(); }
             else { playNote(frequency, noteName); }
         }
@@ -2519,7 +2553,11 @@
                 }
                 Object.keys(sequencerPattern).forEach(track => {
                     if (sequencerPattern[track][currentStep]) {
-                        if (track.startsWith('sample')) playSample(parseInt(track.replace('sample', '')));
+                        if (track.startsWith('sample')) {
+                            const idx = parseInt(track.replace('sample', ''));
+                            if (samplerSlots[idx] && samplerSlots[idx].buffer) playSamplerSlot(idx);
+                            else playSample(idx);
+                        }
                         else playDrum(track);
                     }
                 });
@@ -2958,16 +2996,61 @@
             if (el) { el.classList.add('playing'); source.onended = () => el.classList.remove('playing'); }
             animateVisualizer();
         }
+
+        // Play sampler slot pitched relative to C4 (root note, noteIndex 0 = C of currentOctave)
+        // rootNoteIndex = 0 means C of current octave = root. semitones shift up/down from there.
+        function playSamplerSlotPitched(slotIndex, semitones) {
+            if (!samplerSlots[slotIndex] || !samplerSlots[slotIndex].buffer) return;
+            initAudio();
+            const source = audioContext.createBufferSource();
+            source.buffer = samplerSlots[slotIndex].buffer;
+            source.playbackRate.value = Math.pow(2, semitones / 12);
+            source.connect(drumGain);
+            source.start(audioContext.currentTime);
+            animateVisualizer();
+        }
         // ─────────────────────────────────────────────────────
 
             // Sampler init
             document.getElementById('samplerToggleBtn').addEventListener('click', toggleSampler);
             document.querySelectorAll('.sampler-slot').forEach((el, i) => {
-                el.addEventListener('click', () => {
+                el.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('sampler-seq-btn')) return; // handled separately
                     if (!samplerEnabled) return;
                     selectedSamplerSlot = i;
                     updateSamplerScreen();
                     if (samplerSlots[i] && samplerSlots[i].buffer) playSamplerSlot(i);
+                });
+            });
+
+            // SEQ buttons — select sample track in sequencer
+            document.querySelectorAll('.sampler-seq-btn').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!samplerEnabled) return;
+                    const slot = parseInt(btn.dataset.slot);
+                    if (!samplerSlots[slot] || !samplerSlots[slot].buffer) {
+                        updateNoteDisplay('LOAD SAMPLE FIRST'); setTimeout(() => updateNoteDisplay('---'), 1500); return;
+                    }
+                    const trackName = `sample${slot}`;
+                    // Toggle: if already selected, deselect
+                    if (selectedSample === trackName) {
+                        selectedSample = null;
+                        btn.classList.remove('active');
+                        updateNoteDisplay('SEQ OFF'); setTimeout(() => updateNoteDisplay('---'), 1000);
+                    } else {
+                        // Deactivate all other SEQ buttons
+                        document.querySelectorAll('.sampler-seq-btn').forEach(b => b.classList.remove('active'));
+                        // Deselect drum pads
+                        document.querySelectorAll('.drum-pad').forEach(p => p.classList.remove('selected'));
+                        selectedDrum = null;
+                        selectedSample = trackName;
+                        selectedSamplerSlot = slot;
+                        btn.classList.add('active');
+                        updateSamplerScreen();
+                        updateSequencerDisplay();
+                        updateNoteDisplay(`SEQ S${slot + 1}`); setTimeout(() => updateNoteDisplay('---'), 1000);
+                    }
                 });
             });
             document.getElementById('samplerLoadBtn').addEventListener('click', () => {
@@ -2981,6 +3064,7 @@
                     audioContext.decodeAudioData(ev.target.result.slice(0), (buffer) => {
                         const name = file.name.replace(/\.[^.]+$/, '').slice(0, 18).toUpperCase();
                         samplerSlots[selectedSamplerSlot] = { name, buffer };
+                        sampleBuffers[selectedSamplerSlot] = buffer; // share with sequencer
                         updateSamplerScreen();
                         updateNoteDisplay(`S${selectedSamplerSlot + 1} LOADED`);
                         setTimeout(() => updateNoteDisplay('---'), 1500);
