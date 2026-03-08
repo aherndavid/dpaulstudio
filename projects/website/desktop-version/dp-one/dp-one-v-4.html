@@ -18,6 +18,18 @@
         .synth-container.powered-off * { animation: none !important; color: #333 !important; }
         .synth-container.powered-off .power-btn, .synth-container.powered-off #powerBtn { pointer-events: all !important; opacity: 1 !important; cursor: pointer !important; color: #ff0000 !important; }
         .synth-container.powered-off .tempo-led { background: #0a0a0a !important; box-shadow: none !important; }
+        .synth-container.powered-off .sample-lcd-slot,
+        .synth-container.powered-off .sample-lcd-slot.active,
+        .synth-container.powered-off .sample-lcd-name,
+        .synth-container.powered-off .sample-lcd-name.loaded,
+        .synth-container.powered-off .sample-lcd-name.selected { color: #333 !important; }
+        .synth-container.powered-off .preset-btn.selected,
+        .synth-container.powered-off .seq-btn.active,
+        .synth-container.powered-off .waveform-btn.active,
+        .synth-container.powered-off .sync-btn.active,
+        .synth-container.powered-off .pitch-hold-btn.active,
+        .synth-container.powered-off .sample-key-btn.active { border-color: #1a1a1a !important; background: #0a0a0a !important; }
+        .synth-container.powered-off .preset-btn.selected { border-color: #cccccc !important; background: #ffffff !important; }
         .synth-title { color: #1a1a1a; font-size: 18px; font-weight: normal; font-family: 'Courier New', Courier, monospace; text-transform: uppercase; letter-spacing: 2px; }
         .controls-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 6px; }
         .control-section { background: #000; border: 1px solid #1a1a1a; border-radius: 6px; padding: 8px 12px; display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; }
