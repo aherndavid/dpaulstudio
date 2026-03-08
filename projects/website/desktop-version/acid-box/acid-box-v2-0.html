@@ -1022,6 +1022,7 @@
         function handleMIDIMessage(message) {
             if (!midiEnabled) return;
             flashMidiIn();
+            initAudio(); // ensure context is running before any note or arp trigger
             const command = message.data[0] >> 4;
             const note = message.data[1];
             const velocity = message.data.length > 2 ? message.data[2] : 0;
@@ -1110,6 +1111,10 @@
                 delayNode.connect(distortion);
                 distortion.connect(masterGain);
                 masterGain.connect(audioContext.destination);
+            }
+            // Resume if suspended (needed when triggered by external MIDI without prior user gesture)
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
             }
         }
 
@@ -1298,6 +1303,7 @@
 
         function startArp() {
             if (arpInterval) return;
+            initAudio(); // ensure context is running, especially when triggered via MIDI
             const stepTime = (60 / tempo) * 1000 / 4;
             arpInterval = setInterval(() => {
                 if (arpNotes.length === 0) { stopArp(); return; }
