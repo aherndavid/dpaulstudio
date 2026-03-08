@@ -204,7 +204,6 @@
             <div class="song-btn" id="loadLocalBtn">LOAD LOCAL</div>
             <div class="song-btn" id="saveDriveBtn">SAVE DRIVE</div>
             <div class="song-btn" id="loadDriveBtn">LOAD DRIVE</div>
-            <div class="song-btn" id="loadWavBtn">LOAD WAV</div>
             <input type="file" id="loadSongFile" accept=".json" style="display:none">
             <input type="file" id="wavFileInput" accept=".wav,.aif,.aiff,.mp3,.ogg,.flac,audio/*" multiple style="display:none">
         </div>
@@ -246,7 +245,8 @@
     <div class="sample-key-section">
         <div class="sample-key-label">SAMPLE KEY</div>
         <div class="sample-key-btn" id="sampleKeyModeBtn">OFF</div>
-        <div class="sample-key-label" style="margin-left:8px;">SLOT</div>
+        <div class="sample-key-btn" id="loadWavBtn" style="color:#00aa00;border-color:#004400;">LOAD SAMPLE</div>
+        <div class="sample-key-label" style="margin-left:4px;">SLOT</div>
         <div id="sampleSlotBtns" style="display:flex;gap:4px;"></div>
         <div class="sample-root-indicator" id="sampleRootIndicator" style="margin-left:10px;"></div>
     </div>
@@ -780,22 +780,28 @@ document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('wavFileInput').addEventListener('change',function(e){
         var files=Array.from(e.target.files);if(!files.length)return;
         initAudioForWav(function(){
-            files.forEach(function(file,index){
-                if(index>=drumOrder.length)return;
+            files.forEach(function(file,fileIdx){
+                // Each file loads into slots starting at selectedSampleSlot
+                var index=(selectedSampleSlot+fileIdx)%drumOrder.length;
                 var reader=new FileReader();
                 reader.onload=function(ev){
                     var arrayBuffer=ev.target.result.slice(0);
                     audioContext.decodeAudioData(arrayBuffer,function(buffer){
                         sampleBuffers[index]=buffer;
-                        var slotName=drumOrder[index],shortName=file.name.replace(/\.[^.]+$/,'').slice(0,6).toUpperCase();
+                        var slotName=drumOrder[index];
+                        var shortName=file.name.replace(/\.[^.]+$/,'').slice(0,6).toUpperCase();
+                        // Update drum pad label
                         var pad=document.querySelector('.pad[data-sound="'+slotName+'"]');
                         if(pad){pad.style.border='2px solid #00aa00';pad.style.boxShadow='0 0 8px rgba(0,170,0,0.5)';pad.style.color='#00aa00';pad.textContent=shortName;pad.title=file.name;}
-                        buildSampleSlotBtns();updateSampleRootIndicator();
-                        updateNoteDisplay(shortName+' OK');setTimeout(function(){updateNoteDisplay('---');},1500);
-                        // Play a preview only if powered on
+                        // Refresh slot buttons AFTER buffer is stored
+                        buildSampleSlotBtns();
+                        updateSampleRootIndicator();
+                        updateNoteDisplay(shortName+' S'+(index+1));
+                        setTimeout(function(){updateNoteDisplay('---');},2000);
+                        // Play preview only if powered on
                         if(synthPowered)playSample(index);
                     },function(err){
-                        console.error('decodeAudioData error:',err);
+                        console.error('decodeAudioData error:',err,file.name);
                         updateNoteDisplay('WAV ERR');setTimeout(function(){updateNoteDisplay('---');},1500);
                     });
                 };
