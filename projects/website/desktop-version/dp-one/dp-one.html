@@ -146,6 +146,18 @@
             box-shadow: none !important;
         }
 
+        /* Kill all red/flash states when powered off */
+        .synth-container.powered-off .waveform-btn.active,
+        .synth-container.powered-off .seq-btn.active,
+        .synth-container.powered-off .preset-btn.selected,
+        .synth-container.powered-off .sampler-toggle-btn.on {
+            animation: none !important;
+            border-color: #333 !important;
+            color: #333 !important;
+            background: #111 !important;
+            box-shadow: none !important;
+        }
+
         .synth-title {
             color: #1a1a1a;
             font-size: 18px;
@@ -164,13 +176,6 @@
         .synth-title .mkii {
             color: #000000;
             font-weight: bold;
-        }
-
-        .controls-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 6px;
         }
 
         .control-section {
@@ -1029,14 +1034,31 @@
         }
 
         .visualizer {
-            width: 100%;
-            height: 18px;
+            width: 180px;
+            flex-shrink: 0;
+            height: 70px;
             background: #000;
             border-radius: 6px;
-            margin-bottom: 8px;
             border: 1px solid #c0c2c3;
             overflow: hidden;
             position: relative;
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .controls-row .control-section {
+            flex: 1;
+        }
+
+        .master-knob {
+        }
+
+        .master-knob::after {
         }
 
         .wave-container {
@@ -1575,10 +1597,6 @@
             </div>
         </div>
 
-        <div class="visualizer">
-            <div class="wave-container" id="visualizer"></div>
-        </div>
-
         <div class="waveform-section">
             <div class="waveform-label">WAVE</div>
             <div class="waveform-btn-wrap"><span class="wave-mini-label">Sawtooth</span><div class="waveform-btn active" id="waveSaw" data-wave="sawtooth">SAW</div></div>
@@ -1590,8 +1608,8 @@
             <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
         </div>
 
-        <div class="controls-panel">
-            <!-- Section 1: Effects -->
+        <!-- Controls row: effects | visualizer | volumes -->
+        <div class="controls-row">
             <div class="control-section">
                 <div class="control-group">
                     <div class="control-label">DELAY</div>
@@ -1615,21 +1633,24 @@
                 </div>
             </div>
 
-            <!-- Section 2: Volume -->
+            <div class="visualizer">
+                <div class="wave-container" id="visualizer"></div>
+            </div>
+
             <div class="control-section">
                 <div class="control-group">
-                    <div class="control-label">SYNTH VOL</div>
+                    <div class="control-label">SYNTH</div>
                     <div class="knob" id="synthVolumeKnob" data-value="70"></div>
                     <div class="knob-value" id="synthVolumeValue">70%</div>
                 </div>
                 <div class="control-group">
-                    <div class="control-label">DRUM VOL</div>
+                    <div class="control-label">DRUM</div>
                     <div class="drum-knob knob" id="drumVolumeKnob" data-value="70"></div>
                     <div class="drum-knob-value knob-value" id="drumVolumeValue">70%</div>
                 </div>
                 <div class="control-group">
                     <div class="control-label">MASTER</div>
-                    <div class="knob" id="masterVolumeKnob" data-value="70"></div>
+                    <div class="knob master-knob" id="masterVolumeKnob" data-value="70"></div>
                     <div class="knob-value" id="masterVolumeValue">70%</div>
                 </div>
             </div>
@@ -1637,7 +1658,7 @@
 
         <div class="sequencer">
             <div class="sequencer-header">
-                <div class="sequencer-title">DRUM SEQUENCER <span id="seqTrackIndicator" style="font-size:8px; color:#ff6600; letter-spacing:1px; margin-left:6px;"></span></div>
+                <div class="sequencer-title">SEQUENCER <span id="seqTrackIndicator" style="font-size:8px; color:#ff6600; letter-spacing:1px; margin-left:6px;"></span></div>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <div class="bpm-indicator" id="bpmIndicator"></div>
                     <div class="seq-btn" id="steps8Btn" data-steps="8">8</div>
@@ -3022,13 +3043,14 @@
             const play = () => {
                 const source = audioContext.createBufferSource();
                 source.buffer = samplerSlots[i].buffer;
-                source.connect(drumGain);
+                const out = drumGain || masterGain || audioContext.destination;
+                source.connect(out);
                 source.start(audioContext.currentTime);
                 const el = document.querySelector(`.sampler-slot[data-slot="${i}"]`);
                 if (el) { el.classList.add('playing'); source.onended = () => el.classList.remove('playing'); }
                 animateVisualizer();
             };
-            if (audioContext.state === 'suspended') audioContext.resume().then(play); else play();
+            audioContext.resume().then(play);
         }
 
         function playSamplerSlotPitched(slotIndex, semitones) {
@@ -3038,11 +3060,12 @@
                 const source = audioContext.createBufferSource();
                 source.buffer = samplerSlots[slotIndex].buffer;
                 source.playbackRate.value = Math.pow(2, semitones / 12);
-                source.connect(drumGain);
+                const out = drumGain || masterGain || audioContext.destination;
+                source.connect(out);
                 source.start(audioContext.currentTime);
                 animateVisualizer();
             };
-            if (audioContext.state === 'suspended') audioContext.resume().then(play); else play();
+            audioContext.resume().then(play);
         }
         // ─────────────────────────────────────────────────────
 
@@ -3096,19 +3119,22 @@
             document.getElementById('samplerFileInput').addEventListener('change', (e) => {
                 const file = e.target.files[0]; if (!file) return;
                 initAudio();
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    audioContext.decodeAudioData(ev.target.result.slice(0), (buffer) => {
-                        const name = file.name.replace(/\.[^.]+$/, '').slice(0, 18).toUpperCase();
-                        samplerSlots[selectedSamplerSlot] = { name, buffer };
-                        sampleBuffers[selectedSamplerSlot] = buffer; // share with sequencer
-                        updateSamplerScreen();
-                        updateNoteDisplay(`S${selectedSamplerSlot + 1} LOADED`);
-                        setTimeout(() => updateNoteDisplay('---'), 1500);
-                        playSamplerSlot(selectedSamplerSlot);
-                    }, () => { updateNoteDisplay('DECODE ERR'); setTimeout(() => updateNoteDisplay('---'), 1500); });
-                };
-                reader.readAsArrayBuffer(file); e.target.value = '';
+                audioContext.resume().then(() => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        audioContext.decodeAudioData(ev.target.result.slice(0), (buffer) => {
+                            const name = file.name.replace(/\.[^.]+$/, '').slice(0, 18).toUpperCase();
+                            samplerSlots[selectedSamplerSlot] = { name, buffer };
+                            sampleBuffers[selectedSamplerSlot] = buffer;
+                            updateSamplerScreen();
+                            updateNoteDisplay(`S${selectedSamplerSlot + 1} LOADED`);
+                            setTimeout(() => updateNoteDisplay('---'), 1500);
+                            playSamplerSlot(selectedSamplerSlot);
+                        }, () => { updateNoteDisplay('DECODE ERR'); setTimeout(() => updateNoteDisplay('---'), 1500); });
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+                e.target.value = '';
             });
             document.getElementById('samplerClearBtn').addEventListener('click', () => {
                 samplerSlots[selectedSamplerSlot] = null;
