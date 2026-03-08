@@ -654,28 +654,84 @@
             transform-origin: top center;
         }
 
-        /* MIDI indicator */
-        .midi-indicator {
+        /* MIDI IN/OUT indicators */
+        .midi-indicators {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            color: #000;
-            background: linear-gradient(to bottom, #FFD700, #e6c200);
-            font-size: 7px;
-            font-weight: bold;
-            padding: 3px 7px;
-            border-radius: 3px;
-            display: none;
-            font-family: 'Share Tech Mono', monospace;
-            letter-spacing: 0.5px;
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.4),
-                0 1px 3px rgba(0,0,0,0.7);
-            border: 1px solid #b8960a;
+            top: 10px;
+            right: 28px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
         }
 
-        .midi-indicator.connected {
-            display: block;
+        .midi-led-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .midi-led-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 6px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            color: #5a4e00;
+            text-transform: uppercase;
+        }
+
+        .midi-led {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 38% 35%, #1a0800, #0a0400);
+            border: 1px solid #2a1400;
+            box-shadow:
+                inset 0 1px 2px rgba(0,0,0,0.9),
+                0 1px 2px rgba(0,0,0,0.6);
+            transition: all 0.06s;
+            position: relative;
+        }
+
+        .midi-led::after {
+            content: '';
+            position: absolute;
+            inset: 2px 2px auto auto;
+            width: 2px;
+            height: 2px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        /* IN = yellow/amber flash */
+        .midi-led.in-flash {
+            background: radial-gradient(circle at 38% 35%, #ffe580, #FFD700);
+            border-color: #c8a200;
+            box-shadow:
+                0 0 7px rgba(255,215,0,0.95),
+                0 0 14px rgba(255,215,0,0.5),
+                inset 0 1px 2px rgba(255,255,200,0.4);
+        }
+        .midi-led.in-flash::after { background: rgba(255,255,255,0.55); }
+
+        /* OUT = orange flash */
+        .midi-led.out-flash {
+            background: radial-gradient(circle at 38% 35%, #ffb050, #ff7700);
+            border-color: #cc5500;
+            box-shadow:
+                0 0 7px rgba(255,120,0,0.95),
+                0 0 14px rgba(255,120,0,0.5),
+                inset 0 1px 2px rgba(255,200,150,0.4);
+        }
+        .midi-led.out-flash::after { background: rgba(255,255,255,0.45); }
+
+        /* connected state — dim steady glow */
+        .midi-led.connected {
+            background: radial-gradient(circle at 38% 35%, #332200, #1a1000);
+            border-color: #4a3000;
+            box-shadow:
+                inset 0 1px 2px rgba(0,0,0,0.8),
+                0 0 3px rgba(255,180,0,0.15);
         }
 
         /* Large action buttons */
@@ -728,7 +784,16 @@
         <div class="screw screw-bl"></div>
         <div class="screw screw-br"></div>
 
-        <div class="midi-indicator" id="midiIndicator">MIDI IN</div>
+        <div class="midi-indicators">
+            <div class="midi-led-group">
+                <div class="midi-led" id="midiLedIn"></div>
+                <div class="midi-led-label">IN</div>
+            </div>
+            <div class="midi-led-group">
+                <div class="midi-led" id="midiLedOut"></div>
+                <div class="midi-led-label">OUT</div>
+            </div>
+        </div>
         
         <div class="synth-header">
             <div class="synth-title">ACID-BOX</div>
@@ -917,6 +982,18 @@
             }
         }
 
+        function flashMidiIn() {
+            const led = document.getElementById('midiLedIn');
+            led.classList.add('in-flash');
+            setTimeout(() => led.classList.remove('in-flash'), 80);
+        }
+
+        function flashMidiOut() {
+            const led = document.getElementById('midiLedOut');
+            led.classList.add('out-flash');
+            setTimeout(() => led.classList.remove('out-flash'), 80);
+        }
+
         function initMIDI() {
             if (navigator.requestMIDIAccess) {
                 navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
@@ -927,7 +1004,8 @@
             for (let input of midiAccess.inputs.values()) {
                 midiInputs.push(input);
                 input.onmidimessage = handleMIDIMessage;
-                document.getElementById('midiIndicator').classList.add('connected');
+                document.getElementById('midiLedIn').classList.add('connected');
+                document.getElementById('midiLedOut').classList.add('connected');
             }
         }
 
@@ -943,6 +1021,7 @@
 
         function handleMIDIMessage(message) {
             if (!midiEnabled) return;
+            flashMidiIn();
             const command = message.data[0] >> 4;
             const note = message.data[1];
             const velocity = message.data.length > 2 ? message.data[2] : 0;
@@ -1045,6 +1124,7 @@
 
         function playAcidNote(frequency, noteName) {
             initAudio();
+            flashMidiOut();
             const now = audioContext.currentTime;
             const osc = audioContext.createOscillator();
             osc.type = 'sawtooth';
