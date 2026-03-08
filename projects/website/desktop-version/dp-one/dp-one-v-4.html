@@ -295,8 +295,33 @@ function initAudio(){
         delayNode.connect(filterNode);filterNode.connect(synthGain);
         synthGain.connect(masterGain);drumGain.connect(masterGain);
         masterGain.connect(audioContext.destination);
-        if(!powerHumPlayed){powerHumPlayed=true;setTimeout(playPowerOnHum,50);}
+        // Restore saved knob values to audio nodes
+        var dk=document.getElementById('delayKnob');if(dk)delayNode.delayTime.value=(parseInt(dk.dataset.value)/100)*0.5;
+        var fk=document.getElementById('filterKnob');if(fk)filterNode.frequency.value=200+(parseInt(fk.dataset.value)/100)*4800;
+        var rk=document.getElementById('resonanceKnob');if(rk)filterNode.Q.value=1+(parseInt(rk.dataset.value)/100)*19;
+        var fbk=document.getElementById('feedbackKnob');if(fbk)feedbackGain.gain.value=parseInt(fbk.dataset.value)/100;
+        var svk=document.getElementById('synthVolumeKnob');if(svk)synthGain.gain.value=parseInt(svk.dataset.value)/100;
+        var dvk=document.getElementById('drumVolumeKnob');if(dvk)drumGain.gain.value=parseInt(dvk.dataset.value)/100;
+        var mvk=document.getElementById('masterVolumeKnob');if(mvk)masterGain.gain.value=parseInt(mvk.dataset.value)/100;
     }
+}
+
+function initAudioForWav(callback){
+    // Safely initialise audio context for WAV loading without triggering hum
+    if(!audioContext){
+        audioContext=new(window.AudioContext||window.webkitAudioContext)();
+        masterGain=audioContext.createGain();masterGain.gain.value=0.7;
+        synthGain=audioContext.createGain();synthGain.gain.value=0.7;
+        drumGain=audioContext.createGain();drumGain.gain.value=0.7;
+        delayNode=audioContext.createDelay();delayNode.delayTime.value=0.3;
+        feedbackGain=audioContext.createGain();feedbackGain.gain.value=0.3;
+        filterNode=audioContext.createBiquadFilter();filterNode.type='lowpass';filterNode.frequency.value=2000;filterNode.Q.value=1;
+        delayNode.connect(feedbackGain);feedbackGain.connect(delayNode);
+        delayNode.connect(filterNode);filterNode.connect(synthGain);
+        synthGain.connect(masterGain);drumGain.connect(masterGain);
+        masterGain.connect(audioContext.destination);
+    }
+    audioContext.resume().then(function(){if(callback)callback();});
 }
 
 function playPowerOnHum(){
@@ -495,6 +520,7 @@ function buildKeyboard(){
 }
 
 function handleKeyPress(key){
+    if(!synthPowered)return;
     if(key.classList.contains('playing'))return;
     key.classList.add('playing');
     var ni=parseInt(key.dataset.note),name=key.dataset.noteName;
@@ -753,22 +779,29 @@ document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('loadWavBtn').addEventListener('click',function(){document.getElementById('wavFileInput').click();});
     document.getElementById('wavFileInput').addEventListener('change',function(e){
         var files=Array.from(e.target.files);if(!files.length)return;
-        initAudio();
-        files.forEach(function(file,index){
-            if(index>=drumOrder.length)return;
-            var reader=new FileReader();
-            reader.onload=function(ev){
-                audioContext.decodeAudioData(ev.target.result.slice(0),function(buffer){
-                    sampleBuffers[index]=buffer;
-                    var slotName=drumOrder[index],shortName=file.name.replace(/\.[^.]+$/,'').slice(0,6).toUpperCase();
-                    var pad=document.querySelector('.pad[data-sound="'+slotName+'"]');
-                    if(pad){pad.style.border='2px solid #00aa00';pad.style.boxShadow='0 0 8px rgba(0,170,0,0.5)';pad.style.color='#00aa00';pad.textContent=shortName;pad.title=file.name;}
-                    buildSampleSlotBtns();updateSampleRootIndicator();
-                    updateNoteDisplay(shortName+' OK');setTimeout(function(){updateNoteDisplay('---');},1500);
-                    playSample(index);
-                },function(){updateNoteDisplay('WAV ERR');setTimeout(function(){updateNoteDisplay('---');},1500);});
-            };
-            reader.readAsArrayBuffer(file);
+        initAudioForWav(function(){
+            files.forEach(function(file,index){
+                if(index>=drumOrder.length)return;
+                var reader=new FileReader();
+                reader.onload=function(ev){
+                    var arrayBuffer=ev.target.result.slice(0);
+                    audioContext.decodeAudioData(arrayBuffer,function(buffer){
+                        sampleBuffers[index]=buffer;
+                        var slotName=drumOrder[index],shortName=file.name.replace(/\.[^.]+$/,'').slice(0,6).toUpperCase();
+                        var pad=document.querySelector('.pad[data-sound="'+slotName+'"]');
+                        if(pad){pad.style.border='2px solid #00aa00';pad.style.boxShadow='0 0 8px rgba(0,170,0,0.5)';pad.style.color='#00aa00';pad.textContent=shortName;pad.title=file.name;}
+                        buildSampleSlotBtns();updateSampleRootIndicator();
+                        updateNoteDisplay(shortName+' OK');setTimeout(function(){updateNoteDisplay('---');},1500);
+                        // Play a preview only if powered on
+                        if(synthPowered)playSample(index);
+                    },function(err){
+                        console.error('decodeAudioData error:',err);
+                        updateNoteDisplay('WAV ERR');setTimeout(function(){updateNoteDisplay('---');},1500);
+                    });
+                };
+                reader.onerror=function(){updateNoteDisplay('READ ERR');setTimeout(function(){updateNoteDisplay('---');},1500);};
+                reader.readAsArrayBuffer(file);
+            });
         });
         e.target.value='';
     });
