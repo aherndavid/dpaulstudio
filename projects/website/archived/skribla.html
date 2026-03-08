@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Skribble Pad</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #111;
+    font-family: 'Courier New', Courier, monospace;
+    user-select: none;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
+  #toolbar {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #1a1a1a;
+    border-bottom: 1px solid #333;
+    width: 100%;
+  }
+
+  .toolbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .toolbar-row.full {
+    width: 100%;
+  }
+
+  .section-divider {
+    width: 1px;
+    height: 48px;
+    background: #444;
+    flex-shrink: 0;
+  }
+
+  .colour {
+    width: 42px;
+    height: 42px;
+    border-radius: 4px;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .colour:hover { transform: scale(1.1); }
+  .colour.active { border-color: #fff; transform: scale(1.1); }
+
+  #bgToggle {
+    width: 42px;
+    height: 42px;
+    border-radius: 4px;
+    border: 3px solid #555;
+    background: linear-gradient(135deg, #fff 50%, #000 50%);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  #bgToggle:hover { transform: scale(1.1); }
+
+  .size-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    background: #2a2a2a;
+    border: 2px solid #444;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+  .size-btn:hover { transform: scale(1.1); }
+  .size-btn.active { border-color: #fff; }
+  .size-dot { background: #fff; border-radius: 50%; pointer-events: none; }
+
+  .action-btn {
+    flex: 1;
+    padding: 11px 0;
+    border-radius: 4px;
+    border: 2px solid #444;
+    background: #2a2a2a;
+    color: #ccc;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .action-btn:hover { border-color: #aaa; color: #fff; background: #333; }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn.danger:hover { border-color: #ff5555; color: #ff5555; }
+  .action-btn.save:hover { border-color: #55cc88; color: #55cc88; }
+
+  #canvas-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #canvas {
+    position: absolute;
+    top: 0; left: 0;
+    cursor: crosshair;
+    touch-action: none;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="toolbar">
+    <div class="toolbar-row">
+      <div class="colour active" data-color="#FF3B5C" style="background:#FF3B5C;" title="Red"></div>
+      <div class="colour" data-color="#FFD600" style="background:#FFD600;" title="Yellow"></div>
+      <div class="colour" data-color="#00E5A0" style="background:#00E5A0;" title="Green"></div>
+      <div class="colour" data-color="#3B9FFF" style="background:#3B9FFF;" title="Blue"></div>
+      <div class="colour" data-color="#CC55FF" style="background:#CC55FF;" title="Purple"></div>
+
+      <div class="section-divider"></div>
+
+      <div id="bgToggle" title="Toggle Background"></div>
+
+      <div class="section-divider"></div>
+
+      <div class="size-btn active" data-size="4" title="Small">
+        <div class="size-dot" style="width:5px;height:5px;"></div>
+      </div>
+      <div class="size-btn" data-size="14" title="Medium">
+        <div class="size-dot" style="width:11px;height:11px;"></div>
+      </div>
+      <div class="size-btn" data-size="30" title="Large">
+        <div class="size-dot" style="width:19px;height:19px;"></div>
+      </div>
+    </div>
+
+    <div class="toolbar-row full">
+      <button class="action-btn" id="undoBtn">↩ Undo</button>
+      <button class="action-btn danger" id="clearBtn">✕ Clear</button>
+      <button class="action-btn save" id="saveBtn">⬇ Save</button>
+    </div>
+  </div>
+
+  <div id="canvas-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+</div>
+
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('canvas-wrap');
+
+  let currentColor = '#FF3B5C';
+  let currentSize = 4;
+  let bgColor = '#000000';
+  let isDrawing = false;
+  let lastX = 0, lastY = 0;
+  let snapshots = [];
+
+  function resize() {
+    const w = wrap.clientWidth;
+    const h = wrap.clientHeight;
+    const snap = (canvas.width > 0 && canvas.height > 0) ? canvas.toDataURL() : null;
+    canvas.width = w;
+    canvas.height = h;
+    fillBackground();
+    if (snap) {
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.src = snap;
+    }
+  }
+
+  function fillBackground() {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  window.addEventListener('load', resize);
+  window.addEventListener('resize', resize);
+
+  document.getElementById('bgToggle').addEventListener('click', () => {
+    const snap = canvas.toDataURL();
+    snapshots = [];
+    bgColor = bgColor === '#000000' ? '#ffffff' : '#000000';
+    fillBackground();
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0);
+    img.src = snap;
+  });
+
+  document.querySelectorAll('.colour').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.colour').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      currentColor = el.dataset.color;
+    });
+  });
+
+  document.querySelectorAll('.size-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      currentSize = parseInt(el.dataset.size);
+    });
+  });
+
+  function saveSnapshot() {
+    snapshots.push(canvas.toDataURL());
+    if (snapshots.length > 40) snapshots.shift();
+  }
+
+  document.getElementById('undoBtn').addEventListener('click', () => {
+    if (!snapshots.length) return;
+    const prev = snapshots.pop();
+    const img = new Image();
+    img.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+    img.src = prev;
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    saveSnapshot();
+    fillBackground();
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'skribble-' + Date.now() + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    if (e.touches) {
+      return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+    }
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    saveSnapshot();
+    isDrawing = true;
+    const { x, y } = getPos(e);
+    lastX = x; lastY = y;
+    ctx.beginPath();
+    ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
+    ctx.fillStyle = currentColor;
+    ctx.fill();
+  }
+
+  function draw(e) {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const { x, y } = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = currentSize;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+    lastX = x; lastY = y;
+  }
+
+  function endDraw() { isDrawing = false; }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
+</script>
+</body>
+</html>
