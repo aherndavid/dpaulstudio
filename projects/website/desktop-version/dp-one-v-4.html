@@ -211,12 +211,12 @@
             position: absolute;
             width: 2px;
             height: 12px;
-            background: #ff6b6b;
+            background: #000000;
             top: 3px;
             left: 50%;
             transform: translateX(-50%);
             border-radius: 1px;
-            box-shadow: 0 0 4px rgba(255,107,107,0.8);
+            box-shadow: none;
         }
 
         .knob-value {
@@ -580,41 +580,71 @@
         .pitch-bend {
             width: 40px;
             height: 100px;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
+            background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+            border: 1px solid #444;
             border-radius: 20px;
             position: relative;
             cursor: pointer;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.04);
+        }
+
+        /* Track groove showing travel range */
+        .pitch-bend::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 70px;
+            background: linear-gradient(180deg, #555 0%, #333 50%, #555 100%);
+            border-radius: 2px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
         }
 
         .pitch-bend-thumb {
-            width: 36px;
-            height: 25px;
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border: 1px solid #c0c2c3;
-            border-radius: 13px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 35% 35%, #d0d0d0, #909090);
+            border: 1px solid #aaa;
+            border-radius: 50%;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            top: 37.5px;
+            top: 35px;
             cursor: grab;
-            box-shadow: 0 2px 6px rgba(100,50,0,0.4);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.3);
             transition: background 0.1s;
+            z-index: 2;
+        }
+
+        /* Centre dot on thumb */
+        .pitch-bend-thumb::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #333;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
 
         .pitch-bend-thumb:active {
             cursor: grabbing;
-            background: #131413;
+            background: radial-gradient(circle at 35% 35%, #b0b0b0, #707070);
         }
 
         .pitch-bend-center {
             position: absolute;
-            width: 100%;
-            height: 2px;
-            background: #131413;
+            width: 60%;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
             top: 50%;
-            left: 0;
-            opacity: 0.3;
+            left: 20%;
+            z-index: 1;
         }
 
         .pitch-hold-btn {
@@ -649,7 +679,7 @@
         .sequencer {
             margin-bottom: 6px;
             padding: 8px;
-            background: #7a7e80;
+            background: #d0d0d0;
             border-radius: 6px;
             border: 1px solid #c0c2c3;
         }
@@ -662,7 +692,7 @@
         }
 
         .sequencer-title {
-            color: #8B0000;
+            color: #000000;
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -672,6 +702,9 @@
             background: #000;
             border-radius: 3px;
             padding: 3px 8px;
+            color: #000000;
+            background: #d0d0d0;
+            border: 1px solid #aaaaaa;
         }
 
         .sequencer-controls {
@@ -912,12 +945,12 @@
             position: absolute;
             width: 2px;
             height: 15px;
-            background: #ff6b6b;
+            background: #000000;
             top: 4px;
             left: 50%;
             transform: translateX(-50%);
             border-radius: 1px;
-            box-shadow: 0 0 4px rgba(0,0,0,0.5);
+            box-shadow: none;
         }
 
         .drum-knob-value {
@@ -1008,10 +1041,10 @@
 
         .wave-bar {
             width: 2px;
-            background: #ff6b6b;
+            background: #000000;
             margin: 0 1px;
             border-radius: 1px;
-            box-shadow: 0 0 4px rgba(0,0,0,0.4);
+            box-shadow: none;
             transition: height 0.1s;
         }
 
@@ -1227,7 +1260,7 @@
         }
 
         .waveform-label {
-            color: #666;
+            color: #000000;
             font-size: 8px;
             font-weight: bold;
             text-transform: uppercase;
@@ -1239,7 +1272,7 @@
             background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
             border: 1px solid #1a1a1a;
             border-radius: 4px;
-            color: #ffffff;
+            color: #000000;
             cursor: pointer;
             font-size: 9px;
             box-shadow: 0 2px 6px rgba(100,50,0,0.3);
@@ -1884,7 +1917,7 @@
                 const bendValue = (note | (velocity << 7)) - 8192;
                 pitchBendValue = bendValue / 8192;
                 const pitchBendThumb = document.getElementById('pitchBendThumb');
-                const range = 100 - 25; const centerPos = range / 2;
+                const range = 100 - 30; const centerPos = range / 2;
                 pitchBendThumb.style.top = (centerPos - (pitchBendValue * centerPos)) + 'px';
                 activeNotes.forEach((noteData, noteName) => {
                     const baseFreq = noteData.baseFrequency; const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
@@ -2435,7 +2468,7 @@
             if (isDraggingPitch) {
                 isDraggingPitch = false;
                 if (!pitchHoldEnabled) {
-                    pitchBendValue = 0; pitchBendThumb.style.top = '37.5px';
+                    pitchBendValue = 0; pitchBendThumb.style.top = '35px';
                     activeNotes.forEach((noteData) => {
                         if (noteData.osc1 && noteData.osc1.frequency) {
                             const baseFreq = noteData.baseFrequency;
@@ -2450,9 +2483,9 @@
 
         function updatePitchBend(e) {
             const rect = pitchBend.getBoundingClientRect();
-            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 25));
+            const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 30));
             pitchBendThumb.style.top = y + 'px';
-            const center = (rect.height - 25) / 2; pitchBendValue = -(y - center) / center;
+            const center = (rect.height - 30) / 2; pitchBendValue = -(y - center) / center;
             activeNotes.forEach((noteData) => {
                 const baseFreq = noteData.baseFrequency; const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
                 if (noteData.osc1 && noteData.osc1.frequency) {
@@ -2513,7 +2546,7 @@
                 pitchHoldEnabled = !pitchHoldEnabled;
                 document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
                 if (!pitchHoldEnabled) {
-                    pitchBendValue = 0; document.getElementById('pitchBendThumb').style.top = '37.5px';
+                    pitchBendValue = 0; document.getElementById('pitchBendThumb').style.top = '35px';
                     activeNotes.forEach((noteData) => {
                         if (noteData.osc1 && noteData.osc1.frequency) {
                             const baseFreq = noteData.baseFrequency;
