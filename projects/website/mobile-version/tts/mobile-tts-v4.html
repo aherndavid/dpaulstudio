@@ -7,62 +7,91 @@
     <script src="https://unpkg.com/sam-js@0.3.1/dist/sam.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; overflow: hidden; background: #131413; color: #fff; font-family: -apple-system, sans-serif; }
-        body { height: 100svh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px; font-size: 19px; }
+        
+        /* Fixes the "not fitting" issue by using flex and preventing body scroll */
+        html, body { 
+            height: 100%; 
+            width: 100%;
+            overflow: hidden; 
+            background: #131413; 
+            color: #fff; 
+            font-family: -apple-system, sans-serif; 
+        }
+
+        body { 
+            display: flex; 
+            flex-direction: column; 
+            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px;
+        }
 
         .container {
-            width: 100%; max-width: 420px;
+            width: 100%;
+            max-width: 420px;
+            margin: auto; /* Centers it vertically */
             background: linear-gradient(145deg, #4a0a0a, #6a1010);
-            border-radius: 14px; padding: 18px;
-            display: flex; flex-direction: column; gap: 12px;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            max-height: 95vh; /* Prevents it from being taller than the screen */
         }
 
-        h1 { font-family: Impact, sans-serif; font-size: 28px; color: #000; text-align: center; margin-bottom: 5px; }
+        h1 { font-family: Impact, sans-serif; font-size: 24px; color: #000; text-align: center; }
         
-        .section { background: #0a0a0a; border-radius: 8px; padding: 12px; border: 1px solid #000; }
-        label { color: #888; font-size: 13px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 7px; }
+        .section { background: #0a0a0a; border-radius: 8px; padding: 10px; border: 1px solid #000; }
+        label { color: #888; font-size: 11px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; }
 
         textarea {
-            width: 100%; height: 110px; background: #001a00; color: #00dd00;
-            border: 1px solid #000; padding: 12px; font-family: 'Courier New', monospace;
-            font-size: 19px; resize: none; border-radius: 5px;
+            width: 100%;
+            flex: 1; /* Makes text area fill available space */
+            min-height: 80px;
+            background: #001a00;
+            color: #00dd00;
+            border: 1px solid #000;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 19px; 
+            resize: none;
+            border-radius: 5px;
         }
 
-        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .full { grid-column: span 2; }
 
-        .inc-row { display: flex; align-items: center; gap: 10px; }
-        .inc-btn { width: 44px; height: 44px; background: #333; color: #fff; border: none; border-radius: 5px; font-size: 26px; font-weight: bold; cursor: pointer; }
-        .inc-value { flex: 1; text-align: center; color: #00dd00; font-family: monospace; font-weight: bold; font-size: 19px; }
+        .inc-row { display: flex; align-items: center; gap: 8px; }
+        .inc-btn { width: 40px; height: 40px; background: #333; color: #fff; border: none; border-radius: 5px; font-size: 22px; font-weight: bold; }
+        .inc-value { flex: 1; text-align: center; color: #00dd00; font-family: monospace; font-weight: bold; font-size: 18px; }
 
-        select { width: 100%; padding: 12px; background: #000; color: #fff; border: 1px solid #333; border-radius: 5px; font-size: 16px; }
+        select { width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #333; border-radius: 5px; font-size: 15px; }
 
-        .reverb-box { display: flex; align-items: center; justify-content: space-between; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .reverb-box { display: flex; align-items: center; justify-content: space-between; padding: 2px 0; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #00dd00; }
-        input:checked + .slider:before { transform: translateX(24px); }
+        input:checked + .slider:before { transform: translateX(22px); }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 5px; }
-        button.action { flex: 1; padding: 16px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-weight: bold; font-size: 14px; text-transform: uppercase; cursor: pointer; }
+        .btn-group { display: flex; gap: 8px; }
+        button.action { flex: 1; padding: 14px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-weight: bold; font-size: 13px; text-transform: uppercase; }
         button.primary { background: #555; border-color: #777; }
-        button.export { background: #1a3a1a; color: #00cc00; border-color: #005500; width: 100%; }
+        button.export { background: #1a3a1a; color: #00cc00; border-color: #005500; width: 100%; margin-top: 5px; }
 
-        #status { background: #000; color: #00aa00; font-family: monospace; font-size: 13px; padding: 8px; text-align: center; border-radius: 5px; }
+        #status { background: #000; color: #00aa00; font-family: monospace; font-size: 12px; padding: 6px; text-align: center; border-radius: 5px; }
     </style>
 </head>
-<body onclick="forceLoad()">
+<body ontouchstart="unlockVoices()" onclick="unlockVoices()">
 
 <div class="container">
-    <h1>dPaul TTS <span style="font-size: 13px; opacity: 0.5;">v3.2</span></h1>
+    <h1>dPaul TTS</h1>
 
-    <div class="section">
-        <label>Text Input</label>
-        <textarea id="textInput" placeholder="TAP TO START..."></textarea>
-        <div class="btn-group">
+    <div class="section" style="display:flex; flex-direction:column; flex:1;">
+        <label>Input</label>
+        <textarea id="textInput" placeholder="TAP TO LOAD VOICES..."></textarea>
+        <div class="btn-group" style="margin-top:8px;">
             <button class="action primary" onclick="handleSpeak()">SPEAK</button>
             <button class="action" onclick="document.getElementById('textInput').value=''">CLEAR</button>
         </div>
@@ -70,8 +99,8 @@
 
     <div class="controls-grid">
         <div class="section full">
-            <label>Voice Selection</label>
-            <select id="voiceSelect" onmousedown="forceLoad()"><option value="retro">RETRO: Speak & Spell</option></select>
+            <label>Voice</label>
+            <select id="voiceSelect"><option value="retro">RETRO: Speak & Spell</option></select>
         </div>
 
         <div class="section">
@@ -102,7 +131,7 @@
     </div>
 
     <button class="action export" onclick="handleExport()">⬇ DOWNLOAD WAV</button>
-    <div id="status">Tap anywhere to load voices</div>
+    <div id="status">Tap anywhere to load English voices</div>
 </div>
 
 <script>
@@ -110,26 +139,28 @@
     const synth = window.speechSynthesis;
     let voices = [];
     let params = { rate: 1.0, pitch: 1.0 };
-    let loaded = false;
+    let isUnlocked = false;
 
-    function forceLoad() {
-        if (loaded && voices.length > 0) return;
+    function unlockVoices() {
+        if (isUnlocked) return;
+        
+        // Essential mobile hack: Play a silent sound to unlock the engine
+        const utter = new SpeechSynthesisUtterance("");
+        synth.speak(utter);
+        
         loadVoices();
+        isUnlocked = true;
     }
 
     function loadVoices() {
-        const rawVoices = synth.getVoices();
-        if (rawVoices.length === 0) {
-            // Chrome/Android fallback: trigger a tiny silent speech to "wake" the engine
-            const wake = new SpeechSynthesisUtterance("");
-            synth.speak(wake);
-            return;
-        }
+        const availableVoices = synth.getVoices();
+        if (availableVoices.length === 0) return;
 
         const voiceSelect = document.getElementById('voiceSelect');
-        voices = rawVoices.filter(v => v.lang.toLowerCase().includes('en'));
+        // Filter English
+        voices = availableVoices.filter(v => v.lang.toLowerCase().includes('en'));
         
-        // Keep Retro at top
+        // Reset and add Retro
         voiceSelect.innerHTML = '<option value="retro">RETRO: Speak & Spell</option>';
         
         voices.forEach((voice, i) => {
@@ -139,19 +170,12 @@
             voiceSelect.appendChild(opt);
         });
 
-        document.getElementById('status').textContent = "Ready (" + voices.length + " Voices)";
-        loaded = true;
+        document.getElementById('status').textContent = "Ready (" + voices.length + " English Voices)";
     }
 
-    // Modern Browsers
+    // Chrome/Safari Events
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
     
-    // Automatic Retry
-    const retry = setInterval(() => {
-        if (voices.length === 0) loadVoices();
-        else clearInterval(retry);
-    }, 1000);
-
     function adjust(type, amt) {
         params[type] = Math.max(0.1, Math.min(2.0, params[type] + amt));
         document.getElementById(type + 'Val').textContent = params[type].toFixed(1);
@@ -163,9 +187,9 @@
         if (!text) return;
 
         synth.cancel();
-        
+
         if (voiceIdx === 'retro') {
-            document.getElementById('status').textContent = "Synth... (SAM)";
+            document.getElementById('status').textContent = "Generating Retro...";
             const samConfig = { 
                 speed: Math.round(params.rate * 72), 
                 pitch: Math.round(params.pitch * 64) 
@@ -210,6 +234,7 @@
         sam.download(text, samConfig);
     }
 
+    // Initial load attempt
     loadVoices();
 </script>
 </body>
