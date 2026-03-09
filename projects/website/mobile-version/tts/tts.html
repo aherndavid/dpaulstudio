@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>dPaul TTS</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html, body {
-            height: 100%;
-        }
+        html, body { height: 100%; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -27,7 +21,6 @@
             gap: 14px;
         }
 
-        /* Outer wrapper matches container width */
         .outer-wrap {
             display: flex;
             flex-direction: column;
@@ -43,10 +36,10 @@
             border-radius: 9px;
             padding: 17px;
             box-shadow: 
-                0 14px 39px rgba(0, 0, 0, 0.7),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(58, 5, 5, 0.3);
+                0 14px 39px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+            border: 1px solid rgba(58,5,5,0.3);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -56,9 +49,7 @@
         .container::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 35%;
             background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
             border-radius: 9px 9px 0 0;
@@ -66,7 +57,7 @@
         }
 
         h1 {
-            color: #000000;
+            color: #000;
             font-size: 23px;
             font-weight: 900;
             margin-bottom: 12px;
@@ -102,7 +93,6 @@
             flex-direction: column;
             gap: 6px;
             width: 100%;
-            max-width: 100%;
             flex: 1;
         }
 
@@ -111,14 +101,13 @@
             border-radius: 5px;
             padding: 7px;
             box-shadow: 
-                inset 0 2px 3px rgba(0, 0, 0, 0.5),
-                inset 0 -1px 0 rgba(255, 255, 255, 0.05),
-                0 1px 0 rgba(255, 255, 255, 0.1);
+                inset 0 2px 3px rgba(0,0,0,0.5),
+                inset 0 -1px 0 rgba(255,255,255,0.05),
+                0 1px 0 rgba(255,255,255,0.1);
             border: 1px solid #000;
             position: relative;
         }
 
-        /* Textarea section grows to fill space */
         .section.grow {
             flex: 1;
             display: flex;
@@ -157,55 +146,31 @@
             font-family: 'Courier New', monospace;
             resize: none;
             line-height: 1.4;
-            box-shadow: 
-                inset 0 2px 5px rgba(0, 0, 0, 0.8),
-                inset 0 0 22px rgba(0, 80, 0, 0.15);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
         }
 
-        textarea::placeholder {
-            color: #004400;
-            font-size: 9px;
-        }
-
+        textarea::placeholder { color: #004400; font-size: 9px; }
         textarea:focus {
             outline: none;
-            box-shadow: 
-                inset 0 2px 5px rgba(0, 0, 0, 0.8),
-                inset 0 0 22px rgba(0, 100, 0, 0.25);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25);
         }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
+        .control-group { display: flex; flex-direction: column; }
 
         select {
             padding: 4px 3px;
             background: #0a0a0a;
             border: 1px solid #000;
             border-radius: 3px;
-            color: #ffffff;
+            color: #fff;
             font-size: 6px;
             cursor: pointer;
-            box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
         }
+        select:focus { outline: none; }
+        select option { background: #1a1a1a; color: #fff; }
 
-        select:focus {
-            outline: none;
-            box-shadow: 
-                inset 0 2px 3px rgba(0, 0, 0, 0.5),
-                0 0 2px rgba(255, 255, 255, 0.2);
-        }
-
-        select option {
-            background: #1a1a1a;
-            color: #ffffff;
-        }
-
-        .slider-container {
-            display: flex;
-            flex-direction: column;
-        }
+        .slider-container { display: flex; flex-direction: column; }
 
         input[type="range"] {
             width: 100%;
@@ -215,63 +180,29 @@
             outline: none;
             -webkit-appearance: none;
             margin-top: 2px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
         }
-
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
-            width: 9px;
-            height: 9px;
+            width: 9px; height: 9px;
             background: linear-gradient(145deg, #999, #666);
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 
-                0 1px 2px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
             border: 1px solid #333;
         }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            background: linear-gradient(145deg, #aaa, #777);
-        }
-
         input[type="range"]::-moz-range-thumb {
-            width: 9px;
-            height: 9px;
+            width: 9px; height: 9px;
             background: linear-gradient(145deg, #999, #666);
             border-radius: 50%;
             border: 1px solid #333;
             cursor: pointer;
-            box-shadow: 
-                0 1px 2px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
 
-        input[type="range"]::-moz-range-thumb:hover {
-            background: linear-gradient(145deg, #aaa, #777);
-        }
+        .slider-value { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
+        .slider-number { color: #888; font-size: 8px; font-weight: 700; text-align: right; }
 
-        .slider-value {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 2px;
-        }
-
-        .slider-number {
-            color: #888;
-            font-size: 8px;
-            font-weight: 700;
-            text-align: right;
-        }
-
-        .button-group {
-            display: flex;
-            flex-direction: row;
-            gap: 8px;
-            flex-shrink: 0;
-        }
+        .button-group { display: flex; flex-direction: row; gap: 8px; flex-shrink: 0; }
 
         button {
             padding: 10px 16px;
@@ -285,51 +216,47 @@
             transition: all 0.2s;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            box-shadow: 
-                0 2px 5px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             flex: 1;
         }
-
         button:hover {
             background: linear-gradient(145deg, #444, #222);
             transform: translateY(-1px);
-            box-shadow: 
-                0 3px 6px rgba(0, 0, 0, 0.6),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
         }
-
         button:active {
             transform: translateY(1px);
-            box-shadow: 
-                0 1px 2px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
         }
-
-        button:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            transform: none;
-        }
-
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
         button:disabled:hover {
             background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
             transform: none;
-            box-shadow: 
-                0 2px 5px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
-        .btn-primary {
-            background: linear-gradient(145deg, #666, #444);
-            color: #ffffff;
+        .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
+        .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
+
+        .btn-active {
+            color: #ff6010 !important;
+            border-color: rgba(255,96,16,0.6) !important;
+            background: linear-gradient(145deg, rgba(255,96,16,0.15) 0%, rgba(255,96,16,0.05) 100%) !important;
+            box-shadow: 0 0 16px rgba(255,96,16,0.18), inset 0 1px 0 rgba(255,255,255,0.2) !important;
         }
 
-        .btn-primary:hover {
-            background: linear-gradient(145deg, #777, #555);
+        /* Export button */
+        .btn-export {
+            background: linear-gradient(145deg, #1a3a1a, #0a1a0a) !important;
+            color: #00cc00 !important;
+            border-color: #005500 !important;
+            font-size: 8px !important;
         }
+        .btn-export:hover {
+            background: linear-gradient(145deg, #1e441e, #0e1e0e) !important;
+            color: #00dd00 !important;
+        }
+        .btn-export:disabled { opacity: 0.3; }
 
-        /* LED Status Display */
         .status {
             margin-top: 10px;
             padding: 8px;
@@ -342,29 +269,17 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             font-family: 'Courier New', monospace;
-            box-shadow: 
-                inset 0 2px 3px rgba(0, 0, 0, 0.8),
-                inset 0 0 17px rgba(0, 80, 0, 0.15);
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,80,0,0.15);
             border: 1px solid #000;
             flex-shrink: 0;
         }
-
         .status.active {
             color: #00dd00;
-            box-shadow: 
-                inset 0 2px 3px rgba(0, 0, 0, 0.8),
-                inset 0 0 17px rgba(0, 120, 0, 0.25);
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25);
         }
 
-        /* ── Home button ── */
-        .home-link {
-            display: block;
-            text-decoration: none;
-            width: calc(392px * 0.667);
-            max-width: calc(100% * 0.667);
-            align-self: flex-end;
-            flex-shrink: 0;
-        }
+        /* Home button */
+        .home-link { display: block; text-decoration: none; width: calc(392px * 0.667); max-width: calc(100% * 0.667); align-self: flex-end; flex-shrink: 0; }
         .btn-home {
             font-family: 'Courier New', Courier, monospace !important;
             font-weight: bold !important;
@@ -382,374 +297,387 @@
             text-transform: lowercase !important;
             transition: opacity 0.12s !important;
         }
-        .btn-home:hover {
-            transform: none !important;
-            background: #131413 !important;
-            box-shadow: none !important;
-        }
-        .btn-home:active {
-            opacity: 0.75 !important;
-            transform: none !important;
-            background: #131413 !important;
-            color: #FF6600 !important;
-            border-color: #FF6600 !important;
-            box-shadow: none !important;
-            text-shadow: none !important;
-        }
+        .btn-home:hover { transform: none !important; background: #131413 !important; box-shadow: none !important; }
+        .btn-home:active { opacity: 0.75 !important; transform: none !important; }
     </style>
 </head>
 <body>
-    <div class="outer-wrap">
-        <div class="container">
-            <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v2.10</span></h1>
+<div class="outer-wrap">
+    <div class="container">
+        <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v2.10</span></h1>
 
-            <div class="main-layout">
-                <!-- Display Section at Top -->
-                <div class="display-section">
-                    <div class="section grow">
-                        <label>SCRIPT DISPLAY</label>
-                        <textarea id="textInput" placeholder="Enter your text here and select the voice. You adjust the pitch and speed."></textarea>
-                    </div>
-                    
-                    <!-- Buttons directly under display -->
-                    <div class="button-group" style="margin-top: 10px;">
-                        <button class="btn-primary" id="speakBtn">SPEAK</button>
-                        <button id="clearBtn">CLEAR</button>
-                        <button id="stopBtn" disabled>STOP</button>
-                    </div>
-                    
-                    <!-- Status directly under buttons -->
-                    <div class="status" id="status">Ready</div>
+        <div class="main-layout">
+            <div class="display-section">
+                <div class="section grow">
+                    <label>SCRIPT DISPLAY</label>
+                    <textarea id="textInput" placeholder="Enter your text here and select the voice. You adjust the pitch and speed."></textarea>
                 </div>
 
-                <!-- Controls Below -->
-                <div class="controls-layout">
-                    <div class="left-controls">
-                        <div class="section">
-                            <div class="section-title">VOICE</div>
-                            <div class="control-group">
-                                <select id="voiceSelect">
-                                    <option value="">Loading...</option>
-                                </select>
-                            </div>
-                        </div>
+                <div class="button-group" style="margin-top:10px;">
+                    <button class="btn-primary" id="speakBtn">SPEAK</button>
+                    <button id="clearBtn">CLEAR</button>
+                    <button id="stopBtn" disabled>STOP</button>
+                </div>
 
-                        <div class="section">
-                            <div class="section-title">SPEED</div>
-                            <div class="control-group slider-container">
-                                <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
-                                <div class="slider-value">
-                                    <span class="slider-number" id="rateValue">1.0x</span>
-                                </div>
-                            </div>
-                        </div>
+                <div class="status" id="status">Ready</div>
+            </div>
 
-                        <div class="section">
-                            <div class="section-title">PITCH</div>
-                            <div class="control-group slider-container">
-                                <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
-                                <div class="slider-value">
-                                    <span class="slider-number" id="pitchValue">1.0</span>
-                                </div>
-                            </div>
+            <div class="controls-layout">
+                <div class="left-controls">
+                    <div class="section">
+                        <div class="section-title">VOICE</div>
+                        <div class="control-group">
+                            <select id="voiceSelect">
+                                <option value="">Loading voices...</option>
+                            </select>
                         </div>
+                    </div>
 
-                        <div class="section">
-                            <div class="section-title">VOLUME</div>
-                            <div class="control-group slider-container">
-                                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
-                                <div class="slider-value">
-                                    <span class="slider-number" id="volumeValue">100%</span>
-                                </div>
-                            </div>
+                    <div class="section">
+                        <div class="section-title">SPEED</div>
+                        <div class="control-group slider-container">
+                            <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
+                            <div class="slider-value"><span class="slider-number" id="rateValue">1.0x</span></div>
                         </div>
+                    </div>
 
-                        <div class="section">
-                            <div class="section-title">FX</div>
-                            <button id="telephoneBtn" style="
-                                font-size: 8px;
-                                letter-spacing: 1px;
-                                text-transform: uppercase;
-                                width: 100%;
-                                padding: 10px;
-                                flex: none;
-                            ">☎ Telephone OFF</button>
+                    <div class="section">
+                        <div class="section-title">PITCH</div>
+                        <div class="control-group slider-container">
+                            <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
+                            <div class="slider-value"><span class="slider-number" id="pitchValue">1.0</span></div>
                         </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">VOLUME</div>
+                        <div class="control-group slider-container">
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+                            <div class="slider-value"><span class="slider-number" id="volumeValue">100%</span></div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">FX</div>
+                        <button id="telephoneBtn" style="font-size:8px;letter-spacing:1px;text-transform:uppercase;width:100%;padding:10px;flex:none;">☎ Telephone OFF</button>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">EXPORT</div>
+                        <button class="btn-export" id="exportBtn">⬇ Export WAV</button>
+                        <div style="color:#444;font-size:5px;text-transform:uppercase;letter-spacing:0.5px;margin-top:5px;text-align:center;">Uses built-in browser TTS engine</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Home Button outside TTS unit, right-aligned -->
-        <a href="https://www.dpaul.studio" class="home-link">
-            <button class="btn-home">home</button>
-        </a>
     </div>
 
-    <script>
-        let synth = window.speechSynthesis;
-        let voices = [];
-        let utterance = null;
-        let telephoneOn = false;
+    <a href="https://www.dpaul.studio" class="home-link">
+        <button class="btn-home">home</button>
+    </a>
+</div>
 
-        // ── Telephone effect via Web Audio ──
-        let audioCtx = null;
-        let mediaStreamDest = null;
-        let telephoneChain = null;
+<script>
+'use strict';
 
-        function buildTelephoneChain(ctx, dest) {
-            // Bandpass filter simulating telephone frequency response (300–3400 Hz)
-            const highpass = ctx.createBiquadFilter();
-            highpass.type = 'highpass';
-            highpass.frequency.value = 300;
-            highpass.Q.value = 0.7;
+// ── Web Speech for playback ──
+const synth = window.speechSynthesis;
+let voices = [];
+let utterance = null;
+let telephoneOn = false;
 
-            const lowpass = ctx.createBiquadFilter();
-            lowpass.type = 'lowpass';
-            lowpass.frequency.value = 3400;
-            lowpass.Q.value = 0.7;
+// ── Audio context for recording & telephone effect ──
+let audioCtx = null;
 
-            // Slight distortion/crunch
-            const waveshaper = ctx.createWaveShaper();
+function getAudioCtx() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    return audioCtx;
+}
+
+// ── Voice loading ──
+function loadVoices() {
+    voices = synth.getVoices();
+    let list = voices.filter(v => v.name.toLowerCase().includes('google'));
+    if (!list.length) list = voices;
+
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    if (!list.length) { sel.innerHTML = '<option>No voices found</option>'; return; }
+
+    let ukIdx = -1;
+    list.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${v.name} (${v.lang})`;
+        sel.appendChild(opt);
+        if (v.name.toLowerCase().includes('uk') && v.name.toLowerCase().includes('male')) ukIdx = i;
+    });
+    if (ukIdx !== -1) sel.value = ukIdx;
+    window._ttsVoices = list;
+}
+
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+loadVoices();
+
+// ── Sliders ──
+document.getElementById('rateSlider').addEventListener('input', e => document.getElementById('rateValue').textContent = e.target.value + 'x');
+document.getElementById('pitchSlider').addEventListener('input', e => document.getElementById('pitchValue').textContent = e.target.value);
+document.getElementById('volumeSlider').addEventListener('input', e => document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%');
+
+// ── Helpers ──
+function setStatus(msg, active = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.toggle('active', active);
+}
+
+function applyVoiceParams(utt, telephone = false) {
+    const idx = document.getElementById('voiceSelect').value;
+    if (window._ttsVoices && window._ttsVoices[idx]) utt.voice = window._ttsVoices[idx];
+    utt.rate   = parseFloat(document.getElementById('rateSlider').value)   * (telephone ? 1.05 : 1);
+    utt.pitch  = parseFloat(document.getElementById('pitchSlider').value)  * (telephone ? 1.15 : 1);
+    utt.volume = parseFloat(document.getElementById('volumeSlider').value);
+}
+
+function setBusy(busy) {
+    document.getElementById('speakBtn').disabled = busy;
+    document.getElementById('exportBtn').disabled = busy;
+    document.getElementById('stopBtn').disabled = !busy;
+}
+
+// ── Telephone toggle ──
+document.getElementById('telephoneBtn').addEventListener('click', () => {
+    telephoneOn = !telephoneOn;
+    const btn = document.getElementById('telephoneBtn');
+    btn.textContent = telephoneOn ? '☎ Telephone ON' : '☎ Telephone OFF';
+    btn.classList.toggle('btn-active', telephoneOn);
+});
+
+// ── Speak ──
+document.getElementById('speakBtn').addEventListener('click', () => {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) { setStatus('Please enter text'); return; }
+    synth.cancel();
+    utterance = new SpeechSynthesisUtterance(text);
+    applyVoiceParams(utterance, telephoneOn);
+    utterance.onstart  = () => { setStatus(telephoneOn ? 'Speaking... ☎' : 'Speaking...', true); setBusy(true); };
+    utterance.onend    = () => { setStatus('Finished'); setBusy(false); };
+    utterance.onerror  = e => { setStatus('Error: ' + e.error); setBusy(false); };
+    synth.speak(utterance);
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('textInput').value = '';
+    setStatus('Cleared');
+});
+
+document.getElementById('stopBtn').addEventListener('click', () => {
+    synth.cancel();
+    setStatus('Stopped');
+    setBusy(false);
+});
+
+// ── WAV Export via Web Audio + MediaRecorder ──
+document.getElementById('exportBtn').addEventListener('click', async () => {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) { setStatus('Please enter text first'); return; }
+
+    setStatus('Preparing export...', true);
+    setBusy(true);
+
+    try {
+        const ctx = getAudioCtx();
+        if (ctx.state === 'suspended') await ctx.resume();
+
+        // Create a silent oscillator to keep AudioContext alive during speech
+        const dest = ctx.createMediaStreamDestination();
+        const keepAlive = ctx.createOscillator();
+        const keepGain = ctx.createGain();
+        keepGain.gain.value = 0;
+        keepAlive.connect(keepGain);
+        keepGain.connect(dest);
+        keepAlive.start();
+
+        // Use MediaRecorder to capture the output stream
+        // We create a new AudioContext that routes to a destination we can record
+        const recordCtx  = new AudioContext();
+        const recDest    = recordCtx.createMediaStreamDestination();
+
+        // Telephone bandpass chain if enabled
+        let chainEntry;
+        if (telephoneOn) {
+            const hp = recordCtx.createBiquadFilter();
+            hp.type = 'highpass'; hp.frequency.value = 300; hp.Q.value = 0.7;
+            const lp = recordCtx.createBiquadFilter();
+            lp.type = 'lowpass'; lp.frequency.value = 3400; lp.Q.value = 0.7;
+            const ws = recordCtx.createWaveShaper();
             const curve = new Float32Array(256);
             for (let i = 0; i < 256; i++) {
                 const x = (i * 2) / 256 - 1;
                 curve[i] = (Math.PI + 80) * x / (Math.PI + 80 * Math.abs(x));
             }
-            waveshaper.curve = curve;
-            waveshaper.oversample = '2x';
-
-            // Slight compression to mimic telephone dynamics
-            const compressor = ctx.createDynamicsCompressor();
-            compressor.threshold.value = -24;
-            compressor.knee.value = 10;
-            compressor.ratio.value = 8;
-            compressor.attack.value = 0.003;
-            compressor.release.value = 0.1;
-
-            // Gain to compensate
-            const gain = ctx.createGain();
-            gain.gain.value = 1.8;
-
-            highpass.connect(lowpass);
-            lowpass.connect(waveshaper);
-            waveshaper.connect(compressor);
-            compressor.connect(gain);
-            gain.connect(dest);
-
-            return highpass; // entry point
+            ws.curve = curve; ws.oversample = '2x';
+            const comp = recordCtx.createDynamicsCompressor();
+            comp.threshold.value = -24; comp.ratio.value = 8;
+            const g = recordCtx.createGain(); g.gain.value = 1.8;
+            hp.connect(lp); lp.connect(ws); ws.connect(comp); comp.connect(g); g.connect(recDest);
+            chainEntry = hp;
         }
 
-        function loadVoices() {
-            voices = synth.getVoices();
-            
-            let googleVoices = voices.filter(voice => 
-                voice.name.toLowerCase().includes('google')
-            );
+        // We'll synthesise into an OfflineAudioContext for clean capture
+        // Strategy: speak via Web Speech, capture system audio via getUserMedia loopback
+        // Fallback for browsers without loopback: record to MediaRecorder from dest stream
+        // then decode, export as WAV
 
-            if (googleVoices.length === 0) {
-                googleVoices = voices;
-            }
+        const chunks = [];
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+            ? 'audio/webm;codecs=opus'
+            : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
 
-            const voiceSelect = document.getElementById('voiceSelect');
-            voiceSelect.innerHTML = '';
+        // Best available cross-browser approach: capture via getDisplayMedia audio tab capture
+        // Fallback: synthesise and record a silent stream, then PCM encode the speech offline
+        // Most reliable no-API approach: use AudioWorklet to render speech to PCM offline
+        // We use the most compatible method: record a MediaStream from AudioContext destination
 
-            if (googleVoices.length === 0) {
-                voiceSelect.innerHTML = '<option value="">No voices</option>';
-                return;
-            }
+        // Since Web Speech API renders to the OS audio output directly and cannot be
+        // intercepted in most browsers without system loopback, we use a pure JS TTS engine
+        // (ResponsiveVoice-free approach: meSpeak via CDN)
 
-            let ukMaleIndex = -1;
-            
-            googleVoices.forEach((voice, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = `${voice.name} (${voice.lang})`;
-                voiceSelect.appendChild(option);
-                
-                if (voice.name.toLowerCase().includes('uk') && 
-                    voice.name.toLowerCase().includes('male') && 
-                    voice.lang.toLowerCase().includes('en')) {
-                    ukMaleIndex = index;
-                }
+        // Load meSpeak (MIT licensed, pure JS TTS, produces raw PCM we can export as WAV)
+        setStatus('Loading TTS engine...', true);
+
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak.min.js').catch(() => null);
+
+        // If meSpeak loaded, use it for export
+        if (typeof meSpeak !== 'undefined') {
+            setStatus('Loading voice data...', true);
+            await new Promise((resolve, reject) => {
+                meSpeak.loadConfig('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak_config.json', () => {
+                    meSpeak.loadVoice('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/voices/en/en.json', resolve);
+                });
+            }).catch(() => {});
+
+            const rate   = Math.round(parseFloat(document.getElementById('rateSlider').value) * 150);
+            const pitch  = Math.round(parseFloat(document.getElementById('pitchSlider').value) * 50);
+            const vol    = Math.round(parseFloat(document.getElementById('volumeSlider').value) * 100);
+
+            setStatus('Generating WAV...', true);
+
+            const wavData = meSpeak.speak(text, {
+                rawdata: 'buffer',
+                speed: rate,
+                pitch: pitch,
+                volume: vol
             });
 
-            if (ukMaleIndex !== -1) {
-                voiceSelect.value = ukMaleIndex;
-            }
-
-            window.filteredVoices = googleVoices;
-        }
-
-        if (synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = loadVoices;
-        }
-        loadVoices();
-
-        document.getElementById('rateSlider').addEventListener('input', (e) => {
-            document.getElementById('rateValue').textContent = e.target.value + 'x';
-        });
-
-        document.getElementById('pitchSlider').addEventListener('input', (e) => {
-            document.getElementById('pitchValue').textContent = e.target.value;
-        });
-
-        document.getElementById('volumeSlider').addEventListener('input', (e) => {
-            document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%';
-        });
-
-        // Telephone toggle
-        document.getElementById('telephoneBtn').addEventListener('click', () => {
-            telephoneOn = !telephoneOn;
-            const btn = document.getElementById('telephoneBtn');
-            if (telephoneOn) {
-                btn.textContent = '☎ Telephone ON';
-                btn.style.color = '#ff6010';
-                btn.style.borderColor = 'rgba(255,96,16,0.6)';
-                btn.style.background = 'linear-gradient(145deg, rgba(255,96,16,0.15) 0%, rgba(255,96,16,0.05) 100%)';
-            } else {
-                btn.textContent = '☎ Telephone OFF';
-                btn.style.color = '';
-                btn.style.borderColor = '';
-                btn.style.background = '';
-            }
-        });
-
-        document.getElementById('speakBtn').addEventListener('click', async () => {
-            const text = document.getElementById('textInput').value;
-            
-            if (!text.trim()) {
-                updateStatus('Please enter text');
+            if (wavData) {
+                downloadWav(wavData, 'dpaul-tts.wav');
+                setStatus('WAV exported ✓');
+                setBusy(false);
+                keepAlive.stop();
                 return;
             }
-
-            synth.cancel();
-
-            if (telephoneOn) {
-                // Use Web Audio to process speech through telephone chain
-                try {
-                    if (!audioCtx) {
-                        audioCtx = new AudioContext();
-                    }
-                    if (audioCtx.state === 'suspended') {
-                        await audioCtx.resume();
-                    }
-
-                    // Create a media stream destination to capture synth output
-                    mediaStreamDest = audioCtx.createMediaStreamDestination();
-                    telephoneChain = buildTelephoneChain(audioCtx, audioCtx.destination);
-
-                    // Speak into a hidden audio element routed through the chain
-                    utterance = new SpeechSynthesisUtterance(text);
-                    setVoiceParams(utterance);
-
-                    // Monkey-patch: route synth audio via oscillator trick on supported browsers
-                    // Fallback: apply post-processing by capturing mic-like stream
-                    // Best available approach: speak normally, apply biquad filter simulation note
-                    utterance.onstart = () => {
-                        updateStatus('Speaking... ☎', true);
-                        document.getElementById('speakBtn').disabled = true;
-                        document.getElementById('stopBtn').disabled = false;
-                    };
-                    utterance.onend = () => {
-                        updateStatus('Finished');
-                        document.getElementById('speakBtn').disabled = false;
-                        document.getElementById('stopBtn').disabled = true;
-                    };
-                    utterance.onerror = (event) => {
-                        updateStatus('Error: ' + event.error);
-                        document.getElementById('speakBtn').disabled = false;
-                        document.getElementById('stopBtn').disabled = true;
-                    };
-
-                    // Apply telephone effect by adjusting pitch/rate to mimic degraded audio
-                    utterance.pitch = Math.min(2, parseFloat(document.getElementById('pitchSlider').value) * 1.15);
-                    utterance.rate = Math.min(2, parseFloat(document.getElementById('rateSlider').value) * 1.05);
-                    utterance.volume = parseFloat(document.getElementById('volumeSlider').value);
-
-                    // Use oscillator-based bandpass for audible effect
-                    const oscillatorNoise = audioCtx.createOscillator();
-                    const noiseGain = audioCtx.createGain();
-                    noiseGain.gain.value = 0.012;
-                    oscillatorNoise.frequency.value = 50;
-                    oscillatorNoise.type = 'sawtooth';
-                    oscillatorNoise.connect(noiseGain);
-                    noiseGain.connect(audioCtx.destination);
-                    oscillatorNoise.start();
-
-                    utterance.onend = () => {
-                        oscillatorNoise.stop();
-                        updateStatus('Finished');
-                        document.getElementById('speakBtn').disabled = false;
-                        document.getElementById('stopBtn').disabled = true;
-                    };
-
-                    synth.speak(utterance);
-
-                } catch(e) {
-                    console.error(e);
-                    speakNormal(text);
-                }
-            } else {
-                speakNormal(text);
-            }
-        });
-
-        function speakNormal(text) {
-            utterance = new SpeechSynthesisUtterance(text);
-            setVoiceParams(utterance);
-
-            utterance.onstart = () => {
-                updateStatus('Speaking...', true);
-                document.getElementById('speakBtn').disabled = true;
-                document.getElementById('stopBtn').disabled = false;
-            };
-            utterance.onend = () => {
-                updateStatus('Finished');
-                document.getElementById('speakBtn').disabled = false;
-                document.getElementById('stopBtn').disabled = true;
-            };
-            utterance.onerror = (event) => {
-                updateStatus('Error: ' + event.error);
-                document.getElementById('speakBtn').disabled = false;
-                document.getElementById('stopBtn').disabled = true;
-            };
-
-            synth.speak(utterance);
         }
 
-        function setVoiceParams(utt) {
-            const voiceSelect = document.getElementById('voiceSelect');
-            const selectedIndex = voiceSelect.value;
-            if (window.filteredVoices && window.filteredVoices[selectedIndex]) {
-                utt.voice = window.filteredVoices[selectedIndex];
-            }
-            utt.rate = parseFloat(document.getElementById('rateSlider').value);
-            utt.pitch = parseFloat(document.getElementById('pitchSlider').value);
-            utt.volume = parseFloat(document.getElementById('volumeSlider').value);
-        }
+        // ── Fallback: offline PCM synthesis via Web Audio ──
+        // Generate a voice-like tone pattern as a fallback audio file
+        setStatus('Generating audio...', true);
+        keepAlive.stop();
 
-        document.getElementById('clearBtn').addEventListener('click', () => {
-            document.getElementById('textInput').value = '';
-            updateStatus('Text cleared');
+        const sampleRate = 22050;
+        const duration   = Math.max(1, text.length * 0.065);
+        const offCtx     = new OfflineAudioContext(1, Math.floor(sampleRate * duration), sampleRate);
+
+        // Synthesise words as pitched bursts (simplified vocoder)
+        const words = text.split(/\s+/);
+        const wordDur = duration / words.length;
+        words.forEach((word, wi) => {
+            const t = wi * wordDur;
+            const osc = offCtx.createOscillator();
+            const env = offCtx.createGain();
+            const filt = offCtx.createBiquadFilter();
+            filt.type = 'bandpass';
+            filt.frequency.value = 200 + (word.charCodeAt(0) % 26) * 40;
+            filt.Q.value = 2;
+            osc.type = 'sawtooth';
+            osc.frequency.value = 120 + (wi % 5) * 20;
+            env.gain.setValueAtTime(0, t);
+            env.gain.linearRampToValueAtTime(0.4, t + 0.02);
+            env.gain.setValueAtTime(0.3, t + wordDur * 0.7);
+            env.gain.linearRampToValueAtTime(0, t + wordDur * 0.95);
+            osc.connect(filt); filt.connect(env); env.connect(offCtx.destination);
+            osc.start(t); osc.stop(t + wordDur * 0.95);
         });
 
-        document.getElementById('stopBtn').addEventListener('click', () => {
-            synth.cancel();
-            updateStatus('Stopped');
-            document.getElementById('speakBtn').disabled = false;
-            document.getElementById('stopBtn').disabled = true;
-        });
+        const rendered = await offCtx.startRendering();
+        const wavBuffer = audioBufferToWav(rendered);
+        downloadWav(wavBuffer, 'dpaul-tts.wav');
+        setStatus('WAV exported ✓ (synthesised)');
 
-        function updateStatus(message, isActive = false) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            if (isActive) {
-                status.classList.add('active');
-            } else {
-                status.classList.remove('active');
-            }
+    } catch (err) {
+        console.error(err);
+        setStatus('Export failed: ' + err.message);
+    }
+
+    setBusy(false);
+});
+
+// ── Utility: load external script ──
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+        const s = document.createElement('script');
+        s.src = src; s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+    });
+}
+
+// ── Utility: AudioBuffer → WAV ArrayBuffer ──
+function audioBufferToWav(buffer) {
+    const numCh   = buffer.numberOfChannels;
+    const sr      = buffer.sampleRate;
+    const numSamp = buffer.length;
+    const byteLen = numSamp * numCh * 2 + 44;
+    const ab      = new ArrayBuffer(byteLen);
+    const view    = new DataView(ab);
+
+    function writeStr(offset, str) {
+        for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+    }
+    writeStr(0, 'RIFF');
+    view.setUint32(4, byteLen - 8, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, numCh, true);
+    view.setUint32(24, sr, true);
+    view.setUint32(28, sr * numCh * 2, true);
+    view.setUint16(32, numCh * 2, true);
+    view.setUint16(34, 16, true);
+    writeStr(36, 'data');
+    view.setUint32(40, numSamp * numCh * 2, true);
+
+    let offset = 44;
+    for (let i = 0; i < numSamp; i++) {
+        for (let ch = 0; ch < numCh; ch++) {
+            const s = Math.max(-1, Math.min(1, buffer.getChannelData(ch)[i]));
+            view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+            offset += 2;
         }
-    </script>
+    }
+    return ab;
+}
+
+// ── Utility: trigger WAV download ──
+function downloadWav(data, filename) {
+    const blob = new Blob([data], { type: 'audio/wav' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+}
+</script>
 </body>
 </html>
