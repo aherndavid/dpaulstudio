@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro CRT Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #131413;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+
+        .monitor-setup {
+            position: relative;
+        }
+
+        .monitor {
+            width: 400px;
+            background: linear-gradient(145deg, #D4C4A8, #B8A890);
+            border-radius: 13px 13px 7px 7px;
+            padding: 27px 20px 13px;
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.8),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        /* Ventilation slots on top */
+        .vents {
+            position: absolute;
+            top: 7px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+        }
+
+        .vent-slot {
+            width: 27px;
+            height: 3px;
+            background: #6B5D4F;
+            border-radius: 2px;
+        }
+
+        /* Screen bezel */
+        .screen-bezel {
+            background: #3a3a3a;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 
+                inset 0 4px 12px rgba(0, 0, 0, 0.6),
+                0 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        /* CRT Screen */
+        .screen {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #001a00;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .screen.off {
+            background: #0a0a0a;
+        }
+
+        .screen.off .screen-content {
+            opacity: 0;
+        }
+
+        /* Screen glow effect */
+        .screen-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(0, 255, 0, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .screen.on .screen-glow {
+            opacity: 1;
+        }
+
+        /* Startup animation */
+        @keyframes powerOn {
+            0% {
+                opacity: 0;
+                transform: scaleY(0.01) scaleX(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scaleY(0.02) scaleX(0.95);
+            }
+            80% {
+                opacity: 0.8;
+                transform: scaleY(0.8) scaleX(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scaleY(1) scaleX(1);
+            }
+        }
+
+        @keyframes powerOff {
+            0% {
+                opacity: 1;
+                transform: scaleY(1) scaleX(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scaleY(0.8) scaleX(0.98);
+                filter: brightness(1.5);
+            }
+            100% {
+                opacity: 0;
+                transform: scaleY(0.01) scaleX(0.3);
+                filter: brightness(3);
+            }
+        }
+
+        .screen-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: #00ff00;
+            padding: 20px;
+            font-size: 0.73rem;
+            line-height: 1.8;
+            opacity: 0;
+        }
+
+        .screen.on .screen-content {
+            animation: powerOn 1.5s forwards;
+        }
+
+        .screen.powering-off .screen-content {
+            animation: powerOff 0.8s forwards;
+        }
+
+        /* Scan lines */
+        .scan-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.3) 2px,
+                rgba(0, 0, 0, 0.3) 4px
+            );
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .screen.on .scan-lines {
+            opacity: 1;
+        }
+
+        /* Screen flicker */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.92; }
+        }
+
+        .screen.on .screen-content.flickering {
+            animation: flicker 0.15s;
+        }
+
+        /* Cursor blink */
+        .cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Control panel */
+        .control-panel {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0 13px;
+        }
+
+        /* Power button */
+        .power-button {
+            width: 80px;
+            height: 30px;
+            border-radius: 5px;
+            background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+            border: 2px solid #4a4a4a;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courier New', monospace;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        .power-button.on {
+            background: linear-gradient(145deg, #1a4a1a, #0d3a0d);
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.4),
+                inset 0 2px 4px rgba(0, 255, 0, 0.2),
+                0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .power-button:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Power LED */
+        .power-led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #333;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+        }
+
+        .power-led.on {
+            background: #00ff00;
+            box-shadow: 
+                0 0 7px #00ff00,
+                0 0 13px rgba(0, 255, 0, 0.5),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Brand badge */
+        .brand-badge {
+            position: absolute;
+            bottom: 7px;
+            right: 20px;
+            background: #2C2416;
+            border: 2px solid #6B5D4F;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #D4C4A8;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Screen reflection */
+        .screen-reflection {
+            position: absolute;
+            top: 13px;
+            left: 20px;
+            width: 120px;
+            height: 80px;
+            background: radial-gradient(ellipse at top left, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="monitor-setup">
+        <div class="monitor">
+            <div class="vents">
+                <div class="vent-slot"></div>
+                <div class="vent-slot"></div>
+                <div class="vent-slot"></div>
+                <div class="vent-slot"></div>
+                <div class="vent-slot"></div>
+            </div>
+
+            <div class="screen-bezel">
+                <div class="screen off" id="screen">
+                    <div class="screen-glow"></div>
+                    <div class="screen-reflection"></div>
+                    <div class="screen-content" id="screenContent">
+                        <div>SYSTEM BOOT SEQUENCE</div>
+                        <div style="margin-top: 20px;">Loading BIOS...</div>
+                        <div>Checking RAM: 640K OK</div>
+                        <div>Detecting drives...</div>
+                        <div style="margin-top: 20px;">C:\> DIR</div>
+                        <div style="margin-top: 10px;">
+                            COMMAND.COM<br>
+                            CONFIG.SYS<br>
+                            AUTOEXEC.BAT<br>
+                            DOS/<br>
+                        </div>
+                        <div style="margin-top: 20px;">C:\> <span class="cursor">_</span></div>
+                    </div>
+                    <div class="scan-lines"></div>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="power-button" id="powerButton" title="Power On/Off">POWER-ON</div>
+                <div class="power-led" id="powerLed"></div>
+            </div>
+
+            <div class="brand-badge">dPaul-Tech</div>
+        </div>
+
+    <script>
+        const screen = document.getElementById('screen');
+        const screenContent = document.getElementById('screenContent');
+        const powerButton = document.getElementById('powerButton');
+        const powerLed = document.getElementById('powerLed');
+        
+        let isOn = false;
+        let flickerInterval = null;
+        let audioContext = null;
+        let autoPowerOffTimer = null;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // CRT Power On Sound
+        function playCRTPowerOn() {
+            initAudio();
+            
+            const duration = 1.5;
+            const now = audioContext.currentTime;
+            
+            // Create multiple oscillators for complex sound
+            // High frequency whine (degaussing coil)
+            const whine = audioContext.createOscillator();
+            const whineGain = audioContext.createGain();
+            whine.frequency.setValueAtTime(8000, now);
+            whine.frequency.exponentialRampToValueAtTime(12000, now + 0.3);
+            whine.frequency.exponentialRampToValueAtTime(2000, now + 0.8);
+            whine.type = 'sawtooth';
+            whine.connect(whineGain);
+            whineGain.connect(audioContext.destination);
+            whineGain.gain.setValueAtTime(0, now);
+            whineGain.gain.linearRampToValueAtTime(0.15, now + 0.1);
+            whineGain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+            whine.start(now);
+            whine.stop(now + 0.8);
+            
+            // Magnetic click/thump
+            const click = audioContext.createOscillator();
+            const clickGain = audioContext.createGain();
+            click.frequency.setValueAtTime(80, now);
+            click.type = 'sine';
+            click.connect(clickGain);
+            clickGain.connect(audioContext.destination);
+            clickGain.gain.setValueAtTime(0.4, now);
+            clickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            click.start(now);
+            click.stop(now + 0.15);
+            
+            // Electrical hum (transformer)
+            const hum = audioContext.createOscillator();
+            const humGain = audioContext.createGain();
+            hum.frequency.setValueAtTime(120, now + 0.2); // 60Hz mains hum
+            hum.type = 'sine';
+            hum.connect(humGain);
+            humGain.connect(audioContext.destination);
+            humGain.gain.setValueAtTime(0, now + 0.2);
+            humGain.gain.linearRampToValueAtTime(0.08, now + 0.5);
+            humGain.gain.setValueAtTime(0.08, now + 1.2);
+            humGain.gain.linearRampToValueAtTime(0.03, now + duration);
+            hum.start(now + 0.2);
+            hum.stop(now + duration);
+            
+            // Static/fizz
+            const bufferSize = audioContext.sampleRate * 0.3;
+            const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioContext.createBufferSource();
+            const noiseGain = audioContext.createGain();
+            const noiseFilter = audioContext.createBiquadFilter();
+            noiseFilter.type = 'highpass';
+            noiseFilter.frequency.value = 3000;
+            noise.buffer = noiseBuffer;
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioContext.destination);
+            noiseGain.gain.setValueAtTime(0, now + 0.3);
+            noiseGain.gain.linearRampToValueAtTime(0.1, now + 0.4);
+            noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+            noise.start(now + 0.3);
+        }
+
+        // CRT Power Off Sound
+        function playCRTPowerOff() {
+            initAudio();
+            
+            const duration = 0.8;
+            const now = audioContext.currentTime;
+            
+            // Collapsing magnetic field sound
+            const collapse = audioContext.createOscillator();
+            const collapseGain = audioContext.createGain();
+            collapse.frequency.setValueAtTime(5000, now);
+            collapse.frequency.exponentialRampToValueAtTime(100, now + 0.5);
+            collapse.type = 'sawtooth';
+            collapse.connect(collapseGain);
+            collapseGain.connect(audioContext.destination);
+            collapseGain.gain.setValueAtTime(0.2, now);
+            collapseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+            collapse.start(now);
+            collapse.stop(now + 0.5);
+            
+            // Discharge pop
+            const pop = audioContext.createOscillator();
+            const popGain = audioContext.createGain();
+            pop.frequency.setValueAtTime(150, now + 0.1);
+            pop.type = 'sine';
+            pop.connect(popGain);
+            popGain.connect(audioContext.destination);
+            popGain.gain.setValueAtTime(0.3, now + 0.1);
+            popGain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            pop.start(now + 0.1);
+            pop.stop(now + 0.25);
+            
+            // Residual hum fading
+            const fadeHum = audioContext.createOscillator();
+            const fadeHumGain = audioContext.createGain();
+            fadeHum.frequency.setValueAtTime(120, now);
+            fadeHum.type = 'sine';
+            fadeHum.connect(fadeHumGain);
+            fadeHumGain.connect(audioContext.destination);
+            fadeHumGain.gain.setValueAtTime(0.05, now);
+            fadeHumGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+            fadeHum.start(now);
+            fadeHum.stop(now + duration);
+        }
+
+        function powerOn() {
+            initAudio();
+            isOn = true;
+            screen.classList.remove('off', 'powering-off');
+            screen.classList.add('on');
+            powerLed.classList.add('on');
+            powerButton.classList.add('on');
+            
+            playCRTPowerOn();
+            
+            // Clear any existing timer
+            if (autoPowerOffTimer) {
+                clearTimeout(autoPowerOffTimer);
+            }
+            
+            // Set auto power-off timer for 20 seconds
+            autoPowerOffTimer = setTimeout(() => {
+                if (isOn) {
+                    powerOff();
+                }
+            }, 20000); // 20 seconds
+            
+            // Start random flickering after startup
+            setTimeout(() => {
+                if (isOn) {
+                    startFlickering();
+                }
+            }, 2000);
+        }
+
+        function powerOff() {
+            isOn = false;
+            screen.classList.remove('on');
+            screen.classList.add('powering-off');
+            powerLed.classList.remove('on');
+            powerButton.classList.remove('on');
+            
+            playCRTPowerOff();
+            
+            stopFlickering();
+            
+            // Clear auto power-off timer
+            if (autoPowerOffTimer) {
+                clearTimeout(autoPowerOffTimer);
+                autoPowerOffTimer = null;
+            }
+            
+            // Remove powering-off class after animation
+            setTimeout(() => {
+                screen.classList.remove('powering-off');
+                screen.classList.add('off');
+            }, 800);
+        }
+
+        function startFlickering() {
+            stopFlickering();
+            flickerInterval = setInterval(() => {
+                if (isOn && Math.random() > 0.7) { // 30% chance of flicker
+                    screenContent.classList.add('flickering');
+                    setTimeout(() => {
+                        screenContent.classList.remove('flickering');
+                    }, 150);
+                }
+            }, 3000 + Math.random() * 7000); // Random interval between 3-10 seconds
+        }
+
+        function stopFlickering() {
+            if (flickerInterval) {
+                clearInterval(flickerInterval);
+                flickerInterval = null;
+            }
+        }
+
+        powerButton.addEventListener('click', () => {
+            if (isOn) {
+                powerOff();
+            } else {
+                powerOn();
+            }
+        });
+
+        // Start with monitor off
+        screen.classList.add('off');
+    </script>
+</body>
+</html>
