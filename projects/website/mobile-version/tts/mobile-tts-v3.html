@@ -163,3 +163,79 @@
             margin-top: 8px;
             padding: 5px;
             background: #000;
+            color: #00aa00;
+            font-size: 10px;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        select {
+            width: 100%;
+            padding: 5px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #333;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="outer-wrap">
+    <div class="container">
+        <h1>dPaul TTS <span style="font-size:10px; opacity:0.6;">v2.10</span></h1>
+
+        <div class="main-layout">
+            <div class="display-section">
+                <div class="section grow">
+                    <label>SCRIPT DISPLAY</label>
+                    <textarea id="textInput" placeholder="Enter text..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" id="speakBtn">SPEAK</button>
+                    <button id="clearBtn">CLEAR</button>
+                    <button id="stopBtn" disabled>STOP</button>
+                </div>
+                <div class="status" id="status">Ready</div>
+            </div>
+
+            <div class="controls-layout">
+                <div class="section full-width">
+                    <div class="section-title">VOICE</div>
+                    <select id="voiceSelect"><option>Loading...</option></select>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">SPEED</div>
+                    <div class="inc-row">
+                        <button class="inc-btn" id="rateDown">−</button>
+                        <div class="inc-value" id="rateDisplay">1.0×</div>
+                        <button class="inc-btn" id="rateUp">+</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">PITCH</div>
+                    <div class="inc-row">
+                        <button class="inc-btn" id="pitchDown">−</button>
+                        <div class="inc-value" id="pitchDisplay">1.0</div>
+                        <button class="inc-btn" id="pitchUp">+</button>
+                    </div>
+                </div>
+
+                <div class="section full-width">
+                    <button class="btn-export" id="exportBtn" style="width:100%">⬇ Export WAV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Paste the JavaScript logic from the previous response here.
+// I have kept IDs like 'speakBtn', 'rateDown', etc. identical so the logic works.
+</script>
+
+</body>
+</html>
