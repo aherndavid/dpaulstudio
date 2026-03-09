@@ -26,7 +26,7 @@
             width: 100%;
             max-width: 392px;
             gap: 14px;
-            flex: 1;
+            flex: 2;
         }
 
         .container {
@@ -197,12 +197,6 @@
         .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
         .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
 
-        .btn-active {
-            color: #ff6010 !important;
-            border-color: rgba(255,96,16,0.6) !important;
-            background: linear-gradient(145deg, rgba(255,96,16,0.2), rgba(255,96,16,0.08)) !important;
-        }
-
         .btn-export {
             background: linear-gradient(145deg, #1a3a1a, #0a1a0a) !important;
             color: #00cc00 !important;
@@ -236,7 +230,6 @@
 
         <div class="main-layout">
 
-            <!-- Text input -->
             <div class="display-section">
                 <div class="section grow">
                     <label>SCRIPT DISPLAY</label>
@@ -252,17 +245,14 @@
                 <div class="status" id="status">Ready</div>
             </div>
 
-            <!-- Controls -->
             <div class="controls-layout">
                 <div class="left-controls">
 
-                    <!-- Voice -->
                     <div class="section">
                         <div class="section-title">VOICE</div>
                         <select id="voiceSelect"><option value="">Loading voices...</option></select>
                     </div>
 
-                    <!-- Speed -->
                     <div class="section">
                         <div class="section-title">SPEED</div>
                         <div class="inc-row">
@@ -272,7 +262,6 @@
                         </div>
                     </div>
 
-                    <!-- Pitch -->
                     <div class="section">
                         <div class="section-title">PITCH</div>
                         <div class="inc-row">
@@ -282,7 +271,6 @@
                         </div>
                     </div>
 
-                    <!-- Volume -->
                     <div class="section">
                         <div class="section-title">VOLUME</div>
                         <div class="inc-row">
@@ -292,13 +280,6 @@
                         </div>
                     </div>
 
-                    <!-- FX -->
-                    <div class="section">
-                        <div class="section-title">FX</div>
-                        <button id="telephoneBtn" style="width:100%;padding:10px;flex:none;">☎ Telephone OFF</button>
-                    </div>
-
-                    <!-- Export -->
                     <div class="section">
                         <div class="section-title">EXPORT</div>
                         <button class="btn-export" id="exportBtn">⬇ Export WAV</button>
@@ -349,7 +330,6 @@ document.getElementById('volUp').addEventListener('click',     () => step('volum
 
 // ── Voices ──
 const synth = window.speechSynthesis;
-let telephoneOn = false;
 
 function loadVoices() {
     let all = synth.getVoices();
@@ -392,118 +372,21 @@ function getVoice() {
     return (window._ttsVoices && window._ttsVoices[idx]) ? window._ttsVoices[idx] : null;
 }
 
-// ── Telephone effect via Web Audio ──
-// We capture Web Speech output by routing it through an AudioContext destination
-// using a MediaStream from the speech synth piped through a hidden <audio> element.
-// This is the most compatible approach across Chrome/Safari/Firefox.
-
-let audioCtx = null;
-
-function getCtx() {
-    if (!audioCtx || audioCtx.state === 'closed') audioCtx = new AudioContext();
-    return audioCtx;
-}
-
-function buildTelChain(ctx, destination) {
-    // Classic telephone bandpass: 300 Hz – 3400 Hz
-    const hp = ctx.createBiquadFilter();
-    hp.type = 'highpass'; hp.frequency.value = 300; hp.Q.value = 0.5;
-
-    const lp = ctx.createBiquadFilter();
-    lp.type = 'lowpass'; lp.frequency.value = 3400; lp.Q.value = 0.5;
-
-    // Gentle distortion / crunch
-    const ws = ctx.createWaveShaper();
-    const n = 256, curve = new Float32Array(n);
-    for (let i = 0; i < n; i++) {
-        const x = (i * 2) / n - 1;
-        curve[i] = (3 + 60) * x / (Math.PI + 60 * Math.abs(x));
-    }
-    ws.curve = curve; ws.oversample = '4x';
-
-    // Compressor to squash dynamics like a phone line
-    const comp = ctx.createDynamicsCompressor();
-    comp.threshold.value = -20; comp.knee.value = 6;
-    comp.ratio.value = 10; comp.attack.value = 0.002; comp.release.value = 0.08;
-
-    // Slight gain boost to compensate for filtering loss
-    const gain = ctx.createGain();
-    gain.gain.value = 2.2;
-
-    // Add a tiny 50 Hz hum (phone line noise)
-    const hum = ctx.createOscillator();
-    const humGain = ctx.createGain();
-    hum.frequency.value = 50; hum.type = 'sine';
-    humGain.gain.value = 0.008;
-    hum.connect(humGain); humGain.connect(destination);
-    hum.start();
-
-    hp.connect(lp); lp.connect(ws); ws.connect(comp); comp.connect(gain); gain.connect(destination);
-    return { entry: hp, hum };
-}
-
-// ── Speak with optional telephone effect ──
-// The telephone effect works by routing the speech through Web Audio filters.
-// We achieve this by capturing the browser's audio output using a loopback
-// AudioContext + MediaStream approach, which works in Chrome.
-// On Safari/Firefox the filters are applied via pitch/rate adjustments as a fallback.
-
-async function speakWithEffect(text) {
+// ── Speak ──
+function speakWithEffect(text) {
     synth.cancel();
-
-    if (!telephoneOn) {
-        // Plain speech
-        const utt = new SpeechSynthesisUtterance(text);
-        utt.voice  = getVoice();
-        utt.rate   = params.rate.val;
-        utt.pitch  = params.pitch.val;
-        utt.volume = params.volume.val;
-        utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
-        utt.onend   = () => { setStatus('Finished'); setBusy(false); };
-        utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
-        synth.speak(utt);
-        return;
-    }
-
-    // Telephone mode — use Web Audio context to process audio
-    try {
-        const ctx = getCtx();
-        if (ctx.state === 'suspended') await ctx.resume();
-
-        // Build the filter chain connected to the audio output
-        const chain = buildTelChain(ctx, ctx.destination);
-
-        // Speak with modified params to complement the audio processing
-        const utt = new SpeechSynthesisUtterance(text);
-        utt.voice  = getVoice();
-        // Slight adjustments to complement the bandpass filtering
-        utt.rate   = Math.min(2, params.rate.val * 1.05);
-        utt.pitch  = Math.min(2, params.pitch.val * 1.1);
-        utt.volume = params.volume.val;
-
-        utt.onstart = () => { setStatus('Speaking... ☎', true); setBusy(true); };
-        utt.onend   = () => {
-            try { chain.hum.stop(); } catch(e) {}
-            setStatus('Finished'); setBusy(false);
-        };
-        utt.onerror = e => {
-            try { chain.hum.stop(); } catch(err) {}
-            setStatus('Error: ' + e.error); setBusy(false);
-        };
-
-        synth.speak(utt);
-
-    } catch(e) {
-        console.warn('Telephone effect failed, falling back:', e);
-        // Fallback: speak normally
-        const utt = new SpeechSynthesisUtterance(text);
-        utt.voice = getVoice();
-        utt.rate = params.rate.val; utt.pitch = params.pitch.val; utt.volume = params.volume.val;
-        utt.onstart = () => { setStatus('Speaking... ☎', true); setBusy(true); };
-        utt.onend   = () => { setStatus('Finished'); setBusy(false); };
-        utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
-        synth.speak(utt);
-    }
+    
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.voice  = getVoice();
+    utt.rate   = params.rate.val;
+    utt.pitch  = params.pitch.val;
+    utt.volume = params.volume.val;
+    
+    utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
+    utt.onend   = () => { setStatus('Finished'); setBusy(false); };
+    utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
+    
+    synth.speak(utt);
 }
 
 // ── Button events ──
@@ -522,13 +405,6 @@ document.getElementById('stopBtn').addEventListener('click', () => {
     synth.cancel();
     setStatus('Stopped');
     setBusy(false);
-});
-
-document.getElementById('telephoneBtn').addEventListener('click', () => {
-    telephoneOn = !telephoneOn;
-    const btn = document.getElementById('telephoneBtn');
-    btn.textContent = telephoneOn ? '☎ Telephone ON' : '☎ Telephone OFF';
-    btn.classList.toggle('btn-active', telephoneOn);
 });
 
 // ── WAV Export ──
