@@ -54,14 +54,14 @@
         #status { background: #000; color: #00aa00; font-family: monospace; font-size: 13px; padding: 8px; text-align: center; border-radius: 5px; }
     </style>
 </head>
-<body>
+<body onclick="forceLoad()">
 
 <div class="container">
-    <h1>dPaul TTS <span style="font-size: 13px; opacity: 0.5;">v3.1</span></h1>
+    <h1>dPaul TTS <span style="font-size: 13px; opacity: 0.5;">v3.2</span></h1>
 
     <div class="section">
         <label>Text Input</label>
-        <textarea id="textInput" placeholder="TYPE HERE..."></textarea>
+        <textarea id="textInput" placeholder="TAP TO START..."></textarea>
         <div class="btn-group">
             <button class="action primary" onclick="handleSpeak()">SPEAK</button>
             <button class="action" onclick="document.getElementById('textInput').value=''">CLEAR</button>
@@ -71,11 +71,11 @@
     <div class="controls-grid">
         <div class="section full">
             <label>Voice Selection</label>
-            <select id="voiceSelect"><option>Loading English Voices...</option></select>
+            <select id="voiceSelect" onmousedown="forceLoad()"><option value="retro">RETRO: Speak & Spell</option></select>
         </div>
 
         <div class="section">
-            <label id="speedLabel">Speed</label>
+            <label>Speed</label>
             <div class="inc-row">
                 <button class="inc-btn" onclick="adjust('rate', -0.1)">-</button>
                 <div class="inc-value" id="rateVal">1.0</div>
@@ -84,7 +84,7 @@
         </div>
 
         <div class="section">
-            <label id="pitchLabel">Pitch</label>
+            <label>Pitch</label>
             <div class="inc-row">
                 <button class="inc-btn" onclick="adjust('pitch', -0.1)">-</button>
                 <div class="inc-value" id="pitchVal">1.0</div>
@@ -102,7 +102,7 @@
     </div>
 
     <button class="action export" onclick="handleExport()">⬇ DOWNLOAD WAV</button>
-    <div id="status">System Ready</div>
+    <div id="status">Tap anywhere to load voices</div>
 </div>
 
 <script>
@@ -110,25 +110,47 @@
     const synth = window.speechSynthesis;
     let voices = [];
     let params = { rate: 1.0, pitch: 1.0 };
+    let loaded = false;
+
+    function forceLoad() {
+        if (loaded && voices.length > 0) return;
+        loadVoices();
+    }
 
     function loadVoices() {
         const rawVoices = synth.getVoices();
+        if (rawVoices.length === 0) {
+            // Chrome/Android fallback: trigger a tiny silent speech to "wake" the engine
+            const wake = new SpeechSynthesisUtterance("");
+            synth.speak(wake);
+            return;
+        }
+
         const voiceSelect = document.getElementById('voiceSelect');
-        // Filter: English only + Sam Retro
-        voices = rawVoices.filter(v => v.lang.startsWith('en'));
+        voices = rawVoices.filter(v => v.lang.toLowerCase().includes('en'));
         
+        // Keep Retro at top
         voiceSelect.innerHTML = '<option value="retro">RETRO: Speak & Spell</option>';
+        
         voices.forEach((voice, i) => {
             const opt = document.createElement('option');
             opt.value = i;
             opt.textContent = `${voice.name} (${voice.lang})`;
             voiceSelect.appendChild(opt);
         });
-        document.getElementById('status').textContent = "English Voices: " + voices.length;
+
+        document.getElementById('status').textContent = "Ready (" + voices.length + " Voices)";
+        loaded = true;
     }
 
+    // Modern Browsers
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
-    setInterval(() => { if(voices.length === 0) loadVoices(); }, 1000);
+    
+    // Automatic Retry
+    const retry = setInterval(() => {
+        if (voices.length === 0) loadVoices();
+        else clearInterval(retry);
+    }, 1000);
 
     function adjust(type, amt) {
         params[type] = Math.max(0.1, Math.min(2.0, params[type] + amt));
@@ -141,15 +163,13 @@
         if (!text) return;
 
         synth.cancel();
-        document.getElementById('status').textContent = "Speaking...";
-
+        
         if (voiceIdx === 'retro') {
-            // Convert params (0.1-2.0) to SAM scale (20-250)
+            document.getElementById('status').textContent = "Synth... (SAM)";
             const samConfig = { 
                 speed: Math.round(params.rate * 72), 
                 pitch: Math.round(params.pitch * 64) 
             };
-            
             const buf = await sam.buf(text, samConfig);
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const source = audioCtx.createBufferSource();
@@ -173,6 +193,7 @@
             }
             source.start();
         } else {
+            document.getElementById('status').textContent = "Speaking...";
             const utter = new SpeechSynthesisUtterance(text);
             utter.voice = voices[voiceIdx];
             utter.rate = params.rate;
