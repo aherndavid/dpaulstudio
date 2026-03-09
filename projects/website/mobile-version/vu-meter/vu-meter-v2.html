@@ -63,8 +63,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
   flex-shrink: 0;
+  background: #000;
+  border-radius: 6px;
+  padding: 12px 16px 10px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .db-display {
@@ -84,9 +88,9 @@ body {
 .db-unit {
   font-size: 13px;
   letter-spacing: 6px;
-  color: #4a5055;
+  color: #ffffff;
   text-align: center;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+  text-shadow: none;
 }
 
 /* ── Segment bar ── */
@@ -132,6 +136,10 @@ body {
   gap: 8px;
   overflow: hidden;
   min-height: 0;
+  background: #000;
+  border-radius: 6px;
+  padding: 12px 14px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .peak-header {
@@ -144,15 +152,15 @@ body {
 .peak-title {
   font-size: 11px;
   letter-spacing: 3px;
-  color: #3a3f44;
+  color: #ffffff;
   text-transform: none;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+  text-shadow: none;
 }
 
 .peak-max {
   font-size: 13px;
   letter-spacing: 2px;
-  color: #505a60;
+  color: #aaaaaa;
 }
 .peak-max span {
   color: #ff6010;
@@ -174,12 +182,12 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  background: rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.05);
   border-radius: 4px;
   border-left: 3px solid #ff6010;
   animation: fadeIn 0.2s ease;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15), 0 1px 0 rgba(255,255,255,0.2);
+  box-shadow: none;
 }
 .peak-row.high { border-left-color: #ffaa00; }
 .peak-row.danger { border-left-color: #ff1830; }
@@ -199,13 +207,13 @@ body {
 
 .peak-row-time {
   font-size: 11px;
-  color: #606a70;
+  color: #666666;
   letter-spacing: 1px;
 }
 
 .peak-empty {
   font-size: 11px;
-  color: #606a70;
+  color: #444444;
   letter-spacing: 2px;
   text-align: center;
   padding: 16px 0;
