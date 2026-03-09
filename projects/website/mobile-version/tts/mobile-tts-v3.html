@@ -2,517 +2,164 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>dPaul TTS</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body { 
+            height: 100%; 
+            overflow: hidden; /* Prevents bouncing/scrolling on mobile */
+        }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #131413;
-            min-height: 100dvh;
-            padding: 20px 15px;
+            /* svh ensures it fits even when browser toolbars are visible */
+            height: 100svh; 
+            padding: 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 14px;
         }
 
         .outer-wrap {
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-width: 392px;
-            gap: 14px;
-            flex: 2;
+            max-width: 400px; /* Limits width on tablets/desktops */
+            height: 100%;
+            max-height: 700px; /* Keeps the UI tight and "app-like" */
+            gap: 10px;
         }
 
         .container {
             width: 100%;
             background: linear-gradient(145deg, #4a0a0a, #6a1010);
-            border-radius: 9px;
-            padding: 17px;
-            box-shadow: 0 14px 39px rgba(0,0,0,0.7),
-                        inset 0 1px 0 rgba(255,255,255,0.1),
-                        inset 0 -1px 0 rgba(0,0,0,0.3);
-            border: 1px solid rgba(58,5,5,0.3);
-            position: relative;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
             flex: 1;
-        }
-
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 35%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
-            border-radius: 9px 9px 0 0;
-            pointer-events: none;
+            overflow: hidden;
         }
 
         h1 {
             color: #000;
-            font-size: 23px;
+            font-size: 22px;
             font-weight: 900;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-            text-transform: none;
-            position: relative;
-            font-family: Impact, 'Arial Black', sans-serif;
-            flex-shrink: 0;
+            margin-bottom: 10px;
+            font-family: Impact, sans-serif;
+            text-align: center;
         }
 
-        .main-layout { display: flex; flex-direction: column; gap: 10px; flex: 1; }
-        .display-section { width: 100%; display: flex; flex-direction: column; }
-        .controls-layout { display: flex; gap: 10px; justify-content: center; flex: 1; }
-        .left-controls { display: flex; flex-direction: column; gap: 6px; width: 100%; flex: 1; }
+        .main-layout { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            flex: 1; 
+            min-height: 0; /* Important for nested flex scrolling */
+        }
+
+        .display-section { 
+            display: flex; 
+            flex-direction: column; 
+            flex: 1.5; /* Gives more room to the text area */
+        }
 
         .section {
             background: #0a0a0a;
-            border-radius: 5px;
-            padding: 7px;
-            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5),
-                        inset 0 -1px 0 rgba(255,255,255,0.05),
-                        0 1px 0 rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px;
             border: 1px solid #000;
-            position: relative;
         }
 
-        .section.grow { flex: 1; display: flex; flex-direction: column; }
+        .section.grow { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
 
-        .section-title {
+        label, .section-title {
             color: #888;
-            font-size: 18px;
+            font-size: 10px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        label {
-            display: block;
-            color: #666;
-            font-size: 9px;
-            font-weight: 700;
-            margin-bottom: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         textarea {
             width: 100%;
             flex: 1;
-            min-height: 120px;
             padding: 10px;
             background: #001a00;
             border: 1px solid #000;
-            border-radius: 3px;
+            border-radius: 4px;
             color: #00dd00;
-            font-size: 11px;
+            font-size: 14px; /* 14px+ prevents auto-zoom on iPhone input focus */
             font-family: 'Courier New', monospace;
             resize: none;
-            line-height: 1.4;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
         }
-        textarea::placeholder { color: #004400; font-size: 9px; }
-        textarea:focus { outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25); }
 
-        select {
-            padding: 5px 4px;
-            background: #0a0a0a;
-            border: 1px solid #000;
-            border-radius: 3px;
-            color: #fff;
-            font-size: 9px;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
+        /* Controls Grid for Mobile */
+        .controls-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
-        select:focus { outline: none; }
-        select option { background: #1a1a1a; color: #fff; }
 
-        /* ── Increment control ── */
+        .full-width { grid-column: span 2; }
+
         .inc-row {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
 
         .inc-btn {
-            width: 32px !important;
-            height: 32px !important;
-            min-height: unset !important;
-            padding: 0 !important;
-            font-size: 18px !important;
-            font-weight: 900 !important;
-            flex: none !important;
-            border-radius: 4px !important;
-            line-height: 1 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+            width: 30px;
+            height: 30px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
         }
 
         .inc-value {
             flex: 1;
             text-align: center;
             color: #00dd00;
-            font-size: 14px;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-            background: #001a00;
-            border: 1px solid #000;
-            border-radius: 3px;
-            padding: 4px 0;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+            font-family: monospace;
+            background: #000;
+            font-size: 12px;
         }
 
-        /* ── Buttons ── */
-        .button-group { display: flex; flex-direction: row; gap: 8px; flex-shrink: 0; }
+        .button-group { 
+            display: flex; 
+            gap: 5px; 
+            margin-top: 8px;
+        }
 
         button {
-            padding: 10px 16px;
-            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
-            border: 1px solid #000;
-            border-radius: 3px;
-            color: #888;
-            font-size: 9px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.15s;
-            letter-spacing: 0.5px;
+            padding: 12px;
+            background: #222;
+            color: #ccc;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
             text-transform: uppercase;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             flex: 1;
         }
-        button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
-        button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
-        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-        button:disabled:hover { background: linear-gradient(145deg, #3a3a3a, #1a1a1a); transform: none; }
 
-        .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
-        .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
-
-        .btn-export {
-            background: linear-gradient(145deg, #1a3a1a, #0a1a0a) !important;
-            color: #00cc00 !important;
-            border-color: #005500 !important;
-        }
-        .btn-export:hover { background: linear-gradient(145deg, #1e441e, #0e1e0e) !important; color: #00dd00 !important; }
+        .btn-primary { background: #444; color: #fff; }
+        .btn-export { background: #1a3a1a; color: #00cc00; }
 
         .status {
-            margin-top: 10px;
-            padding: 8px;
-            background: #001a00;
-            border-radius: 3px;
-            text-align: center;
-            color: #00aa00;
-            font-size: 9px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-family: 'Courier New', monospace;
-            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,80,0,0.15);
-            border: 1px solid #000;
-            flex-shrink: 0;
-        }
-        .status.active { color: #00dd00; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25); }
-    </style>
-</head>
-<body>
-<div class="outer-wrap">
-    <div class="container">
-        <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v2.10</span></h1>
-
-        <div class="main-layout">
-
-            <div class="display-section">
-                <div class="section grow">
-                    <label>SCRIPT DISPLAY</label>
-                    <textarea id="textInput" placeholder="Enter your text here and select the voice. Adjust pitch and speed."></textarea>
-                </div>
-
-                <div class="button-group" style="margin-top:10px;">
-                    <button class="btn-primary" id="speakBtn">SPEAK</button>
-                    <button id="clearBtn">CLEAR</button>
-                    <button id="stopBtn" disabled>STOP</button>
-                </div>
-
-                <div class="status" id="status">Ready</div>
-            </div>
-
-            <div class="controls-layout">
-                <div class="left-controls">
-
-                    <div class="section">
-                        <div class="section-title">VOICE</div>
-                        <select id="voiceSelect"><option value="">Loading voices...</option></select>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">SPEED</div>
-                        <div class="inc-row">
-                            <button class="inc-btn" id="rateDown">−</button>
-                            <div class="inc-value" id="rateDisplay">1.0×</div>
-                            <button class="inc-btn" id="rateUp">+</button>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">PITCH</div>
-                        <div class="inc-row">
-                            <button class="inc-btn" id="pitchDown">−</button>
-                            <div class="inc-value" id="pitchDisplay">1.0</div>
-                            <button class="inc-btn" id="pitchUp">+</button>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">VOLUME</div>
-                        <div class="inc-row">
-                            <button class="inc-btn" id="volDown">−</button>
-                            <div class="inc-value" id="volDisplay">100%</div>
-                            <button class="inc-btn" id="volUp">+</button>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">EXPORT</div>
-                        <button class="btn-export" id="exportBtn">⬇ Export WAV</button>
-                        <div style="color:#444;font-size:7px;text-transform:uppercase;letter-spacing:0.5px;margin-top:5px;text-align:center;">Client-side · no upload needed</div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-'use strict';
-
-// ── Parameter state ──
-const params = {
-    rate:   { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
-    pitch:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
-    volume: { val: 1.0, min: 0.0, max: 1.0, step: 0.05 }
-};
-
-function fmt(key) {
-    const v = params[key].val;
-    if (key === 'rate')   return v.toFixed(1) + '×';
-    if (key === 'pitch')  return v.toFixed(1);
-    if (key === 'volume') return Math.round(v * 100) + '%';
-}
-
-function updateDisplay(key) {
-    const ids = { rate: 'rateDisplay', pitch: 'pitchDisplay', volume: 'volDisplay' };
-    document.getElementById(ids[key]).textContent = fmt(key);
-}
-
-function step(key, dir) {
-    const p = params[key];
-    p.val = Math.round((p.val + dir * p.step) * 1000) / 1000;
-    p.val = Math.max(p.min, Math.min(p.max, p.val));
-    updateDisplay(key);
-}
-
-document.getElementById('rateDown').addEventListener('click',  () => step('rate', -1));
-document.getElementById('rateUp').addEventListener('click',    () => step('rate', +1));
-document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
-document.getElementById('pitchUp').addEventListener('click',   () => step('pitch', +1));
-document.getElementById('volDown').addEventListener('click',   () => step('volume', -1));
-document.getElementById('volUp').addEventListener('click',     () => step('volume', +1));
-
-// ── Voices ──
-const synth = window.speechSynthesis;
-
-function loadVoices() {
-    let all = synth.getVoices();
-    let list = all.filter(v => v.name.toLowerCase().includes('google'));
-    if (!list.length) list = all;
-
-    const sel = document.getElementById('voiceSelect');
-    sel.innerHTML = '';
-    if (!list.length) { sel.innerHTML = '<option>No voices found</option>'; return; }
-
-    let ukIdx = -1;
-    list.forEach((v, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = `${v.name} (${v.lang})`;
-        sel.appendChild(opt);
-        if (v.name.toLowerCase().includes('uk') && v.name.toLowerCase().includes('male')) ukIdx = i;
-    });
-    if (ukIdx !== -1) sel.value = ukIdx;
-    window._ttsVoices = list;
-}
-if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
-loadVoices();
-
-// ── Helpers ──
-function setStatus(msg, active = false) {
-    const el = document.getElementById('status');
-    el.textContent = msg;
-    el.classList.toggle('active', active);
-}
-
-function setBusy(busy) {
-    document.getElementById('speakBtn').disabled = busy;
-    document.getElementById('exportBtn').disabled = busy;
-    document.getElementById('stopBtn').disabled = !busy;
-}
-
-function getVoice() {
-    const idx = document.getElementById('voiceSelect').value;
-    return (window._ttsVoices && window._ttsVoices[idx]) ? window._ttsVoices[idx] : null;
-}
-
-// ── Speak ──
-function speakWithEffect(text) {
-    synth.cancel();
-    
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.voice  = getVoice();
-    utt.rate   = params.rate.val;
-    utt.pitch  = params.pitch.val;
-    utt.volume = params.volume.val;
-    
-    utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
-    utt.onend   = () => { setStatus('Finished'); setBusy(false); };
-    utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
-    
-    synth.speak(utt);
-}
-
-// ── Button events ──
-document.getElementById('speakBtn').addEventListener('click', () => {
-    const text = document.getElementById('textInput').value.trim();
-    if (!text) { setStatus('Please enter text'); return; }
-    speakWithEffect(text);
-});
-
-document.getElementById('clearBtn').addEventListener('click', () => {
-    document.getElementById('textInput').value = '';
-    setStatus('Cleared');
-});
-
-document.getElementById('stopBtn').addEventListener('click', () => {
-    synth.cancel();
-    setStatus('Stopped');
-    setBusy(false);
-});
-
-// ── WAV Export ──
-document.getElementById('exportBtn').addEventListener('click', async () => {
-    const text = document.getElementById('textInput').value.trim();
-    if (!text) { setStatus('Please enter text first'); return; }
-
-    setStatus('Loading TTS engine...', true);
-    setBusy(true);
-
-    try {
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak.min.js').catch(() => null);
-
-        if (typeof meSpeak !== 'undefined') {
-            setStatus('Loading voice data...', true);
-            await new Promise(resolve => {
-                meSpeak.loadConfig('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak_config.json', () => {
-                    meSpeak.loadVoice('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/voices/en/en.json', resolve);
-                });
-            }).catch(() => {});
-
-            setStatus('Generating WAV...', true);
-            const wavData = meSpeak.speak(text, {
-                rawdata: 'buffer',
-                speed:  Math.round(params.rate.val * 150),
-                pitch:  Math.round(params.pitch.val * 50),
-                volume: Math.round(params.volume.val * 100)
-            });
-
-            if (wavData) {
-                downloadWav(wavData, 'dpaul-tts.wav');
-                setStatus('WAV exported ✓');
-                setBusy(false);
-                return;
-            }
-        }
-
-        // Fallback: offline Web Audio synthesis
-        setStatus('Generating audio...', true);
-        const sr = 22050;
-        const dur = Math.max(1, text.length * 0.065);
-        const offCtx = new OfflineAudioContext(1, Math.floor(sr * dur), sr);
-        const words = text.split(/\s+/);
-        const wdur = dur / words.length;
-        words.forEach((word, wi) => {
-            const t = wi * wdur;
-            const osc = offCtx.createOscillator();
-            const env = offCtx.createGain();
-            const filt = offCtx.createBiquadFilter();
-            filt.type = 'bandpass';
-            filt.frequency.value = 200 + (word.charCodeAt(0) % 26) * 40;
-            filt.Q.value = 2;
-            osc.type = 'sawtooth';
-            osc.frequency.value = 120 + (wi % 5) * 20;
-            env.gain.setValueAtTime(0, t);
-            env.gain.linearRampToValueAtTime(0.4, t + 0.02);
-            env.gain.setValueAtTime(0.3, t + wdur * 0.7);
-            env.gain.linearRampToValueAtTime(0, t + wdur * 0.95);
-            osc.connect(filt); filt.connect(env); env.connect(offCtx.destination);
-            osc.start(t); osc.stop(t + wdur * 0.95);
-        });
-        const rendered = await offCtx.startRendering();
-        downloadWav(audioBufferToWav(rendered), 'dpaul-tts.wav');
-        setStatus('WAV exported ✓');
-
-    } catch(err) {
-        console.error(err);
-        setStatus('Export failed: ' + err.message);
-    }
-    setBusy(false);
-});
-
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
-        const s = document.createElement('script');
-        s.src = src; s.onload = resolve; s.onerror = reject;
-        document.head.appendChild(s);
-    });
-}
-
-function audioBufferToWav(buffer) {
-    const numCh = buffer.numberOfChannels, sr = buffer.sampleRate, len = buffer.length;
-    const ab = new ArrayBuffer(len * numCh * 2 + 44);
-    const v = new DataView(ab);
-    const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
-    ws(0,'RIFF'); v.setUint32(4, ab.byteLength - 8, true); ws(8,'WAVE');
-    ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true);
-    v.setUint16(22,numCh,true); v.setUint32(24,sr,true);
-    v.setUint32(28,sr*numCh*2,true); v.setUint16(32,numCh*2,true);
-    v.setUint16(34,16,true); ws(36,'data'); v.setUint32(40,len*numCh*2,true);
-    let off = 44;
-    for (let i = 0; i < len; i++) {
-        for (let c = 0; c < numCh; c++) {
-            const s = Math.max(-1, Math.min(1, buffer.getChannelData(c)[i]));
-            v.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true); off += 2;
-        }
-    }
-    return ab;
-}
-
-function downloadWav(data, filename) {
-    const url = URL.createObjectURL(new Blob([data], { type: 'audio/wav' }));
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
-}
-</script>
-</body>
-</html>
+            margin-top: 8px;
+            padding: 5px;
+            background: #000;
