@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DP-ONE MKIV (DP-ONE MKIV)</title>
+    <title>DP-ONE MKIV</title>
     <style>
         * {
             margin: 0;
@@ -65,19 +65,15 @@
             transition: all 0.2s;
         }
 
-        .power-btn:active {
-            transform: scale(0.95);
-        }
+        .power-btn:active { transform: scale(0.95); }
 
         .power-btn.on {
             background: linear-gradient(145deg, #8B0000, #5a0000);
             color: #ff0000;
             border-color: #8B0000;
-            box-shadow: 0 0 12px rgba(139, 0, 0, 0.6),
-                        inset 0 -2px 4px rgba(0,0,0,0.5);
+            box-shadow: 0 0 12px rgba(139, 0, 0, 0.6), inset 0 -2px 4px rgba(0,0,0,0.5);
         }
 
-        /* LED Glow effect for labels when powered on */
         .synth-container.powered-on .control-label,
         .synth-container.powered-on .drum-volume-label,
         .synth-container.powered-on .sequencer-title,
@@ -98,14 +94,12 @@
             text-shadow: 0 0 8px currentColor;
         }
 
-        /* Powered off state - dim everything */
         .synth-container.powered-off {
             opacity: 0.4;
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
-        /* Allow piano keys when sampler is active even if powered off */
         .synth-container.powered-off.sampler-active .white-key,
         .synth-container.powered-off.sampler-active .black-key {
             pointer-events: all !important;
@@ -113,12 +107,8 @@
             cursor: pointer !important;
         }
 
-        /* Slow warm fade-in on power on - handled via JS */
-        .synth-container.powered-on {
-            opacity: 1;
-        }
+        .synth-container.powered-on { opacity: 1; }
 
-        /* Stop all flashing animations when powered off */
         .synth-container.powered-off * {
             animation: none !important;
             color: #333 !important;
@@ -146,7 +136,6 @@
             box-shadow: none !important;
         }
 
-        /* Kill all red/flash states when powered off */
         .synth-container.powered-off .waveform-btn.active,
         .synth-container.powered-off .seq-btn.active,
         .synth-container.powered-off .preset-btn.selected,
@@ -168,15 +157,8 @@
             text-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
         }
 
-        .synth-title .bold {
-            color: #000000;
-            font-weight: bold;
-        }
-
-        .synth-title .mkii {
-            color: #000000;
-            font-weight: bold;
-        }
+        .synth-title .bold { color: #000000; font-weight: bold; }
+        .synth-title .mkii { color: #000000; font-weight: bold; }
 
         .control-section {
             background: #000;
@@ -213,9 +195,7 @@
             border-radius: 50%;
             position: relative;
             cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.5),
-                        inset 0 -2px 4px rgba(0,0,0,0.4),
-                        inset 0 2px 4px rgba(255,255,255,0.3);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.3);
             border: 1px solid #888;
         }
 
@@ -229,7 +209,6 @@
             left: 50%;
             transform: translateX(-50%);
             border-radius: 1px;
-            box-shadow: none;
         }
 
         .knob-value {
@@ -253,8 +232,7 @@
 
         .switch.active {
             background: #7a7e80;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.4),
-                        inset 0 2px 4px rgba(0,0,0,0.5);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .switch::after {
@@ -270,10 +248,7 @@
             box-shadow: 0 2px 4px rgba(100,50,0,0.4);
         }
 
-        .switch.active::after {
-            transform: translateX(23px);
-            background: #fff;
-        }
+        .switch.active::after { transform: translateX(23px); background: #fff; }
 
         .drum-pads {
             display: grid;
@@ -308,23 +283,10 @@
             transition: all 0.1s;
         }
 
-        .pad:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-        }
+        .pad:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; box-shadow: 0 0 15px rgba(0, 0, 0, 0.4); }
+        .pad.selected { border: 2px solid #7a7e80; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
 
-        .pad.selected {
-            border: 2px solid #7a7e80;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-
-        .drum-volume-switch {
-            display: flex;
-            gap: 2px;
-            align-items: center;
-        }
+        .drum-volume-switch { display: flex; gap: 2px; align-items: center; }
 
         .volume-dot {
             width: 6px;
@@ -336,235 +298,7 @@
             transition: all 0.1s;
         }
 
-        .volume-dot.active {
-            background: #7a7e80;
-            box-shadow: 0 0 6px rgba(0,0,0,0.4);
-        }
-
-        .sample-section {
-            margin-bottom: 6px;
-            padding: 8px;
-            background: #7a7e80;
-            border-radius: 6px;
-            border: 1px solid #c0c2c3;
-        }
-
-        .sample-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .sample-title {
-            color: #000000;
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-        }
-
-        .sample-pads {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 6px;
-            justify-items: center;
-        }
-
-        .sample-pad-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            position: relative;
-        }
-
-        .sample-pad {
-            width: 48px;
-            height: 28px;
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000000;
-            font-size: 7px;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-            border: 1px solid #c0c2c3;
-            box-shadow: 0 3px 10px rgba(100,50,0,0.3);
-            transition: all 0.1s;
-            position: relative;
-        }
-
-        .sample-pad:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-            box-shadow: 0 0 15px rgba(0,0,0,0.4);
-        }
-
-        .sample-pad.selected {
-            border: 2px solid #7a7e80;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-
-        .sample-pad.loaded {
-            border: 2px solid #006600;
-            box-shadow: 0 0 6px rgba(0, 100, 0, 0.4);
-        }
-
-        .sample-pad.loaded.selected {
-            border: 2px solid #7a7e80;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-
-        .load-sample-btn {
-            width: 42px;
-            height: 16px;
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-            border: 1px solid #c0c2c3;
-            border-radius: 3px;
-            color: #000000;
-            cursor: pointer;
-            font-size: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(100,50,0,0.3);
-            transition: all 0.1s;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-        }
-
-        .load-sample-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
-
-        .clear-sample-btn {
-            width: 42px;
-            height: 14px;
-            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-            border: 1px solid #c0c2c3;
-            border-radius: 3px;
-            color: #000000;
-            cursor: pointer;
-            font-size: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(100,50,0,0.3);
-            transition: all 0.1s;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-        }
-
-        .clear-sample-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
-
-        .sampler-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-            padding: 8px;
-            background: #7a7e80;
-            border-radius: 4px;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .sampler-control-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .sampler-label {
-            color: #000000;
-            font-size: 7px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-        }
-
-        .sampler-knob {
-            width: 32px;
-            height: 32px;
-            background: radial-gradient(circle at 30% 30%, #c0c0c0, #909090);
-            border-radius: 50%;
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(100,50,0,0.4),
-                        inset 0 -2px 4px rgba(100,50,0,0.5),
-                        inset 0 2px 4px rgba(255,200,100,0.2);
-            border: 1px solid #c0c2c3;
-        }
-
-        .sampler-knob::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            height: 10px;
-            background: #006600;
-            top: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 1px;
-            box-shadow: 0 0 4px rgba(0, 100, 0, 0.8);
-        }
-
-        .sampler-value {
-            color: #006600;
-            font-size: 7px;
-            margin-top: 2px;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-        }
-
-        .sampler-switch {
-            width: 40px;
-            height: 20px;
-            background: #7a7e80;
-            border-radius: 10px;
-            position: relative;
-            cursor: pointer;
-            border: 1px solid #c0c2c3;
-            box-shadow: inset 0 2px 4px rgba(100,50,0,0.4);
-        }
-
-        .sampler-switch.active {
-            background: #006600;
-            box-shadow: 0 0 8px rgba(0, 100, 0, 0.5),
-                        inset 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .sampler-switch::after {
-            content: '';
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background: #f5c842;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(100,50,0,0.4);
-        }
-
-        .sampler-switch.active::after {
-            transform: translateX(20px);
-            background: #7a7e80;
-        }
+        .volume-dot.active { background: #7a7e80; box-shadow: 0 0 6px rgba(0,0,0,0.4); }
 
         .pitch-bend-container {
             position: absolute;
@@ -601,7 +335,6 @@
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.04);
         }
 
-        /* Track groove showing travel range */
         .pitch-bend::before {
             content: '';
             position: absolute;
@@ -631,7 +364,6 @@
             z-index: 2;
         }
 
-        /* Centre dot on thumb */
         .pitch-bend-thumb::after {
             content: '';
             position: absolute;
@@ -645,10 +377,7 @@
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
 
-        .pitch-bend-thumb:active {
-            cursor: grabbing;
-            background: radial-gradient(circle at 35% 35%, #b0b0b0, #707070);
-        }
+        .pitch-bend-thumb:active { cursor: grabbing; background: radial-gradient(circle at 35% 35%, #b0b0b0, #707070); }
 
         .pitch-bend-center {
             position: absolute;
@@ -679,15 +408,8 @@
             transition: all 0.1s;
         }
 
-        .pitch-hold-btn:active {
-            transform: scale(0.95);
-        }
-
-        .pitch-hold-btn.active {
-            background: #7a7e80;
-            color: #7a7e80;
-            box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        }
+        .pitch-hold-btn:active { transform: scale(0.95); }
+        .pitch-hold-btn.active { animation: textFlash 0.8s ease-in-out infinite !important; background: #1a1a1a !important; border: 1px solid #ff0000 !important; box-shadow: none !important; }
 
         .sequencer {
             margin-bottom: 6px;
@@ -712,18 +434,13 @@
             font-weight: bold;
             font-family: Verdana, Geneva, sans-serif;
             text-shadow: none;
-            background: #000;
+            background: #d0d0d0;
             border-radius: 3px;
             padding: 3px 8px;
-            color: #000000;
-            background: #d0d0d0;
             border: 1px solid #aaaaaa;
         }
 
-        .sequencer-controls {
-            display: flex;
-            gap: 8px;
-        }
+        .sequencer-controls { display: flex; gap: 8px; }
 
         .seq-btn {
             padding: 5px 12px;
@@ -739,15 +456,7 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .seq-btn:active {
-            transform: scale(0.95);
-        }
-
-        .seq-btn.active {
-            background: #7a7e80;
-            color: #7a7e80;
-            box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        }
+        .seq-btn:active { transform: scale(0.95); }
 
         .sequencer-grid {
             display: grid;
@@ -766,19 +475,9 @@
             position: relative;
         }
 
-        .step.hidden {
-            display: none;
-        }
-
-        .step.active {
-            background: #7a7e80;
-            box-shadow: 0 0 8px rgba(0,0,0,0.5);
-        }
-
-        .step.playing {
-            box-shadow: 0 0 12px rgba(255,107,107,1);
-            border-color: #ff6b6b;
-        }
+        .step.hidden { display: none; }
+        .step.active { background: #7a7e80; box-shadow: 0 0 8px rgba(0,0,0,0.5); }
+        .step.playing { box-shadow: 0 0 12px rgba(255,107,107,1); border-color: #ff6b6b; }
 
         .step-number {
             position: absolute;
@@ -795,19 +494,8 @@
             margin-top: 8px;
         }
 
-        .tempo-label {
-            color: #666;
-            font-size: 9px;
-            text-transform: uppercase;
-        }
-
-        .tempo-value {
-            color: #7a7e80;
-            font-size: 10px;
-            font-weight: bold;
-            min-width: 60px;
-            font-family: Verdana, Geneva, sans-serif;
-        }
+        .tempo-label { color: #666; font-size: 9px; text-transform: uppercase; }
+        .tempo-value { color: #7a7e80; font-size: 10px; font-weight: bold; min-width: 60px; font-family: Verdana, Geneva, sans-serif; }
 
         .tempo-slider {
             flex: 1;
@@ -845,11 +533,7 @@
             user-select: none;
         }
 
-        .tempo-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
+        .tempo-btn:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; }
 
         .bpm-indicator {
             width: 12px;
@@ -861,18 +545,9 @@
             transition: all 0.1s;
         }
 
-        .bpm-indicator.beat {
-            background: #ff0000;
-            box-shadow: 0 0 10px rgba(0,0,0,0.6),
-                        inset 0 0 4px rgba(100,50,0,0.5);
-        }
+        .bpm-indicator.beat { background: #ff0000; box-shadow: 0 0 10px rgba(0,0,0,0.6), inset 0 0 4px rgba(100,50,0,0.5); }
 
-        .tempo-led-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 8px;
-        }
+        .tempo-led-container { display: flex; flex-direction: row; align-items: center; gap: 8px; }
 
         .tempo-led-label {
             color: #000000;
@@ -893,11 +568,7 @@
             transition: all 0.08s;
         }
 
-        .tempo-led.blink {
-            background: #00ff00;
-            box-shadow: 0 0 12px rgba(0,0,0,0.7),
-                        inset 0 0 6px rgba(100,50,0,0.4);
-        }
+        .tempo-led.blink { background: #00ff00; box-shadow: 0 0 12px rgba(0,0,0,0.7), inset 0 0 6px rgba(100,50,0,0.4); }
 
         .sync-btn {
             padding: 5px 12px;
@@ -914,22 +585,7 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .sync-btn:active {
-            transform: scale(0.95);
-        }
-
-        .sync-btn.active {
-            background: #7a7e80;
-            color: #7a7e80;
-            box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        }
-
-        .drum-volume-control {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
+        .sync-btn:active { transform: scale(0.95); }
 
         .drum-volume-label {
             color: #000000;
@@ -947,9 +603,7 @@
             border-radius: 50%;
             position: relative;
             cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.5),
-                        inset 0 -2px 4px rgba(0,0,0,0.4),
-                        inset 0 2px 4px rgba(255,255,255,0.3);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.3);
             border: 1px solid #888;
         }
 
@@ -963,16 +617,9 @@
             left: 50%;
             transform: translateX(-50%);
             border-radius: 1px;
-            box-shadow: none;
         }
 
-        .drum-knob-value {
-            color: #ffffff;
-            font-size: 10px;
-            margin-top: 3px;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-        }
+        .drum-knob-value { color: #ffffff; font-size: 10px; margin-top: 3px; font-weight: bold; font-family: Verdana, Geneva, sans-serif; }
 
         .keyboard {
             position: relative;
@@ -984,10 +631,7 @@
             flex-shrink: 0;
         }
 
-        .piano-keys {
-            position: relative;
-            display: inline-block;
-        }
+        .piano-keys { position: relative; display: inline-block; }
 
         .white-key {
             width: 26px;
@@ -1051,15 +695,7 @@
             margin-bottom: 6px;
         }
 
-        .controls-row .control-section {
-            flex: 1;
-        }
-
-        .master-knob {
-        }
-
-        .master-knob::after {
-        }
+        .controls-row .control-section { flex: 1; }
 
         .wave-container {
             width: 100%;
@@ -1090,11 +726,7 @@
             box-shadow: inset 0 1px 2px rgba(100,50,0,0.4);
         }
 
-        .status-light.active {
-            background: #7a7e80;
-            box-shadow: 0 0 8px rgba(0,0,0,0.5);
-            animation: glow 1s infinite;
-        }
+        .status-light.active { background: #7a7e80; box-shadow: 0 0 8px rgba(0,0,0,0.5); animation: glow 1s infinite; }
 
         .info-panel {
             display: flex;
@@ -1107,10 +739,7 @@
             border: 1px solid #c0c2c3;
         }
 
-        .song-controls {
-            display: flex;
-            gap: 6px;
-        }
+        .song-controls { display: flex; gap: 6px; }
 
         .song-btn {
             padding: 5px 10px;
@@ -1127,18 +756,9 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .song-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
+        .song-btn:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; }
 
-        .info-text {
-            color: #000000;
-            font-size: 10px;
-            font-weight: bold;
-            font-family: Verdana, Geneva, sans-serif;
-        }
+        .info-text { color: #000000; font-size: 10px; font-weight: bold; font-family: Verdana, Geneva, sans-serif; }
 
         .clear-midi-btn {
             padding: 5px 12px;
@@ -1155,17 +775,9 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .clear-midi-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
+        .clear-midi-btn:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; }
 
-        .octave-controls {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
+        .octave-controls { display: flex; gap: 8px; align-items: center; }
 
         .octave-btn {
             width: 30px;
@@ -1183,11 +795,7 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .octave-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
+        .octave-btn:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; }
 
         .octave-display {
             color: #ff6b6b;
@@ -1220,12 +828,7 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .preset-buttons {
-            display: flex;
-            gap: 5px;
-            flex: 1;
-            justify-content: center;
-        }
+        .preset-buttons { display: flex; gap: 5px; flex: 1; justify-content: center; }
 
         .preset-btn {
             width: 36px;
@@ -1245,16 +848,9 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .preset-btn:active {
-            transform: scale(0.95);
-        }
+        .preset-btn:active { transform: scale(0.95); }
 
-        
-
-        .preset-actions {
-            display: flex;
-            gap: 5px;
-        }
+        .preset-actions { display: flex; gap: 5px; }
 
         .preset-action-btn {
             padding: 5px 8px;
@@ -1270,11 +866,7 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .preset-action-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
+        .preset-action-btn:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; }
 
         .waveform-section {
             display: flex;
@@ -1288,12 +880,7 @@
             border: 1px solid #c0c2c3;
         }
 
-        .waveform-btn-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-        }
+        .waveform-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 
         .wave-mini-label {
             font-size: 6px;
@@ -1305,13 +892,7 @@
             white-space: nowrap;
         }
 
-        .waveform-label {
-            color: #000000;
-            font-size: 8px;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-family: Verdana, Geneva, sans-serif;
-        }
+        .waveform-label { color: #000000; font-size: 8px; font-weight: bold; text-transform: uppercase; font-family: Verdana, Geneva, sans-serif; }
 
         .waveform-btn {
             padding: 5px 10px;
@@ -1327,15 +908,7 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .waveform-btn:active {
-            transform: scale(0.95);
-        }
-
-        .waveform-btn.active {
-            background: #7a7e80;
-            color: #7a7e80;
-            box-shadow: 0 0 8px rgba(0,0,0,0.4);
-        }
+        .waveform-btn:active { transform: scale(0.95); }
 
         .clear-arp-btn {
             padding: 5px 12px;
@@ -1352,11 +925,8 @@
             font-family: Verdana, Geneva, sans-serif;
         }
 
-        .clear-arp-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
+        .clear-arp-btn:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; }
+
         @keyframes textFlash {
             0%, 100% { color: #ff0000; }
             50% { color: #000000; }
@@ -1383,19 +953,13 @@
             box-shadow: none !important;
         }
 
-        .pitch-hold-btn.active {
-            animation: textFlash 0.8s ease-in-out infinite !important;
-            background: #1a1a1a !important;
-            border: 1px solid #ff0000 !important;
-            box-shadow: none !important;
-        }
-
         .preset-btn.selected {
             animation: textFlash 0.8s ease-in-out infinite !important;
             background: #000000 !important;
             border: 2px solid #ff0000 !important;
             box-shadow: none !important;
         }
+
         .sampler-section {
             padding: 6px 10px 8px 10px;
             background: #4a4c4d;
@@ -1452,16 +1016,9 @@
             transition: opacity 0.2s;
         }
 
-        .sampler-screen.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .sampler-screen.active { opacity: 1; pointer-events: all; }
 
-        .sampler-screen-inner {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
+        .sampler-screen-inner { display: flex; flex-direction: column; gap: 3px; }
 
         .sampler-slot {
             display: flex;
@@ -1473,47 +1030,16 @@
             transition: background 0.1s;
         }
 
-        .sampler-slot:hover {
-            background: rgba(255,255,255,0.05);
-        }
+        .sampler-slot:hover { background: rgba(255,255,255,0.05); }
+        .sampler-slot.selected { background: rgba(255,255,255,0.1); }
+        .sampler-slot.playing { background: rgba(255,107,107,0.15); }
 
-        .sampler-slot.selected {
-            background: rgba(255,255,255,0.1);
-        }
+        .sampler-slot-num { color: #444; font-size: 8px; min-width: 16px; }
+        .sampler-screen.active .sampler-slot-num { color: #888; }
 
-        .sampler-slot.playing {
-            background: rgba(255,107,107,0.15);
-        }
-
-        .sampler-slot-num {
-            color: #444;
-            font-size: 8px;
-            min-width: 16px;
-        }
-
-        /* lit up when active */
-        .sampler-screen.active .sampler-slot-num {
-            color: #888;
-        }
-
-        .sampler-slot-name {
-            color: #00cc00;
-            font-size: 8px;
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .sampler-slot-name.empty {
-            color: #333;
-        }
-
-        /* empty slots glow amber when sampler is on */
-        .sampler-screen.active .sampler-slot-name.empty {
-            color: #cc8800;
-            text-shadow: 0 0 6px rgba(200, 140, 0, 0.7);
-        }
+        .sampler-slot-name { color: #00cc00; font-size: 8px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sampler-slot-name.empty { color: #333; }
+        .sampler-screen.active .sampler-slot-name.empty { color: #cc8800; text-shadow: 0 0 6px rgba(200, 140, 0, 0.7); }
 
         .sampler-seq-btn {
             font-size: 7px;
@@ -1529,24 +1055,10 @@
             white-space: nowrap;
         }
 
-        .sampler-seq-btn:hover {
-            color: #888;
-            border-color: #555;
-        }
+        .sampler-seq-btn:hover { color: #888; border-color: #555; }
+        .sampler-seq-btn.active { color: #ff6600; border-color: #ff6600; background: #1a0a00; box-shadow: 0 0 4px rgba(255,100,0,0.4); }
 
-        .sampler-seq-btn.active {
-            color: #ff6600;
-            border-color: #ff6600;
-            background: #1a0a00;
-            box-shadow: 0 0 4px rgba(255,100,0,0.4);
-        }
-
-        .sampler-slot-status {
-            color: #006600;
-            font-size: 7px;
-            min-width: 20px;
-            text-align: right;
-        }
+        .sampler-slot-status { color: #006600; font-size: 7px; min-width: 20px; text-align: right; }
 
         .sampler-btns {
             display: flex;
@@ -1557,10 +1069,7 @@
             transition: opacity 0.2s;
         }
 
-        .sampler-btns.active {
-            opacity: 1;
-            pointer-events: all;
-        }
+        .sampler-btns.active { opacity: 1; pointer-events: all; }
 
         .sampler-load-btn, .sampler-clear-btn {
             padding: 4px 10px;
@@ -1575,18 +1084,13 @@
             transition: all 0.1s;
         }
 
-        .sampler-load-btn:active, .sampler-clear-btn:active {
-            transform: scale(0.95);
-            background: #7a7e80;
-            color: #7a7e80;
-        }
-
+        .sampler-load-btn:active, .sampler-clear-btn:active { transform: scale(0.95); background: #7a7e80; color: #7a7e80; }
     </style>
 </head>
 <body>
     <div class="synth-container powered-off" id="synthContainer">
         <div class="synth-header">
-            <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.05</span></div>
+            <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.06</span></div>
             <div style="display: flex; gap: 12px; align-items: center;">
                 <div class="tempo-led-container">
                     <div class="tempo-led-label">TEMPO</div>
@@ -1607,7 +1111,6 @@
             <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
         </div>
 
-        <!-- Controls row: effects | visualizer | volumes -->
         <div class="controls-row">
             <div class="control-section">
                 <div class="control-group">
@@ -1649,7 +1152,7 @@
                 </div>
                 <div class="control-group">
                     <div class="control-label">MASTER</div>
-                    <div class="knob master-knob" id="masterVolumeKnob" data-value="70"></div>
+                    <div class="knob" id="masterVolumeKnob" data-value="70"></div>
                     <div class="knob-value" id="masterVolumeValue">70%</div>
                 </div>
             </div>
@@ -1757,7 +1260,6 @@
         </div>
 
         <div class="info-panel">
-            <div class="info-text" style="display:none;">37-KEY ANALOG SYNTHESIZER</div>
             <div class="song-controls">
                 <div class="song-btn" id="saveLocalBtn">SAVE LOCAL</div>
                 <div class="song-btn" id="loadLocalBtn">LOAD LOCAL</div>
@@ -1773,7 +1275,7 @@
                 <div class="octave-display" id="octaveDisplay">OCT 4</div>
                 <div class="octave-btn" id="octaveUp">+</div>
             </div>
-            <div class="info-text" id="noteDisplay" style="display:none;">---</div>
+            <div class="info-text" id="noteDisplay" style="min-width:80px; text-align:center;">---</div>
         </div>
 
         <div class="preset-section">
@@ -1809,11 +1311,11 @@
             </div>
             <div class="sampler-screen" id="samplerScreen">
                 <div class="sampler-screen-inner" id="samplerScreenInner">
-                    <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span><span class="sampler-seq-btn" id="seqBtn0" data-slot="0">SEQ</span></div>
-                    <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span><span class="sampler-seq-btn" id="seqBtn1" data-slot="1">SEQ</span></div>
-                    <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span><span class="sampler-seq-btn" id="seqBtn2" data-slot="2">SEQ</span></div>
-                    <div class="sampler-slot" data-slot="3"><span class="sampler-slot-num">04</span><span class="sampler-slot-name" id="slotName3">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus3"></span><span class="sampler-seq-btn" id="seqBtn3" data-slot="3">SEQ</span></div>
-                    <div class="sampler-slot" data-slot="4"><span class="sampler-slot-num">05</span><span class="sampler-slot-name" id="slotName4">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus4"></span><span class="sampler-seq-btn" id="seqBtn4" data-slot="4">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name empty" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span><span class="sampler-seq-btn" id="seqBtn0" data-slot="0">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name empty" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span><span class="sampler-seq-btn" id="seqBtn1" data-slot="1">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name empty" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span><span class="sampler-seq-btn" id="seqBtn2" data-slot="2">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="3"><span class="sampler-slot-num">04</span><span class="sampler-slot-name empty" id="slotName3">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus3"></span><span class="sampler-seq-btn" id="seqBtn3" data-slot="3">SEQ</span></div>
+                    <div class="sampler-slot" data-slot="4"><span class="sampler-slot-num">05</span><span class="sampler-slot-name empty" id="slotName4">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus4"></span><span class="sampler-seq-btn" id="seqBtn4" data-slot="4">SEQ</span></div>
                 </div>
             </div>
             <div class="sampler-btns">
@@ -1837,71 +1339,52 @@
     </div>
 
     <script>
-        console.log('SCRIPT STARTED - TOP OF FILE');
-        
-        // Audio Context
-        let audioContext;
-        let masterGain;
-        let synthGain;
-        let drumGain;
-        let delayNode;
-        let feedbackGain;
-        let filterNode;
-        
-        // Synth state
+        // ─── Audio Context & Nodes ───────────────────────────────────────────────
+        let audioContext, masterGain, synthGain, drumGain, delayNode, feedbackGain, filterNode;
+
+        // ─── Synth State ─────────────────────────────────────────────────────────
         let currentOctave = 4;
-        let arpEnabled = false;
-        let arpInterval = null;
-        let arpNotes = [];
-        let arpIndex = 0;
-        let arpMode = 'up';
-        let arpDirection = 1;
+        let arpEnabled = false, arpInterval = null, arpNotes = [], arpIndex = 0, arpMode = 'up', arpDirection = 1;
         let activeNotes = new Map();
-        let pitchBendValue = 0;
-        let pitchHoldEnabled = false;
-        let synthPowered = false;
-        let powerHumPlayed = false;
+        let pitchBendValue = 0, pitchHoldEnabled = false;
+        let synthPowered = false, powerHumPlayed = false;
         let syncEnabled = false;
-        let midiAccess = null;
-        let midiInputs = [];
-        let selectedPreset = 1;
-        let currentWaveform = 'sawtooth';
+        let midiAccess = null, midiInputs = [];
+        let selectedPreset = 1, currentWaveform = 'sawtooth';
         let presets = { 1: null, 2: null, 3: null };
-        
-        let drumVolumes = {
-            kick: 0.7, snare: 0.7, hihat: 0.7, clap: 0.7,
-            tom1: 0.7, tom2: 0.7, cymbal: 0.7, perc: 0.7, shaker: 0.7
-        };
-        
-        let selectedDrum = 'kick';
-        let selectedSample = null;
-        let sampleBuffers = {};
-        let samplePitch = 0;
-        let sampleSpeed = 1.0;
-        let sampleFilter = 20000;
-        let sampleReverse = false;
-        let sampleLoop = false;
+        let drumVolumes = { kick:0.7, snare:0.7, hihat:0.7, clap:0.7, tom1:0.7, tom2:0.7, cymbal:0.7, perc:0.7, shaker:0.7 };
+        let selectedDrum = 'kick', selectedSample = null;
+        let sampleBuffers = {}, samplePitch = 0, sampleSpeed = 1.0, sampleFilter = 20000, sampleReverse = false, sampleLoop = false;
         let sequencerPattern = {
-            kick: Array(32).fill(false), snare: Array(32).fill(false),
-            hihat: Array(32).fill(false), clap: Array(32).fill(false),
-            tom1: Array(32).fill(false), tom2: Array(32).fill(false),
-            cymbal: Array(32).fill(false), perc: Array(32).fill(false),
-            shaker: Array(32).fill(false),
-            sample0: Array(32).fill(false), sample1: Array(32).fill(false),
-            sample2: Array(32).fill(false), sample3: Array(32).fill(false),
-            sample4: Array(32).fill(false), sample5: Array(32).fill(false),
-            sample6: Array(32).fill(false), sample7: Array(32).fill(false),
-            sample8: Array(32).fill(false), sample9: Array(32).fill(false)
+            kick:Array(32).fill(false), snare:Array(32).fill(false), hihat:Array(32).fill(false),
+            clap:Array(32).fill(false), tom1:Array(32).fill(false), tom2:Array(32).fill(false),
+            cymbal:Array(32).fill(false), perc:Array(32).fill(false), shaker:Array(32).fill(false),
+            sample0:Array(32).fill(false), sample1:Array(32).fill(false), sample2:Array(32).fill(false),
+            sample3:Array(32).fill(false), sample4:Array(32).fill(false)
         };
-        let sequencerPlaying = false;
-        let sequencerInterval = null;
-        let currentStep = 0;
-        let tempo = 120;
-        let tempoLedInterval = null;
-        let sequencerSteps = 32;
+        let sequencerPlaying = false, sequencerInterval = null, currentStep = 0, tempo = 120;
+        let tempoLedInterval = null, sequencerSteps = 32;
 
-        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        // Sampler
+        let samplerEnabled = false;
+        let samplerSlots = [null, null, null, null, null];
+        let selectedSamplerSlot = 0;
 
+        const noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+        // ─── KEY FIX: noteNameToFrequency ────────────────────────────────────────
+        // Converts a note name like "C4", "F#3", "A#5" to Hz
+        function noteNameToFrequency(noteName) {
+            const match = noteName.match(/^([A-G]#?)(-?\d+)$/);
+            if (!match) return 440;
+            const noteIndex = noteNames.indexOf(match[1]);
+            const octave = parseInt(match[2]);
+            // MIDI note: C-1 = 0, so C0 = 12, C4 = 60
+            const midiNote = (octave + 1) * 12 + noteIndex;
+            return 440 * Math.pow(2, (midiNote - 69) / 12);
+        }
+
+        // ─── Audio Init ──────────────────────────────────────────────────────────
         function initAudio() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1948,21 +1431,14 @@
                 const blip = audioContext.createOscillator();
                 const blipGain = audioContext.createGain();
                 const blipFilter = audioContext.createBiquadFilter();
-                blip.type = 'sine';
-                blip.frequency.setValueAtTime(440, now + offset);
-                blipFilter.type = 'lowpass';
-                blipFilter.frequency.value = 800;
-                blipFilter.Q.value = 2;
+                blip.type = 'sine'; blip.frequency.setValueAtTime(440, now + offset);
+                blipFilter.type = 'lowpass'; blipFilter.frequency.value = 800; blipFilter.Q.value = 2;
                 blipGain.gain.setValueAtTime(0, now + offset);
                 blipGain.gain.linearRampToValueAtTime(0.08, now + offset + 0.015);
                 blipGain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.12);
-                blip.connect(blipFilter);
-                blipFilter.connect(blipGain);
-                blipGain.connect(audioContext.destination);
-                blip.start(now + offset);
-                blip.stop(now + offset + 0.15);
+                blip.connect(blipFilter); blipFilter.connect(blipGain); blipGain.connect(audioContext.destination);
+                blip.start(now + offset); blip.stop(now + offset + 0.15);
             });
-
             humOsc.connect(humGain); humOsc2.connect(humGain); humOsc3.connect(humGain);
             noiseSource.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(audioContext.destination);
             humGain.connect(audioContext.destination);
@@ -1992,12 +1468,7 @@
             noiseSource.start(now); noiseSource.stop(now + 0.3);
         }
 
-        function getNoteFrequency(noteIndex, octave) {
-            const A4 = 440; const C4_INDEX = -9;
-            const semitonesFromA4 = (octave - 4) * 12 + noteIndex + C4_INDEX;
-            return A4 * Math.pow(2, semitonesFromA4 / 12);
-        }
-
+        // ─── Play Note ───────────────────────────────────────────────────────────
         function playNote(frequency, noteName) {
             initAudio();
             const doPlay = () => {
@@ -2018,7 +1489,7 @@
                     noise.start(now);
                     activeNotes.set(noteName, { noise, envelope, baseFrequency: frequency, noiseFilter });
                     animateVisualizer(); updateNoteDisplay(noteName);
-                    return { noise, envelope };
+                    return;
                 }
                 const osc1 = audioContext.createOscillator(); const osc2 = audioContext.createOscillator(); const osc3 = audioContext.createOscillator();
                 if (currentWaveform === 'pulse') {
@@ -2037,7 +1508,6 @@
                 osc1.start(now); osc2.start(now); osc3.start(now);
                 activeNotes.set(noteName, { osc1, osc2, osc3, envelope, baseFrequency: frequency });
                 animateVisualizer(); updateNoteDisplay(noteName);
-                return { osc1, osc2, osc3, envelope };
             };
             if (audioContext.state === 'suspended') { audioContext.resume().then(doPlay); } else { doPlay(); }
         }
@@ -2049,13 +1519,16 @@
                 noteData.envelope.gain.setValueAtTime(noteData.envelope.gain.value, now);
                 noteData.envelope.gain.linearRampToValueAtTime(0, now + 0.3);
                 setTimeout(() => {
-                    if (noteData.noise) { noteData.noise.stop(); }
-                    else if (noteData.osc1) { noteData.osc1.stop(); noteData.osc2.stop(); noteData.osc3.stop(); }
+                    try {
+                        if (noteData.noise) noteData.noise.stop();
+                        else if (noteData.osc1) { noteData.osc1.stop(); noteData.osc2.stop(); noteData.osc3.stop(); }
+                    } catch(e) {}
                 }, 400);
                 activeNotes.delete(noteName);
             }
         }
 
+        // ─── Drum Sounds ─────────────────────────────────────────────────────────
         function playDrum(type) {
             initAudio();
             const drumOrder = ['kick','snare','hihat','clap','tom1','tom2','cymbal','perc','shaker'];
@@ -2063,66 +1536,69 @@
             if (slotIndex !== -1 && sampleBuffers[slotIndex]) { playSample(slotIndex); return; }
             const now = audioContext.currentTime;
             switch(type) {
-                case 'kick':
-                    const kickOsc = audioContext.createOscillator(); const kickGain = audioContext.createGain();
-                    kickOsc.frequency.value = 150; kickOsc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
-                    kickGain.gain.value = 1 * drumVolumes.kick; kickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                    kickOsc.type = 'sine'; kickOsc.connect(kickGain); kickGain.connect(drumGain);
-                    kickOsc.start(now); kickOsc.stop(now + 0.5); break;
-                case 'snare':
-                    const snareOsc = audioContext.createOscillator(); const snareGain = audioContext.createGain();
-                    const snareNoise = createNoiseSource(); const snareNoiseGain = audioContext.createGain();
-                    snareOsc.frequency.value = 200; snareOsc.type = 'triangle';
-                    snareGain.gain.value = 0.3 * drumVolumes.snare; snareGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-                    snareNoiseGain.gain.value = 0.4 * drumVolumes.snare; snareNoiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-                    snareOsc.connect(snareGain); snareNoise.connect(snareNoiseGain);
-                    snareGain.connect(drumGain); snareNoiseGain.connect(drumGain);
-                    snareOsc.start(now); snareNoise.start(now); snareOsc.stop(now + 0.2); snareNoise.stop(now + 0.15); break;
-                case 'hihat':
-                    const hihatNoise = createNoiseSource(); const hihatFilter = audioContext.createBiquadFilter(); const hihatGain = audioContext.createGain();
-                    hihatFilter.type = 'highpass'; hihatFilter.frequency.value = 7000;
-                    hihatGain.gain.value = 0.3 * drumVolumes.hihat; hihatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                    hihatNoise.connect(hihatFilter); hihatFilter.connect(hihatGain); hihatGain.connect(drumGain);
-                    hihatNoise.start(now); hihatNoise.stop(now + 0.05); break;
-                case 'clap':
+                case 'kick': {
+                    const o = audioContext.createOscillator(); const g = audioContext.createGain();
+                    o.frequency.value = 150; o.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+                    g.gain.value = 1 * drumVolumes.kick; g.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    o.type = 'sine'; o.connect(g); g.connect(drumGain); o.start(now); o.stop(now + 0.5); break;
+                }
+                case 'snare': {
+                    const o = audioContext.createOscillator(); const g = audioContext.createGain();
+                    const n = createNoiseSource(); const ng = audioContext.createGain();
+                    o.frequency.value = 200; o.type = 'triangle';
+                    g.gain.value = 0.3 * drumVolumes.snare; g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    ng.gain.value = 0.4 * drumVolumes.snare; ng.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    o.connect(g); n.connect(ng); g.connect(drumGain); ng.connect(drumGain);
+                    o.start(now); n.start(now); o.stop(now + 0.2); n.stop(now + 0.15); break;
+                }
+                case 'hihat': {
+                    const n = createNoiseSource(); const f = audioContext.createBiquadFilter(); const g = audioContext.createGain();
+                    f.type = 'highpass'; f.frequency.value = 7000;
+                    g.gain.value = 0.3 * drumVolumes.hihat; g.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    n.connect(f); f.connect(g); g.connect(drumGain); n.start(now); n.stop(now + 0.05); break;
+                }
+                case 'clap': {
                     for (let i = 0; i < 7; i++) {
                         setTimeout(() => {
-                            const clapNoise = createNoiseSource(); const clapFilter = audioContext.createBiquadFilter(); const clapGain = audioContext.createGain();
-                            const clapTime = audioContext.currentTime;
-                            clapFilter.type = 'bandpass'; clapFilter.frequency.value = 1200; clapFilter.Q.value = 1.5;
-                            let burstVolume = i < 3 ? 0.3 + (i * 0.15) : 0.75 - ((i - 3) * 0.1);
-                            clapGain.gain.value = burstVolume * drumVolumes.clap; clapGain.gain.linearRampToValueAtTime(0.01, clapTime + 0.06);
-                            clapNoise.connect(clapFilter); clapFilter.connect(clapGain); clapGain.connect(drumGain);
-                            clapNoise.start(clapTime); clapNoise.stop(clapTime + 0.06);
+                            const n = createNoiseSource(); const f = audioContext.createBiquadFilter(); const g = audioContext.createGain();
+                            const t = audioContext.currentTime;
+                            f.type = 'bandpass'; f.frequency.value = 1200; f.Q.value = 1.5;
+                            let v = i < 3 ? 0.3 + (i * 0.15) : 0.75 - ((i - 3) * 0.1);
+                            g.gain.value = v * drumVolumes.clap; g.gain.linearRampToValueAtTime(0.01, t + 0.06);
+                            n.connect(f); f.connect(g); g.connect(drumGain); n.start(t); n.stop(t + 0.06);
                         }, i * 20);
                     } break;
-                case 'tom1':
-                    const tom1Osc = audioContext.createOscillator(); const tom1Gain = audioContext.createGain();
-                    tom1Osc.frequency.value = 180; tom1Osc.frequency.exponentialRampToValueAtTime(80, now + 0.2);
-                    tom1Gain.gain.value = 0.8 * drumVolumes.tom1; tom1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    tom1Osc.connect(tom1Gain); tom1Gain.connect(drumGain); tom1Osc.start(now); tom1Osc.stop(now + 0.3); break;
-                case 'tom2':
-                    const tom2Osc = audioContext.createOscillator(); const tom2Gain = audioContext.createGain();
-                    tom2Osc.frequency.value = 120; tom2Osc.frequency.exponentialRampToValueAtTime(60, now + 0.2);
-                    tom2Gain.gain.value = 0.8 * drumVolumes.tom2; tom2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    tom2Osc.connect(tom2Gain); tom2Gain.connect(drumGain); tom2Osc.start(now); tom2Osc.stop(now + 0.3); break;
-                case 'cymbal':
-                    const cymbalNoise = createNoiseSource(); const cymbalFilter = audioContext.createBiquadFilter(); const cymbalGain = audioContext.createGain();
-                    cymbalFilter.type = 'highpass'; cymbalFilter.frequency.value = 5000;
-                    cymbalGain.gain.value = 0.4 * drumVolumes.cymbal; cymbalGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                    cymbalNoise.connect(cymbalFilter); cymbalFilter.connect(cymbalGain); cymbalGain.connect(drumGain);
-                    cymbalNoise.start(now); cymbalNoise.stop(now + 0.5); break;
-                case 'perc':
-                    const percOsc = audioContext.createOscillator(); const percGain = audioContext.createGain();
-                    percOsc.frequency.value = 800; percGain.gain.value = 0.3 * drumVolumes.perc;
-                    percGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); percOsc.type = 'triangle';
-                    percOsc.connect(percGain); percGain.connect(drumGain); percOsc.start(now); percOsc.stop(now + 0.1); break;
-                case 'shaker':
-                    const shakerNoise = createNoiseSource(); const shakerFilter = audioContext.createBiquadFilter(); const shakerGain = audioContext.createGain();
-                    shakerFilter.type = 'highpass'; shakerFilter.frequency.value = 4000; shakerFilter.Q.value = 2;
-                    shakerGain.gain.value = 0.25 * drumVolumes.shaker; shakerGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-                    shakerNoise.connect(shakerFilter); shakerFilter.connect(shakerGain); shakerGain.connect(drumGain);
-                    shakerNoise.start(now); shakerNoise.stop(now + 0.08); break;
+                }
+                case 'tom1': {
+                    const o = audioContext.createOscillator(); const g = audioContext.createGain();
+                    o.frequency.value = 180; o.frequency.exponentialRampToValueAtTime(80, now + 0.2);
+                    g.gain.value = 0.8 * drumVolumes.tom1; g.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    o.connect(g); g.connect(drumGain); o.start(now); o.stop(now + 0.3); break;
+                }
+                case 'tom2': {
+                    const o = audioContext.createOscillator(); const g = audioContext.createGain();
+                    o.frequency.value = 120; o.frequency.exponentialRampToValueAtTime(60, now + 0.2);
+                    g.gain.value = 0.8 * drumVolumes.tom2; g.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    o.connect(g); g.connect(drumGain); o.start(now); o.stop(now + 0.3); break;
+                }
+                case 'cymbal': {
+                    const n = createNoiseSource(); const f = audioContext.createBiquadFilter(); const g = audioContext.createGain();
+                    f.type = 'highpass'; f.frequency.value = 5000;
+                    g.gain.value = 0.4 * drumVolumes.cymbal; g.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    n.connect(f); f.connect(g); g.connect(drumGain); n.start(now); n.stop(now + 0.5); break;
+                }
+                case 'perc': {
+                    const o = audioContext.createOscillator(); const g = audioContext.createGain();
+                    o.frequency.value = 800; g.gain.value = 0.3 * drumVolumes.perc;
+                    g.gain.exponentialRampToValueAtTime(0.01, now + 0.1); o.type = 'triangle';
+                    o.connect(g); g.connect(drumGain); o.start(now); o.stop(now + 0.1); break;
+                }
+                case 'shaker': {
+                    const n = createNoiseSource(); const f = audioContext.createBiquadFilter(); const g = audioContext.createGain();
+                    f.type = 'highpass'; f.frequency.value = 4000; f.Q.value = 2;
+                    g.gain.value = 0.25 * drumVolumes.shaker; g.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    n.connect(f); f.connect(g); g.connect(drumGain); n.start(now); n.stop(now + 0.08); break;
+                }
             }
             animateVisualizer();
         }
@@ -2136,22 +1612,18 @@
             return noise;
         }
 
+        // ─── MIDI ────────────────────────────────────────────────────────────────
         async function initMIDI() {
-            if (navigator.requestMIDIAccess) {
-                try {
-                    midiAccess = await navigator.requestMIDIAccess();
-                    midiInputs = Array.from(midiAccess.inputs.values());
-                    if (midiInputs.length > 0) {
-                        midiInputs.forEach(input => { input.onmidimessage = handleMIDIMessage; });
-                        updateNoteDisplay('MIDI CONNECTED'); setTimeout(() => updateNoteDisplay('---'), 2000);
-                    }
-                    midiAccess.onstatechange = (e) => {
-                        if (e.port.type === 'input') {
-                            if (e.port.state === 'connected') { e.port.onmidimessage = handleMIDIMessage; updateNoteDisplay('MIDI CONNECTED'); setTimeout(() => updateNoteDisplay('---'), 2000); }
-                        }
-                    };
-                } catch (err) { console.error('Failed to get MIDI access:', err); }
-            }
+            if (!navigator.requestMIDIAccess) return;
+            try {
+                midiAccess = await navigator.requestMIDIAccess();
+                midiInputs = Array.from(midiAccess.inputs.values());
+                midiInputs.forEach(input => { input.onmidimessage = handleMIDIMessage; });
+                if (midiInputs.length > 0) { updateNoteDisplay('MIDI OK'); setTimeout(() => updateNoteDisplay('---'), 2000); }
+                midiAccess.onstatechange = (e) => {
+                    if (e.port.type === 'input' && e.port.state === 'connected') { e.port.onmidimessage = handleMIDIMessage; }
+                };
+            } catch(err) {}
         }
 
         function handleMIDIMessage(message) {
@@ -2170,27 +1642,19 @@
             } else if (command === 14) {
                 const bendValue = (note | (velocity << 7)) - 8192;
                 pitchBendValue = bendValue / 8192;
-                const pitchBendThumb = document.getElementById('pitchBendThumb');
+                const pbt = document.getElementById('pitchBendThumb');
                 const range = 100 - 30; const centerPos = range / 2;
-                pitchBendThumb.style.top = (centerPos - (pitchBendValue * centerPos)) + 'px';
-                activeNotes.forEach((noteData, noteName) => {
-                    const baseFreq = noteData.baseFrequency; const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
-                    if (noteData.osc1 && noteData.osc1.frequency) {
-                        noteData.osc1.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
-                        noteData.osc2.frequency.setValueAtTime(bendedFreq * 0.995, audioContext.currentTime);
-                        noteData.osc3.frequency.setValueAtTime(bendedFreq * 1.005, audioContext.currentTime);
-                    } else if (noteData.noiseFilter && noteData.noiseFilter.frequency) {
-                        noteData.noiseFilter.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
-                    }
+                pbt.style.top = (centerPos - (pitchBendValue * centerPos)) + 'px';
+                activeNotes.forEach((nd) => {
+                    const bf = nd.baseFrequency; const bf2 = bf * Math.pow(2, (pitchBendValue * 2) / 12);
+                    if (nd.osc1) { nd.osc1.frequency.setValueAtTime(bf2, audioContext.currentTime); nd.osc2.frequency.setValueAtTime(bf2*0.995, audioContext.currentTime); nd.osc3.frequency.setValueAtTime(bf2*1.005, audioContext.currentTime); }
+                    else if (nd.noiseFilter) nd.noiseFilter.frequency.setValueAtTime(bf2, audioContext.currentTime);
                 });
             }
         }
 
-        function midiNoteToFrequency(midiNote) { return 440 * Math.pow(2, (midiNote - 69) / 12); }
-        function midiNoteToName(midiNote) {
-            const octave = Math.floor(midiNote / 12) - 1;
-            return noteNames[midiNote % 12] + octave;
-        }
+        function midiNoteToFrequency(n) { return 440 * Math.pow(2, (n - 69) / 12); }
+        function midiNoteToName(n) { return noteNames[n % 12] + (Math.floor(n / 12) - 1); }
 
         function animateKeyForMIDI(noteName, isPressed) {
             document.querySelectorAll('.white-key, .black-key').forEach(key => {
@@ -2206,17 +1670,18 @@
             arpNotes = []; arpIndex = 0;
             document.querySelectorAll('.white-key, .black-key').forEach(k => k.classList.remove('playing'));
             pitchBendValue = 0;
-            const pbt = document.getElementById('pitchBendThumb'); if (pbt) pbt.style.top = '37.5px';
+            const pbt = document.getElementById('pitchBendThumb'); if (pbt) pbt.style.top = '35px';
             pitchHoldEnabled = false;
-            const phb = document.getElementById('pitchHoldBtn'); if (phb) phb.classList.remove('active');
+            document.getElementById('pitchHoldBtn').classList.remove('active');
             activeNotes.clear();
-            updateNoteDisplay('MIDI CLEARED'); setTimeout(() => updateNoteDisplay('---'), 1000);
+            updateNoteDisplay('CLEARED'); setTimeout(() => updateNoteDisplay('---'), 1000);
         }
 
+        // ─── Presets ─────────────────────────────────────────────────────────────
         function savePreset(slot) {
-            const presetData = {
-                currentOctave, currentWaveform, arpEnabled, arpMode, arpNotes: [...arpNotes],
-                syncEnabled, pitchHoldEnabled, tempo, drumVolumes: {...drumVolumes},
+            presets[slot] = {
+                currentOctave, currentWaveform, arpEnabled, arpMode, syncEnabled, pitchHoldEnabled, tempo,
+                drumVolumes: {...drumVolumes},
                 sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
                 knobValues: {
                     delay: parseInt(document.getElementById('delayKnob').dataset.value),
@@ -2228,55 +1693,35 @@
                     masterVolume: parseInt(document.getElementById('masterVolumeKnob').dataset.value)
                 }
             };
-            presets[slot] = presetData;
-            try {
-                localStorage.setItem('dPaulMKIV_presets', JSON.stringify(presets));
-                updateNoteDisplay(`M${slot} SAVED`); setTimeout(() => updateNoteDisplay('---'), 1000);
-            } catch (e) { updateNoteDisplay('SAVE FAIL'); setTimeout(() => updateNoteDisplay('---'), 1000); }
+            try { localStorage.setItem('dPaulMKIV_presets', JSON.stringify(presets)); } catch(e) {}
+            updateNoteDisplay(`M${slot} SAVED`); setTimeout(() => updateNoteDisplay('---'), 1000);
         }
 
         function loadPreset(slot) {
-            const presetData = presets[slot];
-            if (!presetData) { updateNoteDisplay(`M${slot} EMPTY`); setTimeout(() => updateNoteDisplay('---'), 1000); return; }
-            currentOctave = presetData.currentOctave; updateOctaveDisplay(); rebuildKeyboard();
-            if (presetData.currentWaveform) {
-                currentWaveform = presetData.currentWaveform;
-                document.querySelectorAll('.waveform-btn').forEach(btn => { btn.classList.remove('active'); if (btn.dataset.wave === currentWaveform) btn.classList.add('active'); });
-            }
-            tempo = presetData.tempo; updateTempoDisplay();
-            Object.keys(presetData.knobValues).forEach(knobName => {
-                const knob = document.getElementById(knobName + 'Knob');
-                if (knob) { knob.dataset.value = presetData.knobValues[knobName]; updateKnob(knob); }
-            });
-            if (presetData.drumVolumes) {
-                drumVolumes = presetData.drumVolumes;
-                Object.keys(drumVolumes).forEach(drumName => {
-                    const level = drumVolumes[drumName];
-                    document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`).forEach(dot => { dot.classList.remove('active'); if (parseFloat(dot.dataset.level) === level) dot.classList.add('active'); });
-                });
-            }
-            if (presetData.sequencerPattern) { sequencerPattern = presetData.sequencerPattern; updateSequencerDisplay(); }
-            syncEnabled = presetData.syncEnabled;
-            document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
-            pitchHoldEnabled = presetData.pitchHoldEnabled || false;
-            document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
-            arpEnabled = presetData.arpEnabled;
-            if (presetData.arpMode) {
-                arpMode = presetData.arpMode;
-                document.querySelectorAll('[data-mode]').forEach(btn => { btn.classList.remove('active'); if (btn.dataset.mode === arpMode) btn.classList.add('active'); });
-            }
+            const pd = presets[slot];
+            if (!pd) { updateNoteDisplay(`M${slot} EMPTY`); setTimeout(() => updateNoteDisplay('---'), 1000); return; }
+            currentOctave = pd.currentOctave; updateOctaveDisplay(); rebuildKeyboard();
+            if (pd.currentWaveform) { currentWaveform = pd.currentWaveform; document.querySelectorAll('.waveform-btn').forEach(b => { b.classList.remove('active'); if (b.dataset.wave === currentWaveform) b.classList.add('active'); }); }
+            tempo = pd.tempo; updateTempoDisplay();
+            Object.keys(pd.knobValues).forEach(k => { const knob = document.getElementById(k + 'Knob'); if (knob) { knob.dataset.value = pd.knobValues[k]; updateKnob(knob); } });
+            if (pd.drumVolumes) { drumVolumes = pd.drumVolumes; Object.keys(drumVolumes).forEach(dn => { const lv = drumVolumes[dn]; document.querySelectorAll(`.volume-dot[data-drum="${dn}"]`).forEach(dot => { dot.classList.remove('active'); if (parseFloat(dot.dataset.level) === lv) dot.classList.add('active'); }); }); }
+            if (pd.sequencerPattern) { sequencerPattern = pd.sequencerPattern; updateSequencerDisplay(); }
+            syncEnabled = pd.syncEnabled; document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
+            pitchHoldEnabled = pd.pitchHoldEnabled || false; document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
+            arpEnabled = pd.arpEnabled;
+            if (pd.arpMode) { arpMode = pd.arpMode; document.querySelectorAll('[data-mode]').forEach(b => { b.classList.remove('active'); if (b.dataset.mode === arpMode) b.classList.add('active'); }); }
             document.getElementById('arpSwitch').classList.toggle('active', arpEnabled);
             document.getElementById('arpLight').classList.toggle('active', arpEnabled);
-            if (sequencerPlaying) { stopSequencer(); startSequencer(); }
-            updateNoteDisplay(`M${slot} LOAD`); setTimeout(() => updateNoteDisplay('---'), 1000);
+            updateNoteDisplay(`M${slot} LOADED`); setTimeout(() => updateNoteDisplay('---'), 1000);
         }
 
         function loadPresetsFromStorage() {
-            try { const saved = localStorage.getItem('dPaulMKIV_presets'); if (saved) presets = JSON.parse(saved); } catch (e) {}
+            try { const s = localStorage.getItem('dPaulMKIV_presets'); if (s) presets = JSON.parse(s); } catch(e) {}
         }
 
+        // ─── Settings Save/Load ──────────────────────────────────────────────────
         function saveSettings() {
-            const settings = {
+            const s = {
                 volume: masterGain ? masterGain.gain.value : 0.7,
                 drumVolume: drumGain ? drumGain.gain.value : 0.7,
                 delay: delayNode ? delayNode.delayTime.value : 0.3,
@@ -2286,110 +1731,113 @@
                 currentOctave, currentWaveform, arpEnabled, syncEnabled, pitchHoldEnabled, synthPowered, tempo,
                 drumVolumes, sequencerPattern
             };
-            try {
-                localStorage.setItem('dPaulMKIV_settings', JSON.stringify(settings));
-                updateNoteDisplay('SAVED'); setTimeout(() => updateNoteDisplay('---'), 1000);
-                return true;
-            } catch (e) { return false; }
+            try { localStorage.setItem('dPaulMKIV_settings', JSON.stringify(s)); return true; } catch(e) { return false; }
         }
 
         function loadSettings() {
             try {
-                const saved = localStorage.getItem('dPaulMKIV_settings');
-                if (!saved) return false;
-                const settings = JSON.parse(saved);
-                if (masterGain) masterGain.gain.value = settings.volume || 0.7;
-                if (drumGain) drumGain.gain.value = settings.drumVolume || 0.7;
-                if (delayNode) delayNode.delayTime.value = settings.delay || 0.3;
-                if (feedbackGain) feedbackGain.gain.value = settings.feedback || 0.3;
-                if (filterNode) { filterNode.frequency.value = settings.filter || 2000; filterNode.Q.value = settings.resonance || 1; }
-                currentOctave = settings.currentOctave || 4;
-                arpEnabled = false; syncEnabled = settings.syncEnabled || false;
-                pitchHoldEnabled = settings.pitchHoldEnabled || false;
+                const raw = localStorage.getItem('dPaulMKIV_settings');
+                if (!raw) return false;
+                const s = JSON.parse(raw);
+                if (masterGain) masterGain.gain.value = s.volume || 0.7;
+                if (drumGain) drumGain.gain.value = s.drumVolume || 0.7;
+                if (delayNode) delayNode.delayTime.value = s.delay || 0.3;
+                if (feedbackGain) feedbackGain.gain.value = s.feedback || 0.3;
+                if (filterNode) { filterNode.frequency.value = s.filter || 2000; filterNode.Q.value = s.resonance || 1; }
+                currentOctave = s.currentOctave || 4;
+                arpEnabled = false; syncEnabled = s.syncEnabled || false; pitchHoldEnabled = s.pitchHoldEnabled || false;
                 if (pitchHoldEnabled) document.getElementById('pitchHoldBtn').classList.add('active');
-                tempo = settings.tempo || 120;
-                if (settings.currentWaveform) {
-                    currentWaveform = settings.currentWaveform;
-                    document.querySelectorAll('.waveform-btn').forEach(btn => { btn.classList.remove('active'); if (btn.dataset.wave === currentWaveform) btn.classList.add('active'); });
-                }
-                if (settings.drumVolumes) {
-                    drumVolumes = settings.drumVolumes;
-                    Object.keys(drumVolumes).forEach(drumName => {
-                        const level = drumVolumes[drumName];
-                        document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`).forEach(dot => { dot.classList.remove('active'); if (parseFloat(dot.dataset.level) === level) dot.classList.add('active'); });
-                    });
-                }
-                if (settings.sequencerPattern) { sequencerPattern = settings.sequencerPattern; updateSequencerDisplay(); }
+                tempo = s.tempo || 120;
+                if (s.currentWaveform) { currentWaveform = s.currentWaveform; document.querySelectorAll('.waveform-btn').forEach(b => { b.classList.remove('active'); if (b.dataset.wave === currentWaveform) b.classList.add('active'); }); }
+                if (s.drumVolumes) { drumVolumes = s.drumVolumes; Object.keys(drumVolumes).forEach(dn => { const lv = drumVolumes[dn]; document.querySelectorAll(`.volume-dot[data-drum="${dn}"]`).forEach(dot => { dot.classList.remove('active'); if (parseFloat(dot.dataset.level) === lv) dot.classList.add('active'); }); }); }
+                if (s.sequencerPattern) { sequencerPattern = s.sequencerPattern; updateSequencerDisplay(); }
                 updateOctaveDisplay(); updateTempoDisplay();
                 document.getElementById('arpSwitch').classList.remove('active');
                 document.getElementById('arpLight').classList.remove('active');
                 document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
-                synthPowered = settings.synthPowered !== false;
+                synthPowered = s.synthPowered !== false;
                 const powerBtn = document.getElementById('powerBtn'); const synthContainer = document.getElementById('synthContainer');
                 if (synthPowered) { powerBtn.classList.add('on'); powerBtn.textContent = 'ON'; synthContainer.classList.remove('powered-off'); synthContainer.classList.add('powered-on'); }
                 else { powerBtn.classList.remove('on'); powerBtn.textContent = 'OFF'; synthContainer.classList.remove('powered-on'); synthContainer.classList.add('powered-off'); }
                 document.querySelectorAll('.knob').forEach(updateKnob);
-                updateNoteDisplay('LOADED'); setTimeout(() => updateNoteDisplay('---'), 1000);
                 return true;
-            } catch (e) { return false; }
+            } catch(e) { return false; }
         }
 
         function autoSave() { saveSettings(); }
 
+        // ─── Keyboard Build ──────────────────────────────────────────────────────
         function buildKeyboard() {
             const container = document.getElementById('pianoKeys');
             if (!container) return;
             container.innerHTML = '';
+            // White key positions in an octave (0-based among white keys): C D E F G A B
+            // Black keys go after: C(0)->C#, D(1)->D#, F(3)->F#, G(4)->G#, A(5)->A#
             const blackKeyOffsets = { 0: 17, 1: 43, 3: 95, 4: 121, 5: 147 };
-            let whiteKeyIndex = 0;
+            let whiteKeyCount = 0;
+
             for (let i = 0; i < 37; i++) {
-                const noteIndex = i % 12; const octaveOffset = Math.floor(i / 12);
-                const noteName = noteNames[noteIndex] + (currentOctave + octaveOffset);
-                const isBlack = noteNames[noteIndex].includes('#');
-                if (!isBlack) {
-                    const key = document.createElement('div'); key.className = 'white-key';
-                    key.dataset.note = i; key.dataset.noteName = noteName;
-                    key.addEventListener('mousedown', () => handleKeyPress(key));
-                    key.addEventListener('mouseup', () => handleKeyRelease(key));
-                    key.addEventListener('mouseleave', () => handleKeyRelease(key));
-                    key.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyPress(key); });
-                    key.addEventListener('touchend', (e) => { e.preventDefault(); handleKeyRelease(key); });
-                    container.appendChild(key);
-                    const whiteKeyInOctave = whiteKeyIndex % 7;
-                    const nextNoteIndex = (i + 1) % 12;
-                    const nextIsBlack = noteNames[nextNoteIndex] && noteNames[nextNoteIndex].includes('#');
-                    if (blackKeyOffsets[whiteKeyInOctave] !== undefined && i < 36 && nextIsBlack) {
-                        const blackKey = document.createElement('div'); blackKey.className = 'black-key';
-                        blackKey.dataset.note = i + 1;
-                        blackKey.dataset.noteName = noteNames[nextNoteIndex] + (currentOctave + Math.floor((i + 1) / 12));
-                        blackKey.style.left = blackKeyOffsets[whiteKeyInOctave] + (Math.floor(whiteKeyIndex / 7) * 182) + 'px';
-                        blackKey.addEventListener('mousedown', () => handleKeyPress(blackKey));
-                        blackKey.addEventListener('mouseup', () => handleKeyRelease(blackKey));
-                        blackKey.addEventListener('mouseleave', () => handleKeyRelease(blackKey));
-                        blackKey.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyPress(blackKey); });
-                        blackKey.addEventListener('touchend', (e) => { e.preventDefault(); handleKeyRelease(blackKey); });
-                        container.appendChild(blackKey);
+                const noteIdx = i % 12;
+                const octaveOffset = Math.floor(i / 12);
+                const noteName = noteNames[noteIdx] + (currentOctave + octaveOffset);
+                const isBlack = noteNames[noteIdx].includes('#');
+                if (isBlack) continue; // black keys handled alongside previous white key
+
+                const key = document.createElement('div');
+                key.className = 'white-key';
+                key.dataset.noteName = noteName;
+
+                key.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyPress(key); });
+                key.addEventListener('mouseup', () => handleKeyRelease(key));
+                key.addEventListener('mouseleave', () => handleKeyRelease(key));
+                key.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyPress(key); });
+                key.addEventListener('touchend', (e) => { e.preventDefault(); handleKeyRelease(key); });
+                container.appendChild(key);
+
+                // Add black key after this white key if applicable
+                const whiteKeyInOctave = whiteKeyCount % 7;
+                if (blackKeyOffsets[whiteKeyInOctave] !== undefined) {
+                    const blackNoteIdx = noteIdx + 1;
+                    if (blackNoteIdx < 12 && noteNames[blackNoteIdx].includes('#')) {
+                        const blackOctaveOffset = Math.floor((i + 1) / 12);
+                        const blackNoteName = noteNames[blackNoteIdx] + (currentOctave + blackOctaveOffset);
+                        const bKey = document.createElement('div');
+                        bKey.className = 'black-key';
+                        bKey.dataset.noteName = blackNoteName;
+                        bKey.style.left = (blackKeyOffsets[whiteKeyInOctave] + Math.floor(whiteKeyCount / 7) * 182) + 'px';
+                        bKey.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyPress(bKey); });
+                        bKey.addEventListener('mouseup', () => handleKeyRelease(bKey));
+                        bKey.addEventListener('mouseleave', () => handleKeyRelease(bKey));
+                        bKey.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyPress(bKey); });
+                        bKey.addEventListener('touchend', (e) => { e.preventDefault(); handleKeyRelease(bKey); });
+                        container.appendChild(bKey);
                     }
-                    whiteKeyIndex++;
                 }
+                whiteKeyCount++;
             }
         }
 
+        // ─── Key Press / Release ─────────────────────────────────────────────────
         function handleKeyPress(key) {
             if (key.classList.contains('playing')) return;
             key.classList.add('playing');
             initAudio();
-            if (audioContext && audioContext.state === 'suspended') audioContext.resume();
-            const noteIndex = parseInt(key.dataset.note); const noteName = key.dataset.noteName;
-            const frequency = getNoteFrequency(noteIndex, currentOctave);
-            // If sampler is on and selected slot has a buffer, play it pitched
+            if (audioContext.state === 'suspended') audioContext.resume();
+            const noteName = key.dataset.noteName;
+            // Use noteNameToFrequency — the correct fix
+            const frequency = noteNameToFrequency(noteName);
+
             if (samplerEnabled && samplerSlots[selectedSamplerSlot] && samplerSlots[selectedSamplerSlot].buffer) {
-                const rootNoteIndex = 0; // C of current octave = root (semitone 0)
-                const semitones = noteIndex - rootNoteIndex;
+                // Figure out semitone offset from C of base octave
+                const match = noteName.match(/^([A-G]#?)(-?\d+)$/);
+                const rootNoteName = 'C' + currentOctave;
+                const rootFreq = noteNameToFrequency(rootNoteName);
+                const semitones = Math.round(12 * Math.log2(frequency / rootFreq));
                 playSamplerSlotPitched(selectedSamplerSlot, semitones);
                 updateNoteDisplay(noteName);
                 return;
             }
+
             if (arpEnabled) { arpNotes.push({ frequency, noteName }); if (!arpInterval) startArp(); }
             else { playNote(frequency, noteName); }
         }
@@ -2400,19 +1848,13 @@
             if (!arpEnabled) stopNote(noteName);
         }
 
+        // ─── Arpeggiator ─────────────────────────────────────────────────────────
         function toggleArp() {
             arpEnabled = !arpEnabled;
-            const arpSwitch = document.getElementById('arpSwitch'); const arpLight = document.getElementById('arpLight');
-            if (arpEnabled) {
-                arpSwitch.classList.add('active'); arpLight.classList.add('active');
-                if (arpNotes.length > 0) startArp();
-                if (syncEnabled && !sequencerPlaying) startSequencer();
-            } else {
-                arpSwitch.classList.remove('active'); arpLight.classList.remove('active');
-                if (arpInterval) { clearInterval(arpInterval); arpInterval = null; }
-                stopArp();
-                if (syncEnabled && sequencerPlaying) stopSequencer();
-            }
+            document.getElementById('arpSwitch').classList.toggle('active', arpEnabled);
+            document.getElementById('arpLight').classList.toggle('active', arpEnabled);
+            if (arpEnabled) { if (arpNotes.length > 0) startArp(); if (syncEnabled && !sequencerPlaying) startSequencer(); }
+            else { if (arpInterval) { clearInterval(arpInterval); arpInterval = null; } stopArp(); if (syncEnabled && sequencerPlaying) stopSequencer(); }
             autoSave();
         }
 
@@ -2421,22 +1863,23 @@
             if (arpInterval) { clearInterval(arpInterval); arpInterval = null; }
             const stepTime = (60 / tempo) * 1000 / 4;
             arpInterval = setInterval(() => {
-                if (arpNotes.length > 0) {
-                    let noteIndex;
-                    switch(arpMode) {
-                        case 'up': noteIndex = arpIndex % arpNotes.length; break;
-                        case 'down': noteIndex = (arpNotes.length - 1) - (arpIndex % arpNotes.length); break;
-                        case 'updown':
-                            const cycle = (arpNotes.length * 2) - 2; const pos = arpIndex % cycle;
-                            noteIndex = pos < arpNotes.length ? pos : (arpNotes.length * 2 - 2) - pos; break;
-                        case 'random': noteIndex = Math.floor(Math.random() * arpNotes.length); break;
-                        default: noteIndex = arpIndex % arpNotes.length;
+                if (arpNotes.length === 0) { clearInterval(arpInterval); arpInterval = null; return; }
+                let noteIndex;
+                switch(arpMode) {
+                    case 'up': noteIndex = arpIndex % arpNotes.length; break;
+                    case 'down': noteIndex = (arpNotes.length - 1) - (arpIndex % arpNotes.length); break;
+                    case 'updown': {
+                        const cycle = Math.max(1, (arpNotes.length * 2) - 2);
+                        const pos = arpIndex % cycle;
+                        noteIndex = pos < arpNotes.length ? pos : (arpNotes.length * 2 - 2) - pos; break;
                     }
-                    const note = arpNotes[noteIndex];
-                    playNote(note.frequency, note.noteName);
-                    setTimeout(() => stopNote(note.noteName), stepTime * 0.75);
-                    arpIndex++;
-                } else { if (arpInterval) { clearInterval(arpInterval); arpInterval = null; } }
+                    case 'random': noteIndex = Math.floor(Math.random() * arpNotes.length); break;
+                    default: noteIndex = arpIndex % arpNotes.length;
+                }
+                const note = arpNotes[noteIndex];
+                playNote(note.frequency, note.noteName);
+                setTimeout(() => stopNote(note.noteName), stepTime * 0.75);
+                arpIndex++;
             }, stepTime);
         }
 
@@ -2444,19 +1887,20 @@
         function pauseArp() { if (arpInterval) { clearInterval(arpInterval); arpInterval = null; } }
 
         function syncRestart() {
-            const wasArpPlaying = arpEnabled && arpInterval; const wasSeqPlaying = sequencerPlaying;
-            if (wasArpPlaying) pauseArp(); if (wasSeqPlaying) stopSequencer();
+            const wasArp = arpEnabled && arpInterval; const wasSeq = sequencerPlaying;
+            if (wasArp) pauseArp(); if (wasSeq) stopSequencer();
             arpIndex = 0; currentStep = 0;
-            if (wasArpPlaying) startArp(); if (wasSeqPlaying) startSequencer();
+            if (wasArp) startArp(); if (wasSeq) startSequencer();
         }
 
+        // ─── Knobs ───────────────────────────────────────────────────────────────
         function setupKnobs() {
             document.querySelectorAll('.knob').forEach(knob => {
-                let isDragging = false; let startY = 0; let startValue = parseInt(knob.dataset.value);
-                knob.addEventListener('mousedown', (e) => { isDragging = true; startY = e.clientY; startValue = parseInt(knob.dataset.value); });
+                let isDragging = false; let startY = 0; let startValue = 0;
+                knob.addEventListener('mousedown', (e) => { isDragging = true; startY = e.clientY; startValue = parseInt(knob.dataset.value); e.preventDefault(); });
                 document.addEventListener('mousemove', (e) => {
                     if (!isDragging) return;
-                    let newValue = Math.max(0, Math.min(100, startValue + (startY - e.clientY)));
+                    const newValue = Math.max(0, Math.min(100, startValue + (startY - e.clientY)));
                     knob.dataset.value = newValue; updateKnob(knob);
                 });
                 document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; autoSave(); } });
@@ -2466,8 +1910,8 @@
         function updateKnob(knob) {
             const value = parseInt(knob.dataset.value);
             knob.style.transform = `rotate(${(value / 100) * 270 - 135}deg)`;
-            const valueDisplay = document.getElementById(knob.id.replace('Knob', 'Value'));
-            if (valueDisplay) valueDisplay.textContent = value + '%';
+            const vd = document.getElementById(knob.id.replace('Knob', 'Value'));
+            if (vd) vd.textContent = value + '%';
             if (knob.id === 'delayKnob' && delayNode) delayNode.delayTime.value = (value / 100) * 0.5;
             else if (knob.id === 'feedbackKnob' && feedbackGain) feedbackGain.gain.value = value / 100;
             else if (knob.id === 'filterKnob' && filterNode) filterNode.frequency.value = 200 + (value / 100) * 4800;
@@ -2477,24 +1921,26 @@
             else if (knob.id === 'masterVolumeKnob' && masterGain) masterGain.gain.value = value / 100;
         }
 
+        // ─── Visualizer ──────────────────────────────────────────────────────────
         function animateVisualizer() {
-            const visualizer = document.getElementById('visualizer'); visualizer.innerHTML = '';
+            const v = document.getElementById('visualizer'); v.innerHTML = '';
             for (let i = 0; i < 40; i++) {
                 const bar = document.createElement('div'); bar.className = 'wave-bar';
-                bar.style.height = Math.random() * 40 + 'px'; visualizer.appendChild(bar);
+                bar.style.height = Math.random() * 40 + 'px'; v.appendChild(bar);
             }
-            setTimeout(() => { visualizer.innerHTML = ''; }, 300);
+            setTimeout(() => { v.innerHTML = ''; }, 300);
         }
 
-        function updateNoteDisplay(note) { document.getElementById('noteDisplay').textContent = note; }
-
-        document.getElementById('octaveUp').addEventListener('click', () => { if (currentOctave < 7) { currentOctave++; updateOctaveDisplay(); rebuildKeyboard(); autoSave(); } });
-        document.getElementById('octaveDown').addEventListener('click', () => { if (currentOctave > 1) { currentOctave--; updateOctaveDisplay(); rebuildKeyboard(); autoSave(); } });
-        document.getElementById('clearMidiBtn').addEventListener('click', () => { clearAllMIDINotes(); });
-
+        function updateNoteDisplay(note) { const el = document.getElementById('noteDisplay'); if (el) el.textContent = note; }
         function updateOctaveDisplay() { document.getElementById('octaveDisplay').textContent = `OCT ${currentOctave}`; }
         function rebuildKeyboard() { buildKeyboard(); }
 
+        // ─── Octave / Clear MIDI ─────────────────────────────────────────────────
+        document.getElementById('octaveUp').addEventListener('click', () => { if (currentOctave < 7) { currentOctave++; updateOctaveDisplay(); rebuildKeyboard(); autoSave(); } });
+        document.getElementById('octaveDown').addEventListener('click', () => { if (currentOctave > 1) { currentOctave--; updateOctaveDisplay(); rebuildKeyboard(); autoSave(); } });
+        document.getElementById('clearMidiBtn').addEventListener('click', clearAllMIDINotes);
+
+        // ─── Drum Pads ───────────────────────────────────────────────────────────
         document.querySelectorAll('.pad').forEach(pad => {
             pad.addEventListener('click', () => {
                 document.querySelectorAll('.pad').forEach(p => p.classList.remove('selected'));
@@ -2506,42 +1952,17 @@
             });
         });
 
-        function loadSampleFile(sampleNum, file) {
-            if (!file) return;
-            initAudio(); const reader = new FileReader();
-            reader.onload = (e) => {
-                audioContext.decodeAudioData(e.target.result.slice(0), (buffer) => {
-                    sampleBuffers[sampleNum] = buffer;
-                    const pad = document.querySelector(`.sample-pad[data-sample="${sampleNum}"]`);
-                    if (pad) pad.classList.add('loaded');
-                    updateNoteDisplay(`S${sampleNum + 1} LOADED`); setTimeout(() => updateNoteDisplay('---'), 1000);
-                    playSample(sampleNum);
-                }, (error) => { updateNoteDisplay('DECODE ERROR'); setTimeout(() => updateNoteDisplay('---'), 1000); });
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
+        // ─── Sample Playback ─────────────────────────────────────────────────────
         function playSample(sampleNum) {
             if (!sampleBuffers[sampleNum]) return;
             initAudio();
-            let buffer = sampleBuffers[sampleNum];
-            if (sampleReverse) buffer = reverseBuffer(buffer);
-            const source = audioContext.createBufferSource(); source.buffer = buffer;
+            const source = audioContext.createBufferSource(); source.buffer = sampleBuffers[sampleNum];
             source.detune.value = samplePitch * 100; source.playbackRate.value = sampleSpeed; source.loop = sampleLoop;
-            const sampleFilterNode = audioContext.createBiquadFilter(); sampleFilterNode.type = 'lowpass'; sampleFilterNode.frequency.value = sampleFilter;
-            source.connect(sampleFilterNode); sampleFilterNode.connect(drumGain);
-            source.start(audioContext.currentTime); animateVisualizer();
+            const sf = audioContext.createBiquadFilter(); sf.type = 'lowpass'; sf.frequency.value = sampleFilter;
+            source.connect(sf); sf.connect(drumGain); source.start(audioContext.currentTime); animateVisualizer();
         }
 
-        function reverseBuffer(buffer) {
-            const reversed = audioContext.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
-            for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
-                const inputData = buffer.getChannelData(channel); const outputData = reversed.getChannelData(channel);
-                for (let i = 0; i < buffer.length; i++) outputData[i] = inputData[buffer.length - 1 - i];
-            }
-            return reversed;
-        }
-
+        // ─── Waveform Buttons ─────────────────────────────────────────────────────
         document.getElementById('arpSwitch').addEventListener('click', toggleArp);
         document.querySelectorAll('[data-mode]').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -2565,15 +1986,16 @@
             updateNoteDisplay('ARP CLEARED'); setTimeout(() => updateNoteDisplay('---'), 1000);
         });
 
+        // ─── Sequencer ───────────────────────────────────────────────────────────
         function initSequencer() {
             const grid = document.getElementById('sequencerGrid');
             for (let i = 0; i < 32; i++) {
                 const step = document.createElement('div'); step.className = 'step'; step.dataset.step = i;
-                const stepNum = document.createElement('div'); stepNum.className = 'step-number'; stepNum.textContent = i + 1;
-                step.appendChild(stepNum);
+                const sn = document.createElement('div'); sn.className = 'step-number'; sn.textContent = i + 1;
+                step.appendChild(sn);
                 step.addEventListener('click', () => {
-                    const activeTrack = selectedDrum || selectedSample;
-                    if (activeTrack && sequencerPattern[activeTrack]) {
+                    const activeTrack = selectedSample || selectedDrum;
+                    if (activeTrack && sequencerPattern[activeTrack] !== undefined) {
                         sequencerPattern[activeTrack][i] = !sequencerPattern[activeTrack][i];
                         updateSequencerDisplay(); autoSave();
                     }
@@ -2584,11 +2006,10 @@
         }
 
         function updateSequencerDisplay() {
-            const steps = document.querySelectorAll('.step'); const activeTrack = selectedDrum || selectedSample;
+            const steps = document.querySelectorAll('.step'); const activeTrack = selectedSample || selectedDrum;
             if (!activeTrack) return;
             steps.forEach((step, i) => {
-                if (sequencerPattern[activeTrack] && sequencerPattern[activeTrack][i]) step.classList.add('active');
-                else step.classList.remove('active');
+                step.classList.toggle('active', !!(sequencerPattern[activeTrack] && sequencerPattern[activeTrack][i]));
             });
         }
 
@@ -2599,19 +2020,15 @@
             function step() {
                 if (!sequencerPlaying) return;
                 document.querySelectorAll('.step').forEach(s => s.classList.remove('playing'));
-                document.querySelectorAll('.step')[currentStep].classList.add('playing');
-                if (currentStep % 4 === 0) {
-                    const bpmLed = document.getElementById('bpmIndicator');
-                    bpmLed.classList.add('beat'); setTimeout(() => bpmLed.classList.remove('beat'), 50);
-                }
+                const stepEl = document.querySelectorAll('.step')[currentStep];
+                if (stepEl) stepEl.classList.add('playing');
+                if (currentStep % 4 === 0) { const bi = document.getElementById('bpmIndicator'); bi.classList.add('beat'); setTimeout(() => bi.classList.remove('beat'), 50); }
                 Object.keys(sequencerPattern).forEach(track => {
                     if (sequencerPattern[track][currentStep]) {
                         if (track.startsWith('sample')) {
                             const idx = parseInt(track.replace('sample', ''));
-                            if (samplerSlots[idx] && samplerSlots[idx].buffer) playSamplerSlot(idx);
-                            else playSample(idx);
-                        }
-                        else playDrum(track);
+                            if (samplerSlots[idx] && samplerSlots[idx].buffer) playSamplerSlot(idx); else playSample(idx);
+                        } else { playDrum(track); }
                     }
                 });
                 currentStep = (currentStep + 1) % sequencerSteps;
@@ -2629,61 +2046,43 @@
             document.getElementById('playSeq').classList.remove('active');
         }
 
-        function clearSequencer() {
-            Object.keys(sequencerPattern).forEach(drum => { sequencerPattern[drum] = Array(32).fill(false); });
-            updateSequencerDisplay(); autoSave();
-        }
+        function clearSequencer() { Object.keys(sequencerPattern).forEach(k => { sequencerPattern[k] = Array(32).fill(false); }); updateSequencerDisplay(); autoSave(); }
 
         document.getElementById('playSeq').addEventListener('click', () => { if (sequencerPlaying) stopSequencer(); else startSequencer(); });
         document.getElementById('stopSeq').addEventListener('click', stopSequencer);
         document.getElementById('clearSeq').addEventListener('click', clearSequencer);
-        document.getElementById('steps8Btn').addEventListener('click', () => setSequencerSteps(8));
-        document.getElementById('steps16Btn').addEventListener('click', () => setSequencerSteps(16));
-        document.getElementById('steps32Btn').addEventListener('click', () => setSequencerSteps(32));
 
         function setSequencerSteps(steps) {
             const wasPlaying = sequencerPlaying; if (wasPlaying) stopSequencer();
             sequencerSteps = steps;
-            document.querySelectorAll('[data-steps]').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('[data-steps]').forEach(b => b.classList.remove('active'));
             document.querySelector(`[data-steps="${steps}"]`).classList.add('active');
-            document.querySelectorAll('.step').forEach((step, i) => { if (i < steps) step.classList.remove('hidden'); else step.classList.add('hidden'); });
+            document.querySelectorAll('.step').forEach((s, i) => { if (i < steps) s.classList.remove('hidden'); else s.classList.add('hidden'); });
             if (wasPlaying) startSequencer();
         }
 
+        document.getElementById('steps8Btn').addEventListener('click', () => setSequencerSteps(8));
+        document.getElementById('steps16Btn').addEventListener('click', () => setSequencerSteps(16));
+        document.getElementById('steps32Btn').addEventListener('click', () => setSequencerSteps(32));
         setSequencerSteps(32);
 
         document.getElementById('syncBtn').addEventListener('click', () => {
             syncEnabled = !syncEnabled;
             document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
-            if (syncEnabled) {
-                if (arpEnabled && !sequencerPlaying) startSequencer();
-                else if (!arpEnabled && sequencerPlaying) stopSequencer();
-                else if (arpInterval && sequencerPlaying) syncRestart();
-            }
+            if (syncEnabled) { if (arpEnabled && !sequencerPlaying) startSequencer(); else if (!arpEnabled && sequencerPlaying) stopSequencer(); else if (arpInterval && sequencerPlaying) syncRestart(); }
             autoSave();
         });
 
-        const drumVolumeKnob = document.getElementById('drumVolumeKnob');
-        let isDraggingDrumVolume = false; let drumVolumeStartY = 0; let drumVolumeStartValue = 70;
-        drumVolumeKnob.addEventListener('mousedown', (e) => { isDraggingDrumVolume = true; drumVolumeStartY = e.clientY; drumVolumeStartValue = parseInt(drumVolumeKnob.dataset.value); });
-        document.addEventListener('mousemove', (e) => {
-            if (!isDraggingDrumVolume) return;
-            let newValue = Math.max(0, Math.min(100, drumVolumeStartValue + (drumVolumeStartY - e.clientY)));
-            drumVolumeKnob.dataset.value = newValue;
-            drumVolumeKnob.style.transform = `rotate(${(newValue / 100) * 270 - 135}deg)`;
-            document.getElementById('drumVolumeValue').textContent = newValue + '%';
-            if (drumGain) drumGain.gain.value = newValue / 100;
-        });
-        document.addEventListener('mouseup', () => { if (isDraggingDrumVolume) { isDraggingDrumVolume = false; autoSave(); } });
-
+        // ─── Drum Volume Dots ─────────────────────────────────────────────────────
         document.querySelectorAll('.volume-dot').forEach(dot => {
             dot.addEventListener('click', () => {
-                const drumName = dot.dataset.drum; const level = parseFloat(dot.dataset.level);
-                document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`).forEach(d => d.classList.remove('active'));
-                dot.classList.add('active'); drumVolumes[drumName] = level; autoSave();
+                const dn = dot.dataset.drum; const lv = parseFloat(dot.dataset.level);
+                document.querySelectorAll(`.volume-dot[data-drum="${dn}"]`).forEach(d => d.classList.remove('active'));
+                dot.classList.add('active'); drumVolumes[dn] = lv; autoSave();
             });
         });
 
+        // ─── Tempo ───────────────────────────────────────────────────────────────
         const tempoSlider = document.getElementById('tempoSlider');
         let isDraggingTempo = false;
         tempoSlider.addEventListener('mousedown', (e) => { isDraggingTempo = true; updateTempo(e); });
@@ -2693,25 +2092,22 @@
         function updateTempo(e) {
             const rect = tempoSlider.getBoundingClientRect();
             const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-            tempo = Math.round(60 + (x / rect.width) * 180);
-            updateTempoDisplay();
+            tempo = Math.round(60 + (x / rect.width) * 180); updateTempoDisplay();
             if (sequencerPlaying) { stopSequencer(); startSequencer(); }
         }
 
         function updateTempoDisplay() {
-            const percentage = (tempo - 60) / 180;
-            tempoSlider.style.setProperty('--tempo-width', (percentage * 100) + '%');
+            const pct = (tempo - 60) / 180;
+            tempoSlider.style.setProperty('--tempo-width', (pct * 100) + '%');
             document.getElementById('tempoValue').textContent = tempo + ' BPM';
             startTempoLed();
         }
 
         function startTempoLed() {
             if (tempoLedInterval) clearInterval(tempoLedInterval);
-            const tempoLed = document.getElementById('tempoLed'); const beatInterval = (60 / tempo) * 1000;
-            tempoLed.classList.add('blink'); setTimeout(() => tempoLed.classList.remove('blink'), 100);
-            tempoLedInterval = setInterval(() => {
-                tempoLed.classList.add('blink'); setTimeout(() => tempoLed.classList.remove('blink'), 100);
-            }, beatInterval);
+            const led = document.getElementById('tempoLed'); const bi = (60 / tempo) * 1000;
+            led.classList.add('blink'); setTimeout(() => led.classList.remove('blink'), 100);
+            tempoLedInterval = setInterval(() => { led.classList.add('blink'); setTimeout(() => led.classList.remove('blink'), 100); }, bi);
         }
 
         document.getElementById('tempoUp').addEventListener('click', () => {
@@ -2730,9 +2126,10 @@
 
         updateTempoDisplay();
 
+        // ─── Pitch Bend ──────────────────────────────────────────────────────────
         const pitchBend = document.getElementById('pitchBend'); const pitchBendThumb = document.getElementById('pitchBendThumb');
         let isDraggingPitch = false;
-        pitchBendThumb.addEventListener('mousedown', (e) => { isDraggingPitch = true; e.stopPropagation(); });
+        pitchBendThumb.addEventListener('mousedown', (e) => { isDraggingPitch = true; e.stopPropagation(); e.preventDefault(); });
         pitchBend.addEventListener('mousedown', (e) => { if (e.target === pitchBend || e.target.classList.contains('pitch-bend-center')) { isDraggingPitch = true; updatePitchBend(e); } });
         document.addEventListener('mousemove', (e) => { if (isDraggingPitch) updatePitchBend(e); });
         document.addEventListener('mouseup', () => {
@@ -2740,13 +2137,8 @@
                 isDraggingPitch = false;
                 if (!pitchHoldEnabled) {
                     pitchBendValue = 0; pitchBendThumb.style.top = '35px';
-                    activeNotes.forEach((noteData) => {
-                        if (noteData.osc1 && noteData.osc1.frequency) {
-                            const baseFreq = noteData.baseFrequency;
-                            noteData.osc1.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
-                            noteData.osc2.frequency.setValueAtTime(baseFreq * 0.995, audioContext.currentTime);
-                            noteData.osc3.frequency.setValueAtTime(baseFreq * 1.005, audioContext.currentTime);
-                        }
+                    if (audioContext) activeNotes.forEach(nd => {
+                        if (nd.osc1) { nd.osc1.frequency.setValueAtTime(nd.baseFrequency, audioContext.currentTime); nd.osc2.frequency.setValueAtTime(nd.baseFrequency*0.995, audioContext.currentTime); nd.osc3.frequency.setValueAtTime(nd.baseFrequency*1.005, audioContext.currentTime); }
                     });
                 }
             }
@@ -2757,52 +2149,91 @@
             const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height - 30));
             pitchBendThumb.style.top = y + 'px';
             const center = (rect.height - 30) / 2; pitchBendValue = -(y - center) / center;
-            activeNotes.forEach((noteData) => {
-                const baseFreq = noteData.baseFrequency; const bendedFreq = baseFreq * Math.pow(2, (pitchBendValue * 2) / 12);
-                if (noteData.osc1 && noteData.osc1.frequency) {
-                    noteData.osc1.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
-                    noteData.osc2.frequency.setValueAtTime(bendedFreq * 0.995, audioContext.currentTime);
-                    noteData.osc3.frequency.setValueAtTime(bendedFreq * 1.005, audioContext.currentTime);
-                } else if (noteData.noiseFilter && noteData.noiseFilter.frequency) {
-                    noteData.noiseFilter.frequency.setValueAtTime(bendedFreq, audioContext.currentTime);
-                }
+            if (audioContext) activeNotes.forEach(nd => {
+                const bf2 = nd.baseFrequency * Math.pow(2, (pitchBendValue * 2) / 12);
+                if (nd.osc1) { nd.osc1.frequency.setValueAtTime(bf2, audioContext.currentTime); nd.osc2.frequency.setValueAtTime(bf2*0.995, audioContext.currentTime); nd.osc3.frequency.setValueAtTime(bf2*1.005, audioContext.currentTime); }
+                else if (nd.noiseFilter) nd.noiseFilter.frequency.setValueAtTime(bf2, audioContext.currentTime);
             });
         }
 
+        // ─── Sampler Functions ────────────────────────────────────────────────────
+        function updateSamplerScreen() {
+            for (let i = 0; i < 5; i++) {
+                const nameEl = document.getElementById(`slotName${i}`);
+                const statusEl = document.getElementById(`slotStatus${i}`);
+                if (samplerSlots[i]) { nameEl.textContent = samplerSlots[i].name; nameEl.classList.remove('empty'); statusEl.textContent = '●'; }
+                else { nameEl.textContent = '— EMPTY —'; nameEl.classList.add('empty'); statusEl.textContent = ''; }
+            }
+            document.querySelectorAll('.sampler-slot').forEach((el, i) => { el.classList.toggle('selected', i === selectedSamplerSlot); });
+        }
+
+        function toggleSampler() {
+            samplerEnabled = !samplerEnabled;
+            const btn = document.getElementById('samplerToggleBtn');
+            const screen = document.getElementById('samplerScreen');
+            const btns = document.querySelector('.sampler-btns');
+            const container = document.getElementById('synthContainer');
+            btn.textContent = samplerEnabled ? 'ON' : 'OFF';
+            btn.classList.toggle('on', samplerEnabled);
+            screen.classList.toggle('active', samplerEnabled);
+            btns.classList.toggle('active', samplerEnabled);
+            container.classList.toggle('sampler-active', samplerEnabled);
+            if (samplerEnabled) { initAudio(); if (audioContext) audioContext.resume(); }
+        }
+
+        function playSamplerSlot(i) {
+            if (!samplerSlots[i] || !samplerSlots[i].buffer) return;
+            initAudio();
+            const play = () => {
+                const source = audioContext.createBufferSource();
+                source.buffer = samplerSlots[i].buffer;
+                source.connect(drumGain || masterGain || audioContext.destination);
+                source.start(audioContext.currentTime);
+                const el = document.querySelector(`.sampler-slot[data-slot="${i}"]`);
+                if (el) { el.classList.add('playing'); source.onended = () => el.classList.remove('playing'); }
+                animateVisualizer();
+            };
+            audioContext.resume().then(play);
+        }
+
+        function playSamplerSlotPitched(slotIndex, semitones) {
+            if (!samplerSlots[slotIndex] || !samplerSlots[slotIndex].buffer) return;
+            initAudio();
+            audioContext.resume().then(() => {
+                const source = audioContext.createBufferSource();
+                source.buffer = samplerSlots[slotIndex].buffer;
+                source.playbackRate.value = Math.pow(2, semitones / 12);
+                source.connect(drumGain || masterGain || audioContext.destination);
+                source.start(audioContext.currentTime);
+                animateVisualizer();
+            });
+        }
+
+        // ─── DOMContentLoaded ─────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', function() {
+
             function scaleSynth() {
                 const container = document.getElementById('synthContainer');
                 if (!container) return;
-                // Reset transforms first so we can measure natural size
-                container.style.transform = '';
-                container.style.width = '';
-                // Force layout recalc
+                container.style.transform = ''; container.style.width = '';
                 void container.offsetWidth;
-                const naturalWidth = container.offsetWidth;
-                const naturalHeight = container.offsetHeight;
-                const availW = window.innerWidth;
-                const availH = window.innerHeight;
-                const scaleX = availW / naturalWidth;
-                const scaleY = availH / naturalHeight;
-                const scale = Math.min(scaleX, scaleY, 1);
+                const naturalWidth = container.offsetWidth; const naturalHeight = container.offsetHeight;
+                const availW = window.innerWidth; const availH = window.innerHeight;
+                const scale = Math.min(availW / naturalWidth, availH / naturalHeight, 1);
                 if (scale < 1) {
                     container.style.transform = `scale(${scale})`;
                     container.style.transformOrigin = 'top left';
                     container.style.marginBottom = `${(naturalHeight * scale) - naturalHeight}px`;
                 } else {
-                    container.style.transform = '';
-                    container.style.transformOrigin = '';
-                    container.style.marginBottom = '';
+                    container.style.transform = ''; container.style.transformOrigin = ''; container.style.marginBottom = '';
                 }
             }
-            scaleSynth();
-            window.addEventListener('resize', scaleSynth);
-            // Safari fires resize late — run again after a short delay
-            setTimeout(scaleSynth, 300);
+            scaleSynth(); window.addEventListener('resize', scaleSynth); setTimeout(scaleSynth, 300);
 
             buildKeyboard(); setupKnobs(); initSequencer(); initMIDI();
             loadPresetsFromStorage();
 
+            // Preset buttons
             document.querySelectorAll('.preset-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('selected'));
@@ -2810,26 +2241,21 @@
                 });
             });
             document.getElementById('preset1').classList.add('selected');
-            document.getElementById('savePreset').addEventListener('click', () => { savePreset(selectedPreset); });
-            document.getElementById('loadPreset').addEventListener('click', () => { loadPreset(selectedPreset); });
+            document.getElementById('savePreset').addEventListener('click', () => savePreset(selectedPreset));
+            document.getElementById('loadPreset').addEventListener('click', () => loadPreset(selectedPreset));
 
+            // Pitch hold
             document.getElementById('pitchHoldBtn').addEventListener('click', () => {
                 pitchHoldEnabled = !pitchHoldEnabled;
                 document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
-                if (!pitchHoldEnabled) {
+                if (!pitchHoldEnabled && audioContext) {
                     pitchBendValue = 0; document.getElementById('pitchBendThumb').style.top = '35px';
-                    activeNotes.forEach((noteData) => {
-                        if (noteData.osc1 && noteData.osc1.frequency) {
-                            const baseFreq = noteData.baseFrequency;
-                            noteData.osc1.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
-                            noteData.osc2.frequency.setValueAtTime(baseFreq * 0.995, audioContext.currentTime);
-                            noteData.osc3.frequency.setValueAtTime(baseFreq * 1.005, audioContext.currentTime);
-                        }
-                    });
+                    activeNotes.forEach(nd => { if (nd.osc1) { nd.osc1.frequency.setValueAtTime(nd.baseFrequency, audioContext.currentTime); nd.osc2.frequency.setValueAtTime(nd.baseFrequency*0.995, audioContext.currentTime); nd.osc3.frequency.setValueAtTime(nd.baseFrequency*1.005, audioContext.currentTime); } });
                 }
                 autoSave();
             });
 
+            // Power button
             document.getElementById('powerBtn').addEventListener('click', () => {
                 synthPowered = !synthPowered;
                 const powerBtn = document.getElementById('powerBtn'); const synthContainer = document.getElementById('synthContainer');
@@ -2841,12 +2267,7 @@
                     setTimeout(() => { synthContainer.style.opacity = '1'; }, 50);
                     setTimeout(() => { synthContainer.style.transition = ''; }, 4000);
                     initAudio();
-                    const resumeAndPlay = () => {
-                        audioContext.resume().then(() => {
-                            playPowerOnHum();
-                        });
-                    };
-                    setTimeout(resumeAndPlay, 80);
+                    setTimeout(() => { if (audioContext) audioContext.resume().then(() => playPowerOnHum()); }, 80);
                     startTempoLed();
                 } else {
                     powerBtn.classList.remove('on'); powerBtn.textContent = 'OFF';
@@ -2854,21 +2275,21 @@
                     playPowerOffHum();
                     if (tempoLedInterval) { clearInterval(tempoLedInterval); tempoLedInterval = null; }
                     document.getElementById('tempoLed').classList.remove('blink');
-                    if (arpInterval) pauseArp();
-                    if (sequencerPlaying) stopSequencer();
+                    if (arpInterval) pauseArp(); if (sequencerPlaying) stopSequencer();
                     Array.from(activeNotes.keys()).forEach(n => stopNote(n));
-                    document.querySelectorAll('.white-key, .black-key').forEach(key => key.classList.remove('playing'));
+                    document.querySelectorAll('.white-key, .black-key').forEach(k => k.classList.remove('playing'));
                 }
                 autoSave();
             });
 
+            // Save / Load local
             document.getElementById('saveLocalBtn').addEventListener('click', saveLocal);
-            document.getElementById('loadLocalBtn').addEventListener('click', () => { document.getElementById('loadSongFile').click(); });
+            document.getElementById('loadLocalBtn').addEventListener('click', () => document.getElementById('loadSongFile').click());
             document.getElementById('saveDriveBtn').addEventListener('click', saveToDrive);
             document.getElementById('loadDriveBtn').addEventListener('click', loadFromDrive);
-            document.getElementById('loadSongFile').addEventListener('change', (e) => { loadSong(e.target.files[0]); });
+            document.getElementById('loadSongFile').addEventListener('change', (e) => loadSong(e.target.files[0]));
 
-            document.getElementById('loadWavBtn').addEventListener('click', () => { document.getElementById('wavFileInput').click(); });
+            document.getElementById('loadWavBtn').addEventListener('click', () => document.getElementById('wavFileInput').click());
             document.getElementById('wavFileInput').addEventListener('change', (e) => {
                 const files = Array.from(e.target.files); if (!files.length) return;
                 initAudio();
@@ -2881,245 +2302,46 @@
                             sampleBuffers[index] = buffer;
                             const slotName = drumOrder[index]; const shortName = file.name.replace(/\.[^.]+$/, '').slice(0, 6).toUpperCase();
                             const pad = document.querySelector(`.pad[data-sound="${slotName}"]`);
-                            if (pad) { pad.style.border = '2px solid #00aa00'; pad.style.boxShadow = '0 0 8px rgba(0,170,0,0.5)'; pad.style.color = '#00aa00'; pad.textContent = shortName; pad.title = file.name; }
+                            if (pad) { pad.style.border = '2px solid #00aa00'; pad.style.color = '#00aa00'; pad.textContent = shortName; pad.title = file.name; }
                             updateNoteDisplay(`${shortName} OK`); setTimeout(() => updateNoteDisplay('---'), 1500);
                             playSample(index);
-                        }, (err) => { updateNoteDisplay('WAV ERR'); setTimeout(() => updateNoteDisplay('---'), 1500); });
+                        }, () => { updateNoteDisplay('WAV ERR'); setTimeout(() => updateNoteDisplay('---'), 1500); });
                     };
                     reader.readAsArrayBuffer(file);
                 });
                 e.target.value = '';
             });
 
-            function saveLocal() {
-                try {
-                    const songData = createSongData();
-                    const blob = new Blob([JSON.stringify(songData, null, 2)], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob); const a = document.createElement('a');
-                    a.href = url; a.download = `dp-one-MKIV-Song-${new Date().toISOString().slice(0,10)}.json`;
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-                    updateNoteDisplay('SONG SAVED'); setTimeout(() => updateNoteDisplay('---'), 2000);
-                } catch (error) { updateNoteDisplay('SAVE ERROR'); setTimeout(() => updateNoteDisplay('---'), 2000); }
-            }
-
-            let gapiLoaded = false; let gisLoaded = false; let tokenClient; let accessToken = null;
-
-            function loadGoogleAPIs() {
-                return new Promise((resolve) => {
-                    const gapiScript = document.createElement('script'); gapiScript.src = 'https://apis.google.com/js/api.js';
-                    gapiScript.onload = () => { gapi.load('client', async () => { await gapi.client.init({ apiKey: 'YOUR_API_KEY_HERE', discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] }); gapiLoaded = true; checkAndResolve(); }); };
-                    document.head.appendChild(gapiScript);
-                    const gisScript = document.createElement('script'); gisScript.src = 'https://accounts.google.com/gsi/client';
-                    gisScript.onload = () => { tokenClient = google.accounts.oauth2.initTokenClient({ client_id: 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com', scope: 'https://www.googleapis.com/auth/drive.file', callback: '' }); gisLoaded = true; checkAndResolve(); };
-                    document.head.appendChild(gisScript);
-                    function checkAndResolve() { if (gapiLoaded && gisLoaded) resolve(); }
-                });
-            }
-
-            async function saveToDrive() {
-                try {
-                    if (!gapiLoaded || !gisLoaded) { updateNoteDisplay('LOADING DRIVE...'); await loadGoogleAPIs(); }
-                    if (!accessToken) { await new Promise((resolve) => { tokenClient.callback = (response) => { if (response.error) throw new Error(response.error); accessToken = response.access_token; resolve(); }; tokenClient.requestAccessToken(); }); }
-                    const songData = createSongData(); const jsonContent = JSON.stringify(songData, null, 2);
-                    const fileName = `dp-one-MKIV-${new Date().toISOString().slice(0,10)}.json`;
-                    const file = new Blob([jsonContent], { type: 'application/json' });
-                    const metadata = { name: fileName, mimeType: 'application/json' };
-                    const form = new FormData(); form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' })); form.append('file', file);
-                    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', { method: 'POST', headers: { 'Authorization': `Bearer ${accessToken}` }, body: form });
-                    if (response.ok) { updateNoteDisplay('SAVED TO DRIVE'); setTimeout(() => updateNoteDisplay('---'), 2000); }
-                    else throw new Error('Drive upload failed');
-                } catch (error) { updateNoteDisplay('DRIVE ERROR'); setTimeout(() => updateNoteDisplay('---'), 2000); if (confirm('Google Drive save failed. Save locally instead?')) saveLocal(); }
-            }
-
-            async function loadFromDrive() {
-                try {
-                    if (!gapiLoaded || !gisLoaded) { updateNoteDisplay('LOADING DRIVE...'); await loadGoogleAPIs(); }
-                    if (!accessToken) { await new Promise((resolve) => { tokenClient.callback = (response) => { if (response.error) throw new Error(response.error); accessToken = response.access_token; resolve(); }; tokenClient.requestAccessToken(); }); }
-                    const response = await gapi.client.drive.files.list({ pageSize: 10, fields: 'files(id, name, modifiedTime)', q: "name contains 'dp-one-MKIV' and mimeType='application/json'" });
-                    const files = response.result.files;
-                    if (!files || files.length === 0) { updateNoteDisplay('NO FILES FOUND'); setTimeout(() => updateNoteDisplay('---'), 2000); return; }
-                    const file = files[0];
-                    const downloadResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`, { headers: { 'Authorization': `Bearer ${accessToken}` } });
-                    applySongData(await downloadResponse.json());
-                    updateNoteDisplay('LOADED FROM DRIVE'); setTimeout(() => updateNoteDisplay('---'), 2000);
-                } catch (error) { updateNoteDisplay('DRIVE ERROR'); setTimeout(() => updateNoteDisplay('---'), 2000); }
-            }
-
-            function createSongData() {
-                const songData = {
-                    version: '4.05-MKIV', savedAt: new Date().toISOString(),
-                    settings: { volume: masterGain ? masterGain.gain.value : 0.7, synthVolume: synthGain ? synthGain.gain.value : 0.7, drumVolume: drumGain ? drumGain.gain.value : 0.7, delay: delayNode ? delayNode.delayTime.value : 0.3, feedback: feedbackGain ? feedbackGain.gain.value : 0.3, filter: filterNode ? filterNode.frequency.value : 2000, resonance: filterNode ? filterNode.Q.value : 1, currentOctave, currentWaveform, arpEnabled, arpMode, syncEnabled, pitchHoldEnabled, tempo, sequencerSteps },
-                    drumVolumes: { ...drumVolumes }, sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
-                    sampler: { pitch: samplePitch, speed: sampleSpeed, filter: sampleFilter, reverse: sampleReverse, loop: sampleLoop }, samples: {}
-                };
-                Object.keys(sampleBuffers).forEach(key => {
-                    const buffer = sampleBuffers[key]; const channelData = [];
-                    for (let i = 0; i < buffer.numberOfChannels; i++) channelData.push(Array.from(buffer.getChannelData(i)));
-                    songData.samples[key] = { numberOfChannels: buffer.numberOfChannels, length: buffer.length, sampleRate: buffer.sampleRate, channelData };
-                });
-                return songData;
-            }
-
-            function loadSong(file) {
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => { try { const songData = JSON.parse(e.target.result); initAudio(); applySongData(songData); } catch (error) { updateNoteDisplay('LOAD ERROR'); setTimeout(() => updateNoteDisplay('---'), 2000); } };
-                reader.readAsText(file);
-            }
-
-            function applySongData(songData) {
-                try {
-                    if (masterGain) masterGain.gain.value = songData.settings.volume || 0.7;
-                    if (synthGain) synthGain.gain.value = songData.settings.synthVolume || 0.7;
-                    if (drumGain) drumGain.gain.value = songData.settings.drumVolume || 0.7;
-                    if (delayNode) delayNode.delayTime.value = songData.settings.delay || 0.3;
-                    if (feedbackGain) feedbackGain.gain.value = songData.settings.feedback || 0.3;
-                    if (filterNode) { filterNode.frequency.value = songData.settings.filter || 2000; filterNode.Q.value = songData.settings.resonance || 1; }
-                    currentOctave = songData.settings.currentOctave || 4; currentWaveform = songData.settings.currentWaveform || 'sawtooth';
-                    arpEnabled = songData.settings.arpEnabled || false; arpMode = songData.settings.arpMode || 'up';
-                    syncEnabled = songData.settings.syncEnabled || false; pitchHoldEnabled = songData.settings.pitchHoldEnabled || false;
-                    tempo = songData.settings.tempo || 120;
-                    if (songData.settings.sequencerSteps) setSequencerSteps(songData.settings.sequencerSteps);
-                    if (songData.drumVolumes) { drumVolumes = songData.drumVolumes; Object.keys(drumVolumes).forEach(drumName => { const level = drumVolumes[drumName]; document.querySelectorAll(`.volume-dot[data-drum="${drumName}"]`).forEach(dot => { dot.classList.remove('active'); if (parseFloat(dot.dataset.level) === level) dot.classList.add('active'); }); }); }
-                    if (songData.sequencerPattern) sequencerPattern = songData.sequencerPattern;
-                    if (songData.sampler) { samplePitch = songData.sampler.pitch || 0; sampleSpeed = songData.sampler.speed || 1.0; sampleFilter = songData.sampler.filter || 20000; sampleReverse = songData.sampler.reverse || false; sampleLoop = songData.sampler.loop || false; }
-                    if (songData.samples && audioContext) {
-                        Object.keys(songData.samples).forEach(key => {
-                            const s = songData.samples[key]; const buffer = audioContext.createBuffer(s.numberOfChannels, s.length, s.sampleRate);
-                            for (let i = 0; i < s.numberOfChannels; i++) buffer.getChannelData(i).set(s.channelData[i]);
-                            sampleBuffers[key] = buffer;
-                        });
-                    }
-                    updateOctaveDisplay(); rebuildKeyboard(); updateTempoDisplay(); updateSequencerDisplay();
-                    document.querySelectorAll('.waveform-btn').forEach(btn => { btn.classList.remove('active'); if (btn.dataset.wave === currentWaveform) btn.classList.add('active'); });
-                    document.querySelectorAll('[data-mode]').forEach(btn => { btn.classList.remove('active'); if (btn.dataset.mode === arpMode) btn.classList.add('active'); });
-                    document.getElementById('arpSwitch').classList.toggle('active', arpEnabled);
-                    document.getElementById('arpLight').classList.toggle('active', arpEnabled);
-                    document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
-                    document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
-                    document.querySelectorAll('.knob').forEach(updateKnob);
-                    updateNoteDisplay('SONG LOADED'); setTimeout(() => updateNoteDisplay('---'), 2000);
-                } catch (error) { updateNoteDisplay('APPLY ERROR'); setTimeout(() => updateNoteDisplay('---'), 2000); }
-            }
-
-        // ── SAMPLER ──────────────────────────────────────────
-        let samplerEnabled = false;
-        let samplerSlots = [null, null, null, null, null]; // { name, buffer }
-        let selectedSamplerSlot = 0;
-
-        function updateSamplerScreen() {
-            for (let i = 0; i < 5; i++) {
-                const nameEl = document.getElementById(`slotName${i}`);
-                const statusEl = document.getElementById(`slotStatus${i}`);
-                if (samplerSlots[i]) {
-                    nameEl.textContent = samplerSlots[i].name;
-                    nameEl.classList.remove('empty');
-                    statusEl.textContent = '●';
-                } else {
-                    nameEl.textContent = '— EMPTY —';
-                    nameEl.classList.add('empty');
-                    statusEl.textContent = '';
-                }
-            }
-            document.querySelectorAll('.sampler-slot').forEach((el, i) => {
-                el.classList.toggle('selected', i === selectedSamplerSlot);
-            });
-        }
-
-        function toggleSampler() {
-            samplerEnabled = !samplerEnabled;
-            const btn = document.getElementById('samplerToggleBtn');
-            const screen = document.getElementById('samplerScreen');
-            const btns = document.getElementById('samplerSection').querySelector('.sampler-btns');
-            const container = document.getElementById('synthContainer');
-            btn.textContent = samplerEnabled ? 'ON' : 'OFF';
-            btn.classList.toggle('on', samplerEnabled);
-            screen.classList.toggle('active', samplerEnabled);
-            btns.classList.toggle('active', samplerEnabled);
-            container.classList.toggle('sampler-active', samplerEnabled);
-            if (samplerEnabled) { initAudio(); if (audioContext) audioContext.resume(); }
-        }
-
-
-        function playSamplerSlot(i) {
-            if (!samplerSlots[i] || !samplerSlots[i].buffer) return;
-            initAudio();
-            const play = () => {
-                const source = audioContext.createBufferSource();
-                source.buffer = samplerSlots[i].buffer;
-                const out = drumGain || masterGain || audioContext.destination;
-                source.connect(out);
-                source.start(audioContext.currentTime);
-                const el = document.querySelector(`.sampler-slot[data-slot="${i}"]`);
-                if (el) { el.classList.add('playing'); source.onended = () => el.classList.remove('playing'); }
-                animateVisualizer();
-            };
-            audioContext.resume().then(play);
-        }
-
-        function playSamplerSlotPitched(slotIndex, semitones) {
-            if (!samplerSlots[slotIndex] || !samplerSlots[slotIndex].buffer) return;
-            initAudio();
-            const play = () => {
-                const source = audioContext.createBufferSource();
-                source.buffer = samplerSlots[slotIndex].buffer;
-                source.playbackRate.value = Math.pow(2, semitones / 12);
-                const out = drumGain || masterGain || audioContext.destination;
-                source.connect(out);
-                source.start(audioContext.currentTime);
-                animateVisualizer();
-            };
-            audioContext.resume().then(play);
-        }
-        // ─────────────────────────────────────────────────────
-
-            // Sampler init
+            // Sampler UI
             document.getElementById('samplerToggleBtn').addEventListener('click', toggleSampler);
             document.querySelectorAll('.sampler-slot').forEach((el, i) => {
                 el.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('sampler-seq-btn')) return; // handled separately
+                    if (e.target.classList.contains('sampler-seq-btn')) return;
                     if (!samplerEnabled) return;
-                    selectedSamplerSlot = i;
-                    updateSamplerScreen();
+                    selectedSamplerSlot = i; updateSamplerScreen();
                     if (samplerSlots[i] && samplerSlots[i].buffer) playSamplerSlot(i);
                 });
             });
-
-            // SEQ buttons — select sample track in sequencer
-            document.querySelectorAll('.sampler-seq-btn').forEach((btn) => {
+            document.querySelectorAll('.sampler-seq-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (!samplerEnabled) return;
                     const slot = parseInt(btn.dataset.slot);
-                    if (!samplerSlots[slot] || !samplerSlots[slot].buffer) {
-                        updateNoteDisplay('LOAD SAMPLE FIRST'); setTimeout(() => updateNoteDisplay('---'), 1500); return;
-                    }
+                    if (!samplerSlots[slot] || !samplerSlots[slot].buffer) { updateNoteDisplay('LOAD SAMPLE FIRST'); setTimeout(() => updateNoteDisplay('---'), 1500); return; }
                     const trackName = `sample${slot}`;
-                    // Toggle: if already selected, deselect
                     if (selectedSample === trackName) {
-                        selectedSample = null;
-                        btn.classList.remove('active');
+                        selectedSample = null; btn.classList.remove('active');
                         document.getElementById('seqTrackIndicator').textContent = '';
-                        updateNoteDisplay('SEQ OFF'); setTimeout(() => updateNoteDisplay('---'), 1000);
                     } else {
-                        // Deactivate all other SEQ buttons
                         document.querySelectorAll('.sampler-seq-btn').forEach(b => b.classList.remove('active'));
-                        // Deselect drum pads
-                        document.querySelectorAll('.drum-pad').forEach(p => p.classList.remove('selected'));
-                        selectedDrum = null;
-                        selectedSample = trackName;
-                        selectedSamplerSlot = slot;
-                        btn.classList.add('active');
-                        updateSamplerScreen();
-                        updateSequencerDisplay();
+                        document.querySelectorAll('.pad').forEach(p => p.classList.remove('selected'));
+                        selectedDrum = null; selectedSample = trackName; selectedSamplerSlot = slot;
+                        btn.classList.add('active'); updateSamplerScreen(); updateSequencerDisplay();
                         document.getElementById('seqTrackIndicator').textContent = `▶ SAMPLE ${slot + 1}`;
-                        updateNoteDisplay(`TAP STEPS ↑`); setTimeout(() => updateNoteDisplay('---'), 2000);
                     }
                 });
             });
-            document.getElementById('samplerLoadBtn').addEventListener('click', () => {
-                document.getElementById('samplerFileInput').click();
-            });
+            document.getElementById('samplerLoadBtn').addEventListener('click', () => document.getElementById('samplerFileInput').click());
             document.getElementById('samplerFileInput').addEventListener('change', (e) => {
                 const file = e.target.files[0]; if (!file) return;
                 initAudio();
@@ -3131,8 +2353,7 @@
                             samplerSlots[selectedSamplerSlot] = { name, buffer };
                             sampleBuffers[selectedSamplerSlot] = buffer;
                             updateSamplerScreen();
-                            updateNoteDisplay(`S${selectedSamplerSlot + 1} LOADED`);
-                            setTimeout(() => updateNoteDisplay('---'), 1500);
+                            updateNoteDisplay(`S${selectedSamplerSlot + 1} LOADED`); setTimeout(() => updateNoteDisplay('---'), 1500);
                             playSamplerSlot(selectedSamplerSlot);
                         }, () => { updateNoteDisplay('DECODE ERR'); setTimeout(() => updateNoteDisplay('---'), 1500); });
                     };
@@ -3140,19 +2361,112 @@
                 });
                 e.target.value = '';
             });
-            document.getElementById('samplerClearBtn').addEventListener('click', () => {
-                samplerSlots[selectedSamplerSlot] = null;
-                updateSamplerScreen();
-            });
+            document.getElementById('samplerClearBtn').addEventListener('click', () => { samplerSlots[selectedSamplerSlot] = null; updateSamplerScreen(); });
             updateSamplerScreen();
 
-        loadSettings();
+            loadSettings();
             document.querySelectorAll('.knob').forEach(updateKnob);
+
+            // Google Drive stubs
+            let gapiLoaded = false; let gisLoaded = false; let tokenClient; let accessToken = null;
+
+            function loadGoogleAPIs() {
+                return new Promise((resolve) => {
+                    const gs = document.createElement('script'); gs.src = 'https://apis.google.com/js/api.js';
+                    gs.onload = () => { gapi.load('client', async () => { await gapi.client.init({ apiKey: 'YOUR_API_KEY_HERE', discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] }); gapiLoaded = true; check(); }); };
+                    document.head.appendChild(gs);
+                    const gi = document.createElement('script'); gi.src = 'https://accounts.google.com/gsi/client';
+                    gi.onload = () => { tokenClient = google.accounts.oauth2.initTokenClient({ client_id: 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com', scope: 'https://www.googleapis.com/auth/drive.file', callback: '' }); gisLoaded = true; check(); };
+                    document.head.appendChild(gi);
+                    function check() { if (gapiLoaded && gisLoaded) resolve(); }
+                });
+            }
+
+            async function saveToDrive() {
+                try {
+                    if (!gapiLoaded || !gisLoaded) { updateNoteDisplay('LOADING...'); await loadGoogleAPIs(); }
+                    if (!accessToken) { await new Promise((res) => { tokenClient.callback = (r) => { if (r.error) throw new Error(r.error); accessToken = r.access_token; res(); }; tokenClient.requestAccessToken(); }); }
+                    const sd = createSongData(); const jc = JSON.stringify(sd, null, 2);
+                    const fn = `dp-one-MKIV-${new Date().toISOString().slice(0,10)}.json`;
+                    const form = new FormData();
+                    form.append('metadata', new Blob([JSON.stringify({ name: fn, mimeType: 'application/json' })], { type: 'application/json' }));
+                    form.append('file', new Blob([jc], { type: 'application/json' }));
+                    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', { method: 'POST', headers: { 'Authorization': `Bearer ${accessToken}` }, body: form });
+                    if (res.ok) { updateNoteDisplay('SAVED DRIVE'); setTimeout(() => updateNoteDisplay('---'), 2000); }
+                    else throw new Error();
+                } catch(err) { updateNoteDisplay('DRIVE ERR'); setTimeout(() => updateNoteDisplay('---'), 2000); if (confirm('Drive failed. Save locally?')) saveLocal(); }
+            }
+
+            async function loadFromDrive() {
+                try {
+                    if (!gapiLoaded || !gisLoaded) { updateNoteDisplay('LOADING...'); await loadGoogleAPIs(); }
+                    if (!accessToken) { await new Promise((res) => { tokenClient.callback = (r) => { if (r.error) throw new Error(r.error); accessToken = r.access_token; res(); }; tokenClient.requestAccessToken(); }); }
+                    const res = await gapi.client.drive.files.list({ pageSize: 10, fields: 'files(id, name)', q: "name contains 'dp-one-MKIV' and mimeType='application/json'" });
+                    const files = res.result.files;
+                    if (!files || !files.length) { updateNoteDisplay('NO FILES'); setTimeout(() => updateNoteDisplay('---'), 2000); return; }
+                    const dr = await fetch(`https://www.googleapis.com/drive/v3/files/${files[0].id}?alt=media`, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+                    applySongData(await dr.json());
+                    updateNoteDisplay('LOADED DRIVE'); setTimeout(() => updateNoteDisplay('---'), 2000);
+                } catch(err) { updateNoteDisplay('DRIVE ERR'); setTimeout(() => updateNoteDisplay('---'), 2000); }
+            }
+
+            function createSongData() {
+                return {
+                    version: '4.06-MKIV', savedAt: new Date().toISOString(),
+                    settings: { volume: masterGain ? masterGain.gain.value : 0.7, synthVolume: synthGain ? synthGain.gain.value : 0.7, drumVolume: drumGain ? drumGain.gain.value : 0.7, delay: delayNode ? delayNode.delayTime.value : 0.3, feedback: feedbackGain ? feedbackGain.gain.value : 0.3, filter: filterNode ? filterNode.frequency.value : 2000, resonance: filterNode ? filterNode.Q.value : 1, currentOctave, currentWaveform, arpEnabled, arpMode, syncEnabled, pitchHoldEnabled, tempo, sequencerSteps },
+                    drumVolumes: {...drumVolumes}, sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
+                    sampler: { pitch: samplePitch, speed: sampleSpeed, filter: sampleFilter, reverse: sampleReverse, loop: sampleLoop }, samples: {}
+                };
+            }
+
+            function saveLocal() {
+                try {
+                    const blob = new Blob([JSON.stringify(createSongData(), null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob); const a = document.createElement('a');
+                    a.href = url; a.download = `dp-one-MKIV-${new Date().toISOString().slice(0,10)}.json`;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                    updateNoteDisplay('SAVED'); setTimeout(() => updateNoteDisplay('---'), 2000);
+                } catch(err) { updateNoteDisplay('SAVE ERR'); setTimeout(() => updateNoteDisplay('---'), 2000); }
+            }
+
+            function loadSong(file) {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => { try { initAudio(); applySongData(JSON.parse(e.target.result)); } catch(err) { updateNoteDisplay('LOAD ERR'); setTimeout(() => updateNoteDisplay('---'), 2000); } };
+                reader.readAsText(file);
+            }
+
+            function applySongData(sd) {
+                try {
+                    if (masterGain) masterGain.gain.value = sd.settings.volume || 0.7;
+                    if (synthGain) synthGain.gain.value = sd.settings.synthVolume || 0.7;
+                    if (drumGain) drumGain.gain.value = sd.settings.drumVolume || 0.7;
+                    if (delayNode) delayNode.delayTime.value = sd.settings.delay || 0.3;
+                    if (feedbackGain) feedbackGain.gain.value = sd.settings.feedback || 0.3;
+                    if (filterNode) { filterNode.frequency.value = sd.settings.filter || 2000; filterNode.Q.value = sd.settings.resonance || 1; }
+                    currentOctave = sd.settings.currentOctave || 4; currentWaveform = sd.settings.currentWaveform || 'sawtooth';
+                    arpEnabled = sd.settings.arpEnabled || false; arpMode = sd.settings.arpMode || 'up';
+                    syncEnabled = sd.settings.syncEnabled || false; pitchHoldEnabled = sd.settings.pitchHoldEnabled || false;
+                    tempo = sd.settings.tempo || 120;
+                    if (sd.settings.sequencerSteps) setSequencerSteps(sd.settings.sequencerSteps);
+                    if (sd.drumVolumes) { drumVolumes = sd.drumVolumes; Object.keys(drumVolumes).forEach(dn => { const lv = drumVolumes[dn]; document.querySelectorAll(`.volume-dot[data-drum="${dn}"]`).forEach(dot => { dot.classList.remove('active'); if (parseFloat(dot.dataset.level) === lv) dot.classList.add('active'); }); }); }
+                    if (sd.sequencerPattern) sequencerPattern = sd.sequencerPattern;
+                    updateOctaveDisplay(); rebuildKeyboard(); updateTempoDisplay(); updateSequencerDisplay();
+                    document.querySelectorAll('.waveform-btn').forEach(b => { b.classList.remove('active'); if (b.dataset.wave === currentWaveform) b.classList.add('active'); });
+                    document.querySelectorAll('[data-mode]').forEach(b => { b.classList.remove('active'); if (b.dataset.mode === arpMode) b.classList.add('active'); });
+                    document.getElementById('arpSwitch').classList.toggle('active', arpEnabled);
+                    document.getElementById('arpLight').classList.toggle('active', arpEnabled);
+                    document.getElementById('syncBtn').classList.toggle('active', syncEnabled);
+                    document.getElementById('pitchHoldBtn').classList.toggle('active', pitchHoldEnabled);
+                    document.querySelectorAll('.knob').forEach(updateKnob);
+                    updateNoteDisplay('LOADED'); setTimeout(() => updateNoteDisplay('---'), 2000);
+                } catch(err) { updateNoteDisplay('APPLY ERR'); setTimeout(() => updateNoteDisplay('---'), 2000); }
+            }
         });
 
         setTimeout(function() {
-            const container = document.getElementById('pianoKeys');
-            if (container && container.children.length === 0) buildKeyboard();
+            const c = document.getElementById('pianoKeys');
+            if (c && c.children.length === 0) buildKeyboard();
         }, 1000);
     </script>
 </body>
