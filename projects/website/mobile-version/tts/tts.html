@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>dPaul TTS</title>
     <style>
         * {
@@ -11,18 +11,33 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: #131413;
-            min-height: 100vh;
-            padding: 30px 15px;
+            min-height: 100dvh;
+            padding: 20px 15px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 14px;
+        }
+
+        /* Outer wrapper matches container width */
+        .outer-wrap {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 392px;
+            gap: 14px;
+            flex: 1;
         }
 
         .container {
-            max-width: 392px;
             width: 100%;
             background: linear-gradient(145deg, #4a0a0a, #6a1010);
             border-radius: 9px;
@@ -31,8 +46,11 @@
                 0 14px 39px rgba(0, 0, 0, 0.7),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1),
                 inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-           border: 1px solid rgba(58, 5, 5, 0.3);
+            border: 1px solid rgba(58, 5, 5, 0.3);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .container::before {
@@ -56,22 +74,27 @@
             text-transform: uppercase;
             position: relative;
             font-family: Impact, 'Arial Black', sans-serif;
+            flex-shrink: 0;
         }
 
         .main-layout {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            flex: 1;
         }
 
         .display-section {
             width: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .controls-layout {
             display: flex;
             gap: 10px;
             justify-content: center;
+            flex: 1;
         }
 
         .left-controls {
@@ -80,6 +103,7 @@
             gap: 6px;
             width: 100%;
             max-width: 100%;
+            flex: 1;
         }
 
         .section {
@@ -92,6 +116,13 @@
                 0 1px 0 rgba(255, 255, 255, 0.1);
             border: 1px solid #000;
             position: relative;
+        }
+
+        /* Textarea section grows to fill space */
+        .section.grow {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .section-title {
@@ -113,10 +144,10 @@
             letter-spacing: 0.5px;
         }
 
-        /* Green LED Display Style - LARGER */
         textarea {
             width: 100%;
-            min-height: 140px;
+            flex: 1;
+            min-height: 120px;
             padding: 10px;
             background: #001a00;
             border: 1px solid #000;
@@ -124,7 +155,7 @@
             color: #00dd00;
             font-size: 11px;
             font-family: 'Courier New', monospace;
-            resize: vertical;
+            resize: none;
             line-height: 1.4;
             box-shadow: 
                 inset 0 2px 5px rgba(0, 0, 0, 0.8),
@@ -228,13 +259,6 @@
             margin-top: 2px;
         }
 
-        .slider-label {
-            color: #555;
-            font-size: 4px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
         .slider-number {
             color: #888;
             font-size: 8px;
@@ -246,6 +270,7 @@
             display: flex;
             flex-direction: row;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         button {
@@ -321,6 +346,7 @@
                 inset 0 2px 3px rgba(0, 0, 0, 0.8),
                 inset 0 0 17px rgba(0, 80, 0, 0.15);
             border: 1px solid #000;
+            flex-shrink: 0;
         }
 
         .status.active {
@@ -330,88 +356,122 @@
                 inset 0 0 17px rgba(0, 120, 0, 0.25);
         }
 
-        @media (max-width: 768px) {
-            .controls-layout {
-                flex-direction: column;
-            }
-
-            .left-controls {
-                width: 100%;
-            }
-
-            .button-group {
-                flex-direction: row;
-            }
+        /* ── Home button ── */
+        .home-link {
+            display: block;
+            text-decoration: none;
+            width: calc(392px * 0.667);
+            max-width: calc(100% * 0.667);
+            align-self: flex-end;
+            flex-shrink: 0;
+        }
+        .btn-home {
+            font-family: 'Courier New', Courier, monospace !important;
+            font-weight: bold !important;
+            font-size: 18px !important;
+            letter-spacing: 4px !important;
+            color: #FF6600 !important;
+            background: #131413 !important;
+            border: 2px solid #FF6600 !important;
+            border-radius: 6px !important;
+            width: 100% !important;
+            min-height: 58px !important;
+            cursor: pointer !important;
+            text-shadow: none !important;
+            box-shadow: none !important;
+            text-transform: lowercase !important;
+            transition: opacity 0.12s !important;
+        }
+        .btn-home:hover {
+            transform: none !important;
+            background: #131413 !important;
+            box-shadow: none !important;
+        }
+        .btn-home:active {
+            opacity: 0.75 !important;
+            transform: none !important;
+            background: #131413 !important;
+            color: #FF6600 !important;
+            border-color: #FF6600 !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>dPaul TTS</h1>
+    <div class="outer-wrap">
+        <div class="container">
+            <h1>dPaul TTS</h1>
 
-        <div class="main-layout">
-            <!-- Display Section at Top -->
-            <div class="display-section">
-                <div class="section">
-                    <label>SCRIPT DISPLAY</label>
-                    <textarea id="textInput" placeholder="Enter your text here and select the voice. You adjust the pitch and speed."></textarea>
-                </div>
-                
-                <!-- Buttons directly under display -->
-                <div class="button-group" style="margin-top: 10px;">
-                    <button class="btn-primary" id="speakBtn">SPEAK</button>
-                    <button id="clearBtn">CLEAR</button>
-                    <button id="stopBtn" disabled>STOP</button>
-                </div>
-                
-                <!-- Status directly under buttons -->
-                <div class="status" id="status">Ready</div>
-            </div>
-
-            <!-- Controls Below -->
-            <div class="controls-layout">
-                <div class="left-controls">
-                    <div class="section">
-                        <div class="section-title">VOICE</div>
-                        <div class="control-group">
-                            <select id="voiceSelect">
-                                <option value="">Loading...</option>
-                            </select>
-                        </div>
+            <div class="main-layout">
+                <!-- Display Section at Top -->
+                <div class="display-section">
+                    <div class="section grow">
+                        <label>SCRIPT DISPLAY</label>
+                        <textarea id="textInput" placeholder="Enter your text here and select the voice. You adjust the pitch and speed."></textarea>
                     </div>
+                    
+                    <!-- Buttons directly under display -->
+                    <div class="button-group" style="margin-top: 10px;">
+                        <button class="btn-primary" id="speakBtn">SPEAK</button>
+                        <button id="clearBtn">CLEAR</button>
+                        <button id="stopBtn" disabled>STOP</button>
+                    </div>
+                    
+                    <!-- Status directly under buttons -->
+                    <div class="status" id="status">Ready</div>
+                </div>
 
-                    <div class="section">
-                        <div class="section-title">SPEED</div>
-                        <div class="control-group slider-container">
-                            <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
-                            <div class="slider-value">
-                                <span class="slider-number" id="rateValue">1.0x</span>
+                <!-- Controls Below -->
+                <div class="controls-layout">
+                    <div class="left-controls">
+                        <div class="section">
+                            <div class="section-title">VOICE</div>
+                            <div class="control-group">
+                                <select id="voiceSelect">
+                                    <option value="">Loading...</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="section">
-                        <div class="section-title">PITCH</div>
-                        <div class="control-group slider-container">
-                            <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
-                            <div class="slider-value">
-                                <span class="slider-number" id="pitchValue">1.0</span>
+                        <div class="section">
+                            <div class="section-title">SPEED</div>
+                            <div class="control-group slider-container">
+                                <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
+                                <div class="slider-value">
+                                    <span class="slider-number" id="rateValue">1.0x</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="section">
-                        <div class="section-title">VOLUME</div>
-                        <div class="control-group slider-container">
-                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
-                            <div class="slider-value">
-                                <span class="slider-number" id="volumeValue">100%</span>
+                        <div class="section">
+                            <div class="section-title">PITCH</div>
+                            <div class="control-group slider-container">
+                                <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
+                                <div class="slider-value">
+                                    <span class="slider-number" id="pitchValue">1.0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section">
+                            <div class="section-title">VOLUME</div>
+                            <div class="control-group slider-container">
+                                <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
+                                <div class="slider-value">
+                                    <span class="slider-number" id="volumeValue">100%</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Home Button outside TTS unit, right-aligned -->
+        <a href="https://www.dpaul.studio" class="home-link">
+            <button class="btn-home">home</button>
+        </a>
     </div>
 
     <script>
@@ -419,7 +479,6 @@
         let voices = [];
         let utterance = null;
 
-        // Load voices
         function loadVoices() {
             voices = synth.getVoices();
             
@@ -447,7 +506,6 @@
                 option.textContent = `${voice.name} (${voice.lang})`;
                 voiceSelect.appendChild(option);
                 
-                // Find Google UK English Male
                 if (voice.name.toLowerCase().includes('uk') && 
                     voice.name.toLowerCase().includes('male') && 
                     voice.lang.toLowerCase().includes('en')) {
@@ -455,7 +513,6 @@
                 }
             });
 
-            // Set default to UK Male if found
             if (ukMaleIndex !== -1) {
                 voiceSelect.value = ukMaleIndex;
             }
@@ -468,7 +525,6 @@
         }
         loadVoices();
 
-        // Slider updates
         document.getElementById('rateSlider').addEventListener('input', (e) => {
             document.getElementById('rateValue').textContent = e.target.value + 'x';
         });
@@ -481,7 +537,6 @@
             document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%';
         });
 
-        // Speak button
         document.getElementById('speakBtn').addEventListener('click', () => {
             const text = document.getElementById('textInput').value;
             
@@ -526,13 +581,11 @@
             synth.speak(utterance);
         });
 
-        // Clear button
         document.getElementById('clearBtn').addEventListener('click', () => {
             document.getElementById('textInput').value = '';
             updateStatus('Text cleared');
         });
 
-        // Stop button
         document.getElementById('stopBtn').addEventListener('click', () => {
             synth.cancel();
             updateStatus('Stopped');
