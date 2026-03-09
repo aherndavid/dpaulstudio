@@ -7,7 +7,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* Allows the page to be long and scrollable */
         html, body { 
             min-height: 100%;
             background: #131413; 
@@ -19,148 +18,139 @@
             display: flex; 
             flex-direction: column; 
             align-items: center;
-            padding: 40px 20px; /* More space at top and bottom */
-            overflow-y: auto; /* Enable vertical scrolling */
+            padding: 20px 15px; /* Reduced top/bottom padding */
+            overflow-y: auto; 
         }
 
         .container {
             width: 100%; 
-            max-width: 450px;
+            max-width: 420px;
             background: linear-gradient(145deg, #4a0a0a, #6a1010);
-            border-radius: 20px; 
-            padding: 25px;
+            border-radius: 18px; 
+            padding: 18px; /* Slightly tighter padding */
             display: flex; 
             flex-direction: column; 
-            gap: 20px; /* More space between elements */
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
+            gap: 12px; /* Compressed gap for a shorter unit */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8); 
             border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 40px;
         }
 
         h1 { 
             font-family: Impact, sans-serif; 
-            font-size: 32px; 
+            font-size: 28px; 
             color: #000; 
             text-align: center; 
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         
         .section { 
             background: #0a0a0a; 
-            border-radius: 12px; 
-            padding: 15px; 
+            border-radius: 10px; 
+            padding: 12px; 
             border: 1px solid #000;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
         label { 
-            color: #999; 
-            font-size: 14px; 
+            color: #888; 
+            font-size: 12px; 
             font-weight: 900; 
             text-transform: uppercase; 
             display: block; 
-            margin-bottom: 10px;
-            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
 
         textarea {
             width: 100%; 
-            height: 180px; /* Made the input area much longer */
+            height: 140px; /* Reduced height to keep unit shorter */
             background: #001a00; 
             color: #00dd00; 
-            border: 1px solid #222;
-            padding: 15px; 
+            border: 1px solid #111;
+            padding: 12px; 
             font-family: 'Courier New', monospace;
-            font-size: 20px; 
+            font-size: 19px; 
             resize: none; 
-            border-radius: 8px;
-            line-height: 1.4;
+            border-radius: 6px;
+            line-height: 1.3;
         }
 
         .controls-grid { 
             display: flex;
-            flex-direction: column; /* Stacked for a "longer" look */
-            gap: 15px; 
+            flex-direction: column; 
+            gap: 10px; 
         }
 
         .inc-row { 
             display: flex; 
             align-items: center; 
-            gap: 15px; 
+            gap: 10px; 
             justify-content: center;
         }
 
         .inc-btn { 
-            width: 55px; 
-            height: 55px; 
+            width: 48px; /* Slightly smaller buttons to save vertical space */
+            height: 48px; 
             background: #2a2a2a; 
             color: #fff; 
             border: 1px solid #444; 
-            border-radius: 10px; 
-            font-size: 28px; 
+            border-radius: 8px; 
+            font-size: 24px; 
             font-weight: bold;
-            cursor: pointer;
         }
         
         .inc-btn:active { background: #444; }
 
         .inc-value { 
-            min-width: 80px;
+            min-width: 70px;
             text-align: center; 
             color: #00dd00; 
             font-family: monospace; 
             font-weight: bold; 
-            font-size: 24px; 
+            font-size: 22px; 
         }
 
         select { 
             width: 100%; 
-            padding: 15px; 
+            padding: 12px; 
             background: #000; 
             color: #fff; 
             border: 1px solid #333; 
-            border-radius: 8px; 
-            font-size: 18px;
-            appearance: none;
+            border-radius: 6px; 
+            font-size: 16px;
         }
 
         .btn-group { 
             display: flex; 
-            gap: 12px; 
-            margin-top: 10px; 
+            gap: 8px; /* Narrower gap */
+            margin-top: 8px; 
         }
 
         button.action { 
-            flex: 1; 
-            padding: 20px; 
-            border-radius: 10px; 
-            border: 1px solid #555; 
+            padding: 15px; 
+            border-radius: 8px; 
+            border: 1px solid #444; 
             background: #222; 
             color: #fff; 
             font-weight: bold; 
-            font-size: 16px; 
+            font-size: 14px; 
             text-transform: uppercase;
-            cursor: pointer;
         }
+
+        button.speak-btn { flex: 2; } /* Speak button is wider */
+        button.clear-btn { flex: 1; }  /* Clear button is narrower */
 
         button.primary { 
-            background: #666; 
-            border-color: #888;
-            color: #fff;
+            background: #555; 
+            border-color: #777;
         }
         
-        button.action:active { transform: scale(0.98); }
-
         #status { 
-            margin-top: 10px;
             background: #000; 
             color: #00aa00; 
             font-family: monospace; 
-            font-size: 14px; 
-            padding: 12px; 
+            font-size: 12px; 
+            padding: 10px; 
             text-align: center; 
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #1a1a1a;
         }
     </style>
@@ -171,22 +161,22 @@
     <h1>dPaul TTS</h1>
 
     <div class="section">
-        <label>Script Writer</label>
-        <textarea id="textInput" placeholder="Tap screen first, then type here..."></textarea>
+        <label>Input</label>
+        <textarea id="textInput" placeholder="Tap screen, then type..."></textarea>
         <div class="btn-group">
-            <button class="action primary" onclick="speak()">SPEAK</button>
-            <button class="action" onclick="document.getElementById('textInput').value=''">CLEAR</button>
+            <button class="action primary speak-btn" onclick="speak()">SPEAK</button>
+            <button class="action clear-btn" onclick="document.getElementById('textInput').value=''">CLEAR</button>
         </div>
     </div>
 
     <div class="controls-grid">
         <div class="section">
-            <label>Voice Selection</label>
-            <select id="voiceSelect"><option>TAP SCREEN TO LOAD...</option></select>
+            <label>Voice</label>
+            <select id="voiceSelect"><option>TAP TO LOAD...</option></select>
         </div>
 
         <div class="section">
-            <label>Speech Speed</label>
+            <label>Speed</label>
             <div class="inc-row">
                 <button class="inc-btn" onclick="adjust('rate', -0.1)">-</button>
                 <div class="inc-value" id="rateVal">1.0</div>
@@ -195,7 +185,7 @@
         </div>
 
         <div class="section">
-            <label>Voice Pitch</label>
+            <label>Pitch</label>
             <div class="inc-row">
                 <button class="inc-btn" onclick="adjust('pitch', -0.1)">-</button>
                 <div class="inc-value" id="pitchVal">1.0</div>
@@ -204,7 +194,7 @@
         </div>
     </div>
 
-    <div id="status">LOCKED: TAP ANYWHERE</div>
+    <div id="status">LOCKED: TAP SCREEN</div>
 </div>
 
 <script>
@@ -213,46 +203,33 @@
     let params = { rate: 1.0, pitch: 1.0 };
     let initialized = false;
 
-    // This wakes up the engine on mobile
     function initVoices() {
         if (initialized) return;
-        
         const wake = new SpeechSynthesisUtterance(" ");
         wake.volume = 0;
         synth.speak(wake);
-        
         refreshVoices();
         initialized = true;
     }
 
     function refreshVoices() {
-        // Specifically look for English voices
         const allVoices = synth.getVoices();
         voices = allVoices.filter(v => v.lang.toLowerCase().includes('en'));
-        
         const select = document.getElementById('voiceSelect');
-        
         if (voices.length > 0) {
             select.innerHTML = '';
             voices.forEach((v, i) => {
                 const opt = document.createElement('option');
                 opt.value = i;
-                // Clean up voice names for mobile display
                 opt.textContent = v.name.replace('Google ', '').replace('Apple ', '');
                 select.appendChild(opt);
             });
-            document.getElementById('status').textContent = "SYSTEM READY (" + voices.length + " VOICES)";
+            document.getElementById('status').textContent = "SYSTEM READY";
         }
     }
 
-    if (synth.onvoiceschanged !== undefined) {
-        synth.onvoiceschanged = refreshVoices;
-    }
-
-    // Repeated check to catch voices when they load
-    setInterval(() => {
-        if (voices.length === 0) refreshVoices();
-    }, 1500);
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = refreshVoices;
+    setInterval(() => { if (voices.length === 0) refreshVoices(); }, 1500);
 
     function adjust(type, amt) {
         params[type] = Math.max(0.1, Math.min(2.0, params[type] + amt));
@@ -261,25 +238,14 @@
 
     function speak() {
         const text = document.getElementById('textInput').value;
-        if (!text) {
-            document.getElementById('status').textContent = "ERROR: NO TEXT";
-            return;
-        }
-        if (voices.length === 0) {
-            document.getElementById('status').textContent = "ERROR: VOICES NOT LOADED";
-            return;
-        }
-
+        if (!text || voices.length === 0) return;
         synth.cancel();
         const utter = new SpeechSynthesisUtterance(text);
-        const selectedIdx = document.getElementById('voiceSelect').value;
-        utter.voice = voices[selectedIdx];
+        utter.voice = voices[document.getElementById('voiceSelect').value];
         utter.rate = params.rate;
         utter.pitch = params.pitch;
-        
         utter.onstart = () => document.getElementById('status').textContent = "SPEAKING...";
         utter.onend = () => document.getElementById('status').textContent = "SYSTEM READY";
-        
         synth.speak(utter);
     }
 </script>
