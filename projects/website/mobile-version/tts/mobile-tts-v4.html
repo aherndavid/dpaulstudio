@@ -4,103 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>dPaul TTS</title>
-    <script src="https://unpkg.com/sam-js@0.3.1/dist/sam.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* Fixes the "not fitting" issue by using flex and preventing body scroll */
         html, body { 
-            height: 100%; 
-            width: 100%;
-            overflow: hidden; 
-            background: #131413; 
-            color: #fff; 
-            font-family: -apple-system, sans-serif; 
+            height: 100%; width: 100%; overflow: hidden; 
+            background: #131413; color: #fff; font-family: -apple-system, sans-serif; 
         }
 
         body { 
-            display: flex; 
-            flex-direction: column; 
+            display: flex; flex-direction: column; 
             padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px;
         }
 
         .container {
-            width: 100%;
-            max-width: 420px;
-            margin: auto; /* Centers it vertically */
+            width: 100%; max-width: 420px; margin: auto;
             background: linear-gradient(145deg, #4a0a0a, #6a1010);
-            border-radius: 14px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            max-height: 95vh; /* Prevents it from being taller than the screen */
+            border-radius: 14px; padding: 15px;
+            display: flex; flex-direction: column; gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            max-height: 92vh;
         }
 
-        h1 { font-family: Impact, sans-serif; font-size: 24px; color: #000; text-align: center; }
+        h1 { font-family: Impact, sans-serif; font-size: 26px; color: #000; text-align: center; }
         
         .section { background: #0a0a0a; border-radius: 8px; padding: 10px; border: 1px solid #000; }
-        label { color: #888; font-size: 11px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        label { color: #888; font-size: 12px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; }
 
         textarea {
-            width: 100%;
-            flex: 1; /* Makes text area fill available space */
-            min-height: 80px;
-            background: #001a00;
-            color: #00dd00;
-            border: 1px solid #000;
-            padding: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 19px; 
-            resize: none;
-            border-radius: 5px;
+            width: 100%; flex: 1; min-height: 100px;
+            background: #001a00; color: #00dd00; border: 1px solid #000;
+            padding: 12px; font-family: 'Courier New', monospace;
+            font-size: 19px; resize: none; border-radius: 5px;
         }
 
         .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .full { grid-column: span 2; }
 
         .inc-row { display: flex; align-items: center; gap: 8px; }
-        .inc-btn { width: 40px; height: 40px; background: #333; color: #fff; border: none; border-radius: 5px; font-size: 22px; font-weight: bold; }
-        .inc-value { flex: 1; text-align: center; color: #00dd00; font-family: monospace; font-weight: bold; font-size: 18px; }
+        .inc-btn { width: 44px; height: 44px; background: #333; color: #fff; border: none; border-radius: 5px; font-size: 24px; font-weight: bold; }
+        .inc-value { flex: 1; text-align: center; color: #00dd00; font-family: monospace; font-weight: bold; font-size: 19px; }
 
-        select { width: 100%; padding: 10px; background: #000; color: #fff; border: 1px solid #333; border-radius: 5px; font-size: 15px; }
+        select { width: 100%; padding: 12px; background: #000; color: #fff; border: 1px solid #333; border-radius: 5px; font-size: 16px; }
 
-        .reverb-box { display: flex; align-items: center; justify-content: space-between; padding: 2px 0; }
-        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #00dd00; }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        .btn-group { display: flex; gap: 8px; }
-        button.action { flex: 1; padding: 14px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+        .btn-group { display: flex; gap: 8px; margin-top: 5px; }
+        button.action { flex: 1; padding: 16px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-weight: bold; font-size: 14px; text-transform: uppercase; }
         button.primary { background: #555; border-color: #777; }
-        button.export { background: #1a3a1a; color: #00cc00; border-color: #005500; width: 100%; margin-top: 5px; }
 
-        #status { background: #000; color: #00aa00; font-family: monospace; font-size: 12px; padding: 6px; text-align: center; border-radius: 5px; }
+        #status { background: #000; color: #00aa00; font-family: monospace; font-size: 13px; padding: 8px; text-align: center; border-radius: 5px; }
     </style>
 </head>
-<body ontouchstart="unlockVoices()" onclick="unlockVoices()">
+<body onclick="initVoices()" ontouchstart="initVoices()">
 
 <div class="container">
     <h1>dPaul TTS</h1>
 
     <div class="section" style="display:flex; flex-direction:column; flex:1;">
         <label>Input</label>
-        <textarea id="textInput" placeholder="TAP TO LOAD VOICES..."></textarea>
-        <div class="btn-group" style="margin-top:8px;">
-            <button class="action primary" onclick="handleSpeak()">SPEAK</button>
+        <textarea id="textInput" placeholder="TAP ANYWHERE TO LOAD..."></textarea>
+        <div class="btn-group">
+            <button class="action primary" onclick="speak()">SPEAK</button>
             <button class="action" onclick="document.getElementById('textInput').value=''">CLEAR</button>
         </div>
     </div>
 
     <div class="controls-grid">
         <div class="section full">
-            <label>Voice</label>
-            <select id="voiceSelect"><option value="retro">RETRO: Speak & Spell</option></select>
+            <label>English Voices</label>
+            <select id="voiceSelect"><option>Click to load voices...</option></select>
         </div>
 
         <div class="section">
@@ -120,122 +91,72 @@
                 <button class="inc-btn" onclick="adjust('pitch', 0.1)">+</button>
             </div>
         </div>
-
-        <div class="section full reverb-box">
-            <label style="margin:0">Space Reverb</label>
-            <label class="switch">
-                <input type="checkbox" id="reverbToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
     </div>
 
-    <button class="action export" onclick="handleExport()">⬇ DOWNLOAD WAV</button>
-    <div id="status">Tap anywhere to load English voices</div>
+    <div id="status">System Locked: TAP SCREEN</div>
 </div>
 
 <script>
-    const sam = new SamJs();
     const synth = window.speechSynthesis;
     let voices = [];
     let params = { rate: 1.0, pitch: 1.0 };
-    let isUnlocked = false;
+    let initialized = false;
 
-    function unlockVoices() {
-        if (isUnlocked) return;
+    // Aggressive load for Mobile
+    function initVoices() {
+        if (initialized) return;
         
-        // Essential mobile hack: Play a silent sound to unlock the engine
-        const utter = new SpeechSynthesisUtterance("");
-        synth.speak(utter);
+        // Hack: Speak a "silent" character to wake up the OS engine
+        const wake = new SpeechSynthesisUtterance(" ");
+        wake.volume = 0;
+        synth.speak(wake);
         
-        loadVoices();
-        isUnlocked = true;
+        refreshVoices();
+        initialized = true;
     }
 
-    function loadVoices() {
-        const availableVoices = synth.getVoices();
-        if (availableVoices.length === 0) return;
-
-        const voiceSelect = document.getElementById('voiceSelect');
-        // Filter English
-        voices = availableVoices.filter(v => v.lang.toLowerCase().includes('en'));
+    function refreshVoices() {
+        voices = synth.getVoices().filter(v => v.lang.includes('en'));
+        const select = document.getElementById('voiceSelect');
         
-        // Reset and add Retro
-        voiceSelect.innerHTML = '<option value="retro">RETRO: Speak & Spell</option>';
-        
-        voices.forEach((voice, i) => {
-            const opt = document.createElement('option');
-            opt.value = i;
-            opt.textContent = `${voice.name} (${voice.lang})`;
-            voiceSelect.appendChild(opt);
-        });
-
-        document.getElementById('status').textContent = "Ready (" + voices.length + " English Voices)";
+        if (voices.length > 0) {
+            select.innerHTML = '';
+            voices.forEach((v, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = v.name.replace('Google ', '').replace('Apple ', '');
+                select.appendChild(opt);
+            });
+            document.getElementById('status').textContent = "READY: " + voices.length + " VOICES";
+        }
     }
 
-    // Chrome/Safari Events
-    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
-    
+    // Standard event listeners
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = refreshVoices;
+
+    // Safety Poller
+    setInterval(() => { if (voices.length === 0) refreshVoices(); }, 1000);
+
     function adjust(type, amt) {
         params[type] = Math.max(0.1, Math.min(2.0, params[type] + amt));
         document.getElementById(type + 'Val').textContent = params[type].toFixed(1);
     }
 
-    async function handleSpeak() {
+    function speak() {
         const text = document.getElementById('textInput').value;
-        const voiceIdx = document.getElementById('voiceSelect').value;
-        if (!text) return;
+        if (!text || voices.length === 0) return;
 
         synth.cancel();
-
-        if (voiceIdx === 'retro') {
-            document.getElementById('status').textContent = "Generating Retro...";
-            const samConfig = { 
-                speed: Math.round(params.rate * 72), 
-                pitch: Math.round(params.pitch * 64) 
-            };
-            const buf = await sam.buf(text, samConfig);
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const source = audioCtx.createBufferSource();
-            const audioBuffer = audioCtx.createBuffer(1, buf.length, 22050);
-            audioBuffer.getChannelData(0).set(Array.from(buf).map(v => (v - 128) / 128));
-            source.buffer = audioBuffer;
-
-            if (document.getElementById('reverbToggle').checked) {
-                const conv = audioCtx.createConvolver();
-                const rate = audioCtx.sampleRate;
-                const impulse = audioCtx.createBuffer(2, rate*2, rate);
-                for(let i=0; i<2; i++) {
-                    let ch = impulse.getChannelData(i);
-                    for(let j=0; j<rate*2; j++) ch[j] = (Math.random()*2-1) * Math.pow(1-j/(rate*2), 1.5);
-                }
-                conv.buffer = impulse;
-                source.connect(conv);
-                conv.connect(audioCtx.destination);
-            } else {
-                source.connect(audioCtx.destination);
-            }
-            source.start();
-        } else {
-            document.getElementById('status').textContent = "Speaking...";
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.voice = voices[voiceIdx];
-            utter.rate = params.rate;
-            utter.pitch = params.pitch;
-            utter.onend = () => document.getElementById('status').textContent = "Ready";
-            synth.speak(utter);
-        }
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.voice = voices[document.getElementById('voiceSelect').value];
+        utter.rate = params.rate;
+        utter.pitch = params.pitch;
+        
+        utter.onstart = () => document.getElementById('status').textContent = "SPEAKING...";
+        utter.onend = () => document.getElementById('status').textContent = "READY";
+        
+        synth.speak(utter);
     }
-
-    function handleExport() {
-        const text = document.getElementById('textInput').value;
-        if (!text) return;
-        const samConfig = { speed: Math.round(params.rate * 72), pitch: Math.round(params.pitch * 64) };
-        sam.download(text, samConfig);
-    }
-
-    // Initial load attempt
-    loadVoices();
 </script>
 </body>
 </html>
