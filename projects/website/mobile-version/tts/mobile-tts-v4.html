@@ -7,51 +7,162 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
+        /* Allows the page to be long and scrollable */
         html, body { 
-            height: 100%; width: 100%; overflow: hidden; 
-            background: #131413; color: #fff; font-family: -apple-system, sans-serif; 
+            min-height: 100%;
+            background: #131413; 
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
         }
 
         body { 
-            display: flex; flex-direction: column; 
-            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            padding: 40px 20px; /* More space at top and bottom */
+            overflow-y: auto; /* Enable vertical scrolling */
         }
 
         .container {
-            width: 100%; max-width: 420px; margin: auto;
+            width: 100%; 
+            max-width: 450px;
             background: linear-gradient(145deg, #4a0a0a, #6a1010);
-            border-radius: 14px; padding: 15px;
-            display: flex; flex-direction: column; gap: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
-            max-height: 92vh;
+            border-radius: 20px; 
+            padding: 25px;
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; /* More space between elements */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 40px;
         }
 
-        h1 { font-family: Impact, sans-serif; font-size: 26px; color: #000; text-align: center; }
+        h1 { 
+            font-family: Impact, sans-serif; 
+            font-size: 32px; 
+            color: #000; 
+            text-align: center; 
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
         
-        .section { background: #0a0a0a; border-radius: 8px; padding: 10px; border: 1px solid #000; }
-        label { color: #888; font-size: 12px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .section { 
+            background: #0a0a0a; 
+            border-radius: 12px; 
+            padding: 15px; 
+            border: 1px solid #000;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        label { 
+            color: #999; 
+            font-size: 14px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            display: block; 
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
 
         textarea {
-            width: 100%; flex: 1; min-height: 100px;
-            background: #001a00; color: #00dd00; border: 1px solid #000;
-            padding: 12px; font-family: 'Courier New', monospace;
-            font-size: 19px; resize: none; border-radius: 5px;
+            width: 100%; 
+            height: 180px; /* Made the input area much longer */
+            background: #001a00; 
+            color: #00dd00; 
+            border: 1px solid #222;
+            padding: 15px; 
+            font-family: 'Courier New', monospace;
+            font-size: 20px; 
+            resize: none; 
+            border-radius: 8px;
+            line-height: 1.4;
         }
 
-        .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .full { grid-column: span 2; }
+        .controls-grid { 
+            display: flex;
+            flex-direction: column; /* Stacked for a "longer" look */
+            gap: 15px; 
+        }
 
-        .inc-row { display: flex; align-items: center; gap: 8px; }
-        .inc-btn { width: 44px; height: 44px; background: #333; color: #fff; border: none; border-radius: 5px; font-size: 24px; font-weight: bold; }
-        .inc-value { flex: 1; text-align: center; color: #00dd00; font-family: monospace; font-weight: bold; font-size: 19px; }
+        .inc-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            justify-content: center;
+        }
 
-        select { width: 100%; padding: 12px; background: #000; color: #fff; border: 1px solid #333; border-radius: 5px; font-size: 16px; }
+        .inc-btn { 
+            width: 55px; 
+            height: 55px; 
+            background: #2a2a2a; 
+            color: #fff; 
+            border: 1px solid #444; 
+            border-radius: 10px; 
+            font-size: 28px; 
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .inc-btn:active { background: #444; }
 
-        .btn-group { display: flex; gap: 8px; margin-top: 5px; }
-        button.action { flex: 1; padding: 16px; border-radius: 5px; border: 1px solid #444; background: #222; color: #fff; font-weight: bold; font-size: 14px; text-transform: uppercase; }
-        button.primary { background: #555; border-color: #777; }
+        .inc-value { 
+            min-width: 80px;
+            text-align: center; 
+            color: #00dd00; 
+            font-family: monospace; 
+            font-weight: bold; 
+            font-size: 24px; 
+        }
 
-        #status { background: #000; color: #00aa00; font-family: monospace; font-size: 13px; padding: 8px; text-align: center; border-radius: 5px; }
+        select { 
+            width: 100%; 
+            padding: 15px; 
+            background: #000; 
+            color: #fff; 
+            border: 1px solid #333; 
+            border-radius: 8px; 
+            font-size: 18px;
+            appearance: none;
+        }
+
+        .btn-group { 
+            display: flex; 
+            gap: 12px; 
+            margin-top: 10px; 
+        }
+
+        button.action { 
+            flex: 1; 
+            padding: 20px; 
+            border-radius: 10px; 
+            border: 1px solid #555; 
+            background: #222; 
+            color: #fff; 
+            font-weight: bold; 
+            font-size: 16px; 
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        button.primary { 
+            background: #666; 
+            border-color: #888;
+            color: #fff;
+        }
+        
+        button.action:active { transform: scale(0.98); }
+
+        #status { 
+            margin-top: 10px;
+            background: #000; 
+            color: #00aa00; 
+            font-family: monospace; 
+            font-size: 14px; 
+            padding: 12px; 
+            text-align: center; 
+            border-radius: 8px;
+            border: 1px solid #1a1a1a;
+        }
     </style>
 </head>
 <body onclick="initVoices()" ontouchstart="initVoices()">
@@ -59,9 +170,9 @@
 <div class="container">
     <h1>dPaul TTS</h1>
 
-    <div class="section" style="display:flex; flex-direction:column; flex:1;">
-        <label>Input</label>
-        <textarea id="textInput" placeholder="TAP ANYWHERE TO LOAD..."></textarea>
+    <div class="section">
+        <label>Script Writer</label>
+        <textarea id="textInput" placeholder="Tap screen first, then type here..."></textarea>
         <div class="btn-group">
             <button class="action primary" onclick="speak()">SPEAK</button>
             <button class="action" onclick="document.getElementById('textInput').value=''">CLEAR</button>
@@ -69,13 +180,13 @@
     </div>
 
     <div class="controls-grid">
-        <div class="section full">
-            <label>English Voices</label>
-            <select id="voiceSelect"><option>Click to load voices...</option></select>
+        <div class="section">
+            <label>Voice Selection</label>
+            <select id="voiceSelect"><option>TAP SCREEN TO LOAD...</option></select>
         </div>
 
         <div class="section">
-            <label>Speed</label>
+            <label>Speech Speed</label>
             <div class="inc-row">
                 <button class="inc-btn" onclick="adjust('rate', -0.1)">-</button>
                 <div class="inc-value" id="rateVal">1.0</div>
@@ -84,7 +195,7 @@
         </div>
 
         <div class="section">
-            <label>Pitch</label>
+            <label>Voice Pitch</label>
             <div class="inc-row">
                 <button class="inc-btn" onclick="adjust('pitch', -0.1)">-</button>
                 <div class="inc-value" id="pitchVal">1.0</div>
@@ -93,7 +204,7 @@
         </div>
     </div>
 
-    <div id="status">System Locked: TAP SCREEN</div>
+    <div id="status">LOCKED: TAP ANYWHERE</div>
 </div>
 
 <script>
@@ -102,11 +213,10 @@
     let params = { rate: 1.0, pitch: 1.0 };
     let initialized = false;
 
-    // Aggressive load for Mobile
+    // This wakes up the engine on mobile
     function initVoices() {
         if (initialized) return;
         
-        // Hack: Speak a "silent" character to wake up the OS engine
         const wake = new SpeechSynthesisUtterance(" ");
         wake.volume = 0;
         synth.speak(wake);
@@ -116,7 +226,10 @@
     }
 
     function refreshVoices() {
-        voices = synth.getVoices().filter(v => v.lang.includes('en'));
+        // Specifically look for English voices
+        const allVoices = synth.getVoices();
+        voices = allVoices.filter(v => v.lang.toLowerCase().includes('en'));
+        
         const select = document.getElementById('voiceSelect');
         
         if (voices.length > 0) {
@@ -124,18 +237,22 @@
             voices.forEach((v, i) => {
                 const opt = document.createElement('option');
                 opt.value = i;
+                // Clean up voice names for mobile display
                 opt.textContent = v.name.replace('Google ', '').replace('Apple ', '');
                 select.appendChild(opt);
             });
-            document.getElementById('status').textContent = "READY: " + voices.length + " VOICES";
+            document.getElementById('status').textContent = "SYSTEM READY (" + voices.length + " VOICES)";
         }
     }
 
-    // Standard event listeners
-    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = refreshVoices;
+    if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = refreshVoices;
+    }
 
-    // Safety Poller
-    setInterval(() => { if (voices.length === 0) refreshVoices(); }, 1000);
+    // Repeated check to catch voices when they load
+    setInterval(() => {
+        if (voices.length === 0) refreshVoices();
+    }, 1500);
 
     function adjust(type, amt) {
         params[type] = Math.max(0.1, Math.min(2.0, params[type] + amt));
@@ -144,16 +261,24 @@
 
     function speak() {
         const text = document.getElementById('textInput').value;
-        if (!text || voices.length === 0) return;
+        if (!text) {
+            document.getElementById('status').textContent = "ERROR: NO TEXT";
+            return;
+        }
+        if (voices.length === 0) {
+            document.getElementById('status').textContent = "ERROR: VOICES NOT LOADED";
+            return;
+        }
 
         synth.cancel();
         const utter = new SpeechSynthesisUtterance(text);
-        utter.voice = voices[document.getElementById('voiceSelect').value];
+        const selectedIdx = document.getElementById('voiceSelect').value;
+        utter.voice = voices[selectedIdx];
         utter.rate = params.rate;
         utter.pitch = params.pitch;
         
         utter.onstart = () => document.getElementById('status').textContent = "SPEAKING...";
-        utter.onend = () => document.getElementById('status').textContent = "READY";
+        utter.onend = () => document.getElementById('status').textContent = "SYSTEM READY";
         
         synth.speak(utter);
     }
