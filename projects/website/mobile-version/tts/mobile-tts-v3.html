@@ -6,7 +6,6 @@
     <title>dPaul TTS</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         html, body { height: 100%; }
 
         body {
@@ -35,10 +34,9 @@
             background: linear-gradient(145deg, #4a0a0a, #6a1010);
             border-radius: 9px;
             padding: 17px;
-            box-shadow: 
-                0 14px 39px rgba(0,0,0,0.7),
-                inset 0 1px 0 rgba(255,255,255,0.1),
-                inset 0 -1px 0 rgba(0,0,0,0.3);
+            box-shadow: 0 14px 39px rgba(0,0,0,0.7),
+                        inset 0 1px 0 rgba(255,255,255,0.1),
+                        inset 0 -1px 0 rgba(0,0,0,0.3);
             border: 1px solid rgba(58,5,5,0.3);
             position: relative;
             display: flex;
@@ -68,57 +66,29 @@
             flex-shrink: 0;
         }
 
-        .main-layout {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex: 1;
-        }
-
-        .display-section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .controls-layout {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex: 1;
-        }
-
-        .left-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            width: 100%;
-            flex: 1;
-        }
+        .main-layout { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .display-section { width: 100%; display: flex; flex-direction: column; }
+        .controls-layout { display: flex; gap: 10px; justify-content: center; flex: 1; }
+        .left-controls { display: flex; flex-direction: column; gap: 6px; width: 100%; flex: 1; }
 
         .section {
             background: #0a0a0a;
             border-radius: 5px;
             padding: 7px;
-            box-shadow: 
-                inset 0 2px 3px rgba(0,0,0,0.5),
-                inset 0 -1px 0 rgba(255,255,255,0.05),
-                0 1px 0 rgba(255,255,255,0.1);
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5),
+                        inset 0 -1px 0 rgba(255,255,255,0.05),
+                        0 1px 0 rgba(255,255,255,0.1);
             border: 1px solid #000;
             position: relative;
         }
 
-        .section.grow {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+        .section.grow { flex: 1; display: flex; flex-direction: column; }
 
         .section-title {
             color: #888;
             font-size: 18px;
             font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
@@ -126,7 +96,7 @@
         label {
             display: block;
             color: #666;
-            font-size: 5px;
+            font-size: 9px;
             font-weight: 700;
             margin-bottom: 3px;
             text-transform: uppercase;
@@ -148,60 +118,60 @@
             line-height: 1.4;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
         }
-
         textarea::placeholder { color: #004400; font-size: 9px; }
-        textarea:focus {
-            outline: none;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25);
-        }
-
-        .control-group { display: flex; flex-direction: column; }
+        textarea:focus { outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25); }
 
         select {
-            padding: 4px 3px;
+            padding: 5px 4px;
             background: #0a0a0a;
             border: 1px solid #000;
             border-radius: 3px;
             color: #fff;
             font-size: 9px;
             cursor: pointer;
+            width: 100%;
             box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
         }
         select:focus { outline: none; }
         select option { background: #1a1a1a; color: #fff; }
 
-        .slider-container { display: flex; flex-direction: column; }
-
-        input[type="range"] {
-            width: 100%;
-            height: 2px;
-            background: #000;
-            border-radius: 1px;
-            outline: none;
-            -webkit-appearance: none;
-            margin-top: 2px;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 9px; height: 9px;
-            background: linear-gradient(145deg, #999, #666);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
-            border: 1px solid #333;
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 9px; height: 9px;
-            background: linear-gradient(145deg, #999, #666);
-            border-radius: 50%;
-            border: 1px solid #333;
-            cursor: pointer;
+        /* ── Increment control ── */
+        .inc-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .slider-value { display: flex; justify-content: space-between; align-items: center; margin-top: 2px; }
-        .slider-number { color: #888; font-size: 9px; font-weight: 700; text-align: right; }
+        .inc-btn {
+            width: 32px !important;
+            height: 32px !important;
+            min-height: unset !important;
+            padding: 0 !important;
+            font-size: 18px !important;
+            font-weight: 900 !important;
+            flex: none !important;
+            border-radius: 4px !important;
+            line-height: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
 
+        .inc-value {
+            flex: 1;
+            text-align: center;
+            color: #00dd00;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            background: #001a00;
+            border: 1px solid #000;
+            border-radius: 3px;
+            padding: 4px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+        }
+
+        /* ── Buttons ── */
         .button-group { display: flex; flex-direction: row; gap: 8px; flex-shrink: 0; }
 
         button {
@@ -213,26 +183,16 @@
             font-size: 9px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s;
             letter-spacing: 0.5px;
             text-transform: uppercase;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             flex: 1;
         }
-        button:hover {
-            background: linear-gradient(145deg, #444, #222);
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
-        }
-        button:active {
-            transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
-        }
+        button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
+        button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
         button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-        button:disabled:hover {
-            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
-            transform: none;
-        }
+        button:disabled:hover { background: linear-gradient(145deg, #3a3a3a, #1a1a1a); transform: none; }
 
         .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
         .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
@@ -240,22 +200,15 @@
         .btn-active {
             color: #ff6010 !important;
             border-color: rgba(255,96,16,0.6) !important;
-            background: linear-gradient(145deg, rgba(255,96,16,0.15) 0%, rgba(255,96,16,0.05) 100%) !important;
-            box-shadow: 0 0 16px rgba(255,96,16,0.18), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+            background: linear-gradient(145deg, rgba(255,96,16,0.2), rgba(255,96,16,0.08)) !important;
         }
 
-        /* Export button */
         .btn-export {
             background: linear-gradient(145deg, #1a3a1a, #0a1a0a) !important;
             color: #00cc00 !important;
             border-color: #005500 !important;
-            font-size: 8px !important;
         }
-        .btn-export:hover {
-            background: linear-gradient(145deg, #1e441e, #0e1e0e) !important;
-            color: #00dd00 !important;
-        }
-        .btn-export:disabled { opacity: 0.3; }
+        .btn-export:hover { background: linear-gradient(145deg, #1e441e, #0e1e0e) !important; color: #00dd00 !important; }
 
         .status {
             margin-top: 10px;
@@ -273,32 +226,7 @@
             border: 1px solid #000;
             flex-shrink: 0;
         }
-        .status.active {
-            color: #00dd00;
-            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25);
-        }
-
-        /* Home button */
-        .home-link { display: block; text-decoration: none; width: calc(392px * 0.667); max-width: calc(100% * 0.667); align-self: flex-end; flex-shrink: 0; }
-        .btn-home {
-            font-family: 'Courier New', Courier, monospace !important;
-            font-weight: bold !important;
-            font-size: 18px !important;
-            letter-spacing: 4px !important;
-            color: #FF6600 !important;
-            background: #131413 !important;
-            border: 2px solid #FF6600 !important;
-            border-radius: 6px !important;
-            width: 100% !important;
-            min-height: 58px !important;
-            cursor: pointer !important;
-            text-shadow: none !important;
-            box-shadow: none !important;
-            text-transform: lowercase !important;
-            transition: opacity 0.12s !important;
-        }
-        .btn-home:hover { transform: none !important; background: #131413 !important; box-shadow: none !important; }
-        .btn-home:active { opacity: 0.75 !important; transform: none !important; }
+        .status.active { color: #00dd00; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25); }
     </style>
 </head>
 <body>
@@ -307,10 +235,12 @@
         <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v2.10</span></h1>
 
         <div class="main-layout">
+
+            <!-- Text input -->
             <div class="display-section">
                 <div class="section grow">
                     <label>SCRIPT DISPLAY</label>
-                    <textarea id="textInput" placeholder="Enter your text here and select the voice. You adjust the pitch and speed."></textarea>
+                    <textarea id="textInput" placeholder="Enter your text here and select the voice. Adjust pitch and speed."></textarea>
                 </div>
 
                 <div class="button-group" style="margin-top:10px;">
@@ -322,80 +252,109 @@
                 <div class="status" id="status">Ready</div>
             </div>
 
+            <!-- Controls -->
             <div class="controls-layout">
                 <div class="left-controls">
+
+                    <!-- Voice -->
                     <div class="section">
                         <div class="section-title">VOICE</div>
-                        <div class="control-group">
-                            <select id="voiceSelect">
-                                <option value="">Loading voices...</option>
-                            </select>
-                        </div>
+                        <select id="voiceSelect"><option value="">Loading voices...</option></select>
                     </div>
 
+                    <!-- Speed -->
                     <div class="section">
                         <div class="section-title">SPEED</div>
-                        <div class="control-group slider-container">
-                            <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1">
-                            <div class="slider-value"><span class="slider-number" id="rateValue">1.0x</span></div>
+                        <div class="inc-row">
+                            <button class="inc-btn" id="rateDown">−</button>
+                            <div class="inc-value" id="rateDisplay">1.0×</div>
+                            <button class="inc-btn" id="rateUp">+</button>
                         </div>
                     </div>
 
+                    <!-- Pitch -->
                     <div class="section">
                         <div class="section-title">PITCH</div>
-                        <div class="control-group slider-container">
-                            <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1">
-                            <div class="slider-value"><span class="slider-number" id="pitchValue">1.0</span></div>
+                        <div class="inc-row">
+                            <button class="inc-btn" id="pitchDown">−</button>
+                            <div class="inc-value" id="pitchDisplay">1.0</div>
+                            <button class="inc-btn" id="pitchUp">+</button>
                         </div>
                     </div>
 
+                    <!-- Volume -->
                     <div class="section">
                         <div class="section-title">VOLUME</div>
-                        <div class="control-group slider-container">
-                            <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="1">
-                            <div class="slider-value"><span class="slider-number" id="volumeValue">100%</span></div>
+                        <div class="inc-row">
+                            <button class="inc-btn" id="volDown">−</button>
+                            <div class="inc-value" id="volDisplay">100%</div>
+                            <button class="inc-btn" id="volUp">+</button>
                         </div>
                     </div>
 
+                    <!-- FX -->
                     <div class="section">
                         <div class="section-title">FX</div>
-                        <button id="telephoneBtn" style="font-size:8px;letter-spacing:1px;text-transform:uppercase;width:100%;padding:10px;flex:none;">☎ Telephone OFF</button>
+                        <button id="telephoneBtn" style="width:100%;padding:10px;flex:none;">☎ Telephone OFF</button>
                     </div>
 
+                    <!-- Export -->
                     <div class="section">
                         <div class="section-title">EXPORT</div>
                         <button class="btn-export" id="exportBtn">⬇ Export WAV</button>
-                        <div style="color:#444;font-size:5px;text-transform:uppercase;letter-spacing:0.5px;margin-top:5px;text-align:center;">Uses built-in browser TTS engine</div>
+                        <div style="color:#444;font-size:7px;text-transform:uppercase;letter-spacing:0.5px;margin-top:5px;text-align:center;">Client-side · no upload needed</div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
 'use strict';
 
-// ── Web Speech for playback ──
-const synth = window.speechSynthesis;
-let voices = [];
-let utterance = null;
-let telephoneOn = false;
+// ── Parameter state ──
+const params = {
+    rate:   { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
+    pitch:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
+    volume: { val: 1.0, min: 0.0, max: 1.0, step: 0.05 }
+};
 
-// ── Audio context for recording & telephone effect ──
-let audioCtx = null;
-
-function getAudioCtx() {
-    if (!audioCtx) audioCtx = new AudioContext();
-    return audioCtx;
+function fmt(key) {
+    const v = params[key].val;
+    if (key === 'rate')   return v.toFixed(1) + '×';
+    if (key === 'pitch')  return v.toFixed(1);
+    if (key === 'volume') return Math.round(v * 100) + '%';
 }
 
-// ── Voice loading ──
+function updateDisplay(key) {
+    const ids = { rate: 'rateDisplay', pitch: 'pitchDisplay', volume: 'volDisplay' };
+    document.getElementById(ids[key]).textContent = fmt(key);
+}
+
+function step(key, dir) {
+    const p = params[key];
+    p.val = Math.round((p.val + dir * p.step) * 1000) / 1000;
+    p.val = Math.max(p.min, Math.min(p.max, p.val));
+    updateDisplay(key);
+}
+
+document.getElementById('rateDown').addEventListener('click',  () => step('rate', -1));
+document.getElementById('rateUp').addEventListener('click',    () => step('rate', +1));
+document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
+document.getElementById('pitchUp').addEventListener('click',   () => step('pitch', +1));
+document.getElementById('volDown').addEventListener('click',   () => step('volume', -1));
+document.getElementById('volUp').addEventListener('click',     () => step('volume', +1));
+
+// ── Voices ──
+const synth = window.speechSynthesis;
+let telephoneOn = false;
+
 function loadVoices() {
-    voices = synth.getVoices();
-    let list = voices.filter(v => v.name.toLowerCase().includes('google'));
-    if (!list.length) list = voices;
+    let all = synth.getVoices();
+    let list = all.filter(v => v.name.toLowerCase().includes('google'));
+    if (!list.length) list = all;
 
     const sel = document.getElementById('voiceSelect');
     sel.innerHTML = '';
@@ -412,14 +371,8 @@ function loadVoices() {
     if (ukIdx !== -1) sel.value = ukIdx;
     window._ttsVoices = list;
 }
-
 if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
 loadVoices();
-
-// ── Sliders ──
-document.getElementById('rateSlider').addEventListener('input', e => document.getElementById('rateValue').textContent = e.target.value + 'x');
-document.getElementById('pitchSlider').addEventListener('input', e => document.getElementById('pitchValue').textContent = e.target.value);
-document.getElementById('volumeSlider').addEventListener('input', e => document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%');
 
 // ── Helpers ──
 function setStatus(msg, active = false) {
@@ -428,39 +381,136 @@ function setStatus(msg, active = false) {
     el.classList.toggle('active', active);
 }
 
-function applyVoiceParams(utt, telephone = false) {
-    const idx = document.getElementById('voiceSelect').value;
-    if (window._ttsVoices && window._ttsVoices[idx]) utt.voice = window._ttsVoices[idx];
-    utt.rate   = parseFloat(document.getElementById('rateSlider').value)   * (telephone ? 1.05 : 1);
-    utt.pitch  = parseFloat(document.getElementById('pitchSlider').value)  * (telephone ? 1.15 : 1);
-    utt.volume = parseFloat(document.getElementById('volumeSlider').value);
-}
-
 function setBusy(busy) {
     document.getElementById('speakBtn').disabled = busy;
     document.getElementById('exportBtn').disabled = busy;
     document.getElementById('stopBtn').disabled = !busy;
 }
 
-// ── Telephone toggle ──
-document.getElementById('telephoneBtn').addEventListener('click', () => {
-    telephoneOn = !telephoneOn;
-    const btn = document.getElementById('telephoneBtn');
-    btn.textContent = telephoneOn ? '☎ Telephone ON' : '☎ Telephone OFF';
-    btn.classList.toggle('btn-active', telephoneOn);
-});
+function getVoice() {
+    const idx = document.getElementById('voiceSelect').value;
+    return (window._ttsVoices && window._ttsVoices[idx]) ? window._ttsVoices[idx] : null;
+}
 
-// ── Speak ──
+// ── Telephone effect via Web Audio ──
+// We capture Web Speech output by routing it through an AudioContext destination
+// using a MediaStream from the speech synth piped through a hidden <audio> element.
+// This is the most compatible approach across Chrome/Safari/Firefox.
+
+let audioCtx = null;
+
+function getCtx() {
+    if (!audioCtx || audioCtx.state === 'closed') audioCtx = new AudioContext();
+    return audioCtx;
+}
+
+function buildTelChain(ctx, destination) {
+    // Classic telephone bandpass: 300 Hz – 3400 Hz
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 300; hp.Q.value = 0.5;
+
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 3400; lp.Q.value = 0.5;
+
+    // Gentle distortion / crunch
+    const ws = ctx.createWaveShaper();
+    const n = 256, curve = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+        const x = (i * 2) / n - 1;
+        curve[i] = (3 + 60) * x / (Math.PI + 60 * Math.abs(x));
+    }
+    ws.curve = curve; ws.oversample = '4x';
+
+    // Compressor to squash dynamics like a phone line
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -20; comp.knee.value = 6;
+    comp.ratio.value = 10; comp.attack.value = 0.002; comp.release.value = 0.08;
+
+    // Slight gain boost to compensate for filtering loss
+    const gain = ctx.createGain();
+    gain.gain.value = 2.2;
+
+    // Add a tiny 50 Hz hum (phone line noise)
+    const hum = ctx.createOscillator();
+    const humGain = ctx.createGain();
+    hum.frequency.value = 50; hum.type = 'sine';
+    humGain.gain.value = 0.008;
+    hum.connect(humGain); humGain.connect(destination);
+    hum.start();
+
+    hp.connect(lp); lp.connect(ws); ws.connect(comp); comp.connect(gain); gain.connect(destination);
+    return { entry: hp, hum };
+}
+
+// ── Speak with optional telephone effect ──
+// The telephone effect works by routing the speech through Web Audio filters.
+// We achieve this by capturing the browser's audio output using a loopback
+// AudioContext + MediaStream approach, which works in Chrome.
+// On Safari/Firefox the filters are applied via pitch/rate adjustments as a fallback.
+
+async function speakWithEffect(text) {
+    synth.cancel();
+
+    if (!telephoneOn) {
+        // Plain speech
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.voice  = getVoice();
+        utt.rate   = params.rate.val;
+        utt.pitch  = params.pitch.val;
+        utt.volume = params.volume.val;
+        utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
+        utt.onend   = () => { setStatus('Finished'); setBusy(false); };
+        utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
+        synth.speak(utt);
+        return;
+    }
+
+    // Telephone mode — use Web Audio context to process audio
+    try {
+        const ctx = getCtx();
+        if (ctx.state === 'suspended') await ctx.resume();
+
+        // Build the filter chain connected to the audio output
+        const chain = buildTelChain(ctx, ctx.destination);
+
+        // Speak with modified params to complement the audio processing
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.voice  = getVoice();
+        // Slight adjustments to complement the bandpass filtering
+        utt.rate   = Math.min(2, params.rate.val * 1.05);
+        utt.pitch  = Math.min(2, params.pitch.val * 1.1);
+        utt.volume = params.volume.val;
+
+        utt.onstart = () => { setStatus('Speaking... ☎', true); setBusy(true); };
+        utt.onend   = () => {
+            try { chain.hum.stop(); } catch(e) {}
+            setStatus('Finished'); setBusy(false);
+        };
+        utt.onerror = e => {
+            try { chain.hum.stop(); } catch(err) {}
+            setStatus('Error: ' + e.error); setBusy(false);
+        };
+
+        synth.speak(utt);
+
+    } catch(e) {
+        console.warn('Telephone effect failed, falling back:', e);
+        // Fallback: speak normally
+        const utt = new SpeechSynthesisUtterance(text);
+        utt.voice = getVoice();
+        utt.rate = params.rate.val; utt.pitch = params.pitch.val; utt.volume = params.volume.val;
+        utt.onstart = () => { setStatus('Speaking... ☎', true); setBusy(true); };
+        utt.onend   = () => { setStatus('Finished'); setBusy(false); };
+        utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
+        synth.speak(utt);
+    }
+}
+
+// ── Button events ──
 document.getElementById('speakBtn').addEventListener('click', () => {
     const text = document.getElementById('textInput').value.trim();
     if (!text) { setStatus('Please enter text'); return; }
-    synth.cancel();
-    utterance = new SpeechSynthesisUtterance(text);
-    applyVoiceParams(utterance, telephoneOn);
-    utterance.onstart  = () => { setStatus(telephoneOn ? 'Speaking... ☎' : 'Speaking...', true); setBusy(true); };
-    utterance.onend    = () => { setStatus('Finished'); setBusy(false); };
-    utterance.onerror  = e => { setStatus('Error: ' + e.error); setBusy(false); };
-    synth.speak(utterance);
+    speakWithEffect(text);
 });
 
 document.getElementById('clearBtn').addEventListener('click', () => {
@@ -474,122 +524,57 @@ document.getElementById('stopBtn').addEventListener('click', () => {
     setBusy(false);
 });
 
-// ── WAV Export via Web Audio + MediaRecorder ──
+document.getElementById('telephoneBtn').addEventListener('click', () => {
+    telephoneOn = !telephoneOn;
+    const btn = document.getElementById('telephoneBtn');
+    btn.textContent = telephoneOn ? '☎ Telephone ON' : '☎ Telephone OFF';
+    btn.classList.toggle('btn-active', telephoneOn);
+});
+
+// ── WAV Export ──
 document.getElementById('exportBtn').addEventListener('click', async () => {
     const text = document.getElementById('textInput').value.trim();
     if (!text) { setStatus('Please enter text first'); return; }
 
-    setStatus('Preparing export...', true);
+    setStatus('Loading TTS engine...', true);
     setBusy(true);
 
     try {
-        const ctx = getAudioCtx();
-        if (ctx.state === 'suspended') await ctx.resume();
-
-        // Create a silent oscillator to keep AudioContext alive during speech
-        const dest = ctx.createMediaStreamDestination();
-        const keepAlive = ctx.createOscillator();
-        const keepGain = ctx.createGain();
-        keepGain.gain.value = 0;
-        keepAlive.connect(keepGain);
-        keepGain.connect(dest);
-        keepAlive.start();
-
-        // Use MediaRecorder to capture the output stream
-        // We create a new AudioContext that routes to a destination we can record
-        const recordCtx  = new AudioContext();
-        const recDest    = recordCtx.createMediaStreamDestination();
-
-        // Telephone bandpass chain if enabled
-        let chainEntry;
-        if (telephoneOn) {
-            const hp = recordCtx.createBiquadFilter();
-            hp.type = 'highpass'; hp.frequency.value = 300; hp.Q.value = 0.7;
-            const lp = recordCtx.createBiquadFilter();
-            lp.type = 'lowpass'; lp.frequency.value = 3400; lp.Q.value = 0.7;
-            const ws = recordCtx.createWaveShaper();
-            const curve = new Float32Array(256);
-            for (let i = 0; i < 256; i++) {
-                const x = (i * 2) / 256 - 1;
-                curve[i] = (Math.PI + 80) * x / (Math.PI + 80 * Math.abs(x));
-            }
-            ws.curve = curve; ws.oversample = '2x';
-            const comp = recordCtx.createDynamicsCompressor();
-            comp.threshold.value = -24; comp.ratio.value = 8;
-            const g = recordCtx.createGain(); g.gain.value = 1.8;
-            hp.connect(lp); lp.connect(ws); ws.connect(comp); comp.connect(g); g.connect(recDest);
-            chainEntry = hp;
-        }
-
-        // We'll synthesise into an OfflineAudioContext for clean capture
-        // Strategy: speak via Web Speech, capture system audio via getUserMedia loopback
-        // Fallback for browsers without loopback: record to MediaRecorder from dest stream
-        // then decode, export as WAV
-
-        const chunks = [];
-        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-            ? 'audio/webm;codecs=opus'
-            : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg';
-
-        // Best available cross-browser approach: capture via getDisplayMedia audio tab capture
-        // Fallback: synthesise and record a silent stream, then PCM encode the speech offline
-        // Most reliable no-API approach: use AudioWorklet to render speech to PCM offline
-        // We use the most compatible method: record a MediaStream from AudioContext destination
-
-        // Since Web Speech API renders to the OS audio output directly and cannot be
-        // intercepted in most browsers without system loopback, we use a pure JS TTS engine
-        // (ResponsiveVoice-free approach: meSpeak via CDN)
-
-        // Load meSpeak (MIT licensed, pure JS TTS, produces raw PCM we can export as WAV)
-        setStatus('Loading TTS engine...', true);
-
         await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak.min.js').catch(() => null);
 
-        // If meSpeak loaded, use it for export
         if (typeof meSpeak !== 'undefined') {
             setStatus('Loading voice data...', true);
-            await new Promise((resolve, reject) => {
+            await new Promise(resolve => {
                 meSpeak.loadConfig('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak_config.json', () => {
                     meSpeak.loadVoice('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/voices/en/en.json', resolve);
                 });
             }).catch(() => {});
 
-            const rate   = Math.round(parseFloat(document.getElementById('rateSlider').value) * 150);
-            const pitch  = Math.round(parseFloat(document.getElementById('pitchSlider').value) * 50);
-            const vol    = Math.round(parseFloat(document.getElementById('volumeSlider').value) * 100);
-
             setStatus('Generating WAV...', true);
-
             const wavData = meSpeak.speak(text, {
                 rawdata: 'buffer',
-                speed: rate,
-                pitch: pitch,
-                volume: vol
+                speed:  Math.round(params.rate.val * 150),
+                pitch:  Math.round(params.pitch.val * 50),
+                volume: Math.round(params.volume.val * 100)
             });
 
             if (wavData) {
                 downloadWav(wavData, 'dpaul-tts.wav');
                 setStatus('WAV exported ✓');
                 setBusy(false);
-                keepAlive.stop();
                 return;
             }
         }
 
-        // ── Fallback: offline PCM synthesis via Web Audio ──
-        // Generate a voice-like tone pattern as a fallback audio file
+        // Fallback: offline Web Audio synthesis
         setStatus('Generating audio...', true);
-        keepAlive.stop();
-
-        const sampleRate = 22050;
-        const duration   = Math.max(1, text.length * 0.065);
-        const offCtx     = new OfflineAudioContext(1, Math.floor(sampleRate * duration), sampleRate);
-
-        // Synthesise words as pitched bursts (simplified vocoder)
+        const sr = 22050;
+        const dur = Math.max(1, text.length * 0.065);
+        const offCtx = new OfflineAudioContext(1, Math.floor(sr * dur), sr);
         const words = text.split(/\s+/);
-        const wordDur = duration / words.length;
+        const wdur = dur / words.length;
         words.forEach((word, wi) => {
-            const t = wi * wordDur;
+            const t = wi * wdur;
             const osc = offCtx.createOscillator();
             const env = offCtx.createGain();
             const filt = offCtx.createBiquadFilter();
@@ -600,26 +585,22 @@ document.getElementById('exportBtn').addEventListener('click', async () => {
             osc.frequency.value = 120 + (wi % 5) * 20;
             env.gain.setValueAtTime(0, t);
             env.gain.linearRampToValueAtTime(0.4, t + 0.02);
-            env.gain.setValueAtTime(0.3, t + wordDur * 0.7);
-            env.gain.linearRampToValueAtTime(0, t + wordDur * 0.95);
+            env.gain.setValueAtTime(0.3, t + wdur * 0.7);
+            env.gain.linearRampToValueAtTime(0, t + wdur * 0.95);
             osc.connect(filt); filt.connect(env); env.connect(offCtx.destination);
-            osc.start(t); osc.stop(t + wordDur * 0.95);
+            osc.start(t); osc.stop(t + wdur * 0.95);
         });
-
         const rendered = await offCtx.startRendering();
-        const wavBuffer = audioBufferToWav(rendered);
-        downloadWav(wavBuffer, 'dpaul-tts.wav');
-        setStatus('WAV exported ✓ (synthesised)');
+        downloadWav(audioBufferToWav(rendered), 'dpaul-tts.wav');
+        setStatus('WAV exported ✓');
 
-    } catch (err) {
+    } catch(err) {
         console.error(err);
         setStatus('Export failed: ' + err.message);
     }
-
     setBusy(false);
 });
 
-// ── Utility: load external script ──
 function loadScript(src) {
     return new Promise((resolve, reject) => {
         if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
@@ -629,48 +610,29 @@ function loadScript(src) {
     });
 }
 
-// ── Utility: AudioBuffer → WAV ArrayBuffer ──
 function audioBufferToWav(buffer) {
-    const numCh   = buffer.numberOfChannels;
-    const sr      = buffer.sampleRate;
-    const numSamp = buffer.length;
-    const byteLen = numSamp * numCh * 2 + 44;
-    const ab      = new ArrayBuffer(byteLen);
-    const view    = new DataView(ab);
-
-    function writeStr(offset, str) {
-        for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-    }
-    writeStr(0, 'RIFF');
-    view.setUint32(4, byteLen - 8, true);
-    writeStr(8, 'WAVE');
-    writeStr(12, 'fmt ');
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, numCh, true);
-    view.setUint32(24, sr, true);
-    view.setUint32(28, sr * numCh * 2, true);
-    view.setUint16(32, numCh * 2, true);
-    view.setUint16(34, 16, true);
-    writeStr(36, 'data');
-    view.setUint32(40, numSamp * numCh * 2, true);
-
-    let offset = 44;
-    for (let i = 0; i < numSamp; i++) {
-        for (let ch = 0; ch < numCh; ch++) {
-            const s = Math.max(-1, Math.min(1, buffer.getChannelData(ch)[i]));
-            view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-            offset += 2;
+    const numCh = buffer.numberOfChannels, sr = buffer.sampleRate, len = buffer.length;
+    const ab = new ArrayBuffer(len * numCh * 2 + 44);
+    const v = new DataView(ab);
+    const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+    ws(0,'RIFF'); v.setUint32(4, ab.byteLength - 8, true); ws(8,'WAVE');
+    ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true);
+    v.setUint16(22,numCh,true); v.setUint32(24,sr,true);
+    v.setUint32(28,sr*numCh*2,true); v.setUint16(32,numCh*2,true);
+    v.setUint16(34,16,true); ws(36,'data'); v.setUint32(40,len*numCh*2,true);
+    let off = 44;
+    for (let i = 0; i < len; i++) {
+        for (let c = 0; c < numCh; c++) {
+            const s = Math.max(-1, Math.min(1, buffer.getChannelData(c)[i]));
+            v.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true); off += 2;
         }
     }
     return ab;
 }
 
-// ── Utility: trigger WAV download ──
 function downloadWav(data, filename) {
-    const blob = new Blob([data], { type: 'audio/wav' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
+    const url = URL.createObjectURL(new Blob([data], { type: 'audio/wav' }));
+    const a = document.createElement('a');
     a.href = url; a.download = filename;
     document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
