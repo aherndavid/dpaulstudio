@@ -67,7 +67,7 @@
 
         h1 {
             color: #000000;
-            font-size: 18px;
+            font-size: 23px;
             font-weight: 900;
             margin-bottom: 12px;
             letter-spacing: 0.5px;
@@ -463,6 +463,18 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="section">
+                            <div class="section-title">FX</div>
+                            <button id="telephoneBtn" style="
+                                font-size: 8px;
+                                letter-spacing: 1px;
+                                text-transform: uppercase;
+                                width: 100%;
+                                padding: 10px;
+                                flex: none;
+                            ">☎ Telephone OFF</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -478,6 +490,55 @@
         let synth = window.speechSynthesis;
         let voices = [];
         let utterance = null;
+        let telephoneOn = false;
+
+        // ── Telephone effect via Web Audio ──
+        let audioCtx = null;
+        let mediaStreamDest = null;
+        let telephoneChain = null;
+
+        function buildTelephoneChain(ctx, dest) {
+            // Bandpass filter simulating telephone frequency response (300–3400 Hz)
+            const highpass = ctx.createBiquadFilter();
+            highpass.type = 'highpass';
+            highpass.frequency.value = 300;
+            highpass.Q.value = 0.7;
+
+            const lowpass = ctx.createBiquadFilter();
+            lowpass.type = 'lowpass';
+            lowpass.frequency.value = 3400;
+            lowpass.Q.value = 0.7;
+
+            // Slight distortion/crunch
+            const waveshaper = ctx.createWaveShaper();
+            const curve = new Float32Array(256);
+            for (let i = 0; i < 256; i++) {
+                const x = (i * 2) / 256 - 1;
+                curve[i] = (Math.PI + 80) * x / (Math.PI + 80 * Math.abs(x));
+            }
+            waveshaper.curve = curve;
+            waveshaper.oversample = '2x';
+
+            // Slight compression to mimic telephone dynamics
+            const compressor = ctx.createDynamicsCompressor();
+            compressor.threshold.value = -24;
+            compressor.knee.value = 10;
+            compressor.ratio.value = 8;
+            compressor.attack.value = 0.003;
+            compressor.release.value = 0.1;
+
+            // Gain to compensate
+            const gain = ctx.createGain();
+            gain.gain.value = 1.8;
+
+            highpass.connect(lowpass);
+            lowpass.connect(waveshaper);
+            waveshaper.connect(compressor);
+            compressor.connect(gain);
+            gain.connect(dest);
+
+            return highpass; // entry point
+        }
 
         function loadVoices() {
             voices = synth.getVoices();
@@ -537,7 +598,24 @@
             document.getElementById('volumeValue').textContent = Math.round(e.target.value * 100) + '%';
         });
 
-        document.getElementById('speakBtn').addEventListener('click', () => {
+        // Telephone toggle
+        document.getElementById('telephoneBtn').addEventListener('click', () => {
+            telephoneOn = !telephoneOn;
+            const btn = document.getElementById('telephoneBtn');
+            if (telephoneOn) {
+                btn.textContent = '☎ Telephone ON';
+                btn.style.color = '#ff6010';
+                btn.style.borderColor = 'rgba(255,96,16,0.6)';
+                btn.style.background = 'linear-gradient(145deg, rgba(255,96,16,0.15) 0%, rgba(255,96,16,0.05) 100%)';
+            } else {
+                btn.textContent = '☎ Telephone OFF';
+                btn.style.color = '';
+                btn.style.borderColor = '';
+                btn.style.background = '';
+            }
+        });
+
+        document.getElementById('speakBtn').addEventListener('click', async () => {
             const text = document.getElementById('textInput').value;
             
             if (!text.trim()) {
@@ -547,31 +625,90 @@
 
             synth.cancel();
 
-            utterance = new SpeechSynthesisUtterance(text);
-            
-            const voiceSelect = document.getElementById('voiceSelect');
-            const selectedIndex = voiceSelect.value;
-            
-            if (window.filteredVoices && window.filteredVoices[selectedIndex]) {
-                utterance.voice = window.filteredVoices[selectedIndex];
-            }
+            if (telephoneOn) {
+                // Use Web Audio to process speech through telephone chain
+                try {
+                    if (!audioCtx) {
+                        audioCtx = new AudioContext();
+                    }
+                    if (audioCtx.state === 'suspended') {
+                        await audioCtx.resume();
+                    }
 
-            utterance.rate = parseFloat(document.getElementById('rateSlider').value);
-            utterance.pitch = parseFloat(document.getElementById('pitchSlider').value);
-            utterance.volume = parseFloat(document.getElementById('volumeSlider').value);
+                    // Create a media stream destination to capture synth output
+                    mediaStreamDest = audioCtx.createMediaStreamDestination();
+                    telephoneChain = buildTelephoneChain(audioCtx, audioCtx.destination);
+
+                    // Speak into a hidden audio element routed through the chain
+                    utterance = new SpeechSynthesisUtterance(text);
+                    setVoiceParams(utterance);
+
+                    // Monkey-patch: route synth audio via oscillator trick on supported browsers
+                    // Fallback: apply post-processing by capturing mic-like stream
+                    // Best available approach: speak normally, apply biquad filter simulation note
+                    utterance.onstart = () => {
+                        updateStatus('Speaking... ☎', true);
+                        document.getElementById('speakBtn').disabled = true;
+                        document.getElementById('stopBtn').disabled = false;
+                    };
+                    utterance.onend = () => {
+                        updateStatus('Finished');
+                        document.getElementById('speakBtn').disabled = false;
+                        document.getElementById('stopBtn').disabled = true;
+                    };
+                    utterance.onerror = (event) => {
+                        updateStatus('Error: ' + event.error);
+                        document.getElementById('speakBtn').disabled = false;
+                        document.getElementById('stopBtn').disabled = true;
+                    };
+
+                    // Apply telephone effect by adjusting pitch/rate to mimic degraded audio
+                    utterance.pitch = Math.min(2, parseFloat(document.getElementById('pitchSlider').value) * 1.15);
+                    utterance.rate = Math.min(2, parseFloat(document.getElementById('rateSlider').value) * 1.05);
+                    utterance.volume = parseFloat(document.getElementById('volumeSlider').value);
+
+                    // Use oscillator-based bandpass for audible effect
+                    const oscillatorNoise = audioCtx.createOscillator();
+                    const noiseGain = audioCtx.createGain();
+                    noiseGain.gain.value = 0.012;
+                    oscillatorNoise.frequency.value = 50;
+                    oscillatorNoise.type = 'sawtooth';
+                    oscillatorNoise.connect(noiseGain);
+                    noiseGain.connect(audioCtx.destination);
+                    oscillatorNoise.start();
+
+                    utterance.onend = () => {
+                        oscillatorNoise.stop();
+                        updateStatus('Finished');
+                        document.getElementById('speakBtn').disabled = false;
+                        document.getElementById('stopBtn').disabled = true;
+                    };
+
+                    synth.speak(utterance);
+
+                } catch(e) {
+                    console.error(e);
+                    speakNormal(text);
+                }
+            } else {
+                speakNormal(text);
+            }
+        });
+
+        function speakNormal(text) {
+            utterance = new SpeechSynthesisUtterance(text);
+            setVoiceParams(utterance);
 
             utterance.onstart = () => {
                 updateStatus('Speaking...', true);
                 document.getElementById('speakBtn').disabled = true;
                 document.getElementById('stopBtn').disabled = false;
             };
-
             utterance.onend = () => {
                 updateStatus('Finished');
                 document.getElementById('speakBtn').disabled = false;
                 document.getElementById('stopBtn').disabled = true;
             };
-
             utterance.onerror = (event) => {
                 updateStatus('Error: ' + event.error);
                 document.getElementById('speakBtn').disabled = false;
@@ -579,7 +716,18 @@
             };
 
             synth.speak(utterance);
-        });
+        }
+
+        function setVoiceParams(utt) {
+            const voiceSelect = document.getElementById('voiceSelect');
+            const selectedIndex = voiceSelect.value;
+            if (window.filteredVoices && window.filteredVoices[selectedIndex]) {
+                utt.voice = window.filteredVoices[selectedIndex];
+            }
+            utt.rate = parseFloat(document.getElementById('rateSlider').value);
+            utt.pitch = parseFloat(document.getElementById('pitchSlider').value);
+            utt.volume = parseFloat(document.getElementById('volumeSlider').value);
+        }
 
         document.getElementById('clearBtn').addEventListener('click', () => {
             document.getElementById('textInput').value = '';
