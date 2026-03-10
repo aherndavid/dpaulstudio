@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>dPaul Technologies VU Meter</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #6a6d70;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Share Tech Mono', monospace;
+  background:
+    radial-gradient(ellipse at 30% 20%, #8c9095 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #585c61 0%, transparent 55%),
+    #6a6d70;
+}
+
+/* ── Enclosure ── */
+.unit {
+  width: min(380px, 96vw);
+  background:
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(255,255,255,0.025) 2px,
+      rgba(255,255,255,0.025) 3px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 6px,
+      rgba(0,0,0,0.03) 6px,
+      rgba(0,0,0,0.03) 7px
+    ),
+    linear-gradient(
+      170deg,
+      #d4d8dc 0%,
+      #b8bcc0 8%,
+      #cdd1d5 18%,
+      #a8acb0 28%,
+      #c0c4c8 38%,
+      #b0b4b8 50%,
+      #c8ccd0 62%,
+      #a4a8ac 72%,
+      #bcc0c4 82%,
+      #d0d4d8 90%,
+      #b4b8bc 100%
+    );
+  border-radius: 22px;
+  padding: 18px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.55),
+    0 0 0 2px rgba(0,0,0,0.18),
+    0 8px 32px rgba(0,0,0,0.45),
+    0 2px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -1px 0 rgba(0,0,0,0.15);
+}
+
+/* ── Brand ── */
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.brand-top {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #3a3f44;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45), 0 -1px 0 rgba(0,0,0,0.12);
+}
+.brand-bottom {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.brand-title {
+  font-size: 19px;
+  letter-spacing: 7px;
+  color: #2e3236;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.45), 0 -1px 0 rgba(0,0,0,0.12);
+}
+.brand-ver {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(58,63,68,0.55);
+}
+
+/* ── dB readout ── */
+.db-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: #040405;
+  border-radius: 14px;
+  padding: 10px 14px 8px;
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,0.9),
+    inset 0 1px 3px rgba(0,0,0,0.6),
+    0 1px 0 rgba(255,255,255,0.2),
+    0 0 0 1px rgba(0,0,0,0.35);
+}
+
+.db-display {
+  font-size: clamp(72px, 22vw, 110px);
+  line-height: 1;
+  color: #ff6010;
+  letter-spacing: -3px;
+  text-align: center;
+  text-shadow: 0 0 22px rgba(255,96,16,0.7), 0 0 60px rgba(255,96,16,0.2);
+  transition: color 0.08s, text-shadow 0.08s;
+}
+.db-display.peak {
+  color: #ff1830;
+  text-shadow: 0 0 22px rgba(255,24,48,0.9), 0 0 60px rgba(255,24,48,0.35);
+}
+
+.db-unit {
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+}
+
+/* ── Segment bar ── */
+.bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+  background: #040405;
+  border-radius: 12px;
+  padding: 10px 12px 9px;
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,0.9),
+    inset 0 1px 3px rgba(0,0,0,0.6),
+    0 1px 0 rgba(255,255,255,0.2),
+    0 0 0 1px rgba(0,0,0,0.35);
+}
+
+.segments {
+  display: flex;
+  gap: 2px;
+  height: 30px;
+}
+
+.seg {
+  flex: 1;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.06);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+  transition: background 0.04s, box-shadow 0.04s;
+}
+.seg.lit-orange { background: #ff6010; box-shadow: 0 0 6px rgba(255,96,16,0.55); }
+.seg.lit-yellow { background: #ffaa00; box-shadow: 0 0 6px rgba(255,170,0,0.55); }
+.seg.lit-red    { background: #ff1830; box-shadow: 0 0 8px rgba(255,24,48,0.65); }
+
+.bar-scale {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.35);
+  padding: 0 1px;
+}
+
+/* ── Peak history ── */
+.peak-section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  background: #040405;
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,0.9),
+    inset 0 1px 3px rgba(0,0,0,0.6),
+    0 1px 0 rgba(255,255,255,0.2),
+    0 0 0 1px rgba(0,0,0,0.35);
+  max-height: 172px;
+}
+
+.peak-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.peak-title {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.4);
+}
+
+.peak-max {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #888;
+}
+.peak-max span {
+  color: #ff6010;
+  text-shadow: 0 0 10px rgba(255,96,16,0.45);
+}
+
+.peak-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  scrollbar-width: none;
+}
+.peak-list::-webkit-scrollbar { display: none; }
+
+.peak-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  border-left: 2px solid #ff6010;
+  animation: fadeIn 0.2s ease;
+  flex-shrink: 0;
+}
+.peak-row.high    { border-left-color: #ffaa00; }
+.peak-row.danger  { border-left-color: #ff1830; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.peak-row-db {
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: #ff6010;
+}
+.peak-row.high   .peak-row-db { color: #ffaa00; }
+.peak-row.danger .peak-row-db { color: #ff1830; }
+
+.peak-row-time {
+  font-size: 9px;
+  color: #555;
+  letter-spacing: 1px;
+}
+
+.peak-empty {
+  font-size: 9px;
+  color: #333;
+  letter-spacing: 2px;
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* ── Controls ── */
+.controls-box {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex-shrink: 0;
+  background: #040405;
+  border-radius: 14px;
+  padding: 11px 12px 10px;
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,0.9),
+    inset 0 1px 3px rgba(0,0,0,0.6),
+    0 1px 0 rgba(255,255,255,0.2),
+    0 0 0 1px rgba(0,0,0,0.35);
+}
+
+.btns {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+button {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.08) 100%);
+  color: #3a3f44;
+  border: 1px solid rgba(0,0,0,0.22);
+  border-bottom: 1px solid rgba(0,0,0,0.32);
+  padding: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 1;
+  min-height: 44px;
+  transition: all 0.12s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.42);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+}
+button:active, button.active {
+  color: #ff6010;
+  border-color: rgba(255,96,16,0.55);
+  background: linear-gradient(180deg, rgba(255,96,16,0.14) 0%, rgba(255,96,16,0.04) 100%);
+  box-shadow: 0 0 14px rgba(255,96,16,0.16), inset 0 1px 0 rgba(255,255,255,0.18);
+  text-shadow: 0 0 10px rgba(255,96,16,0.45);
+}
+
+/* ── Home button ── */
+.home-link {
+  display: block;
+  text-decoration: none;
+}
+.btn-home {
+  font-family: 'Courier New', Courier, monospace !important;
+  font-weight: bold !important;
+  font-size: 15px !important;
+  letter-spacing: 4px !important;
+  color: #FF6600 !important;
+  background: #0c0c0d !important;
+  border: 2px solid #FF6600 !important;
+  border-radius: 8px !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  cursor: pointer !important;
+  flex: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  text-transform: lowercase !important;
+  transition: opacity 0.12s !important;
+}
+.btn-home:active {
+  opacity: 0.75 !important;
+  background: #0c0c0d !important;
+  color: #FF6600 !important;
+  border-color: #FF6600 !important;
+  box-shadow: none !important;
+}
+</style>
+</head>
+<body>
+
+<div class="unit">
+
+  <div class="brand">
+    <div class="brand-top">
+      <span>dPaul</span><span style="font-size:0.75em;letter-spacing:5px">Technologies</span>
+    </div>
+    <div class="brand-bottom">
+      <span class="brand-title">VU Meter</span>
+      <span class="brand-ver">v.2.01</span>
+    </div>
+  </div>
+
+  <div class="db-wrap">
+    <div class="db-display" id="dbDisplay">—</div>
+    <div class="db-unit">DECIBELS</div>
+  </div>
+
+  <div class="bar-wrap">
+    <div class="segments" id="segments"></div>
+    <div class="bar-scale">
+      <span>-40</span>
+      <span>-20</span>
+      <span>0</span>
+      <span>20</span>
+      <span>50</span>
+      <span>100</span>
+    </div>
+  </div>
+
+  <div class="peak-section">
+    <div class="peak-header">
+      <span class="peak-title">Peak History</span>
+      <span class="peak-max" id="peakMax">Max: <span id="peakMaxVal">—</span></span>
+    </div>
+    <div class="peak-list" id="peakList">
+      <div class="peak-empty" id="peakEmpty">No peaks recorded yet</div>
+    </div>
+  </div>
+
+  <div class="controls-box">
+    <div class="btns">
+      <button id="btnMic">Mic</button>
+      <button id="btnTest">Test</button>
+      <button id="btnReset">Reset</button>
+    </div>
+    <a href="https://www.dpaul.studio" class="home-link">
+      <button class="btn-home">home</button>
+    </a>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const MIN_DB = -40, MAX_DB = 100;
+const NUM_SEGS = 36;
+const PEAK_THRESHOLD = 80;
+const PEAK_HOLD_MS   = 1200;
+
+const segsEl = document.getElementById('segments');
+for (let i = 0; i < NUM_SEGS; i++) {
+  const d = document.createElement('div');
+  d.className = 'seg';
+  segsEl.appendChild(d);
+}
+const segs = Array.from(segsEl.children);
+
+const idxYellow = Math.round((80 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idxRed    = Math.round((90 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+
+const dbDisplay  = document.getElementById('dbDisplay');
+const peakList   = document.getElementById('peakList');
+const peakEmpty  = document.getElementById('peakEmpty');
+const peakMaxVal = document.getElementById('peakMaxVal');
+
+let peakHistory  = [];
+let allTimePeak  = null;
+let lastPeakTime = 0;
+let lastDb       = MIN_DB;
+let peakHoldDb   = null;
+
+function now() {
+  return new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+
+function recordPeak(db) {
+  const t = Date.now();
+  if (t - lastPeakTime < PEAK_HOLD_MS) return;
+  lastPeakTime = t;
+
+  peakHistory.unshift({ db, time: now() });
+  if (peakHistory.length > 20) peakHistory.pop();
+
+  if (allTimePeak === null || db > allTimePeak) {
+    allTimePeak = db;
+    peakMaxVal.textContent = db.toFixed(1) + ' dB';
+  }
+
+  renderPeakList();
+}
+
+function renderPeakList() {
+  if (peakHistory.length === 0) {
+    peakEmpty.style.display = 'block';
+    Array.from(peakList.querySelectorAll('.peak-row')).forEach(r => r.remove());
+    return;
+  }
+  peakEmpty.style.display = 'none';
+  Array.from(peakList.querySelectorAll('.peak-row')).forEach(r => r.remove());
+
+  peakHistory.forEach(({db, time}) => {
+    const row = document.createElement('div');
+    row.className = 'peak-row' + (db >= 90 ? ' danger' : db >= 80 ? ' high' : '');
+    row.innerHTML = `
+      <span class="peak-row-db">${db.toFixed(1)} dB</span>
+      <span class="peak-row-time">${time}</span>
+    `;
+    peakList.appendChild(row);
+  });
+}
+
+function setLevel(db) {
+  const filled = Math.round(((db - MIN_DB) / (MAX_DB - MIN_DB)) * (NUM_SEGS - 1));
+  segs.forEach((s, i) => {
+    if (i <= filled) {
+      s.className = i >= idxRed ? 'seg lit-red' : i >= idxYellow ? 'seg lit-yellow' : 'seg lit-orange';
+    } else {
+      s.className = 'seg';
+    }
+  });
+
+  if (db <= MIN_DB) {
+    dbDisplay.textContent = '—';
+    dbDisplay.className = 'db-display';
+  } else {
+    dbDisplay.textContent = db.toFixed(1);
+    dbDisplay.className = 'db-display' + (db >= 90 ? ' peak' : '');
+  }
+
+  if (db > lastDb) {
+    peakHoldDb = db;
+  } else if (peakHoldDb !== null && db < peakHoldDb - 3 && peakHoldDb >= PEAK_THRESHOLD) {
+    recordPeak(peakHoldDb);
+    peakHoldDb = null;
+  }
+  lastDb = db;
+}
+
+function resetMeter() {
+  segs.forEach(s => s.className = 'seg');
+  dbDisplay.textContent = '—';
+  dbDisplay.className = 'db-display';
+  peakHistory = [];
+  allTimePeak = null;
+  lastDb = MIN_DB;
+  peakHoldDb = null;
+  peakMaxVal.textContent = '—';
+  renderPeakList();
+}
+
+resetMeter();
+
+let simInterval = null, simMode = null;
+
+function stopSim() {
+  clearInterval(simInterval); simInterval = null; simMode = null;
+  document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+}
+
+document.getElementById('btnTest').addEventListener('click', () => {
+  if (simMode === 'test') { stopSim(); return; }
+  stopSim(); simMode = 'test';
+  document.getElementById('btnTest').classList.add('active');
+  let ph = 0;
+  simInterval = setInterval(() => {
+    ph++;
+    let db = 30 + Math.sin(ph * 0.065) * 45 + Math.sin(ph * 0.028) * 20;
+    db = Math.max(MIN_DB, Math.min(MAX_DB, db));
+    setLevel(db);
+  }, 55);
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  stopSim(); resetMeter();
+});
+
+document.getElementById('btnMic').addEventListener('click', async () => {
+  if (simMode === 'mic') { stopSim(); return; }
+  try {
+    const stream   = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stopSim(); simMode = 'mic';
+    document.getElementById('btnMic').classList.add('active');
+    const actx     = new AudioContext();
+    const src      = actx.createMediaStreamSource(stream);
+    const analyser = actx.createAnalyser();
+    analyser.fftSize = 512;
+    src.connect(analyser);
+    const buf = new Float32Array(analyser.fftSize);
+    simInterval = setInterval(() => {
+      analyser.getFloatTimeDomainData(buf);
+      let sum = 0; buf.forEach(v => sum += v * v);
+      const rms = Math.sqrt(sum / buf.length);
+      const db  = rms > 0
+        ? Math.max(MIN_DB, Math.min(MAX_DB, 20 * Math.log10(rms) + 90))
+        : MIN_DB;
+      setLevel(db);
+    }, 55);
+  } catch(e) { alert('Microphone access denied.'); }
+});
+</script>
+</body>
+</html>
