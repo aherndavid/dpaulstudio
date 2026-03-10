@@ -135,7 +135,6 @@
         select:focus { outline: none; }
         select option { background: #1a1a1a; color: #fff; }
 
-        /* ── Increment control ── */
         .inc-row {
             display: flex;
             align-items: center;
@@ -171,7 +170,6 @@
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
         }
 
-        /* ── Buttons ── */
         .button-group { display: flex; flex-direction: row; gap: 8px; flex-shrink: 0; }
 
         button {
@@ -196,19 +194,6 @@
 
         .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
         .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
-
-        .btn-active {
-            color: #ff6010 !important;
-            border-color: rgba(255,96,16,0.6) !important;
-            background: linear-gradient(145deg, rgba(255,96,16,0.2), rgba(255,96,16,0.08)) !important;
-        }
-
-        .btn-export {
-            background: linear-gradient(145deg, #1a3a1a, #0a1a0a) !important;
-            color: #00cc00 !important;
-            border-color: #005500 !important;
-        }
-        .btn-export:hover { background: linear-gradient(145deg, #1e441e, #0e1e0e) !important; color: #00dd00 !important; }
 
         .status {
             margin-top: 10px;
@@ -236,7 +221,6 @@
 
         <div class="main-layout">
 
-            <!-- Text input -->
             <div class="display-section">
                 <div class="section grow">
                     <label>SCRIPT DISPLAY</label>
@@ -252,17 +236,14 @@
                 <div class="status" id="status">Ready</div>
             </div>
 
-            <!-- Controls -->
             <div class="controls-layout">
                 <div class="left-controls">
 
-                    <!-- Voice -->
                     <div class="section">
                         <div class="section-title">VOICE</div>
                         <select id="voiceSelect"><option value="">Loading voices...</option></select>
                     </div>
 
-                    <!-- Speed -->
                     <div class="section">
                         <div class="section-title">SPEED</div>
                         <div class="inc-row">
@@ -272,7 +253,6 @@
                         </div>
                     </div>
 
-                    <!-- Pitch -->
                     <div class="section">
                         <div class="section-title">PITCH</div>
                         <div class="inc-row">
@@ -282,7 +262,6 @@
                         </div>
                     </div>
 
-                    <!-- Volume -->
                     <div class="section">
                         <div class="section-title">VOLUME</div>
                         <div class="inc-row">
@@ -290,13 +269,6 @@
                             <div class="inc-value" id="volDisplay">100%</div>
                             <button class="inc-btn" id="volUp">+</button>
                         </div>
-                    </div>
-
-                    <!-- Export -->
-                    <div class="section">
-                        <div class="section-title">EXPORT</div>
-                        <button class="btn-export" id="exportBtn">⬇ Export WAV</button>
-                        <div style="color:#444;font-size:7px;text-transform:uppercase;letter-spacing:0.5px;margin-top:5px;text-align:center;">Client-side · no upload needed</div>
                     </div>
 
                 </div>
@@ -308,7 +280,6 @@
 <script>
 'use strict';
 
-// ── Parameter state ──
 const params = {
     rate:   { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
     pitch:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
@@ -341,7 +312,6 @@ document.getElementById('pitchUp').addEventListener('click',   () => step('pitch
 document.getElementById('volDown').addEventListener('click',   () => step('volume', -1));
 document.getElementById('volUp').addEventListener('click',     () => step('volume', +1));
 
-// ── Voices ──
 const synth = window.speechSynthesis;
 
 function loadVoices() {
@@ -367,7 +337,6 @@ function loadVoices() {
 if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
 loadVoices();
 
-// ── Helpers ──
 function setStatus(msg, active = false) {
     const el = document.getElementById('status');
     el.textContent = msg;
@@ -376,7 +345,6 @@ function setStatus(msg, active = false) {
 
 function setBusy(busy) {
     document.getElementById('speakBtn').disabled = busy;
-    document.getElementById('exportBtn').disabled = busy;
     document.getElementById('stopBtn').disabled = !busy;
 }
 
@@ -385,7 +353,6 @@ function getVoice() {
     return (window._ttsVoices && window._ttsVoices[idx]) ? window._ttsVoices[idx] : null;
 }
 
-// ── Speak ──
 function speak(text) {
     synth.cancel();
     const utt = new SpeechSynthesisUtterance(text);
@@ -399,7 +366,6 @@ function speak(text) {
     synth.speak(utt);
 }
 
-// ── Button events ──
 document.getElementById('speakBtn').addEventListener('click', () => {
     const text = document.getElementById('textInput').value.trim();
     if (!text) { setStatus('Please enter text'); return; }
@@ -416,113 +382,6 @@ document.getElementById('stopBtn').addEventListener('click', () => {
     setStatus('Stopped');
     setBusy(false);
 });
-
-// ── WAV Export ──
-document.getElementById('exportBtn').addEventListener('click', async () => {
-    const text = document.getElementById('textInput').value.trim();
-    if (!text) { setStatus('Please enter text first'); return; }
-
-    setStatus('Loading TTS engine...', true);
-    setBusy(true);
-
-    try {
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak.min.js').catch(() => null);
-
-        if (typeof meSpeak !== 'undefined') {
-            setStatus('Loading voice data...', true);
-            await new Promise(resolve => {
-                meSpeak.loadConfig('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/mespeak_config.json', () => {
-                    meSpeak.loadVoice('https://cdnjs.cloudflare.com/ajax/libs/mespeak/2.0.2/voices/en/en.json', resolve);
-                });
-            }).catch(() => {});
-
-            setStatus('Generating WAV...', true);
-            const wavData = meSpeak.speak(text, {
-                rawdata: 'buffer',
-                speed:  Math.round(params.rate.val * 150),
-                pitch:  Math.round(params.pitch.val * 50),
-                volume: Math.round(params.volume.val * 100)
-            });
-
-            if (wavData) {
-                downloadWav(wavData, 'dpaul-tts.wav');
-                setStatus('WAV exported ✓');
-                setBusy(false);
-                return;
-            }
-        }
-
-        // Fallback: offline Web Audio synthesis
-        setStatus('Generating audio...', true);
-        const sr = 22050;
-        const dur = Math.max(1, text.length * 0.065);
-        const offCtx = new OfflineAudioContext(1, Math.floor(sr * dur), sr);
-        const words = text.split(/\s+/);
-        const wdur = dur / words.length;
-        words.forEach((word, wi) => {
-            const t = wi * wdur;
-            const osc = offCtx.createOscillator();
-            const env = offCtx.createGain();
-            const filt = offCtx.createBiquadFilter();
-            filt.type = 'bandpass';
-            filt.frequency.value = 200 + (word.charCodeAt(0) % 26) * 40;
-            filt.Q.value = 2;
-            osc.type = 'sawtooth';
-            osc.frequency.value = 120 + (wi % 5) * 20;
-            env.gain.setValueAtTime(0, t);
-            env.gain.linearRampToValueAtTime(0.4, t + 0.02);
-            env.gain.setValueAtTime(0.3, t + wdur * 0.7);
-            env.gain.linearRampToValueAtTime(0, t + wdur * 0.95);
-            osc.connect(filt); filt.connect(env); env.connect(offCtx.destination);
-            osc.start(t); osc.stop(t + wdur * 0.95);
-        });
-        const rendered = await offCtx.startRendering();
-        downloadWav(audioBufferToWav(rendered), 'dpaul-tts.wav');
-        setStatus('WAV exported ✓');
-
-    } catch(err) {
-        console.error(err);
-        setStatus('Export failed: ' + err.message);
-    }
-    setBusy(false);
-});
-
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
-        const s = document.createElement('script');
-        s.src = src; s.onload = resolve; s.onerror = reject;
-        document.head.appendChild(s);
-    });
-}
-
-function audioBufferToWav(buffer) {
-    const numCh = buffer.numberOfChannels, sr = buffer.sampleRate, len = buffer.length;
-    const ab = new ArrayBuffer(len * numCh * 2 + 44);
-    const v = new DataView(ab);
-    const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
-    ws(0,'RIFF'); v.setUint32(4, ab.byteLength - 8, true); ws(8,'WAVE');
-    ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true);
-    v.setUint16(22,numCh,true); v.setUint32(24,sr,true);
-    v.setUint32(28,sr*numCh*2,true); v.setUint16(32,numCh*2,true);
-    v.setUint16(34,16,true); ws(36,'data'); v.setUint32(40,len*numCh*2,true);
-    let off = 44;
-    for (let i = 0; i < len; i++) {
-        for (let c = 0; c < numCh; c++) {
-            const s = Math.max(-1, Math.min(1, buffer.getChannelData(c)[i]));
-            v.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true); off += 2;
-        }
-    }
-    return ab;
-}
-
-function downloadWav(data, filename) {
-    const url = URL.createObjectURL(new Blob([data], { type: 'audio/wav' }));
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
-}
 </script>
 </body>
 </html>
