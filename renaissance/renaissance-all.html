@@ -27,7 +27,7 @@
             overflow: hidden;
         }
 
-        /* CRT Scanlines Overlay */
+        /* CRT Overlay Scanlines */
         body::before {
             content: " ";
             display: block;
@@ -52,6 +52,7 @@
             gap: 20px;
         }
 
+        /* LEFT PANEL: 120s SCROLLING TEXT & IMAGE */
         .scroller-container {
             width: 35%;
             height: 100%;
@@ -67,7 +68,6 @@
         .scroller-text {
             position: absolute;
             width: 90%;
-            /* SET TO 120 SECONDS FOR MAXIMUM READABILITY */
             animation: scroll-up 120s linear forwards;
             font-size: 1.2rem;
             line-height: 1.4;
@@ -94,7 +94,7 @@
         @keyframes scroll-up {
             0% { transform: translateY(105%); opacity: 1; }
             99% { opacity: 1; }
-            100% { transform: translateY(-155%); opacity: 0; }
+            100% { transform: translateY(-160%); opacity: 0; }
         }
 
         @keyframes flicker {
@@ -103,15 +103,18 @@
             100% { opacity: 0.75; }
         }
 
+        /* RIGHT PANEL: PLAYER UI */
         .player-content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            text-align: center;
         }
 
         #disc-selector {
             display: flex; gap: 15px; margin-bottom: 15px;
             border-bottom: 1px solid var(--crt-color); padding-bottom: 10px;
+            justify-content: center;
         }
 
         .disc-btn, .control-btn {
@@ -120,22 +123,24 @@
             padding: 2px 10px;
         }
 
+        /* PAUSE BUTTON STYLING */
         .control-btn {
-            font-size: 1.5rem;
-            margin-top: 10px;
-            width: 150px;
-            align-self: center;
+            font-size: 1.8rem;
+            margin: 10px auto;
+            width: 180px;
+            transition: all 0.3s;
+            box-shadow: 0 0 5px var(--glow);
         }
 
         .control-btn:hover { background: var(--crt-color); color: #000; }
         .active-disc { background: var(--crt-color); color: #000; }
 
-        #timer { font-size: 5rem; color: #fff; text-align: center; margin: 10px 0; }
+        #timer { font-size: 6rem; color: #fff; line-height: 1; margin: 10px 0; }
 
-        #now-playing { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; font-size: 1.8rem; }
+        #now-playing { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; font-size: 2rem; }
 
-        .label { font-size: 0.9rem; opacity: 0.6; }
-        .data { color: #fff; margin-bottom: 15px; }
+        .label { font-size: 1rem; opacity: 0.6; display: block; }
+        .data { color: #fff; margin-bottom: 20px; display: block; }
 
         #boot-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -190,11 +195,11 @@
             <div id="timer">00:00</div>
         </div>
 
-        <div id="now-playing">
-            <span class="data" style="text-align:center;">SYSTEM_READY...<br>AWAITING FEED SELECTION</span>
-        </div>
+        <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">[ PAUSE ]</button>
 
-        <button id="play-pause-btn" class="control-btn" onclick="togglePlay()" style="visibility: hidden;">[ PAUSE ]</button>
+        <div id="now-playing">
+            <span class="data">SYSTEM_READY...<br>AWAITING FEED SELECTION</span>
+        </div>
     </div>
 </div>
 
@@ -207,6 +212,7 @@ const textFeed = document.getElementById('text-feed');
 const coverArt = document.getElementById('cover-art');
 const playBtn = document.getElementById('play-pause-btn');
 
+// Image logic: Show cover after 120s scroll
 textFeed.addEventListener('animationend', () => {
     coverArt.classList.add('show-art');
 });
@@ -233,6 +239,7 @@ function bootSystem() {
 }
 
 function togglePlay() {
+    if (!audio.src) return; // Ignore if no disc loaded
     if (audio.paused) {
         audio.play();
         playBtn.innerText = "[ PAUSE ]";
@@ -261,7 +268,6 @@ function changeDisc(disc) {
     audio.load();
     audio.oncanplay = () => { 
         audio.play(); 
-        playBtn.style.visibility = "visible";
         playBtn.innerText = "[ PAUSE ]";
         audio.oncanplay = null; 
     };
