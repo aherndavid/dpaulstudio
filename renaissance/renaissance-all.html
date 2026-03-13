@@ -8,8 +8,8 @@
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         :root {
-            --crt-color: #33ff33; /* Default Green */
-            --glow: rgba(51, 255, 51, 0.4);
+            --crt-color: #33ccff; 
+            --glow: rgba(51, 204, 255, 0.4);
         }
 
         body {
@@ -27,7 +27,7 @@
             transition: color 0.5s ease;
         }
 
-        /* Scanline Overlay */
+        /* CRT Scanline Overlay */
         body::before {
             content: " ";
             display: block;
@@ -70,7 +70,7 @@
             font-family: 'VT323', monospace;
             cursor: pointer;
             padding: 2px 10px;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
         .disc-btn:hover { background: var(--crt-color); color: #000; }
@@ -84,7 +84,7 @@
         }
 
         #timer {
-            font-size: 3.5rem;
+            font-size: 4rem;
             color: #fff;
             display: block;
             text-align: center;
@@ -110,6 +110,8 @@
             padding-top: 10px;
             font-size: 0.9rem;
             opacity: 0.8;
+            display: flex;
+            justify-content: space-between;
         }
 
         @keyframes flicker { 0% { opacity: 0.98; } 10% { opacity: 0.95; } 100% { opacity: 1; } }
@@ -119,112 +121,137 @@
 </head>
 <body>
 
+<audio id="crt-audio" preload="auto" crossorigin="anonymous"></audio>
+
 <div class="crt-container">
     <div id="disc-selector">
-        <button class="disc-btn active-disc" onclick="changeDisc('blue')">DISC_01: BLUE</button>
+        <button class="disc-btn" onclick="changeDisc('blue')">DISC_01: BLUE</button>
         <button class="disc-btn" onclick="changeDisc('orange')">DISC_02: ORANGE</button>
         <button class="disc-btn" onclick="changeDisc('green')">DISC_03: GREEN</button>
     </div>
 
     <div id="header">
-        SYS_ID: RENAISSANCE_1994 // <span id="mix-id">BLUE_MIX</span><br>
-        FEED: <span style="color:red; animation: blink 1s infinite;">● LIVE_DATA</span>
+        SYS_ID: RENAISSANCE_1994 // <span id="mix-id">STANDBY</span><br>
+        FEED: <span id="status-led" style="color:gray;">● OFFLINE</span>
         <span id="timer">00:00</span>
     </div>
 
-    <div id="now-playing"></div>
+    <div id="now-playing">
+        <span class="data" style="text-align:center;">INITIALIZING...<br>SELECT DISC TO BOOT SYSTEM</span>
+    </div>
 
     <div class="footer">
-        BPM_TRACKER: SYNCED<br>
-        DECODE: 16-BIT / 44.1kHz<br>
-        SOURCE: ORIGINAL_DAT_REMASTER
+        <div>DECODE: 16-BIT / 44.1kHz<br>SOURCE: REMOTE_DRIVE_STREAM</div>
+        <div style="text-align:right;">BPM_TRACKER: ACTIVE<br>MEM_LOAD: 14.1%</div>
     </div>
 </div>
 
 <script>
+const audio = document.getElementById('crt-audio');
+const timerEl = document.getElementById('timer');
+const displayEl = document.getElementById('now-playing');
+const statusLed = document.getElementById('status-led');
+
 const data = {
     blue: {
         color: '#33ccff',
         label: '01 // BLUE_MIX',
+        file: 'https://docs.google.com/uc?export=download&id=1bdeVUHDnS92CtdWQdmiWveXt-WCM7Dx4',
         tracks: [
-            { time: 0, art: "LEFTFIELD", trk: 'SONG OF LIFE\n(LEMON INTERRUPT MIX)' },
-            { time: 326, art: "BEDROCK FEATURING KYO", trk: 'FOR WHAT YOU DREAM OF\n(RENAISSANCE MIX)' },
-            { time: 800, art: "DISCO EVANGELISTS", trk: 'DE NIRO\n(SPACEFLIGHT REMIX)' },
-            { time: 1200, art: "SUNSCREEM", trk: 'PERFECT MOTION\n(HELLER & FARLEY MIX)' },
-            { time: 1800, art: "M PEOPLE", trk: 'RENAISSANCE\n(JOHN DIGWEED MIX)' }
+            { time: 0, art: "LEFTFIELD", trk: "SONG OF LIFE\n(LEMON INTERRUPT MIX)" },
+            { time: 326, art: "LEFTFIELD", trk: "SONG OF LIFE\n(DUB FOR LIFE MIX)" },
+            { time: 568, art: "LEFTFIELD", trk: "SONG OF LIFE\n(STEPPIN' RAZOR MIX)" },
+            { time: 704, art: "BEDROCK FEATURING KYO", trk: "FOR WHAT YOU DREAM OF\n(FULL ON RENAISSANCE MIX)" },
+            { time: 1083, art: "RHYTHM INVENTION", trk: "CHRONOCLASM" },
+            { time: 1240, art: "DISCO EVANGELISTS", trk: "DE NIRO\n(SPACEFLIGHT REMIX)" },
+            { time: 1606, art: "MEMPHISTO", trk: "STATE OF MIND\n(QUIET MIX)" },
+            { time: 1709, art: "MOONCHILD", trk: "V.O.A.T\n(ORIGINAL MIX)" },
+            { time: 2037, art: "SUNSCREEM", trk: "PERFECT MOTION\n(HELLER & FARLEY MIX)" },
+            { time: 2646, art: "RIVER OCEAN", trk: "LOVE & HAPPINESS\n(X-PRESS 2 DUB)" },
+            { time: 2913, art: "THAT KID CHRIS", trk: "KEEP ON PRESSIN' ON" },
+            { time: 3261, art: "REMAKE / INNER CITY", trk: "BLADERUNNER / 'TIL WE MEET AGAIN" },
+            { time: 3525, art: "BUMP", trk: "HOUSE STOMPIN'\n(BIG BUMP MIX)" },
+            { time: 3947, art: "F MACHINE", trk: "CHILD BRIDE\n(FEEDBACK MAX MIX)" },
+            { time: 4215, art: "M PEOPLE", trk: "RENAISSANCE\n(JOHN DIGWEED MIX)" }
         ]
     },
     orange: {
         color: '#ff8800',
         label: '02 // ORANGE_MIX',
-        tracks: [
-            { time: 0, art: "DAJAE", trk: 'U GOT 2 KNOW\n(GAT DECOR MIX)' },
-            { time: 400, art: "AGE OF LOVE", trk: 'THE AGE OF LOVE\n(JAM & SPOON MIX)' },
-            { time: 900, art: "LEFTFIELD", trk: 'RELEASE THE PRESSURE' },
-            { time: 1500, art: "FLUKE", trk: 'SLIDE' }
-        ]
+        file: '', // Add ID here later
+        tracks: [{ time: 0, art: "SYSTEM_OFFLINE", trk: "NO_DATA_FOUND" }]
     },
     green: {
         color: '#33ff33',
         label: '03 // GREEN_MIX',
-        tracks: [
-            { time: 0, art: "EMPRESS", trk: 'DYING TO BE WITH YOU' },
-            { time: 500, art: "UNDERWORLD", trk: 'DARK & LONG\n(DARK TRAIN MIX)' },
-            { time: 1200, art: "THE DRUM CLUB", trk: 'SOUNDS AROUND' }
-        ]
+        file: '', // Add ID here later
+        tracks: [{ time: 0, art: "SYSTEM_OFFLINE", trk: "NO_DATA_FOUND" }]
     }
 };
 
-let currentDisc = 'blue';
-let totalSeconds = 0;
-const timerEl = document.getElementById('timer');
-const displayEl = document.getElementById('now-playing');
+let currentDisc = null;
 
 function changeDisc(disc) {
     currentDisc = disc;
-    totalSeconds = 0;
+    const mix = data[disc];
     
-    // Update Theme Colors
-    document.documentElement.style.setProperty('--crt-color', data[disc].color);
-    document.documentElement.style.setProperty('--glow', data[disc].color + '66');
-    document.getElementById('mix-id').innerText = data[disc].label;
+    // UI Theme Transition
+    document.documentElement.style.setProperty('--crt-color', mix.color);
+    document.documentElement.style.setProperty('--glow', mix.color + '66');
+    document.getElementById('mix-id').innerText = mix.label;
     
-    // Update Active Button
+    // Status Update
+    statusLed.style.color = 'red';
+    statusLed.style.animation = 'blink 1s infinite';
+    statusLed.innerText = '● LIVE_STREAM';
+
+    // Audio Setup
+    if(mix.file) {
+        audio.src = mix.file;
+        audio.play().catch(e => {
+            displayEl.innerHTML = '<span class="data" style="color:red">ERROR: USER INTERACTION REQUIRED</span>';
+        });
+    }
+
+    // Active Button Style
     document.querySelectorAll('.disc-btn').forEach(btn => {
         btn.classList.remove('active-disc');
         if(btn.innerText.includes(disc.toUpperCase())) btn.classList.add('active-disc');
     });
-
-    updateDisplay();
 }
 
-function updateDisplay() {
+function updateTimerDisplay(seconds) {
+    let mins = Math.floor(seconds / 60);
+    let secs = Math.floor(seconds % 60);
+    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
+}
+
+audio.ontimeupdate = () => {
+    if (!currentDisc) return;
+    const currentTime = audio.currentTime;
+    updateTimerDisplay(currentTime);
+    
     const playlist = data[currentDisc].tracks;
-    let current = playlist[0];
+    let currentTrack = playlist[0];
     for (let i = 0; i < playlist.length; i++) {
-        if (totalSeconds >= playlist[i].time) { current = playlist[i]; }
+        if (currentTime >= playlist[i].time) {
+            currentTrack = playlist[i];
+        }
     }
 
     displayEl.innerHTML = `
         <span class="label">CURRENT_ARTIST:</span>
-        <span class="data">${current.art}</span>
+        <span class="data">${currentTrack.art}</span>
         <span class="label">CURRENT_TRACK:</span>
-        <span class="data">${current.trk}</span>
-        <span class="label">COLLECTION:</span>
-        <span class="data">${data[currentDisc].label}</span>
+        <span class="data">${currentTrack.trk}</span>
+        <span class="label">BITRATE:</span>
+        <span class="data">1411KBPS (PCM_STREAM)</span>
     `;
-}
+};
 
-setInterval(() => {
-    totalSeconds++;
-    let mins = Math.floor(totalSeconds / 60);
-    let secs = totalSeconds % 60;
-    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
-    updateDisplay();
-}, 1000);
-
-// Initialize
-changeDisc('blue');
+audio.onwaiting = () => {
+    displayEl.innerHTML = '<span class="data" style="color:yellow; animation:blink 0.5s infinite;">BUFFERING_STREAM...</span>';
+};
 </script>
 
 </body>
