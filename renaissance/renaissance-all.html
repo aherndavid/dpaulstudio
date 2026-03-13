@@ -24,10 +24,9 @@
             margin: 0;
             padding: 10px;
             overflow: hidden;
-            transition: color 0.5s ease;
         }
 
-        /* CRT Scanline Overlay */
+        /* CRT Overlay */
         body::before {
             content: " ";
             display: block;
@@ -38,6 +37,19 @@
             z-index: 10;
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
+        }
+
+        /* Boot Overlay to fix User Interaction Error */
+        #boot-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #131413;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
         }
 
         .crt-container {
@@ -52,7 +64,6 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            transition: border-color 0.5s ease, box-shadow 0.5s ease;
         }
 
         #disc-selector {
@@ -76,50 +87,22 @@
         .disc-btn:hover { background: var(--crt-color); color: #000; }
         .active-disc { background: var(--crt-color); color: #000; box-shadow: 0 0 10px var(--crt-color); }
 
-        #header {
-            border-bottom: 2px solid var(--crt-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
+        #timer { font-size: 4rem; color: #fff; text-align: center; text-shadow: 0 0 10px var(--crt-color); }
 
-        #timer {
-            font-size: 4rem;
-            color: #fff;
-            display: block;
-            text-align: center;
-            margin: 5px 0;
-            text-shadow: 0 0 10px var(--crt-color);
-        }
-
-        #now-playing {
-            flex-grow: 1;
-            font-size: 1.8rem;
-            line-height: 1.1;
-            white-space: pre-wrap;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
+        #now-playing { flex-grow: 1; font-size: 1.8rem; line-height: 1.1; display: flex; flex-direction: column; justify-content: center; }
 
         .label { color: var(--crt-color); text-transform: uppercase; font-size: 1rem; opacity: 0.7; }
-        .data { color: #fff; margin-bottom: 10px; display: block; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        .data { color: #fff; margin-bottom: 10px; display: block; }
 
-        .footer {
-            border-top: 1px dashed var(--crt-color);
-            padding-top: 10px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        @keyframes flicker { 0% { opacity: 0.98; } 10% { opacity: 0.95; } 100% { opacity: 1; } }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-        body { animation: flicker 0.15s infinite; }
     </style>
 </head>
 <body>
+
+<div id="boot-screen" onclick="bootSystem()">
+    <h1 style="color: #33ccff; font-size: 3rem; text-shadow: 0 0 10px #33ccff;">RENAISSANCE_1994</h1>
+    <p style="color: #fff; animation: blink 1s infinite;">[ CLICK TO POWER ON SYSTEM ]</p>
+</div>
 
 <audio id="crt-audio" preload="auto" crossorigin="anonymous"></audio>
 
@@ -137,12 +120,7 @@
     </div>
 
     <div id="now-playing">
-        <span class="data" style="text-align:center;">INITIALIZING...<br>SELECT DISC TO BOOT SYSTEM</span>
-    </div>
-
-    <div class="footer">
-        <div>DECODE: 16-BIT / 44.1kHz<br>SOURCE: REMOTE_DRIVE_STREAM</div>
-        <div style="text-align:right;">BPM_TRACKER: ACTIVE<br>MEM_LOAD: 14.1%</div>
+        <span class="data" style="text-align:center;">SYSTEM_LOADED...<br>SELECT DISC TO COMMENCE FEED</span>
     </div>
 </div>
 
@@ -174,69 +152,49 @@ const data = {
             { time: 3947, art: "F MACHINE", trk: "CHILD BRIDE\n(FEEDBACK MAX MIX)" },
             { time: 4215, art: "M PEOPLE", trk: "RENAISSANCE\n(JOHN DIGWEED MIX)" }
         ]
-    },
-    orange: {
-        color: '#ff8800',
-        label: '02 // ORANGE_MIX',
-        file: '', // Add ID here later
-        tracks: [{ time: 0, art: "SYSTEM_OFFLINE", trk: "NO_DATA_FOUND" }]
-    },
-    green: {
-        color: '#33ff33',
-        label: '03 // GREEN_MIX',
-        file: '', // Add ID here later
-        tracks: [{ time: 0, art: "SYSTEM_OFFLINE", trk: "NO_DATA_FOUND" }]
     }
 };
 
-let currentDisc = null;
+function bootSystem() {
+    // This empty play/pause "wakes up" the browser audio engine
+    audio.play().then(() => { audio.pause(); }).catch(e => console.log("Engine primed"));
+    document.getElementById('boot-screen').style.display = 'none';
+}
 
 function changeDisc(disc) {
-    currentDisc = disc;
+    if(!data[disc]) return;
     const mix = data[disc];
     
-    // UI Theme Transition
     document.documentElement.style.setProperty('--crt-color', mix.color);
     document.documentElement.style.setProperty('--glow', mix.color + '66');
     document.getElementById('mix-id').innerText = mix.label;
     
-    // Status Update
     statusLed.style.color = 'red';
     statusLed.style.animation = 'blink 1s infinite';
     statusLed.innerText = '● LIVE_STREAM';
 
-    // Audio Setup
-    if(mix.file) {
-        audio.src = mix.file;
-        audio.play().catch(e => {
-            displayEl.innerHTML = '<span class="data" style="color:red">ERROR: USER INTERACTION REQUIRED</span>';
-        });
-    }
+    audio.src = mix.file;
+    audio.load(); // Forces the browser to start the handshake
+    audio.play().catch(err => {
+        console.error("Playback failed", err);
+    });
 
-    // Active Button Style
     document.querySelectorAll('.disc-btn').forEach(btn => {
         btn.classList.remove('active-disc');
         if(btn.innerText.includes(disc.toUpperCase())) btn.classList.add('active-disc');
     });
 }
 
-function updateTimerDisplay(seconds) {
-    let mins = Math.floor(seconds / 60);
-    let secs = Math.floor(seconds % 60);
-    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
-}
-
 audio.ontimeupdate = () => {
-    if (!currentDisc) return;
     const currentTime = audio.currentTime;
-    updateTimerDisplay(currentTime);
+    let mins = Math.floor(currentTime / 60);
+    let secs = Math.floor(currentTime % 60);
+    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
     
-    const playlist = data[currentDisc].tracks;
+    const playlist = data.blue.tracks;
     let currentTrack = playlist[0];
     for (let i = 0; i < playlist.length; i++) {
-        if (currentTime >= playlist[i].time) {
-            currentTrack = playlist[i];
-        }
+        if (currentTime >= playlist[i].time) currentTrack = playlist[i];
     }
 
     displayEl.innerHTML = `
@@ -244,15 +202,8 @@ audio.ontimeupdate = () => {
         <span class="data">${currentTrack.art}</span>
         <span class="label">CURRENT_TRACK:</span>
         <span class="data">${currentTrack.trk}</span>
-        <span class="label">BITRATE:</span>
-        <span class="data">1411KBPS (PCM_STREAM)</span>
     `;
 };
-
-audio.onwaiting = () => {
-    displayEl.innerHTML = '<span class="data" style="color:yellow; animation:blink 0.5s infinite;">BUFFERING_STREAM...</span>';
-};
 </script>
-
 </body>
 </html>
