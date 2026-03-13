@@ -131,7 +131,7 @@
     </div>
 
     <div class="footer">
-        <div>DECODE: 16-BIT / 44.1kHz<br>SOURCE: CATBOX_DIRECT_STREAM</div>
+        <div>DECODE: 16-BIT / 44.1kHz<br>SOURCE: DIRECT_STREAM</div>
         <div style="text-align:right;">SIGNAL: <span id="sig-strength">--</span><br>BPM: SYNCED</div>
     </div>
 </div>
@@ -165,18 +165,35 @@ const data = {
             { time: 3947, art: "F MACHINE", trk: "CHILD BRIDE\n(FEEDBACK MAX MIX)" },
             { time: 4215, art: "M PEOPLE", trk: "RENAISSANCE\n(JOHN DIGWEED MIX)" }
         ]
+    },
+    orange: {
+        color: '#ff8800',
+        label: '02 // ORANGE_MIX',
+        file: '', 
+        tracks: [{ time: 0, art: "DATA_PENDING", trk: "AWAITING_UPLOADS" }]
+    },
+    green: {
+        color: '#33ff33',
+        label: '03 // GREEN_MIX',
+        file: '', 
+        tracks: [{ time: 0, art: "DATA_PENDING", trk: "AWAITING_UPLOADS" }]
     }
 };
 
+let currentDiscKey = null;
+
 function bootSystem() {
-    audio.play().then(() => { audio.pause(); }).catch(e => console.log("Engaged"));
+    // Prime the audio engine
+    audio.play().then(() => { audio.pause(); }).catch(e => console.log("Primed"));
     document.getElementById('boot-screen').style.display = 'none';
 }
 
 function changeDisc(disc) {
     if(!data[disc] || !data[disc].file) return;
+    currentDiscKey = disc;
     const mix = data[disc];
     
+    // UI Updates
     document.documentElement.style.setProperty('--crt-color', mix.color);
     document.documentElement.style.setProperty('--glow', mix.color + '66');
     document.getElementById('mix-id').innerText = mix.label;
@@ -185,8 +202,15 @@ function changeDisc(disc) {
     statusLed.style.animation = 'blink 1s infinite';
     statusLed.innerText = '● LIVE_STREAM';
 
+    // Start Audio Load
     audio.src = mix.file;
-    audio.play();
+    audio.load();
+
+    // The "Single Click" fix: Auto-play as soon as data arrives
+    audio.oncanplay = () => {
+        audio.play();
+        audio.oncanplay = null; 
+    };
 
     document.querySelectorAll('.disc-btn').forEach(btn => {
         btn.classList.remove('active-disc');
@@ -195,16 +219,20 @@ function changeDisc(disc) {
 }
 
 audio.ontimeupdate = () => {
+    if(!currentDiscKey) return;
     const currentTime = audio.currentTime;
+    
+    // Update Timer
     let mins = Math.floor(currentTime / 60);
     let secs = Math.floor(currentTime % 60);
     timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
     
-    // Signal Strength Animation
+    // Random Signal Strength flicker
     let bars = "|||".substring(0, Math.floor(Math.random() * 3) + 1);
-    sigEl.innerText = bars + " " + Math.floor(Math.random() * 20 + 80) + "%";
+    sigEl.innerText = bars + " " + Math.floor(Math.random() * 10 + 90) + "%";
 
-    const playlist = data.blue.tracks;
+    // Dynamic Track Switching
+    const playlist = data[currentDiscKey].tracks;
     let currentTrack = playlist[0];
     for (let i = 0; i < playlist.length; i++) {
         if (currentTime >= playlist[i].time) currentTrack = playlist[i];
