@@ -300,15 +300,12 @@
         .volume-dot.active { background: #7a7e80; box-shadow: 0 0 6px rgba(0,0,0,0.4); }
 
         .pitch-bend-container {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 3px;
             width: 52px;
+            flex-shrink: 0;
         }
 
         .pitch-bend-label {
@@ -609,19 +606,20 @@
 
         .keyboard {
             position: relative;
-            height: 70px;
-            margin-top: 6px;
+            height: 110px;
             display: flex;
-            justify-content: center;
-            padding-left: 64px;
-            flex-shrink: 0;
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            overflow: hidden;
         }
 
-        .piano-keys { position: relative; display: inline-block; }
+        .piano-keys { position: relative; display: inline-block; flex-shrink: 0; }
 
         .white-key {
             width: 26px;
-            height: 70px;
+            height: 110px;
             background: linear-gradient(180deg, #fafafa 0%, #d0d0d0 100%);
             border: 1px solid #1a1a1a;
             border-radius: 0 0 4px 4px;
@@ -643,7 +641,7 @@
 
         .black-key {
             width: 18px;
-            height: 45px;
+            height: 70px;
             background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
             border: 1px solid #000;
             border-radius: 0 0 3px 3px;
@@ -660,7 +658,7 @@
             background: linear-gradient(180deg, #ff6b6b 0%, #ff4757 100%);
             box-shadow: 0 0 15px rgba(255,107,107,0.8);
             transform: translateY(2px);
-            height: 43px;
+            height: 68px;
         }
 
         .visualizer {
@@ -947,19 +945,30 @@
             box-shadow: none !important;
         }
 
+        .bottom-row {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            gap: 6px;
+        }
+
         .sampler-section {
-            padding: 6px 10px 8px 10px;
+            padding: 5px 8px 6px 8px;
             background: #4a4c4d;
             border-radius: 6px;
             border: 1px solid #333;
-            margin-top: 4px;
+            flex-shrink: 0;
+            width: 160px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .sampler-section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
         }
 
         .sampler-section-title {
@@ -1281,35 +1290,37 @@
             </div>
         </div>
 
-        <div class="sampler-section" id="samplerSection">
-            <div class="sampler-section-header">
-                <div class="sampler-section-title">SAMPLER</div>
-                <div class="sampler-toggle-btn" id="samplerToggleBtn">OFF</div>
-            </div>
-            <div class="sampler-screen" id="samplerScreen">
-                <div class="sampler-screen-inner" id="samplerScreenInner">
-                    <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name empty" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span><span class="sampler-seq-btn" id="seqBtn0" data-slot="0">SEQ</span></div>
-                    <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name empty" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span><span class="sampler-seq-btn" id="seqBtn1" data-slot="1">SEQ</span></div>
-                    <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name empty" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span><span class="sampler-seq-btn" id="seqBtn2" data-slot="2">SEQ</span></div>
+        <div class="bottom-row">
+            <div class="keyboard">
+                <div class="pitch-bend-container">
+                    <div class="pitch-bend" id="pitchBend">
+                        <div class="pitch-bend-center"></div>
+                        <div class="pitch-bend-thumb" id="pitchBendThumb"></div>
+                    </div>
+                    <div class="pitch-bend-label">PITCH</div>
+                    <div class="pitch-hold-btn" id="pitchHoldBtn">HOLD</div>
                 </div>
+                <div class="piano-keys" id="pianoKeys"></div>
             </div>
-            <div class="sampler-btns">
-                <div class="sampler-load-btn" id="samplerLoadBtn">LOAD SAMPLE</div>
-                <div class="sampler-clear-btn" id="samplerClearBtn">CLEAR</div>
-                <input type="file" id="samplerFileInput" accept="audio/*,.wav,.aif,.aiff,.mp3,.ogg,.flac" style="display:none">
-            </div>
-        </div>
 
-        <div class="keyboard">
-            <div class="pitch-bend-container">
-                <div class="pitch-bend" id="pitchBend">
-                    <div class="pitch-bend-center"></div>
-                    <div class="pitch-bend-thumb" id="pitchBendThumb"></div>
+            <div class="sampler-section" id="samplerSection">
+                <div class="sampler-section-header">
+                    <div class="sampler-section-title">SAMPLER</div>
+                    <div class="sampler-toggle-btn" id="samplerToggleBtn">OFF</div>
                 </div>
-                <div class="pitch-bend-label">PITCH</div>
-                <div class="pitch-hold-btn" id="pitchHoldBtn">HOLD</div>
+                <div class="sampler-screen" id="samplerScreen">
+                    <div class="sampler-screen-inner" id="samplerScreenInner">
+                        <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name empty" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span><span class="sampler-seq-btn" id="seqBtn0" data-slot="0">SEQ</span></div>
+                        <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name empty" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span><span class="sampler-seq-btn" id="seqBtn1" data-slot="1">SEQ</span></div>
+                        <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name empty" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span><span class="sampler-seq-btn" id="seqBtn2" data-slot="2">SEQ</span></div>
+                    </div>
+                </div>
+                <div class="sampler-btns">
+                    <div class="sampler-load-btn" id="samplerLoadBtn">LOAD SAMPLE</div>
+                    <div class="sampler-clear-btn" id="samplerClearBtn">CLEAR</div>
+                    <input type="file" id="samplerFileInput" accept="audio/*,.wav,.aif,.aiff,.mp3,.ogg,.flac" style="display:none">
+                </div>
             </div>
-            <div class="piano-keys" id="pianoKeys"></div>
         </div>
     </div>
 
@@ -1341,6 +1352,7 @@
 
         // Sampler
         let samplerEnabled = false;
+        let isMouseDown = false;
         let samplerSlots = [null, null, null];
         let selectedSamplerSlot = 0;
 
@@ -1749,9 +1761,9 @@
                 key.className = 'white-key';
                 key.dataset.noteName = noteName;
 
-                key.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyPress(key); });
-                key.addEventListener('mouseup', () => handleKeyRelease(key));
-                key.addEventListener('mouseleave', () => handleKeyRelease(key));
+                key.addEventListener('mousedown', (e) => { e.preventDefault(); isMouseDown = true; handleKeyPress(key); });
+                key.addEventListener('mouseenter', () => { if (isMouseDown) handleKeyPress(key); });
+                key.addEventListener('mouseleave', () => { if (isMouseDown) handleKeyRelease(key); });
                 key.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyPress(key); });
                 key.addEventListener('touchend', (e) => { e.preventDefault(); handleKeyRelease(key); });
                 container.appendChild(key);
@@ -1766,9 +1778,9 @@
                         bKey.className = 'black-key';
                         bKey.dataset.noteName = blackNoteName;
                         bKey.style.left = (blackKeyOffsets[whiteKeyInOctave] + Math.floor(whiteKeyCount / 7) * 182) + 'px';
-                        bKey.addEventListener('mousedown', (e) => { e.preventDefault(); handleKeyPress(bKey); });
-                        bKey.addEventListener('mouseup', () => handleKeyRelease(bKey));
-                        bKey.addEventListener('mouseleave', () => handleKeyRelease(bKey));
+                        bKey.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); isMouseDown = true; handleKeyPress(bKey); });
+                        bKey.addEventListener('mouseenter', () => { if (isMouseDown) handleKeyPress(bKey); });
+                        bKey.addEventListener('mouseleave', () => { if (isMouseDown) handleKeyRelease(bKey); });
                         bKey.addEventListener('touchstart', (e) => { e.preventDefault(); handleKeyPress(bKey); });
                         bKey.addEventListener('touchend', (e) => { e.preventDefault(); handleKeyRelease(bKey); });
                         container.appendChild(bKey);
@@ -2034,7 +2046,12 @@
         let isDraggingTempo = false;
         tempoSlider.addEventListener('mousedown', (e) => { isDraggingTempo = true; updateTempo(e); });
         document.addEventListener('mousemove', (e) => { if (isDraggingTempo) updateTempo(e); });
-        document.addEventListener('mouseup', () => { isDraggingTempo = false; });
+        document.addEventListener('mouseup', () => {
+            if (isMouseDown) {
+                isMouseDown = false;
+                document.querySelectorAll('.white-key.playing, .black-key.playing').forEach(k => handleKeyRelease(k));
+            }
+        });
 
         function updateTempo(e) {
             const rect = tempoSlider.getBoundingClientRect();
