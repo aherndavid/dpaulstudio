@@ -12,59 +12,48 @@
             color: #33ff33;
             font-family: 'VT323', monospace;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 20px;
             overflow-x: hidden;
-            text-transform: uppercase;
         }
 
-        /* Scanline Effect */
+        /* CRT Scanline Overlay */
         body::before {
             content: " ";
             display: block;
             position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 2px, 3px 100%;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
             pointer-events: none;
         }
 
-        /* CRT Flicker */
         .crt-container {
-            width: 80%;
-            max-width: 900px;
-            padding: 40px;
+            width: 90%;
+            max-width: 850px;
             position: relative;
-            animation: textShadow 1.6s infinite;
+            z-index: 5;
+            text-shadow: 0 0 5px #33ff33;
         }
 
-        @keyframes textShadow {
-            0% { text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-            5% { text-shadow: 2.7928974010788217px 0 1px rgba(0,30,255,0.5), -2.7928974010788217px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-            /* ... abbreviated for flow ... */
-            100% { text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-        }
-
-        .terminal-text {
-            line-height: 1.2;
-            font-size: 1.4rem;
+        #terminal {
             white-space: pre-wrap;
-            word-wrap: break-word;
+            font-size: 1.5rem;
+            line-height: 1.3;
+            letter-spacing: 1px;
         }
 
         .cursor {
             display: inline-block;
             background-color: #33ff33;
-            width: 12px;
-            height: 20px;
-            margin-left: 4px;
-            animation: blink 0.8s infinite;
+            width: 10px;
+            height: 1.2rem;
+            animation: blink 0.7s infinite;
             vertical-align: middle;
         }
 
@@ -73,88 +62,82 @@
             50%, 100% { opacity: 0; }
         }
 
-        h1 { font-size: 2rem; margin-bottom: 20px; border-bottom: 1px solid #33ff33; display: inline-block; }
-        .section-title { color: #88ff88; text-decoration: underline; margin-top: 25px; display: block; }
-        .tracklist { margin-top: 20px; color: #22cc22; }
-        hr { border: none; border-top: 1px dashed #33ff33; margin: 30px 0; }
+        /* Subtle screen flicker */
+        @keyframes flicker {
+            0% { opacity: 0.98; }
+            5% { opacity: 0.95; }
+            10% { opacity: 0.99; }
+            100% { opacity: 1; }
+        }
+        body { animation: flicker 0.15s infinite; }
+
     </style>
 </head>
 <body>
 
 <div class="crt-container">
-    <div class="terminal-text">
-> ACCESSING ARCHIVE...
+    <div id="terminal"></div><span class="cursor"></span>
+</div>
+
+<script>
+const text = `> ACCESSING ARCHIVE...
 > LOADING FILE: RENAISSANCE_1994.LOG
 > RUNNING CRT_EMULATION_MODE...
+> 
+RENAISSANCE: THE MIX COLLECTION (SASHA & JOHN DIGWEED)
 
-<h1>RENAISSANCE: THE MIX COLLECTION (SASHA & JOHN DIGWEED)</h1>
+WIDELY REGARDED AS THE "HOLY GRAIL" OF DJ MIX COMPILATIONS, RENAISSANCE: THE MIX COLLECTION IS THE 1994 DEBUT MASTERPIECE FROM BRITISH ICONS SASHA & JOHN DIGWEED. 
 
-WIDELY REGARDED AS THE "HOLY GRAIL" OF DJ MIX COMPILATIONS, RENAISSANCE: THE MIX COLLECTION IS THE 1994 DEBUT MASTERPIECE FROM BRITISH ICONS SASHA & JOHN DIGWEED. IT DIDN'T JUST CAPTURE A MOMENT IN TIME; IT REDEFINED THE ELECTRONIC MUSIC INDUSTRY BY PROVING THAT A DJ MIX COULD BE A HIGH-ART, COMMERCIAL POWERHOUSE.
+IT REDEFINED THE ELECTRONIC MUSIC INDUSTRY BY PROVING THAT A DJ MIX COULD BE A HIGH-ART, COMMERCIAL POWERHOUSE.
 
-<span class="section-title">THE DEFINITIVE SOUND OF AN ERA</span>
-RELEASED ON 14 OCTOBER 1994, THIS TRIPLE-CD SET SERVED AS A SONIC BLUEPRINT FOR THE LEGENDARY RENAISSANCE NIGHTCLUB. IT SEAMLESSLY WEAVES TOGETHER HOUSE, PROGRESSIVE HOUSE, AND EARLY TRANCE, FEATURING TRACKS FROM TITANS LIKE LEFTFIELD, UNDERWORLD, AND AGE OF LOVE.
+[THE DEFINITIVE SOUND OF AN ERA]
+RELEASED ON 14 OCTOBER 1994, THIS TRIPLE-CD SET SERVED AS A SONIC BLUEPRINT FOR THE LEGENDARY RENAISSANCE NIGHTCLUB. IT WEAVES TOGETHER HOUSE, PROGRESSIVE HOUSE, AND EARLY TRANCE.
 
-ARTISTIC PRESENTATION: HOUSED IN AN ICONIC TRIPLE DIGIPACK, THE ARTWORK FEATURES MICHELANGELO’S PAINTING OF THE PROPHET ZECHARIAH FROM THE SISTINE CHAPEL, SIGNALING THE ALBUM'S AMBITIOUS, "HIGH-CULTURE" INTENT.
+ARTISTIC PRESENTATION: MICHELANGELO’S PAINTING OF THE PROPHET ZECHARIAH (SISTINE CHAPEL) SIGNALED THE ALBUM'S AMBITIOUS, "HIGH-CULTURE" INTENT.
 
-THE MIX: THE THREE DISCS (BLUE, ORANGE, AND GREEN) ARE CELEBRATED FOR THEIR "EFFORTLESS" AND "HEDONISTIC" FLOW, CAPTURING THE TRANSITION OF DANCE MUSIC FROM UNDERGROUND RAVES TO A GLOBAL AUDIENCE.
+[TRACK LISTING DETECTED]
 
-<span class="section-title">LEGACY AND CRITICAL ACCLAIM</span>
-THE ALBUM'S IMPACT WAS IMMEDIATE AND ENDURING, EARNING A SILVER CERTIFICATION IN THE UK AND CEMENTING SASHA AND DIGWEED AS THE PREMIER ARCHITECTS OF THE "PROGRESSIVE" SOUND.
+DISC ONE: THE BLUE MIX
+01. LEFTFIELD - SONG OF LIFE
+02. BEDROCK FEAT. KYO - FOR WHAT YOU DREAM OF
+03. RHYTHM INVENTION - CHRONOCLASM
+04. THE DISCO EVANGELISTS - DE NIRO
+05. M PEOPLE - RENAISSANCE
 
-<hr>
-<div class="tracklist">
-[DISC ONE: THE BLUE MIX]
-01. LEFTFIELD - SONG OF LIFE (LEMON INTERRUPT MIX)
-02. LEFTFIELD - SONG OF LIFE (DUB FOR LIFE MIX)
-03. LEFTFIELD - SONG OF LIFE (STEPPIN' RAZOR MIX)
-04. BEDROCK FEAT. KYO - FOR WHAT YOU DREAM OF (FULL ON RENAISSANCE MIX)
-05. RHYTHM INVENTION - CHRONOCLASM
-06. THE DISCO EVANGELISTS - DE NIRO (THE SPACEFLIGHT REMIX)
-07. MEPHISTO - STATE OF MIND (QUIET MIX)
-08. MOONCHILD - V.O.A.T. (ORIGINAL MIX)
-09. SUNSCREEM - PERFECT MOTION (HELLER & FARLEY'S BOY'S OWN MIX)
-10. RIVER OCEAN FEAT. INDIA - LOVE & HAPPINESS (JUNIOR BOY'S OWN SUPER DUB)
-11. THAT KID CHRIS - KEEP ON PRESSIN' ON (DIDN'T I SHOW YOU LUV MIX)
-12. REMAKE - BLADERUNNER / INNER CITY - 'TIL WE MEET AGAIN (PERKAPPELLA)
-13. BUMP - HOUSE STOMPIN' (BIG BUMP MIX)
-14. F MACHINE - CHILD BRIDE (FEEDBACK MAX MIX)
-15. M PEOPLE - RENAISSANCE (JOHN DIGWEED'S FULL ON MIX)
-
-[DISC TWO: THE ORANGE MIX]
+DISC TWO: THE ORANGE MIX
 01. FLUKE - SLID (PDF MIX)
-02. FUNK MACHINE - LET'S GET THIS PARTY STARTED (PARTY MIX)
-03. FLUKE - SLID (JUSTIN ROBERTSON'S SCAT & FRENZY)
-04. CORRADO - TRUST (PINK MIX)
-05. MBG - TRANCE 1 (ORIENTAL PSYCHO ESTMIX)
-06. HYSTERIX - TALK TO ME (SASHA'S FULL MASTER MIX)
-07. ANNADIN - ANGEL
-08. VIRTUALMISMO - MISMOPLASTICO (DIRTYSYNCOMIX / ORIGINAL REMIX)
-09. FISHBONE BEAT - ALWAYS (PSYCHEDELIC MARTINI REMIX)
-10. GRACE - NOT OVER YET (PERFECTO MIX)
-11. SECRET LIFE - SHE HOLDS THE KEY (H.A.L.F. I'M A BELIEVER MIX)
-12. FUNTOPIA FEAT. JIMI POLO - DO YOU WANNA KNOW (GUT DRUM MIX)
-13. V.F.R. - TRANCEILLUSION (ORIGINAL MIX)
-14. KYM MAZELLE - WAS THAT ALL IT WAS (DAVID MORALES' DEF MIX)
+02. HYSTERIX - TALK TO ME
+03. GRACE - NOT OVER YET
+04. V.F.R. - TRANCEILLUSION
 
-[DISC THREE: THE GREEN MIX]
-01. M PEOPLE - HOW CAN I LOVE YOU MORE (QAT MIX)
-02. MOBY - GO (NIGHTTIME MIX)
-03. JACO - SHOW SOME LOVE (ORIGINAL DUB)
-04. SPOOKY - LITTLE BULLET (HIGH VELOCITY MIX)
-05. HAVANA - SUBLIME THEME (DUB)
-06. SHAWN CHRISTOPHER - ANOTHER SLEEPLESS NIGHT (BASSMAN MIX)
-07. UNITY 3 - AGE OF LOVE (TRANCE DUB & FANTASY MIX)
-08. EMF - THEY'RE HERE (D:REAM DREAM)
-09. SOLAR PLEXUS - SOLAR PLEXUS
-10. HAVANA - ETHNIC PRAYER (EURO MIX)
-11. 2 BAD MICE - BOMBSCARE
-12. AGE OF LOVE - THE AGE OF LOVE (JAM & SPOON'S WATCH OUT FOR STELLA MIX)
-13. MY FRIEND SAM FEAT. VIOLA WILLS - IT'S MY PLEASURE (CLUB MIX)
-14. LEMON INTERRUPT - DIRTY
-</div>
-END OF FILE<span class="cursor"></span>
-    </div>
-</div>
+DISC THREE: THE GREEN MIX
+01. MOBY - GO (NIGHTTIME MIX)
+02. SPOOKY - LITTLE BULLET
+03. AGE OF LOVE - THE AGE OF LOVE (JAM & SPOON MIX)
+04. LEMON INTERRUPT - DIRTY
+
+> END OF FILE.
+> SYSTEM STANDBY...`;
+
+let i = 0;
+const speed = 30; // Milliseconds per character
+const terminal = document.getElementById('terminal');
+
+function typeWriter() {
+    if (i < text.length) {
+        terminal.innerHTML += text.charAt(i);
+        i++;
+        // Randomize speed slightly for a "mechanical" feel
+        setTimeout(typeWriter, speed + Math.random() * 20);
+        
+        // Auto-scroll to bottom as it types
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+}
+
+// Start typing on load
+window.onload = typeWriter;
+</script>
 
 </body>
 </html>
