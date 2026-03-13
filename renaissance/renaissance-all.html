@@ -39,7 +39,6 @@
             pointer-events: none;
         }
 
-        /* Boot Overlay to fix User Interaction Error */
         #boot-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -94,6 +93,14 @@
         .label { color: var(--crt-color); text-transform: uppercase; font-size: 1rem; opacity: 0.7; }
         .data { color: #fff; margin-bottom: 10px; display: block; }
 
+        .footer {
+            border-top: 1px dashed var(--crt-color);
+            padding-top: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
     </style>
 </head>
@@ -101,7 +108,7 @@
 
 <div id="boot-screen" onclick="bootSystem()">
     <h1 style="color: #33ccff; font-size: 3rem; text-shadow: 0 0 10px #33ccff;">RENAISSANCE_1994</h1>
-    <p style="color: #fff; animation: blink 1s infinite;">[ CLICK TO POWER ON SYSTEM ]</p>
+    <p style="color: #fff; animation: blink 1s infinite;">[ CLICK TO INITIALIZE DAT_FEED ]</p>
 </div>
 
 <audio id="crt-audio" preload="auto" crossorigin="anonymous"></audio>
@@ -120,7 +127,12 @@
     </div>
 
     <div id="now-playing">
-        <span class="data" style="text-align:center;">SYSTEM_LOADED...<br>SELECT DISC TO COMMENCE FEED</span>
+        <span class="data" style="text-align:center;">SYSTEM_READY...<br>AWAITING DISC SELECTION</span>
+    </div>
+
+    <div class="footer">
+        <div>DECODE: 16-BIT / 44.1kHz<br>SOURCE: CATBOX_DIRECT_STREAM</div>
+        <div style="text-align:right;">SIGNAL: <span id="sig-strength">--</span><br>BPM: SYNCED</div>
     </div>
 </div>
 
@@ -129,12 +141,13 @@ const audio = document.getElementById('crt-audio');
 const timerEl = document.getElementById('timer');
 const displayEl = document.getElementById('now-playing');
 const statusLed = document.getElementById('status-led');
+const sigEl = document.getElementById('sig-strength');
 
 const data = {
     blue: {
         color: '#33ccff',
         label: '01 // BLUE_MIX',
-        file: 'https://docs.google.com/uc?export=download&id=1bdeVUHDnS92CtdWQdmiWveXt-WCM7Dx4',
+        file: 'https://files.catbox.moe/azs98z.mp3',
         tracks: [
             { time: 0, art: "LEFTFIELD", trk: "SONG OF LIFE\n(LEMON INTERRUPT MIX)" },
             { time: 326, art: "LEFTFIELD", trk: "SONG OF LIFE\n(DUB FOR LIFE MIX)" },
@@ -156,13 +169,12 @@ const data = {
 };
 
 function bootSystem() {
-    // This empty play/pause "wakes up" the browser audio engine
-    audio.play().then(() => { audio.pause(); }).catch(e => console.log("Engine primed"));
+    audio.play().then(() => { audio.pause(); }).catch(e => console.log("Engaged"));
     document.getElementById('boot-screen').style.display = 'none';
 }
 
 function changeDisc(disc) {
-    if(!data[disc]) return;
+    if(!data[disc] || !data[disc].file) return;
     const mix = data[disc];
     
     document.documentElement.style.setProperty('--crt-color', mix.color);
@@ -174,10 +186,7 @@ function changeDisc(disc) {
     statusLed.innerText = '● LIVE_STREAM';
 
     audio.src = mix.file;
-    audio.load(); // Forces the browser to start the handshake
-    audio.play().catch(err => {
-        console.error("Playback failed", err);
-    });
+    audio.play();
 
     document.querySelectorAll('.disc-btn').forEach(btn => {
         btn.classList.remove('active-disc');
@@ -191,6 +200,10 @@ audio.ontimeupdate = () => {
     let secs = Math.floor(currentTime % 60);
     timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
     
+    // Signal Strength Animation
+    let bars = "|||".substring(0, Math.floor(Math.random() * 3) + 1);
+    sigEl.innerText = bars + " " + Math.floor(Math.random() * 20 + 80) + "%";
+
     const playlist = data.blue.tracks;
     let currentTrack = playlist[0];
     for (let i = 0; i < playlist.length; i++) {
@@ -203,6 +216,10 @@ audio.ontimeupdate = () => {
         <span class="label">CURRENT_TRACK:</span>
         <span class="data">${currentTrack.trk}</span>
     `;
+};
+
+audio.onwaiting = () => {
+    displayEl.innerHTML = '<span class="data" style="color:yellow; animation:blink 0.5s infinite;">BUFFERING_STREAM...</span>';
 };
 </script>
 </body>
