@@ -62,7 +62,6 @@
             50%, 100% { opacity: 0; }
         }
 
-        /* Subtle screen flicker */
         @keyframes flicker {
             0% { opacity: 0.98; }
             5% { opacity: 0.95; }
@@ -70,7 +69,6 @@
             100% { opacity: 1; }
         }
         body { animation: flicker 0.15s infinite; }
-
     </style>
 </head>
 <body>
@@ -86,11 +84,10 @@ const text = `> ACCESSING ARCHIVE...
 > PLEASE WAIT:
 > PLEASE WAIT:
 > FOUND:
-> 
->
+
 > LOADING FILE: RENAISSANCE_1994.LOG
 > RUNNING CRT_EMULATION_MODE...
-> 
+
 RENAISSANCE: THE MIX COLLECTION (SASHA & JOHN DIGWEED)
 
 WIDELY REGARDED AS THE "HOLY GRAIL" OF DJ MIX COMPILATIONS, RENAISSANCE: THE MIX COLLECTION IS THE 1994 DEBUT MASTERPIECE FROM BRITISH ICONS SASHA & JOHN DIGWEED. 
@@ -127,22 +124,28 @@ DISC THREE: THE GREEN MIX
 > SYSTEM STANDBY...`;
 
 let i = 0;
-const speed = 30; // Milliseconds per character
+const speed = 30; 
 const terminal = document.getElementById('terminal');
 
 function typeWriter() {
     if (i < text.length) {
-        terminal.innerHTML += text.charAt(i);
+        let char = text.charAt(i);
+        terminal.innerHTML += char;
         i++;
-        // Randomize speed slightly for a "mechanical" feel
-        setTimeout(typeWriter, speed + Math.random() * 20);
+
+        // Logic for the 5-second pause
+        // Checks if the last 12 characters typed match "PLEASE WAIT:"
+        let lastLines = text.substring(0, i);
+        if (lastLines.endsWith("PLEASE WAIT:")) {
+            setTimeout(typeWriter, 5000); // 5 second dramatic pause
+        } else {
+            setTimeout(typeWriter, speed + Math.random() * 20);
+        }
         
-        // Auto-scroll to bottom as it types
         window.scrollTo(0, document.body.scrollHeight);
     }
 }
 
-// Start typing on load
 window.onload = typeWriter;
 </script>
 
