@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RENAISSANCE: PORTRAIT FEED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        body {
+            background-color: #020502;
+            color: #33ff33;
+            font-family: 'VT323', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        /* Scanline Overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .crt-container {
+            width: 95%;
+            height: 90vh;
+            margin-top: 5vh;
+            border: 2px solid #33ff33;
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(0, 10, 0, 0.4);
+            box-shadow: inset 0 0 15px rgba(51, 255, 51, 0.3), 0 0 10px rgba(51, 255, 51, 0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header {
+            border-bottom: 2px solid #33ff33;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        #timer {
+            font-size: 3rem;
+            color: #fff;
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+            text-shadow: 0 0 10px #33ff33;
+        }
+
+        #now-playing {
+            flex-grow: 1;
+            font-size: 1.6rem;
+            line-height: 1.2;
+            white-space: pre-wrap;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .label { color: #88ff88; text-transform: uppercase; font-size: 1rem; }
+        .data { color: #fff; margin-bottom: 15px; display: block; }
+
+        .footer {
+            border-top: 1px dashed #33ff33;
+            padding-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.99; }
+            10% { opacity: 0.94; }
+            20% { opacity: 0.98; }
+            100% { opacity: 1; }
+        }
+        body { animation: flicker 0.15s infinite; }
+    </style>
+</head>
+<body>
+
+<div class="crt-container">
+    <div id="header">
+        SYS_ID: RENAISSANCE_1994<br>
+        SOURCE: SASHA/DIGWEED_MASTER<br>
+        FEED: <span style="color:red; animation: blink 1s infinite;">● LIVE_STREAM</span>
+        <span id="timer">00:00</span>
+    </div>
+
+    <div id="now-playing">
+        <span class="label">STATUS:</span>
+        <span class="data">CONNECTING TO RENAISSANCE HQ...</span>
+    </div>
+
+    <div class="footer">
+        BPM_TRACKER: ACTIVE<br>
+        MEM_LOAD: 14.1%<br>
+        BITRATE: 1411kbps (PCM)
+    </div>
+</div>
+
+<script>
+// Logic: Time in seconds, cumulative
+const playlist = [
+    { time: 0, art: "LEFTFIELD", trk: "SONG OF LIFE\n(LEMON INTERRUPT MIX)" },
+    { time: 326, art: "LEFTFIELD", trk: "SONG OF LIFE\n(DUB FOR LIFE MIX)" },
+    { time: 568, art: "LEFTFIELD", trk: "SONG OF LIFE\n(STEPPIN' RAZOR MIX)" },
+    { time: 704, art: "BEDROCK feat. CAROL LEEMING", trk: "FOR WHAT YOU DREAM OF\n(RENAISSANCE MIX)" },
+    { time: 1083, art: "RHYTHM INVENTION", trk: "CHRONOCLASM" },
+    { time: 1240, art: "DISCO EVANGELISTS", trk: "DE NIRO\n(SPACEFLIGHT REMIX)" },
+    { time: 1606, art: "MEMPHISTO", trk: "STATE OF MIND\n(QUIET MIX)" },
+    { time: 1709, art: "MOONCHILD", trk: "V.O.A.T\n(ORIGINAL MIX)" },
+    { time: 2037, art: "SUNSCREEM", trk: "PERFECT MOTION\n(SIMPLE DUB MIX)" },
+    { time: 2125, art: "SUNSCREEM", trk: "PERFECT MOTION\n(BOYS OWN MIX)" },
+    { time: 2646, art: "RIVER OCEAN", trk: "LOVE & HAPPINESS\n(SUPER DUB)" },
+    { time: 2913, art: "THAT KID CHRIS", trk: "KEEP ON (PRESSIN' ON)" },
+    { time: 3261, art: "REMAKE", trk: "BLADERUNNER" },
+    { time: 3525, art: "INNER CITY", trk: "'TIL WE MEET AGAIN" },
+    { time: 3789, art: "BUMP", trk: "HOUSE STOMPIN'" },
+    { time: 4211, art: "M-PEOPLE", trk: "RENAISSANCE\n(DIGWEED FULL ON MIX)" }
+];
+
+let totalSeconds = 0;
+const timerEl = document.getElementById('timer');
+const displayEl = document.getElementById('now-playing');
+
+function updateDisplay() {
+    let current = playlist[0];
+    for (let i = 0; i < playlist.length; i++) {
+        if (totalSeconds >= playlist[i].time) { current = playlist[i]; }
+    }
+
+    displayEl.innerHTML = `
+        <span class="label">CURRENT_ARTIST:</span>
+        <span class="data">${current.art}</span>
+        <span class="label">CURRENT_TRACK:</span>
+        <span class="data">${current.trk}</span>
+        <span class="label">DISC_INFO:</span>
+        <span class="data">01 // BLUE_MIX</span>
+    `;
+}
+
+setInterval(() => {
+    totalSeconds++;
+    let mins = Math.floor(totalSeconds / 60);
+    let secs = totalSeconds % 60;
+    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
+    updateDisplay();
+}, 1000);
+
+// Initial call
+updateDisplay();
+</script>
+
+<style>
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+</style>
+
+</body>
+</html>
