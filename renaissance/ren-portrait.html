@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         body {
-            background-color: #020502;
+            background-color: #131413; /* Updated Background */
             color: #33ff33;
             font-family: 'VT323', monospace;
             display: flex;
@@ -41,8 +41,8 @@
             border: 2px solid #33ff33;
             padding: 20px;
             box-sizing: border-box;
-            background: rgba(0, 10, 0, 0.4);
-            box-shadow: inset 0 0 15px rgba(51, 255, 51, 0.3), 0 0 10px rgba(51, 255, 51, 0.2);
+            background: rgba(0, 5, 0, 0.6); /* Slightly darker contrast for new BG */
+            box-shadow: inset 0 0 15px rgba(51, 255, 51, 0.2), 0 0 10px rgba(0, 0, 0, 0.5);
             position: relative;
             display: flex;
             flex-direction: column;
@@ -90,6 +90,8 @@
             20% { opacity: 0.98; }
             100% { opacity: 1; }
         }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+        
         body { animation: flicker 0.15s infinite; }
     </style>
 </head>
@@ -104,9 +106,7 @@
     </div>
 
     <div id="now-playing">
-        <span class="label">STATUS:</span>
-        <span class="data">CONNECTING TO RENAISSANCE HQ...</span>
-    </div>
+        </div>
 
     <div class="footer">
         BPM_TRACKER: ACTIVE<br>
@@ -116,24 +116,22 @@
 </div>
 
 <script>
-// Logic: Time in seconds, cumulative
 const playlist = [
-    { time: 0, art: "LEFTFIELD", trk: "SONG OF LIFE\n(LEMON INTERRUPT MIX)" },
-    { time: 326, art: "LEFTFIELD", trk: "SONG OF LIFE\n(DUB FOR LIFE MIX)" },
-    { time: 568, art: "LEFTFIELD", trk: "SONG OF LIFE\n(STEPPIN' RAZOR MIX)" },
-    { time: 704, art: "BEDROCK feat. CAROL LEEMING", trk: "FOR WHAT YOU DREAM OF\n(RENAISSANCE MIX)" },
-    { time: 1083, art: "RHYTHM INVENTION", trk: "CHRONOCLASM" },
-    { time: 1240, art: "DISCO EVANGELISTS", trk: "DE NIRO\n(SPACEFLIGHT REMIX)" },
-    { time: 1606, art: "MEMPHISTO", trk: "STATE OF MIND\n(QUIET MIX)" },
-    { time: 1709, art: "MOONCHILD", trk: "V.O.A.T\n(ORIGINAL MIX)" },
-    { time: 2037, art: "SUNSCREEM", trk: "PERFECT MOTION\n(SIMPLE DUB MIX)" },
-    { time: 2125, art: "SUNSCREEM", trk: "PERFECT MOTION\n(BOYS OWN MIX)" },
-    { time: 2646, art: "RIVER OCEAN", trk: "LOVE & HAPPINESS\n(SUPER DUB)" },
-    { time: 2913, art: "THAT KID CHRIS", trk: "KEEP ON (PRESSIN' ON)" },
-    { time: 3261, art: "REMAKE", trk: "BLADERUNNER" },
-    { time: 3525, art: "INNER CITY", trk: "'TIL WE MEET AGAIN" },
-    { time: 3789, art: "BUMP", trk: "HOUSE STOMPIN'" },
-    { time: 4211, art: "M-PEOPLE", trk: "RENAISSANCE\n(DIGWEED FULL ON MIX)" }
+    { time: 0, art: "LEFTFIELD", trk: 'SONG OF LIFE\n(LEMON INTERRUPT MIX)' },
+    { time: 326, art: "LEFTFIELD", trk: 'SONG OF LIFE\n(DUB FOR LIFE MIX)' },
+    { time: 568, art: "LEFTFIELD", trk: 'SONG OF LIFE\n(STEPPIN\' RAZOR MIX)' },
+    { time: 704, art: "BEDROCK FEATURING KYO", trk: 'FOR WHAT YOU DREAM OF\n(FULL ON RENAISSANCE MIX)' },
+    { time: 1083, art: "RHYTHM INVENTION", trk: 'CHRONOCLASM' },
+    { time: 1240, art: "DISCO EVANGELISTS", trk: 'DE NIRO\n(SPACEFLIGHT REMIX)' },
+    { time: 1606, art: "MEMPHISTO", trk: 'STATE OF MIND\n(QUIET MIX)' },
+    { time: 1709, art: "MOONCHILD", trk: 'V.O.A.T\n(ORIGINAL MIX)' },
+    { time: 2037, art: "SUNSCREEM", trk: 'PERFECT MOTION\n(HELLER & FARLEY\'S BOY\'S OWN MIX)' },
+    { time: 2646, art: "RIVER OCEAN", trk: 'LOVE & HAPPINESS\n(X-PRESS 2\'S JUNIOR BOY\'S OWN SUPER DUB)' },
+    { time: 2913, art: "THAT KID CHRIS", trk: 'KEEP ON PRESSIN\' ON\n(DIDN\'T I SHOW YOU LUV MIX)' },
+    { time: 3261, art: "REMAKE / INNER CITY", trk: 'BLADERUNNER / \'TIL WE MEET AGAIN\n(BROTHERS IN RHYTHM PERKAPPELLA)' },
+    { time: 3525, art: "BUMP", trk: 'HOUSE STOMPIN\'\n(BIG BUMP MIX)' },
+    { time: 3947, art: "F MACHINE", trk: 'CHILD BRIDE\n(FEEDBACK MAX MIX)' },
+    { time: 4215, art: "M PEOPLE", trk: 'RENAISSANCE\n(JOHN DIGWEED\'S FULL ON MIX)' }
 ];
 
 let totalSeconds = 0;
@@ -164,13 +162,8 @@ setInterval(() => {
     updateDisplay();
 }, 1000);
 
-// Initial call
 updateDisplay();
 </script>
-
-<style>
-@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-</style>
 
 </body>
 </html>
