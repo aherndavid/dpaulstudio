@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL: RENAISSANCE_1994</title>
+    <title>RENAISSANCE: LIVE FEED</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
@@ -14,13 +14,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        /* CRT Scanline Overlay */
+        /* CRT Effects */
         body::before {
             content: " ";
             display: block;
@@ -34,93 +34,110 @@
         }
 
         .crt-container {
-            width: 90%;
-            max-width: 850px;
-            position: relative;
-            z-index: 5;
-            text-shadow: 0 0 5px #33ff33;
+            width: 85%;
+            max-width: 700px;
+            text-shadow: 0 0 8px #33ff33;
+            border: 1px solid #33ff33;
+            padding: 30px;
+            background: rgba(0, 20, 0, 0.1);
         }
 
-        #terminal {
-            white-space: pre-wrap;
-            font-size: 1.5rem;
-            line-height: 1.3;
-            letter-spacing: 1px;
-        }
+        #header-info { margin-bottom: 20px; border-bottom: 1px dashed #33ff33; padding-bottom: 10px; }
+        #now-playing { font-size: 1.8rem; height: 180px; }
+        #timer { font-size: 2.5rem; color: #fff; text-shadow: 0 0 10px #fff; }
 
+        .label { color: #88ff88; }
         .cursor {
             display: inline-block;
             background-color: #33ff33;
             width: 10px;
-            height: 1.2rem;
+            height: 1.5rem;
             animation: blink 0.7s infinite;
-            vertical-align: middle;
         }
 
-        @keyframes blink {
-            0%, 49% { opacity: 1; }
-            50%, 100% { opacity: 0; }
-        }
-
-        @keyframes flicker {
-            0% { opacity: 0.98; }
-            5% { opacity: 0.95; }
-            10% { opacity: 0.99; }
-            100% { opacity: 1; }
-        }
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes flicker { 0% { opacity: 0.98; } 5% { opacity: 0.95; } 100% { opacity: 1; } }
         body { animation: flicker 0.15s infinite; }
     </style>
 </head>
 <body>
 
 <div class="crt-container">
-    <div id="terminal"></div><span class="cursor"></span>
+    <div id="header-info">
+        > RENAISSANCE_1994_STREAM<br>
+        > STATUS: <span style="color:red">● LIVE</span><br>
+        > SESSION TIME: <span id="timer">00:00</span>
+    </div>
+
+    <div id="now-playing">
+        <span class="label">[ SYSTEM INITIALIZING ]</span><br>
+        PLEASE WAIT...
+    </div>
+    
+    <div style="margin-top: 20px; font-size: 1rem; opacity: 0.6;">
+        > SYNCING TO MASTER CLOCK...
+    </div>
 </div>
 
 <script>
-const text = `>
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-LEFTFIELD - SONG OF LIFE
-> 
-> 
-PLEASE WAIT
-> 
-> 
-> 
-> 
+// Tracklist with start times calculated cumulatively in seconds
+const playlist = [
+    { time: 0, artist: "LEFTFIELD", track: "SONG OF LIFE (LEMON INTERUPT MIX)" },
+    { time: 326, artist: "LEFTFIELD", track: "SONG OF LIFE (DUB FOR LIFE MIX)" },
+    { time: 568, artist: "LEFTFIELD", track: "SONG OF LIFE (STEPPIN' RAZOR MIX)" },
+    { time: 704, artist: "BEDROCK feat. CAROL LEEMING", track: "FOR WHAT YOU DREAM OF (FULL ON RENAISSANCE MIX)" },
+    { time: 1083, artist: "RHYTHM INVENTION", track: "CHRONOCLASM" },
+    { time: 1240, artist: "DISCO EVANGELISTS", track: "DE NIRO (THE SPACEFLIGHT REMIX)" },
+    { time: 1606, artist: "MEMPHISTO", track: "STATE OF MIND (QUIET MIX)" },
+    { time: 1709, artist: "MOONCHILD", track: "V.O.A.T (ORIGINAL MIX)" },
+    { time: 2037, artist: "SUNSCREEM", track: "PERFECT MOTION (SIMPLE DUB MIX)" },
+    { time: 2125, artist: "SUNSCREEM", track: "PERFECT MOTION (BOYS OWN MIX)" },
+    { time: 2646, artist: "RIVER OCEAN", track: "LOVE & HAPPINESS (JUNIOR BOYS OWN SUPER DUB)" }
+];
 
+let totalSeconds = 0;
+const timerElement = document.getElementById('timer');
+const displayElement = document.getElementById('now-playing');
 
-let i = 0;
-const speed = 30; 
-const terminal = document.getElementById('terminal');
-
-function typeWriter() {
-    if (i < text.length) {
-        let char = text.charAt(i);
-        terminal.innerHTML += char;
-        i++;
-
-        // Logic for the 5-second pause
-        // Checks if the last 12 characters typed match "PLEASE WAIT:"
-        let lastLines = text.substring(0, i);
-        if (lastLines.endsWith("PLEASE WAIT:")) {
-            setTimeout(typeWriter, 5000); // 5 second dramatic pause
-        } else {
-            setTimeout(typeWriter, speed + Math.random() * 20);
+function updateDisplay() {
+    // Find the current track based on time
+    let current = playlist[0];
+    for (let i = 0; i < playlist.length; i++) {
+        if (totalSeconds >= playlist[i].time) {
+            current = playlist[i];
         }
-        
-        window.scrollTo(0, document.body.scrollHeight);
     }
+
+    displayElement.innerHTML = `
+        <span class="label">NOW PLAYING:</span><br>
+        ARTIST: ${current.artist}<br>
+        TRACK:  ${current.track}<br>
+        <span class="label">----------------------------</span><br>
+        SOURCE: RENAISSANCE (BLUE MIX)<br>
+        BITRATE: 1411 KBPS
+    `;
 }
 
-window.onload = typeWriter;
+function startClock() {
+    setInterval(() => {
+        totalSeconds++;
+        
+        // Format time for the CRT header
+        let mins = Math.floor(totalSeconds / 60);
+        let secs = totalSeconds % 60;
+        timerElement.innerText = 
+            (mins < 10 ? "0" + mins : mins) + ":" + 
+            (secs < 10 ? "0" + secs : secs);
+        
+        updateDisplay();
+    }, 1000);
+}
+
+// Start sequence
+setTimeout(() => {
+    startClock();
+    updateDisplay();
+}, 2000); // 2 second delay to simulate boot-up
 </script>
 
 </body>
