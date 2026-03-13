@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RENAISSANCE: TRILOGY FEED</title>
+    <link rel="preload" href="https://files.catbox.moe/azs98z.mp3" as="media">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
@@ -17,6 +18,7 @@
             background-color: var(--bg-color);
             color: var(--crt-color);
             font-family: 'VT323', monospace;
+            font-display: swap;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -50,7 +52,6 @@
             gap: 20px;
         }
 
-        /* LEFT PANEL: SCROLLING TEXT & IMAGE */
         .scroller-container {
             width: 35%;
             height: 100%;
@@ -66,7 +67,6 @@
         .scroller-text {
             position: absolute;
             width: 90%;
-            /* Duration increased to 40s (33s + 20% approximately) */
             animation: scroll-up 40s linear forwards;
             font-size: 1.2rem;
             line-height: 1.4;
@@ -75,13 +75,14 @@
         }
 
         #cover-art {
-            max-width: 80%;
+            max-width: 85%;
             border: 1px solid var(--crt-color);
             opacity: 0;
             transition: opacity 2s ease;
             box-shadow: 0 0 15px var(--glow);
-            filter: grayscale(100%) brightness(1.2) contrast(1.2);
+            filter: grayscale(100%) brightness(1.1) contrast(1.1);
             position: absolute;
+            z-index: 5;
         }
 
         .show-art {
@@ -92,7 +93,7 @@
         @keyframes scroll-up {
             0% { transform: translateY(105%); opacity: 1; }
             95% { opacity: 1; }
-            100% { transform: translateY(-130%); opacity: 0; }
+            100% { transform: translateY(-135%); opacity: 0; }
         }
 
         @keyframes flicker {
@@ -101,7 +102,6 @@
             100% { opacity: 0.75; }
         }
 
-        /* RIGHT PANEL: PLAYER UI */
         .player-content {
             flex-grow: 1;
             display: flex;
@@ -113,12 +113,21 @@
             border-bottom: 1px solid var(--crt-color); padding-bottom: 10px;
         }
 
-        .disc-btn {
+        .disc-btn, .control-btn {
             background: transparent; border: 1px solid var(--crt-color);
             color: #fff; font-family: 'VT323', monospace; cursor: pointer;
             padding: 2px 10px;
         }
 
+        .control-btn {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            width: 150px;
+            align-self: center;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover { background: var(--crt-color); color: #000; }
         .active-disc { background: var(--crt-color); color: #000; }
 
         #timer { font-size: 5rem; color: #fff; text-align: center; margin: 10px 0; }
@@ -184,6 +193,8 @@
         <div id="now-playing">
             <span class="data" style="text-align:center;">SYSTEM_READY...<br>AWAITING FEED SELECTION</span>
         </div>
+
+        <button id="play-pause-btn" class="control-btn" onclick="togglePlay()" style="visibility: hidden;">[ PAUSE ]</button>
     </div>
 </div>
 
@@ -194,8 +205,8 @@ const displayEl = document.getElementById('now-playing');
 const statusLed = document.getElementById('status-led');
 const textFeed = document.getElementById('text-feed');
 const coverArt = document.getElementById('cover-art');
+const playBtn = document.getElementById('play-pause-btn');
 
-// Handle image load after the 40s scroll ends
 textFeed.addEventListener('animationend', () => {
     coverArt.classList.add('show-art');
 });
@@ -221,17 +232,40 @@ function bootSystem() {
     document.getElementById('boot-screen').style.display = 'none';
 }
 
+function togglePlay() {
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerText = "[ PAUSE ]";
+        statusLed.innerText = "● LIVE_STREAM";
+        statusLed.style.animation = "blink 1s infinite";
+    } else {
+        audio.pause();
+        playBtn.innerText = "[ PLAY ]";
+        statusLed.innerText = "● PAUSED";
+        statusLed.style.animation = "none";
+    }
+}
+
 function changeDisc(disc) {
     if(!data[disc] || !data[disc].file) return;
     const mix = data[disc];
     document.documentElement.style.setProperty('--crt-color', mix.color);
     document.documentElement.style.setProperty('--glow', mix.color + '66');
     document.getElementById('mix-id').innerText = mix.label;
+    
     statusLed.style.color = 'red';
+    statusLed.style.animation = 'blink 1s infinite';
     statusLed.innerText = '● LIVE_STREAM';
+    
     audio.src = mix.file;
     audio.load();
-    audio.oncanplay = () => { audio.play(); audio.oncanplay = null; };
+    audio.oncanplay = () => { 
+        audio.play(); 
+        playBtn.style.visibility = "visible";
+        playBtn.innerText = "[ PAUSE ]";
+        audio.oncanplay = null; 
+    };
+
     document.querySelectorAll('.disc-btn').forEach(btn => {
         btn.classList.remove('active-disc');
         if(btn.innerText.includes(disc.toUpperCase())) btn.classList.add('active-disc');
@@ -244,14 +278,12 @@ audio.ontimeupdate = () => {
     let secs = Math.floor(currentTime % 60);
     timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
     
-    if (data.blue.tracks) {
-        const playlist = data.blue.tracks;
-        let currentTrack = playlist[0];
-        for (let i = 0; i < playlist.length; i++) {
-            if (currentTime >= playlist[i].time) currentTrack = playlist[i];
-        }
-        displayEl.innerHTML = `<span class="label">ARTIST:</span><span class="data">${currentTrack.art}</span><span class="label">TRACK:</span><span class="data">${currentTrack.trk}</span>`;
+    const playlist = data.blue.tracks;
+    let currentTrack = playlist[0];
+    for (let i = 0; i < playlist.length; i++) {
+        if (currentTime >= playlist[i].time) currentTrack = playlist[i];
     }
+    displayEl.innerHTML = `<span class="label">ARTIST:</span><span class="data">${currentTrack.art}</span><span class="label">TRACK:</span><span class="data">${currentTrack.trk}</span>`;
 };
 </script>
 </body>
