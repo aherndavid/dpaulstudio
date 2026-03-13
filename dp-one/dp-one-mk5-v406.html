@@ -17,8 +17,13 @@
             padding: 0;
             margin: 0;
             font-family: Verdana, Geneva, sans-serif;
-            overflow-x: auto;
-            overflow-y: auto;
+            overflow: hidden;
+        }
+
+        /* Scaler wrapper — JS sets transform here */
+        #synthScaler {
+            transform-origin: top left;
+            width: 1080px; /* design width */
         }
 
         .synth-container {
@@ -26,14 +31,12 @@
             border-radius: 8px;
             padding: 10px 16px 14px 16px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.15) inset;
-            width: 100%;
-            max-width: 1600px;
+            width: 1080px;
             border: 1px solid #7a7e80;
             position: relative;
             display: flex;
             flex-direction: column;
             gap: 5px;
-            flex-shrink: 0;
             box-sizing: border-box;
         }
 
@@ -369,9 +372,7 @@
 
         .pitch-bend-thumb:active { cursor: grabbing; background: radial-gradient(circle at 35% 35%, #b0b0b0, #707070); }
 
-        .pitch-bend-center {
-            display: none;
-        }
+        .pitch-bend-center { display: none; }
 
         .pitch-hold-btn {
             width: 52px;
@@ -606,7 +607,7 @@
 
         .keyboard {
             position: relative;
-            height: 110px;
+            height: 120px;
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -615,11 +616,11 @@
             overflow: hidden;
         }
 
-        .piano-keys { position: relative; display: inline-block; flex-shrink: 0; }
+        .piano-keys { position: relative; display: inline-block; flex-shrink: 0; margin-left: 20px; }
 
         .white-key {
-            width: 26px;
-            height: 110px;
+            width: 30px;
+            height: 120px;
             background: linear-gradient(180deg, #fafafa 0%, #d0d0d0 100%);
             border: 1px solid #1a1a1a;
             border-radius: 0 0 4px 4px;
@@ -640,8 +641,8 @@
         }
 
         .black-key {
-            width: 18px;
-            height: 70px;
+            width: 20px;
+            height: 78px;
             background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
             border: 1px solid #000;
             border-radius: 0 0 3px 3px;
@@ -658,7 +659,7 @@
             background: linear-gradient(180deg, #ff6b6b 0%, #ff4757 100%);
             box-shadow: 0 0 15px rgba(255,107,107,0.8);
             transform: translateY(2px);
-            height: 68px;
+            height: 76px;
         }
 
         .visualizer {
@@ -1084,247 +1085,268 @@
     </style>
 </head>
 <body>
-    <div class="synth-container powered-off" id="synthContainer">
-        <div class="synth-header">
-            <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.06</span></div>
-            <div style="display: flex; gap: 12px; align-items: center;">
-                <div class="tempo-led-container">
-                    <div class="tempo-led-label">TEMPO</div>
-                    <div class="tempo-led" id="tempoLed"></div>
+    <div id="synthScaler">
+        <div class="synth-container powered-off" id="synthContainer">
+            <div class="synth-header">
+                <div class="synth-title">dp-one MkIV <span style="font-size: 11px; font-weight: normal; opacity: 0.6; letter-spacing: 1px;">v4.07</span></div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <div class="tempo-led-container">
+                        <div class="tempo-led-label">TEMPO</div>
+                        <div class="tempo-led" id="tempoLed"></div>
+                    </div>
+                    <div class="power-btn" id="powerBtn">OFF</div>
                 </div>
-                <div class="power-btn" id="powerBtn">OFF</div>
             </div>
-        </div>
 
-        <div class="waveform-section">
-            <div class="waveform-label">WAVE</div>
-            <div class="waveform-btn-wrap"><span class="wave-mini-label">Sawtooth</span><div class="waveform-btn active" id="waveSaw" data-wave="sawtooth">SAW</div></div>
-            <div class="waveform-btn-wrap"><span class="wave-mini-label">Square</span><div class="waveform-btn" id="waveSquare" data-wave="square">SQR</div></div>
-            <div class="waveform-btn-wrap"><span class="wave-mini-label">Triangle</span><div class="waveform-btn" id="waveTri" data-wave="triangle">TRI</div></div>
-            <div class="waveform-btn-wrap"><span class="wave-mini-label">Sine</span><div class="waveform-btn" id="waveSine" data-wave="sine">SIN</div></div>
-            <div class="waveform-btn-wrap"><span class="wave-mini-label">Pulse</span><div class="waveform-btn" id="wavePulse" data-wave="pulse">PULSE</div></div>
-            <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
-            <div style="width:1px;background:#aaa;align-self:stretch;margin:0 4px;opacity:0.4;"></div>
-            <div class="control-group">
-                <div class="control-label">DELAY</div>
-                <div class="knob" id="delayKnob" data-value="50"></div>
-                <div class="knob-value" id="delayValue">50%</div>
+            <div class="waveform-section">
+                <div class="waveform-label">WAVE</div>
+                <div class="waveform-btn-wrap"><span class="wave-mini-label">Sawtooth</span><div class="waveform-btn active" id="waveSaw" data-wave="sawtooth">SAW</div></div>
+                <div class="waveform-btn-wrap"><span class="wave-mini-label">Square</span><div class="waveform-btn" id="waveSquare" data-wave="square">SQR</div></div>
+                <div class="waveform-btn-wrap"><span class="wave-mini-label">Triangle</span><div class="waveform-btn" id="waveTri" data-wave="triangle">TRI</div></div>
+                <div class="waveform-btn-wrap"><span class="wave-mini-label">Sine</span><div class="waveform-btn" id="waveSine" data-wave="sine">SIN</div></div>
+                <div class="waveform-btn-wrap"><span class="wave-mini-label">Pulse</span><div class="waveform-btn" id="wavePulse" data-wave="pulse">PULSE</div></div>
+                <div class="clear-arp-btn" id="clearArpBtn">CLEAR ARP</div>
+                <div style="width:1px;background:#aaa;align-self:stretch;margin:0 4px;opacity:0.4;"></div>
+                <div class="control-group">
+                    <div class="control-label">DELAY</div>
+                    <div class="knob" id="delayKnob" data-value="50"></div>
+                    <div class="knob-value" id="delayValue">50%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">FEEDBACK</div>
+                    <div class="knob" id="feedbackKnob" data-value="30"></div>
+                    <div class="knob-value" id="feedbackValue">30%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">FILTER</div>
+                    <div class="knob" id="filterKnob" data-value="80"></div>
+                    <div class="knob-value" id="filterValue">80%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">RESONANCE</div>
+                    <div class="knob" id="resonanceKnob" data-value="20"></div>
+                    <div class="knob-value" id="resonanceValue">20%</div>
+                </div>
+                <div style="width:1px;background:#aaa;align-self:stretch;margin:0 4px;opacity:0.4;"></div>
+                <div class="control-group">
+                    <div class="control-label">SYNTH</div>
+                    <div class="knob" id="synthVolumeKnob" data-value="70"></div>
+                    <div class="knob-value" id="synthVolumeValue">70%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">DRUM</div>
+                    <div class="knob" id="drumVolumeKnob" data-value="70"></div>
+                    <div class="knob-value" id="drumVolumeValue">70%</div>
+                </div>
+                <div class="control-group">
+                    <div class="control-label">MASTER</div>
+                    <div class="knob" id="masterVolumeKnob" data-value="70"></div>
+                    <div class="knob-value" id="masterVolumeValue">70%</div>
+                </div>
+                <div class="wave-container" id="visualizer" style="width:80px;flex-shrink:0;"></div>
             </div>
-            <div class="control-group">
-                <div class="control-label">FEEDBACK</div>
-                <div class="knob" id="feedbackKnob" data-value="30"></div>
-                <div class="knob-value" id="feedbackValue">30%</div>
-            </div>
-            <div class="control-group">
-                <div class="control-label">FILTER</div>
-                <div class="knob" id="filterKnob" data-value="80"></div>
-                <div class="knob-value" id="filterValue">80%</div>
-            </div>
-            <div class="control-group">
-                <div class="control-label">RESONANCE</div>
-                <div class="knob" id="resonanceKnob" data-value="20"></div>
-                <div class="knob-value" id="resonanceValue">20%</div>
-            </div>
-            <div style="width:1px;background:#aaa;align-self:stretch;margin:0 4px;opacity:0.4;"></div>
-            <div class="control-group">
-                <div class="control-label">SYNTH</div>
-                <div class="knob" id="synthVolumeKnob" data-value="70"></div>
-                <div class="knob-value" id="synthVolumeValue">70%</div>
-            </div>
-            <div class="control-group">
-                <div class="control-label">DRUM</div>
-                <div class="knob" id="drumVolumeKnob" data-value="70"></div>
-                <div class="knob-value" id="drumVolumeValue">70%</div>
-            </div>
-            <div class="control-group">
-                <div class="control-label">MASTER</div>
-                <div class="knob" id="masterVolumeKnob" data-value="70"></div>
-                <div class="knob-value" id="masterVolumeValue">70%</div>
-            </div>
-            <div class="wave-container" id="visualizer" style="width:80px;flex-shrink:0;"></div>
-        </div>
 
-        <div class="sequencer">
-            <div class="sequencer-header">
-                <div class="sequencer-title">SEQUENCER <span id="seqTrackIndicator" style="font-size:8px; color:#ff6600; letter-spacing:1px; margin-left:6px;"></span></div>
-                <div style="display: flex; gap: 4px; align-items: center;">
-                    <div class="bpm-indicator" id="bpmIndicator"></div>
-                    <div class="seq-btn" id="steps8Btn" data-steps="8">8</div>
-                    <div class="seq-btn" id="steps16Btn" data-steps="16">16</div>
-                    <div class="seq-btn active" id="steps32Btn" data-steps="32">32</div>
-                    <div class="sync-btn" id="syncBtn">SYNC</div>
-                    <div class="sequencer-controls">
-                        <div class="seq-btn" id="playSeq">PLAY</div>
-                        <div class="seq-btn" id="stopSeq">STOP</div>
-                        <div class="seq-btn" id="clearSeq">CLEAR</div>
+            <div class="sequencer">
+                <div class="sequencer-header">
+                    <div class="sequencer-title">SEQUENCER <span id="seqTrackIndicator" style="font-size:8px; color:#ff6600; letter-spacing:1px; margin-left:6px;"></span></div>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <div class="bpm-indicator" id="bpmIndicator"></div>
+                        <div class="seq-btn" id="steps8Btn" data-steps="8">8</div>
+                        <div class="seq-btn" id="steps16Btn" data-steps="16">16</div>
+                        <div class="seq-btn active" id="steps32Btn" data-steps="32">32</div>
+                        <div class="sync-btn" id="syncBtn">SYNC</div>
+                        <div class="sequencer-controls">
+                            <div class="seq-btn" id="playSeq">PLAY</div>
+                            <div class="seq-btn" id="stopSeq">STOP</div>
+                            <div class="seq-btn" id="clearSeq">CLEAR</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sequencer-grid" id="sequencerGrid"></div>
+                <div class="tempo-control">
+                    <div class="tempo-label">TEMPO</div>
+                    <div class="tempo-btn" id="tempoDown">-</div>
+                    <div class="tempo-slider" id="tempoSlider"></div>
+                    <div class="tempo-btn" id="tempoUp">+</div>
+                    <div class="tempo-value" id="tempoValue">120 BPM</div>
+                </div>
+            </div>
+
+            <div class="drum-pads">
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="kick">KICK</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="kick" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="kick" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="kick" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="snare">SNARE</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="snare" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="snare" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="snare" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="hihat">HIHAT</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="hihat" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="hihat" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="hihat" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="clap">CLAP</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="clap" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="clap" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="clap" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="tom1">TOM1</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="tom1" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="tom1" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="tom1" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="tom2">TOM2</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="tom2" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="tom2" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="tom2" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="cymbal">CYMBAL</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="cymbal" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="cymbal" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="cymbal" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="perc">PERC</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="perc" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="perc" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="perc" data-level="1.0"></div>
+                    </div>
+                </div>
+                <div class="drum-pad-container">
+                    <div class="pad" data-sound="shaker">SHAKER</div>
+                    <div class="drum-volume-switch">
+                        <div class="volume-dot" data-drum="shaker" data-level="0.3"></div>
+                        <div class="volume-dot active" data-drum="shaker" data-level="0.7"></div>
+                        <div class="volume-dot" data-drum="shaker" data-level="1.0"></div>
                     </div>
                 </div>
             </div>
-            <div class="sequencer-grid" id="sequencerGrid"></div>
-            <div class="tempo-control">
-                <div class="tempo-label">TEMPO</div>
-                <div class="tempo-btn" id="tempoDown">-</div>
-                <div class="tempo-slider" id="tempoSlider"></div>
-                <div class="tempo-btn" id="tempoUp">+</div>
-                <div class="tempo-value" id="tempoValue">120 BPM</div>
-            </div>
-        </div>
 
-        <div class="drum-pads">
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="kick">KICK</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="kick" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="kick" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="kick" data-level="1.0"></div>
+            <div class="info-panel">
+                <div class="song-controls">
+                    <div class="song-btn" id="saveLocalBtn">SAVE LOCAL</div>
+                    <div class="song-btn" id="loadLocalBtn">LOAD LOCAL</div>
+                    <div class="song-btn" id="saveDriveBtn">SAVE DRIVE</div>
+                    <div class="song-btn" id="loadDriveBtn">LOAD DRIVE</div>
+                    <div class="song-btn" id="loadWavBtn">LOAD WAV</div>
+                    <input type="file" id="loadSongFile" accept=".json" style="display:none">
+                    <input type="file" id="wavFileInput" accept="audio/*,.wav,.aif,.aiff,.mp3,.ogg,.flac" multiple style="display:none">
                 </div>
-            </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="snare">SNARE</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="snare" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="snare" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="snare" data-level="1.0"></div>
+                <div class="clear-midi-btn" id="clearMidiBtn">CLEAR MIDI</div>
+                <div class="octave-controls">
+                    <div class="octave-btn" id="octaveDown">-</div>
+                    <div class="octave-display" id="octaveDisplay">OCT 4</div>
+                    <div class="octave-btn" id="octaveUp">+</div>
                 </div>
+                <div class="info-text" id="noteDisplay" style="min-width:80px; text-align:center;">---</div>
             </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="hihat">HIHAT</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="hihat" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="hihat" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="hihat" data-level="1.0"></div>
-                </div>
-            </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="clap">CLAP</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="clap" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="clap" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="clap" data-level="1.0"></div>
-                </div>
-            </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="tom1">TOM1</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="tom1" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="tom1" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="tom1" data-level="1.0"></div>
-                </div>
-            </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="tom2">TOM2</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="tom2" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="tom2" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="tom2" data-level="1.0"></div>
-                </div>
-            </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="cymbal">CYMBAL</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="cymbal" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="cymbal" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="cymbal" data-level="1.0"></div>
-                </div>
-            </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="perc">PERC</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="perc" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="perc" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="perc" data-level="1.0"></div>
-                </div>
-            </div>
-            <div class="drum-pad-container">
-                <div class="pad" data-sound="shaker">SHAKER</div>
-                <div class="drum-volume-switch">
-                    <div class="volume-dot" data-drum="shaker" data-level="0.3"></div>
-                    <div class="volume-dot active" data-drum="shaker" data-level="0.7"></div>
-                    <div class="volume-dot" data-drum="shaker" data-level="1.0"></div>
-                </div>
-            </div>
-        </div>
 
-        <div class="info-panel">
-            <div class="song-controls">
-                <div class="song-btn" id="saveLocalBtn">SAVE LOCAL</div>
-                <div class="song-btn" id="loadLocalBtn">LOAD LOCAL</div>
-                <div class="song-btn" id="saveDriveBtn">SAVE DRIVE</div>
-                <div class="song-btn" id="loadDriveBtn">LOAD DRIVE</div>
-                <div class="song-btn" id="loadWavBtn">LOAD WAV</div>
-                <input type="file" id="loadSongFile" accept=".json" style="display:none">
-                <input type="file" id="wavFileInput" accept="audio/*,.wav,.aif,.aiff,.mp3,.ogg,.flac" multiple style="display:none">
+            <div class="preset-section">
+                <div class="preset-label">MEMORY</div>
+                <div class="preset-buttons">
+                    <div class="preset-btn" id="preset1" data-preset="1">M1</div>
+                    <div class="preset-btn" id="preset2" data-preset="2">M2</div>
+                    <div class="preset-btn" id="preset3" data-preset="3">M3</div>
+                </div>
+                <div class="preset-actions">
+                    <div class="preset-action-btn" id="savePreset">SAVE</div>
+                    <div class="preset-action-btn" id="loadPreset">LOAD</div>
+                </div>
+                <div style="width:1px; background:#555; align-self:stretch; margin: 0 4px;"></div>
+                <div class="preset-label">ARP</div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <div class="switch" id="arpSwitch"></div>
+                    <div class="status-light" id="arpLight"></div>
+                </div>
+                <div class="preset-label" style="margin-left:6px;">MODE</div>
+                <div style="display: flex; gap: 3px; align-items:center;">
+                    <div class="seq-btn active" id="arpUp" data-mode="up" style="font-size: 7px; padding: 3px 6px;">UP</div>
+                    <div class="seq-btn" id="arpDown" data-mode="down" style="font-size: 7px; padding: 3px 6px;">DN</div>
+                    <div class="seq-btn" id="arpUpDown" data-mode="updown" style="font-size: 7px; padding: 3px 6px;">U/D</div>
+                    <div class="seq-btn" id="arpRandom" data-mode="random" style="font-size: 7px; padding: 3px 6px;">RND</div>
+                </div>
             </div>
-            <div class="clear-midi-btn" id="clearMidiBtn">CLEAR MIDI</div>
-            <div class="octave-controls">
-                <div class="octave-btn" id="octaveDown">-</div>
-                <div class="octave-display" id="octaveDisplay">OCT 4</div>
-                <div class="octave-btn" id="octaveUp">+</div>
-            </div>
-            <div class="info-text" id="noteDisplay" style="min-width:80px; text-align:center;">---</div>
-        </div>
 
-        <div class="preset-section">
-            <div class="preset-label">MEMORY</div>
-            <div class="preset-buttons">
-                <div class="preset-btn" id="preset1" data-preset="1">M1</div>
-                <div class="preset-btn" id="preset2" data-preset="2">M2</div>
-                <div class="preset-btn" id="preset3" data-preset="3">M3</div>
-            </div>
-            <div class="preset-actions">
-                <div class="preset-action-btn" id="savePreset">SAVE</div>
-                <div class="preset-action-btn" id="loadPreset">LOAD</div>
-            </div>
-            <div style="width:1px; background:#555; align-self:stretch; margin: 0 4px;"></div>
-            <div class="preset-label">ARP</div>
-            <div style="display:flex; align-items:center; gap:6px;">
-                <div class="switch" id="arpSwitch"></div>
-                <div class="status-light" id="arpLight"></div>
-            </div>
-            <div class="preset-label" style="margin-left:6px;">MODE</div>
-            <div style="display: flex; gap: 3px; align-items:center;">
-                <div class="seq-btn active" id="arpUp" data-mode="up" style="font-size: 7px; padding: 3px 6px;">UP</div>
-                <div class="seq-btn" id="arpDown" data-mode="down" style="font-size: 7px; padding: 3px 6px;">DN</div>
-                <div class="seq-btn" id="arpUpDown" data-mode="updown" style="font-size: 7px; padding: 3px 6px;">U/D</div>
-                <div class="seq-btn" id="arpRandom" data-mode="random" style="font-size: 7px; padding: 3px 6px;">RND</div>
-            </div>
-        </div>
-
-        <div class="bottom-row">
-            <div class="keyboard">
-                <div class="pitch-bend-container">
-                    <div class="pitch-bend" id="pitchBend">
-                        <div class="pitch-bend-center"></div>
-                        <div class="pitch-bend-thumb" id="pitchBendThumb"></div>
+            <div class="bottom-row">
+                <div class="keyboard">
+                    <div class="pitch-bend-container">
+                        <div class="pitch-bend" id="pitchBend">
+                            <div class="pitch-bend-center"></div>
+                            <div class="pitch-bend-thumb" id="pitchBendThumb"></div>
+                        </div>
+                        <div class="pitch-bend-label">PITCH</div>
+                        <div class="pitch-hold-btn" id="pitchHoldBtn">HOLD</div>
                     </div>
-                    <div class="pitch-bend-label">PITCH</div>
-                    <div class="pitch-hold-btn" id="pitchHoldBtn">HOLD</div>
+                    <div class="piano-keys" id="pianoKeys"></div>
                 </div>
-                <div class="piano-keys" id="pianoKeys"></div>
-            </div>
 
-            <div class="sampler-section" id="samplerSection">
-                <div class="sampler-section-header">
-                    <div class="sampler-section-title">SAMPLER</div>
-                    <div class="sampler-toggle-btn" id="samplerToggleBtn">OFF</div>
-                </div>
-                <div class="sampler-screen" id="samplerScreen">
-                    <div class="sampler-screen-inner" id="samplerScreenInner">
-                        <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name empty" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span><span class="sampler-seq-btn" id="seqBtn0" data-slot="0">SEQ</span></div>
-                        <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name empty" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span><span class="sampler-seq-btn" id="seqBtn1" data-slot="1">SEQ</span></div>
-                        <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name empty" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span><span class="sampler-seq-btn" id="seqBtn2" data-slot="2">SEQ</span></div>
+                <div class="sampler-section" id="samplerSection">
+                    <div class="sampler-section-header">
+                        <div class="sampler-section-title">SAMPLER</div>
+                        <div class="sampler-toggle-btn" id="samplerToggleBtn">OFF</div>
+                    </div>
+                    <div class="sampler-screen" id="samplerScreen">
+                        <div class="sampler-screen-inner" id="samplerScreenInner">
+                            <div class="sampler-slot" data-slot="0"><span class="sampler-slot-num">01</span><span class="sampler-slot-name empty" id="slotName0">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus0"></span><span class="sampler-seq-btn" id="seqBtn0" data-slot="0">SEQ</span></div>
+                            <div class="sampler-slot" data-slot="1"><span class="sampler-slot-num">02</span><span class="sampler-slot-name empty" id="slotName1">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus1"></span><span class="sampler-seq-btn" id="seqBtn1" data-slot="1">SEQ</span></div>
+                            <div class="sampler-slot" data-slot="2"><span class="sampler-slot-num">03</span><span class="sampler-slot-name empty" id="slotName2">— EMPTY —</span><span class="sampler-slot-status" id="slotStatus2"></span><span class="sampler-seq-btn" id="seqBtn2" data-slot="2">SEQ</span></div>
+                        </div>
+                    </div>
+                    <div class="sampler-btns">
+                        <div class="sampler-load-btn" id="samplerLoadBtn">LOAD SAMPLE</div>
+                        <div class="sampler-clear-btn" id="samplerClearBtn">CLEAR</div>
+                        <input type="file" id="samplerFileInput" accept="audio/*,.wav,.aif,.aiff,.mp3,.ogg,.flac" style="display:none">
                     </div>
                 </div>
-                <div class="sampler-btns">
-                    <div class="sampler-load-btn" id="samplerLoadBtn">LOAD SAMPLE</div>
-                    <div class="sampler-clear-btn" id="samplerClearBtn">CLEAR</div>
-                    <input type="file" id="samplerFileInput" accept="audio/*,.wav,.aif,.aiff,.mp3,.ogg,.flac" style="display:none">
-                </div>
             </div>
-        </div>
-    </div>
+        </div><!-- end synth-container -->
+    </div><!-- end synthScaler -->
 
     <script>
+        // ─── Scaling ─────────────────────────────────────────────────────────────
+        const DESIGN_WIDTH = 1080;
+        const scaler = document.getElementById('synthScaler');
+
+        function applyScale() {
+            const vw = window.innerWidth;
+            const scale = Math.min(1, vw / DESIGN_WIDTH);
+            scaler.style.transform = `scale(${scale})`;
+            scaler.style.width = DESIGN_WIDTH + 'px';
+            // Keep body height in sync so page doesn't over-scroll
+            const scaledH = scaler.offsetHeight * scale;
+            document.body.style.height = scaledH + 'px';
+        }
+
+        window.addEventListener('resize', applyScale);
+        // Run after layout so offsetHeight is accurate
+        window.addEventListener('load', applyScale);
+        document.addEventListener('DOMContentLoaded', () => setTimeout(applyScale, 100));
+
         // ─── Audio Context & Nodes ───────────────────────────────────────────────
         let audioContext, masterGain, synthGain, drumGain, delayNode, feedbackGain, filterNode;
 
@@ -1747,7 +1769,7 @@
             const container = document.getElementById('pianoKeys');
             if (!container) return;
             container.innerHTML = '';
-            const blackKeyOffsets = { 0: 17, 1: 43, 3: 95, 4: 121, 5: 147 };
+            const blackKeyOffsets = { 0: 20, 1: 50, 3: 110, 4: 140, 5: 170 };
             let whiteKeyCount = 0;
 
             for (let i = 0; i < 38; i++) {
@@ -1777,7 +1799,7 @@
                         const bKey = document.createElement('div');
                         bKey.className = 'black-key';
                         bKey.dataset.noteName = blackNoteName;
-                        bKey.style.left = (blackKeyOffsets[whiteKeyInOctave] + Math.floor(whiteKeyCount / 7) * 182) + 'px';
+                        bKey.style.left = (blackKeyOffsets[whiteKeyInOctave] + Math.floor(whiteKeyCount / 7) * 210) + 'px';
                         bKey.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); isMouseDown = true; handleKeyPress(bKey); });
                         bKey.addEventListener('mouseenter', () => { if (isMouseDown) handleKeyPress(bKey); });
                         bKey.addEventListener('mouseleave', () => { if (isMouseDown) handleKeyRelease(bKey); });
@@ -2047,6 +2069,7 @@
         tempoSlider.addEventListener('mousedown', (e) => { isDraggingTempo = true; updateTempo(e); });
         document.addEventListener('mousemove', (e) => { if (isDraggingTempo) updateTempo(e); });
         document.addEventListener('mouseup', () => {
+            isDraggingTempo = false;
             if (isMouseDown) {
                 isMouseDown = false;
                 document.querySelectorAll('.white-key.playing, .black-key.playing').forEach(k => handleKeyRelease(k));
@@ -2306,6 +2329,9 @@
             loadSettings();
             document.querySelectorAll('.knob').forEach(updateKnob);
 
+            // Run scale after everything is rendered
+            setTimeout(applyScale, 150);
+
             let gapiLoaded = false; let gisLoaded = false; let tokenClient; let accessToken = null;
 
             function loadGoogleAPIs() {
@@ -2350,7 +2376,7 @@
 
             function createSongData() {
                 return {
-                    version: '4.06-MKIV', savedAt: new Date().toISOString(),
+                    version: '4.07-MKIV', savedAt: new Date().toISOString(),
                     settings: { volume: masterGain ? masterGain.gain.value : 0.7, synthVolume: synthGain ? synthGain.gain.value : 0.7, drumVolume: drumGain ? drumGain.gain.value : 0.7, delay: delayNode ? delayNode.delayTime.value : 0.3, feedback: feedbackGain ? feedbackGain.gain.value : 0.3, filter: filterNode ? filterNode.frequency.value : 2000, resonance: filterNode ? filterNode.Q.value : 1, currentOctave, currentWaveform, arpEnabled, arpMode, syncEnabled, pitchHoldEnabled, tempo, sequencerSteps },
                     drumVolumes: {...drumVolumes}, sequencerPattern: JSON.parse(JSON.stringify(sequencerPattern)),
                     sampler: { pitch: samplePitch, speed: sampleSpeed, filter: sampleFilter, reverse: sampleReverse, loop: sampleLoop }, samples: {}
@@ -2405,6 +2431,7 @@
         setTimeout(function() {
             const c = document.getElementById('pianoKeys');
             if (c && c.children.length === 0) buildKeyboard();
+            applyScale();
         }, 1000);
     </script>
 </body>
