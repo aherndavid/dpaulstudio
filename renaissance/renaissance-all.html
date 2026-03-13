@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RENAISSANCE: TRILOGY FEED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --crt-color: #33ff33; /* Default Green */
+            --glow: rgba(51, 255, 51, 0.4);
+        }
+
+        body {
+            background-color: #131413;
+            color: var(--crt-color);
+            font-family: 'VT323', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            overflow: hidden;
+            transition: color 0.5s ease;
+        }
+
+        /* Scanline Overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .crt-container {
+            width: 95%;
+            height: 90vh;
+            margin-top: 2vh;
+            border: 2px solid var(--crt-color);
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(19, 20, 19, 0.5); 
+            box-shadow: inset 0 0 15px var(--glow), 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        #disc-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--crt-color);
+            padding-bottom: 10px;
+        }
+
+        .disc-btn {
+            background: transparent;
+            border: 1px solid var(--crt-color);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            padding: 2px 10px;
+            font-size: 1rem;
+        }
+
+        .disc-btn:hover { background: var(--crt-color); color: #000; }
+        .active-disc { background: var(--crt-color); color: #000; box-shadow: 0 0 10px var(--crt-color); }
+
+        #header {
+            border-bottom: 2px solid var(--crt-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        #timer {
+            font-size: 3.5rem;
+            color: #fff;
+            display: block;
+            text-align: center;
+            margin: 5px 0;
+            text-shadow: 0 0 10px var(--crt-color);
+        }
+
+        #now-playing {
+            flex-grow: 1;
+            font-size: 1.8rem;
+            line-height: 1.1;
+            white-space: pre-wrap;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .label { color: var(--crt-color); text-transform: uppercase; font-size: 1rem; opacity: 0.7; }
+        .data { color: #fff; margin-bottom: 10px; display: block; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+
+        .footer {
+            border-top: 1px dashed var(--crt-color);
+            padding-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @keyframes flicker { 0% { opacity: 0.98; } 10% { opacity: 0.95; } 100% { opacity: 1; } }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+        body { animation: flicker 0.15s infinite; }
+    </style>
+</head>
+<body>
+
+<div class="crt-container">
+    <div id="disc-selector">
+        <button class="disc-btn active-disc" onclick="changeDisc('blue')">DISC_01: BLUE</button>
+        <button class="disc-btn" onclick="changeDisc('orange')">DISC_02: ORANGE</button>
+        <button class="disc-btn" onclick="changeDisc('green')">DISC_03: GREEN</button>
+    </div>
+
+    <div id="header">
+        SYS_ID: RENAISSANCE_1994 // <span id="mix-id">BLUE_MIX</span><br>
+        FEED: <span style="color:red; animation: blink 1s infinite;">● LIVE_DATA</span>
+        <span id="timer">00:00</span>
+    </div>
+
+    <div id="now-playing"></div>
+
+    <div class="footer">
+        BPM_TRACKER: SYNCED<br>
+        DECODE: 16-BIT / 44.1kHz<br>
+        SOURCE: ORIGINAL_DAT_REMASTER
+    </div>
+</div>
+
+<script>
+const data = {
+    blue: {
+        color: '#33ccff',
+        label: '01 // BLUE_MIX',
+        tracks: [
+            { time: 0, art: "LEFTFIELD", trk: 'SONG OF LIFE\n(LEMON INTERRUPT MIX)' },
+            { time: 326, art: "BEDROCK FEATURING KYO", trk: 'FOR WHAT YOU DREAM OF\n(RENAISSANCE MIX)' },
+            { time: 800, art: "DISCO EVANGELISTS", trk: 'DE NIRO\n(SPACEFLIGHT REMIX)' },
+            { time: 1200, art: "SUNSCREEM", trk: 'PERFECT MOTION\n(HELLER & FARLEY MIX)' },
+            { time: 1800, art: "M PEOPLE", trk: 'RENAISSANCE\n(JOHN DIGWEED MIX)' }
+        ]
+    },
+    orange: {
+        color: '#ff8800',
+        label: '02 // ORANGE_MIX',
+        tracks: [
+            { time: 0, art: "DAJAE", trk: 'U GOT 2 KNOW\n(GAT DECOR MIX)' },
+            { time: 400, art: "AGE OF LOVE", trk: 'THE AGE OF LOVE\n(JAM & SPOON MIX)' },
+            { time: 900, art: "LEFTFIELD", trk: 'RELEASE THE PRESSURE' },
+            { time: 1500, art: "FLUKE", trk: 'SLIDE' }
+        ]
+    },
+    green: {
+        color: '#33ff33',
+        label: '03 // GREEN_MIX',
+        tracks: [
+            { time: 0, art: "EMPRESS", trk: 'DYING TO BE WITH YOU' },
+            { time: 500, art: "UNDERWORLD", trk: 'DARK & LONG\n(DARK TRAIN MIX)' },
+            { time: 1200, art: "THE DRUM CLUB", trk: 'SOUNDS AROUND' }
+        ]
+    }
+};
+
+let currentDisc = 'blue';
+let totalSeconds = 0;
+const timerEl = document.getElementById('timer');
+const displayEl = document.getElementById('now-playing');
+
+function changeDisc(disc) {
+    currentDisc = disc;
+    totalSeconds = 0;
+    
+    // Update Theme Colors
+    document.documentElement.style.setProperty('--crt-color', data[disc].color);
+    document.documentElement.style.setProperty('--glow', data[disc].color + '66');
+    document.getElementById('mix-id').innerText = data[disc].label;
+    
+    // Update Active Button
+    document.querySelectorAll('.disc-btn').forEach(btn => {
+        btn.classList.remove('active-disc');
+        if(btn.innerText.includes(disc.toUpperCase())) btn.classList.add('active-disc');
+    });
+
+    updateDisplay();
+}
+
+function updateDisplay() {
+    const playlist = data[currentDisc].tracks;
+    let current = playlist[0];
+    for (let i = 0; i < playlist.length; i++) {
+        if (totalSeconds >= playlist[i].time) { current = playlist[i]; }
+    }
+
+    displayEl.innerHTML = `
+        <span class="label">CURRENT_ARTIST:</span>
+        <span class="data">${current.art}</span>
+        <span class="label">CURRENT_TRACK:</span>
+        <span class="data">${current.trk}</span>
+        <span class="label">COLLECTION:</span>
+        <span class="data">${data[currentDisc].label}</span>
+    `;
+}
+
+setInterval(() => {
+    totalSeconds++;
+    let mins = Math.floor(totalSeconds / 60);
+    let secs = totalSeconds % 60;
+    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
+    updateDisplay();
+}, 1000);
+
+// Initialize
+changeDisc('blue');
+</script>
+
+</body>
+</html>
