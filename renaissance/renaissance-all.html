@@ -66,8 +66,8 @@
         .scroller-text {
             position: absolute;
             width: 90%;
-            /* Duration increased to 33s to slow down speed */
-            animation: scroll-up 33s linear forwards;
+            /* Duration increased to 40s (33s + 20% approximately) */
+            animation: scroll-up 40s linear forwards;
             font-size: 1.2rem;
             line-height: 1.4;
             color: var(--crt-color);
@@ -90,9 +90,9 @@
         }
 
         @keyframes scroll-up {
-            0% { transform: translateY(100%); opacity: 1; }
+            0% { transform: translateY(105%); opacity: 1; }
             95% { opacity: 1; }
-            100% { transform: translateY(-120%); opacity: 0; }
+            100% { transform: translateY(-130%); opacity: 0; }
         }
 
         @keyframes flicker {
@@ -195,7 +195,7 @@ const statusLed = document.getElementById('status-led');
 const textFeed = document.getElementById('text-feed');
 const coverArt = document.getElementById('cover-art');
 
-// Image appears after the 33s scroll ends
+// Handle image load after the 40s scroll ends
 textFeed.addEventListener('animationend', () => {
     coverArt.classList.add('show-art');
 });
@@ -244,7 +244,6 @@ audio.ontimeupdate = () => {
     let secs = Math.floor(currentTime % 60);
     timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
     
-    // Safety check for empty tracks
     if (data.blue.tracks) {
         const playlist = data.blue.tracks;
         let currentTrack = playlist[0];
