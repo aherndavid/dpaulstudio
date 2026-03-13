@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renaissance Scroll</title>
+    <style>
+        body {
+            background-color: #131413;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevents scrollbars */
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .scroll-container {
+            width: 80%;
+            max-width: 800px;
+            color: #ffffff;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            text-align: center;
+            position: absolute;
+            bottom: -100%; /* Start off-screen at the bottom */
+            animation: scroll-up 45s linear infinite;
+        }
+
+        @keyframes scroll-up {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-250%); /* Adjust based on text length */
+            }
+        }
+
+        .section-break {
+            margin-bottom: 3rem;
+            display: block;
+        }
+
+        .title {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container">
+        <p>WIDELY REGARDED AS THE "HOLY GRAIL" OF DJ MIX COMPILATIONS, RENAISSANCE: THE MIX COLLECTION IS THE 1994 DEBUT MASTERPIECE FROM BRITISH ICONS SASHA & JOHN DIGWEED.</p>
+        
+        <p>IT DIDN'T JUST CAPTURE A MOMENT IN TIME; IT REDEFINED THE ELECTRONIC MUSIC INDUSTRY BY PROVING THAT A DJ MIX COULD BE A HIGH-ART, COMMERCIAL POWERHOUSE.</p>
+
+        <span class="section-break"></span>
+
+        <p class="title">THE DEFINITIVE SOUND OF AN ERA</p>
+
+        <p>RELEASED ON 14 OCTOBER 1994, THIS TRIPLE-CD SET SERVED AS A SONIC BLUEPRINT FOR THE LEGENDARY RENAISSANCE NIGHTCLUB.</p>
+        
+        <p>IT SEAMLESSLY WEAVES TOGETHER HOUSE, PROGRESSIVE HOUSE, AND EARLY TRANCE, FEATURING TRACKS FROM TITANS LIKE LEFTFIELD, UNDERWORLD, AND AGE OF LOVE.</p>
+
+        <span class="section-break"></span>
+
+        <p class="title">ARTISTIC PRESENTATION</p>
+        
+        <p>HOUSED IN AN ICONIC TRIPLE DIGIPACK, THE ARTWORK FEATURES MICHELANGELO’S PAINTING OF THE PROPHET ZECHARIAH FROM THE SISTINE CHAPEL, SIGNALING THE ALBUM'S AMBITIOUS, "HIGH-CULTURE" INTENT.</p>
+
+        <span class="section-break"></span>
+
+        <p class="title">THE MIX</p>
+        
+        <p>THE THREE DISCS (BLUE, ORANGE, AND GREEN) ARE CELEBRATED FOR THEIR "EFFORTLESS" AND "HEDONISTIC" FLOW, CAPTURING THE TRANSITION OF DANCE MUSIC FROM UNDERGROUND RAVES TO A GLOBAL AUDIENCE.</p>
+
+        <span class="section-break"></span>
+
+        <p class="title">LEGACY AND CRITICAL ACCLAIM</p>
+
+        <p>THE ALBUM'S IMPACT WAS IMMEDIATE AND ENDURING, EARNING A SILVER CERTIFICATION IN THE UK AND CEMENTING SASHA AND DIGWEED AS THE PREMIER ARCHITECTS OF THE "PROGRESSIVE" SOUND.</p>
+    </div>
+
+</body>
+</html>
