@@ -262,15 +262,6 @@
                         </div>
                     </div>
 
-                    <div class="section">
-                        <div class="section-title">VOLUME</div>
-                        <div class="inc-row">
-                            <button class="inc-btn" id="volDown">−</button>
-                            <div class="inc-value" id="volDisplay">100%</div>
-                            <button class="inc-btn" id="volUp">+</button>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -281,20 +272,18 @@
 'use strict';
 
 const params = {
-    rate:   { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
-    pitch:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
-    volume: { val: 1.0, min: 0.0, max: 1.0, step: 0.05 }
+    rate:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
+    pitch: { val: 1.0, min: 0.5, max: 2.0, step: 0.1 }
 };
 
 function fmt(key) {
     const v = params[key].val;
-    if (key === 'rate')   return v.toFixed(1) + '×';
-    if (key === 'pitch')  return v.toFixed(1);
-    if (key === 'volume') return Math.round(v * 100) + '%';
+    if (key === 'rate')  return v.toFixed(1) + '×';
+    if (key === 'pitch') return v.toFixed(1);
 }
 
 function updateDisplay(key) {
-    const ids = { rate: 'rateDisplay', pitch: 'pitchDisplay', volume: 'volDisplay' };
+    const ids = { rate: 'rateDisplay', pitch: 'pitchDisplay' };
     document.getElementById(ids[key]).textContent = fmt(key);
 }
 
@@ -309,8 +298,6 @@ document.getElementById('rateDown').addEventListener('click',  () => step('rate'
 document.getElementById('rateUp').addEventListener('click',    () => step('rate', +1));
 document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
 document.getElementById('pitchUp').addEventListener('click',   () => step('pitch', +1));
-document.getElementById('volDown').addEventListener('click',   () => step('volume', -1));
-document.getElementById('volUp').addEventListener('click',     () => step('volume', +1));
 
 const synth = window.speechSynthesis;
 
@@ -356,10 +343,9 @@ function getVoice() {
 function speak(text) {
     synth.cancel();
     const utt = new SpeechSynthesisUtterance(text);
-    utt.voice  = getVoice();
-    utt.rate   = params.rate.val;
-    utt.pitch  = params.pitch.val;
-    utt.volume = params.volume.val;
+    utt.voice = getVoice();
+    utt.rate  = params.rate.val;
+    utt.pitch = params.pitch.val;
     utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
     utt.onend   = () => { setStatus('Finished'); setBusy(false); };
     utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
