@@ -199,7 +199,11 @@
             <div id="timer">00:00</div>
         </div>
 
-        <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">[ PAUSE ]</button>
+        <div style="display:flex; justify-content:center; align-items:center; gap:12px; margin:10px auto;">
+            <button class="control-btn" onclick="prevTrack()" style="width:120px; font-size:2.2rem;">[ &#9664;&#9664; ]</button>
+            <button id="play-pause-btn" class="control-btn" onclick="togglePlay()" style="width:160px;">[ PAUSE ]</button>
+            <button class="control-btn" onclick="nextTrack()" style="width:120px; font-size:2.2rem;">[ &#9654;&#9654; ]</button>
+        </div>
 
         <div id="now-playing">
             <span class="data">SYSTEM_READY...<br>AWAITING FEED SELECTION</span>
@@ -324,6 +328,35 @@ audio.ontimeupdate = () => {
     }
     displayEl.innerHTML = `<span class="label">ARTIST:</span><span class="data">${currentTrack.art}</span><span class="label">TRACK:</span><span class="data">${currentTrack.trk}</span>`;
 };
+
+function getCurrentTrackIndex() {
+    const t = audio.currentTime;
+    const playlist = data[activeDisc].tracks;
+    let idx = 0;
+    for (let i = 0; i < playlist.length; i++) {
+        if (t >= playlist[i].time) idx = i;
+    }
+    return idx;
+}
+
+function nextTrack() {
+    const playlist = data[activeDisc].tracks;
+    const idx = getCurrentTrackIndex();
+    if (idx < playlist.length - 1) {
+        audio.currentTime = playlist[idx + 1].time;
+    }
+}
+
+function prevTrack() {
+    const playlist = data[activeDisc].tracks;
+    const idx = getCurrentTrackIndex();
+    // If more than 3s into track, restart it; otherwise go to previous
+    if (audio.currentTime - playlist[idx].time > 3 || idx === 0) {
+        audio.currentTime = playlist[idx].time;
+    } else {
+        audio.currentTime = playlist[idx - 1].time;
+    }
+}
 </script>
 </body>
 </html>
