@@ -1334,7 +1334,7 @@
 
         function applyScale() {
         const vw = screen.width;
-            const scale = Math.min(1, vw / DESIGN_WIDTH);
+            const scale = vw / DESIGN_WIDTH;
             scaler.style.transform = `scale(${scale})`;
             scaler.style.width = DESIGN_WIDTH + 'px';
             // Keep body height in sync so page doesn't over-scroll
