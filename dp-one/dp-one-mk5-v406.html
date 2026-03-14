@@ -1333,7 +1333,7 @@
         const scaler = document.getElementById('synthScaler');
 
         function applyScale() {
-            const vw = window.innerWidth;
+        const vw = screen.width;
             const scale = Math.min(1, vw / DESIGN_WIDTH);
             scaler.style.transform = `scale(${scale})`;
             scaler.style.width = DESIGN_WIDTH + 'px';
