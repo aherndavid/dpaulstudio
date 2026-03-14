@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RENAISSANCE: TRILOGY FEED</title>
+    <link rel="preload" href="https://files.catbox.moe/azs98z.mp3" as="media">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --crt-color: #33ccff;
+            --glow: rgba(51, 204, 255, 0.4);
+            --bg-color: #131413;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--crt-color);
+            font-family: 'VT323', monospace;
+            font-display: swap;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* CRT Scanlines */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .crt-container {
+            width: 95%;
+            height: 90vh;
+            border: 2px solid var(--crt-color);
+            background: rgba(19, 20, 19, 0.8);
+            box-shadow: inset 0 0 15px var(--glow), 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 20px;
+        }
+
+        /* LEFT PANEL: COVER ART */
+        .art-panel {
+            width: 35%;
+            height: 100%;
+            border-right: 1px solid var(--crt-color);
+            overflow: hidden;
+            position: relative;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #cover-art {
+            max-width: 88%;
+            border: 1px solid var(--crt-color);
+            opacity: 0.85;
+            box-shadow: 0 0 20px var(--glow);
+            filter: grayscale(100%) brightness(1.1) contrast(1.1);
+            animation: flicker 4s infinite;
+        }
+
+        @keyframes flicker {
+            0%   { opacity: 0.85; }
+            92%  { opacity: 0.85; }
+            93%  { opacity: 0.6; }
+            94%  { opacity: 0.85; }
+            97%  { opacity: 0.75; }
+            100% { opacity: 0.85; }
+        }
+
+        /* RIGHT PANEL: PLAYER */
+        .player-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        /* DISC SELECTOR — LARGE */
+        #disc-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--crt-color);
+            padding-bottom: 14px;
+            justify-content: center;
+        }
+
+        .disc-btn {
+            background: transparent;
+            border: 2px solid var(--crt-color);
+            color: var(--crt-color);
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            font-size: 1.8rem;
+            padding: 8px 22px;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            box-shadow: 0 0 6px var(--glow);
+            line-height: 1.1;
+        }
+
+        .disc-btn:hover {
+            background: var(--crt-color);
+            color: #000;
+            box-shadow: 0 0 18px var(--glow);
+        }
+
+        .active-disc {
+            background: var(--crt-color);
+            color: #000;
+            box-shadow: 0 0 18px var(--glow);
+        }
+
+        /* CONTROL BUTTON */
+        .control-btn {
+            background: transparent;
+            border: 1px solid var(--crt-color);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            font-size: 1.8rem;
+            margin: 10px auto;
+            width: 180px;
+            padding: 2px 10px;
+            transition: all 0.3s;
+            box-shadow: 0 0 5px var(--glow);
+        }
+
+        .control-btn:hover { background: var(--crt-color); color: #000; }
+
+        #timer { font-size: 6rem; color: #fff; line-height: 1; margin: 10px 0; }
+
+        #now-playing {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .label { font-size: 1rem; opacity: 0.6; display: block; }
+        .data  { color: #fff; margin-bottom: 20px; display: block; }
+
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;
+        }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div id="boot-screen" onclick="bootSystem()">
+    <h1 style="color: #33ccff; font-size: 3rem;">RENAISSANCE_1994</h1>
+    <p style="color: #fff; animation: blink 1s infinite;">[ CLICK TO INITIALIZE SYSTEM ]</p>
+</div>
+
+<audio id="crt-audio" preload="auto" crossorigin="anonymous"></audio>
+
+<div class="crt-container">
+
+    <!-- LEFT: Cover Art -->
+    <div class="art-panel">
+        <img id="cover-art"
+             src="https://github.com/aherndavid/dpaulstudio/raw/main/renaissance/images/renaissance-cover.jpg"
+             alt="Renaissance Cover">
+    </div>
+
+    <!-- RIGHT: Player -->
+    <div class="player-content">
+        <div id="disc-selector">
+            <button class="disc-btn" onclick="changeDisc('blue')">CD_01<br>BLUE</button>
+            <button class="disc-btn" onclick="changeDisc('orange')">CD_02<br>ORANGE</button>
+            <button class="disc-btn" onclick="changeDisc('green')">CD_03<br>GREEN</button>
+        </div>
+
+        <div id="header">
+            SYS_ID: RENAISSANCE_1994 // <span id="mix-id">STANDBY</span><br>
+            FEED: <span id="status-led" style="color:gray;">● OFFLINE</span>
+            <div id="timer">00:00</div>
+        </div>
+
+        <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">[ PAUSE ]</button>
+
+        <div id="now-playing">
+            <span class="data">SYSTEM_READY...<br>AWAITING FEED SELECTION</span>
+        </div>
+    </div>
+</div>
+
+<script>
+const audio      = document.getElementById('crt-audio');
+const timerEl    = document.getElementById('timer');
+const displayEl  = document.getElementById('now-playing');
+const statusLed  = document.getElementById('status-led');
+const playBtn    = document.getElementById('play-pause-btn');
+
+const data = {
+    blue: {
+        color: '#33ccff',
+        label: '01 // BLUE_MIX',
+        file: 'https://files.catbox.moe/azs98z.mp3',
+        tracks: [
+            { time: 0,    art: "LEFTFIELD",          trk: "SONG OF LIFE\n(LEMON INTERRUPT MIX)" },
+            { time: 326,  art: "LEFTFIELD",          trk: "SONG OF LIFE\n(DUB FOR LIFE MIX)" },
+            { time: 704,  art: "BEDROCK",            trk: "FOR WHAT YOU DREAM OF" },
+            { time: 1240, art: "DISCO EVANGELISTS",  trk: "DE NIRO" },
+            { time: 2037, art: "SUNSCREEM",          trk: "PERFECT MOTION" },
+            { time: 4215, art: "M PEOPLE",           trk: "RENAISSANCE" }
+        ]
+    }
+};
+
+function bootSystem() {
+    audio.play().then(() => { audio.pause(); }).catch(e => console.log("Init"));
+    document.getElementById('boot-screen').style.display = 'none';
+}
+
+function togglePlay() {
+    if (!audio.src) return;
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerText = "[ PAUSE ]";
+        statusLed.innerText = "● LIVE_STREAM";
+        statusLed.style.color = '';
+        statusLed.style.animation = "blink 1s infinite";
+    } else {
+        audio.pause();
+        playBtn.innerText = "[ PLAY ]";
+        statusLed.innerText = "● PAUSED";
+        statusLed.style.animation = "none";
+    }
+}
+
+function changeDisc(disc) {
+    if (!data[disc] || !data[disc].file) return;
+    const mix = data[disc];
+    document.documentElement.style.setProperty('--crt-color', mix.color);
+    document.documentElement.style.setProperty('--glow', mix.color + '66');
+    document.getElementById('mix-id').innerText = mix.label;
+
+    statusLed.style.color = 'red';
+    statusLed.style.animation = 'blink 1s infinite';
+    statusLed.innerText = '● LIVE_STREAM';
+
+    audio.src = mix.file;
+    audio.load();
+    audio.oncanplay = () => {
+        audio.play();
+        playBtn.innerText = "[ PAUSE ]";
+        audio.oncanplay = null;
+    };
+
+    document.querySelectorAll('.disc-btn').forEach(btn => {
+        btn.classList.remove('active-disc');
+        if (btn.innerText.includes(disc.toUpperCase())) btn.classList.add('active-disc');
+    });
+}
+
+audio.ontimeupdate = () => {
+    const t = audio.currentTime;
+    const mins = Math.floor(t / 60);
+    const secs = Math.floor(t % 60);
+    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
+
+    const playlist = data.blue.tracks;
+    let currentTrack = playlist[0];
+    for (let i = 0; i < playlist.length; i++) {
+        if (t >= playlist[i].time) currentTrack = playlist[i];
+    }
+    displayEl.innerHTML = `<span class="label">ARTIST:</span><span class="data">${currentTrack.art}</span><span class="label">TRACK:</span><span class="data">${currentTrack.trk}</span>`;
+};
+</script>
+</body>
+</html>
