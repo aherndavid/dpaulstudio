@@ -3,373 +3,301 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>dPaul Technologies VU Meter</title>
+<title>dPaul VU Meter</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: #131413;
+        padding: 20px 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #6a6d70;
-}
+    .outer-wrap {
+        width: 100%;
+        max-width: 392px;
+    }
 
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Share Tech Mono', monospace;
-  background: #131413;
-}
+    .container {
+        width: 100%;
+        background: linear-gradient(145deg, #0a1a4a, #102060);
+        border-radius: 9px;
+        padding: 17px;
+        box-shadow: 0 14px 39px rgba(0,0,0,0.7),
+                    inset 0 1px 0 rgba(255,255,255,0.1),
+                    inset 0 -1px 0 rgba(0,0,0,0.3);
+        border: 1px solid rgba(5,15,58,0.3);
+        position: relative;
+    }
 
-/* ── Enclosure ── */
-.unit {
-  width: min(380px, 96vw);
-  background:
-    repeating-linear-gradient(
-      92deg,
-      transparent 0px,
-      transparent 2px,
-      rgba(255,255,255,0.025) 2px,
-      rgba(255,255,255,0.025) 3px
-    ),
-    repeating-linear-gradient(
-      180deg,
-      transparent 0px,
-      transparent 6px,
-      rgba(0,0,0,0.03) 6px,
-      rgba(0,0,0,0.03) 7px
-    ),
-    linear-gradient(
-      170deg,
-      #d4d8dc 0%,
-      #b8bcc0 8%,
-      #cdd1d5 18%,
-      #a8acb0 28%,
-      #c0c4c8 38%,
-      #b0b4b8 50%,
-      #c8ccd0 62%,
-      #a4a8ac 72%,
-      #bcc0c4 82%,
-      #d0d4d8 90%,
-      #b4b8bc 100%
-    );
-  border-radius: 22px;
-  padding: 18px 16px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.55),
-    0 0 0 2px rgba(0,0,0,0.18),
-    0 8px 32px rgba(0,0,0,0.45),
-    0 2px 6px rgba(0,0,0,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.7),
-    inset 0 -1px 0 rgba(0,0,0,0.15);
-}
+    .container::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 35%;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 9px 9px 0 0;
+        pointer-events: none;
+    }
 
-/* ── Brand ── */
-.brand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.brand-top {
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-  font-size: 14px;
-  letter-spacing: 3px;
-  color: #3a3f44;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.45), 0 -1px 0 rgba(0,0,0,0.12);
-}
-.brand-bottom {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-.brand-title {
-  font-size: 19px;
-  letter-spacing: 7px;
-  color: #2e3236;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.45), 0 -1px 0 rgba(0,0,0,0.12);
-}
-.brand-ver {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: rgba(58,63,68,0.55);
-}
+    h1 {
+        color: #000;
+        font-size: 23px;
+        font-weight: 900;
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+        font-family: Impact, 'Arial Black', sans-serif;
+    }
 
-/* ── dB readout ── */
-.db-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  background: #040405;
-  border-radius: 14px;
-  padding: 10px 14px 8px;
-  box-shadow:
-    inset 0 3px 10px rgba(0,0,0,0.9),
-    inset 0 1px 3px rgba(0,0,0,0.6),
-    0 1px 0 rgba(255,255,255,0.2),
-    0 0 0 1px rgba(0,0,0,0.35);
-}
+    .main-layout { display: flex; flex-direction: column; gap: 10px; }
 
-.db-display {
-  font-size: clamp(72px, 22vw, 110px);
-  line-height: 1;
-  color: #ff6010;
-  letter-spacing: -3px;
-  text-align: center;
-  text-shadow: 0 0 22px rgba(255,96,16,0.7), 0 0 60px rgba(255,96,16,0.2);
-  transition: color 0.08s, text-shadow 0.08s;
-}
-.db-display.peak {
-  color: #ff1830;
-  text-shadow: 0 0 22px rgba(255,24,48,0.9), 0 0 60px rgba(255,24,48,0.35);
-}
+    .section {
+        background: #0a0a0a;
+        border-radius: 5px;
+        padding: 7px;
+        box-shadow: inset 0 2px 3px rgba(0,0,0,0.5),
+                    inset 0 -1px 0 rgba(255,255,255,0.05),
+                    0 1px 0 rgba(255,255,255,0.1);
+        border: 1px solid #000;
+    }
 
-.db-unit {
-  font-size: 10px;
-  letter-spacing: 6px;
-  color: rgba(255,255,255,0.55);
-  text-align: center;
-}
+    .section-title {
+        color: #888;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
 
-/* ── Segment bar ── */
-.bar-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-  background: #040405;
-  border-radius: 12px;
-  padding: 10px 12px 9px;
-  box-shadow:
-    inset 0 3px 10px rgba(0,0,0,0.9),
-    inset 0 1px 3px rgba(0,0,0,0.6),
-    0 1px 0 rgba(255,255,255,0.2),
-    0 0 0 1px rgba(0,0,0,0.35);
-}
+    label {
+        display: block;
+        color: #666;
+        font-size: 9px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-.segments {
-  display: flex;
-  gap: 2px;
-  height: 30px;
-}
+    /* ── dB Big Display ── */
+    .db-readout {
+        text-align: center;
+        padding: 6px 0 4px;
+    }
+    .db-number {
+        font-family: 'Courier New', monospace;
+        font-size: 72px;
+        font-weight: 700;
+        line-height: 1;
+        color: #1a7fff;
+        letter-spacing: -2px;
+        text-shadow: 0 0 18px rgba(26,127,255,0.6), 0 0 50px rgba(26,127,255,0.2);
+        transition: color 0.08s, text-shadow 0.08s;
+    }
+    .db-number.peak {
+        color: #ff1830;
+        text-shadow: 0 0 18px rgba(255,24,48,0.8), 0 0 50px rgba(255,24,48,0.3);
+    }
+    .db-unit-label {
+        color: #666;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 2px;
+    }
 
-.seg {
-  flex: 1;
-  border-radius: 2px;
-  background: rgba(255,255,255,0.06);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
-  transition: background 0.04s, box-shadow 0.04s;
-}
-.seg.lit-orange { background: #ff6010; box-shadow: 0 0 6px rgba(255,96,16,0.55); }
-.seg.lit-yellow { background: #ffaa00; box-shadow: 0 0 6px rgba(255,170,0,0.55); }
-.seg.lit-red    { background: #ff1830; box-shadow: 0 0 8px rgba(255,24,48,0.65); }
+    /* ── Segment bar ── */
+    .segments {
+        display: flex;
+        gap: 2px;
+        height: 28px;
+        margin-bottom: 5px;
+    }
+    .seg {
+        flex: 1;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.05);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+        transition: background 0.04s, box-shadow 0.04s;
+    }
+    .seg.lit-blue   { background: #1a7fff; box-shadow: 0 0 5px rgba(26,127,255,0.5); }
+    .seg.lit-cyan   { background: #00c8ff; box-shadow: 0 0 5px rgba(0,200,255,0.5); }
+    .seg.lit-red    { background: #ff1830; box-shadow: 0 0 7px rgba(255,24,48,0.6); }
 
-.bar-scale {
-  display: flex;
-  justify-content: space-between;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 9px;
-  color: rgba(255,255,255,0.35);
-  padding: 0 1px;
-}
+    .bar-scale {
+        display: flex;
+        justify-content: space-between;
+        font-family: 'Courier New', monospace;
+        font-size: 9px;
+        color: #444;
+        padding: 0 1px;
+    }
 
-/* ── Peak history ── */
-.peak-section {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  background: #040405;
-  border-radius: 14px;
-  padding: 10px 12px;
-  box-shadow:
-    inset 0 3px 10px rgba(0,0,0,0.9),
-    inset 0 1px 3px rgba(0,0,0,0.6),
-    0 1px 0 rgba(255,255,255,0.2),
-    0 0 0 1px rgba(0,0,0,0.35);
-  max-height: 172px;
-}
+    /* ── Peak history ── */
+    .peak-list-wrap {
+        max-height: 130px;
+        overflow-y: auto;
+        scrollbar-width: none;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+    .peak-list-wrap::-webkit-scrollbar { display: none; }
 
-.peak-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-}
+    .peak-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .peak-max-label {
+        color: #666;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .peak-max-val {
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        color: #1a7fff;
+    }
 
-.peak-title {
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: rgba(255,255,255,0.4);
-}
+    .peak-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 8px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 3px;
+        border-left: 2px solid #1a7fff;
+    }
+    .peak-row.high   { border-left-color: #00c8ff; }
+    .peak-row.danger { border-left-color: #ff1830; }
 
-.peak-max {
-  font-size: 10px;
-  letter-spacing: 1px;
-  color: #888;
-}
-.peak-max span {
-  color: #ff6010;
-  text-shadow: 0 0 10px rgba(255,96,16,0.45);
-}
+    .peak-row-db {
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        color: #1a7fff;
+    }
+    .peak-row.high   .peak-row-db { color: #00c8ff; }
+    .peak-row.danger .peak-row-db { color: #ff1830; }
 
-.peak-list {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  scrollbar-width: none;
-}
-.peak-list::-webkit-scrollbar { display: none; }
+    .peak-row-time {
+        font-family: 'Courier New', monospace;
+        font-size: 9px;
+        color: #444;
+        letter-spacing: 0.5px;
+    }
 
-.peak-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 10px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 6px;
-  border-left: 2px solid #ff6010;
-  animation: fadeIn 0.2s ease;
-  flex-shrink: 0;
-}
-.peak-row.high    { border-left-color: #ffaa00; }
-.peak-row.danger  { border-left-color: #ff1830; }
+    .peak-empty {
+        font-family: 'Courier New', monospace;
+        font-size: 9px;
+        color: #333;
+        letter-spacing: 1px;
+        text-align: center;
+        padding: 10px 0;
+    }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-3px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+    /* ── Buttons ── */
+    .button-group { display: flex; flex-direction: row; gap: 8px; }
 
-.peak-row-db {
-  font-size: 16px;
-  letter-spacing: 1px;
-  color: #ff6010;
-}
-.peak-row.high   .peak-row-db { color: #ffaa00; }
-.peak-row.danger .peak-row-db { color: #ff1830; }
+    button {
+        padding: 10px 16px;
+        background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+        border: 1px solid #000;
+        border-radius: 3px;
+        color: #888;
+        font-size: 9px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+        flex: 1;
+    }
+    button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
+    button:active, button.active {
+        transform: translateY(1px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        color: #1a7fff;
+        border-color: #1a7fff;
+    }
 
-.peak-row-time {
-  font-size: 9px;
-  color: #555;
-  letter-spacing: 1px;
-}
+    .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
+    .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
 
-.peak-empty {
-  font-size: 9px;
-  color: #333;
-  letter-spacing: 2px;
-  text-align: center;
-  padding: 12px 0;
-}
-
-/* ── Controls ── */
-.controls-box {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  flex-shrink: 0;
-  background: #040405;
-  border-radius: 14px;
-  padding: 11px 12px 10px;
-  box-shadow:
-    inset 0 3px 10px rgba(0,0,0,0.9),
-    inset 0 1px 3px rgba(0,0,0,0.6),
-    0 1px 0 rgba(255,255,255,0.2),
-    0 0 0 1px rgba(0,0,0,0.35);
-}
-
-.btns {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-button {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 2px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.08) 100%);
-  color: #3a3f44;
-  border: 1px solid rgba(0,0,0,0.22);
-  border-bottom: 1px solid rgba(0,0,0,0.32);
-  padding: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  flex: 1;
-  min-height: 44px;
-  transition: all 0.12s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.42);
-  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
-}
-button:active, button.active {
-  color: #ff6010;
-  border-color: rgba(255,96,16,0.55);
-  background: linear-gradient(180deg, rgba(255,96,16,0.14) 0%, rgba(255,96,16,0.04) 100%);
-  box-shadow: 0 0 14px rgba(255,96,16,0.16), inset 0 1px 0 rgba(255,255,255,0.18);
-  text-shadow: 0 0 10px rgba(255,96,16,0.45);
-}
+    .status {
+        margin-top: 10px;
+        padding: 8px;
+        background: #000a1a;
+        border-radius: 3px;
+        text-align: center;
+        color: #005588;
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Courier New', monospace;
+        box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,60,120,0.15);
+        border: 1px solid #000;
+    }
+    .status.active { color: #1a7fff; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(26,100,255,0.25); }
 </style>
 </head>
 <body>
+<div class="outer-wrap">
+    <div class="container">
+        <h1>dPaul VU <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v2.01</span></h1>
 
-<div class="unit">
+        <div class="main-layout">
 
-  <div class="brand">
-    <div class="brand-top">
-      <span>dPaul</span><span style="font-size:0.75em;letter-spacing:5px">Technologies</span>
+            <!-- dB readout -->
+            <div class="section">
+                <label>LEVEL DISPLAY</label>
+                <div class="db-readout">
+                    <div class="db-number" id="dbDisplay">—</div>
+                    <div class="db-unit-label">Decibels</div>
+                </div>
+            </div>
+
+            <!-- Segment bar -->
+            <div class="section">
+                <label>SIGNAL BAR</label>
+                <div class="segments" id="segments"></div>
+                <div class="bar-scale">
+                    <span>-40</span><span>-20</span><span>0</span><span>20</span><span>50</span><span>100</span>
+                </div>
+            </div>
+
+            <!-- Peak history -->
+            <div class="section">
+                <div class="peak-header-row">
+                    <label style="margin:0;">PEAK HISTORY</label>
+                    <span class="peak-max-val" id="peakMaxVal">Max: —</span>
+                </div>
+                <div class="peak-list-wrap" id="peakList">
+                    <div class="peak-empty" id="peakEmpty">No peaks recorded yet</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="button-group">
+                <button class="btn-primary" id="btnMic">MIC</button>
+                <button id="btnTest">TEST</button>
+                <button id="btnReset">RESET</button>
+            </div>
+
+            <div class="status" id="status">Ready</div>
+
+        </div>
     </div>
-    <div class="brand-bottom">
-      <span class="brand-title">VU Meter</span>
-      <span class="brand-ver">v.2.01</span>
-    </div>
-  </div>
-
-  <div class="db-wrap">
-    <div class="db-display" id="dbDisplay">—</div>
-    <div class="db-unit">DECIBELS</div>
-  </div>
-
-  <div class="bar-wrap">
-    <div class="segments" id="segments"></div>
-    <div class="bar-scale">
-      <span>-40</span>
-      <span>-20</span>
-      <span>0</span>
-      <span>20</span>
-      <span>50</span>
-      <span>100</span>
-    </div>
-  </div>
-
-  <div class="peak-section">
-    <div class="peak-header">
-      <span class="peak-title">Peak History</span>
-      <span class="peak-max" id="peakMax">Max: <span id="peakMaxVal">—</span></span>
-    </div>
-    <div class="peak-list" id="peakList">
-      <div class="peak-empty" id="peakEmpty">No peaks recorded yet</div>
-    </div>
-  </div>
-
-  <div class="controls-box">
-    <div class="btns">
-      <button id="btnMic">Mic</button>
-      <button id="btnTest">Test</button>
-      <button id="btnReset">Reset</button>
-    </div>
-  </div>
-
 </div>
 
 <script>
@@ -382,14 +310,14 @@ const PEAK_HOLD_MS   = 1200;
 
 const segsEl = document.getElementById('segments');
 for (let i = 0; i < NUM_SEGS; i++) {
-  const d = document.createElement('div');
-  d.className = 'seg';
-  segsEl.appendChild(d);
+    const d = document.createElement('div');
+    d.className = 'seg';
+    segsEl.appendChild(d);
 }
 const segs = Array.from(segsEl.children);
 
-const idxYellow = Math.round((80 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
-const idxRed    = Math.round((90 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idxCyan = Math.round((80 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idxRed  = Math.round((90 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
 
 const dbDisplay  = document.getElementById('dbDisplay');
 const peakList   = document.getElementById('peakList');
@@ -402,83 +330,85 @@ let lastPeakTime = 0;
 let lastDb       = MIN_DB;
 let peakHoldDb   = null;
 
-function now() {
-  return new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+function nowStr() {
+    return new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+
+function setStatus(msg, active = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.toggle('active', active);
 }
 
 function recordPeak(db) {
-  const t = Date.now();
-  if (t - lastPeakTime < PEAK_HOLD_MS) return;
-  lastPeakTime = t;
+    const t = Date.now();
+    if (t - lastPeakTime < PEAK_HOLD_MS) return;
+    lastPeakTime = t;
 
-  peakHistory.unshift({ db, time: now() });
-  if (peakHistory.length > 20) peakHistory.pop();
+    peakHistory.unshift({ db, time: nowStr() });
+    if (peakHistory.length > 20) peakHistory.pop();
 
-  if (allTimePeak === null || db > allTimePeak) {
-    allTimePeak = db;
-    peakMaxVal.textContent = db.toFixed(1) + ' dB';
-  }
+    if (allTimePeak === null || db > allTimePeak) {
+        allTimePeak = db;
+        peakMaxVal.textContent = 'Max: ' + db.toFixed(1) + ' dB';
+    }
 
-  renderPeakList();
+    renderPeakList();
 }
 
 function renderPeakList() {
-  if (peakHistory.length === 0) {
-    peakEmpty.style.display = 'block';
-    Array.from(peakList.querySelectorAll('.peak-row')).forEach(r => r.remove());
-    return;
-  }
-  peakEmpty.style.display = 'none';
-  Array.from(peakList.querySelectorAll('.peak-row')).forEach(r => r.remove());
-
-  peakHistory.forEach(({db, time}) => {
-    const row = document.createElement('div');
-    row.className = 'peak-row' + (db >= 90 ? ' danger' : db >= 80 ? ' high' : '');
-    row.innerHTML = `
-      <span class="peak-row-db">${db.toFixed(1)} dB</span>
-      <span class="peak-row-time">${time}</span>
-    `;
-    peakList.appendChild(row);
-  });
+    peakList.querySelectorAll('.peak-row').forEach(r => r.remove());
+    if (peakHistory.length === 0) {
+        peakEmpty.style.display = 'block';
+        return;
+    }
+    peakEmpty.style.display = 'none';
+    peakHistory.forEach(({db, time}) => {
+        const row = document.createElement('div');
+        row.className = 'peak-row' + (db >= 90 ? ' danger' : db >= 80 ? ' high' : '');
+        row.innerHTML = `<span class="peak-row-db">${db.toFixed(1)} dB</span><span class="peak-row-time">${time}</span>`;
+        peakList.appendChild(row);
+    });
 }
 
 function setLevel(db) {
-  const filled = Math.round(((db - MIN_DB) / (MAX_DB - MIN_DB)) * (NUM_SEGS - 1));
-  segs.forEach((s, i) => {
-    if (i <= filled) {
-      s.className = i >= idxRed ? 'seg lit-red' : i >= idxYellow ? 'seg lit-yellow' : 'seg lit-orange';
+    const filled = Math.round(((db - MIN_DB) / (MAX_DB - MIN_DB)) * (NUM_SEGS - 1));
+    segs.forEach((s, i) => {
+        if (i <= filled) {
+            s.className = i >= idxRed ? 'seg lit-red' : i >= idxCyan ? 'seg lit-cyan' : 'seg lit-blue';
+        } else {
+            s.className = 'seg';
+        }
+    });
+
+    if (db <= MIN_DB) {
+        dbDisplay.textContent = '—';
+        dbDisplay.className = 'db-number';
     } else {
-      s.className = 'seg';
+        dbDisplay.textContent = db.toFixed(1);
+        dbDisplay.className = 'db-number' + (db >= 90 ? ' peak' : '');
     }
-  });
 
-  if (db <= MIN_DB) {
-    dbDisplay.textContent = '—';
-    dbDisplay.className = 'db-display';
-  } else {
-    dbDisplay.textContent = db.toFixed(1);
-    dbDisplay.className = 'db-display' + (db >= 90 ? ' peak' : '');
-  }
-
-  if (db > lastDb) {
-    peakHoldDb = db;
-  } else if (peakHoldDb !== null && db < peakHoldDb - 3 && peakHoldDb >= PEAK_THRESHOLD) {
-    recordPeak(peakHoldDb);
-    peakHoldDb = null;
-  }
-  lastDb = db;
+    if (db > lastDb) {
+        peakHoldDb = db;
+    } else if (peakHoldDb !== null && db < peakHoldDb - 3 && peakHoldDb >= PEAK_THRESHOLD) {
+        recordPeak(peakHoldDb);
+        peakHoldDb = null;
+    }
+    lastDb = db;
 }
 
 function resetMeter() {
-  segs.forEach(s => s.className = 'seg');
-  dbDisplay.textContent = '—';
-  dbDisplay.className = 'db-display';
-  peakHistory = [];
-  allTimePeak = null;
-  lastDb = MIN_DB;
-  peakHoldDb = null;
-  peakMaxVal.textContent = '—';
-  renderPeakList();
+    segs.forEach(s => s.className = 'seg');
+    dbDisplay.textContent = '—';
+    dbDisplay.className = 'db-number';
+    peakHistory = [];
+    allTimePeak = null;
+    lastDb = MIN_DB;
+    peakHoldDb = null;
+    peakMaxVal.textContent = 'Max: —';
+    renderPeakList();
+    setStatus('Ready');
 }
 
 resetMeter();
@@ -486,49 +416,51 @@ resetMeter();
 let simInterval = null, simMode = null;
 
 function stopSim() {
-  clearInterval(simInterval); simInterval = null; simMode = null;
-  document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    clearInterval(simInterval); simInterval = null; simMode = null;
+    document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
 }
 
 document.getElementById('btnTest').addEventListener('click', () => {
-  if (simMode === 'test') { stopSim(); return; }
-  stopSim(); simMode = 'test';
-  document.getElementById('btnTest').classList.add('active');
-  let ph = 0;
-  simInterval = setInterval(() => {
-    ph++;
-    let db = 30 + Math.sin(ph * 0.065) * 45 + Math.sin(ph * 0.028) * 20;
-    db = Math.max(MIN_DB, Math.min(MAX_DB, db));
-    setLevel(db);
-  }, 55);
+    if (simMode === 'test') { stopSim(); setStatus('Stopped'); return; }
+    stopSim(); simMode = 'test';
+    document.getElementById('btnTest').classList.add('active');
+    setStatus('Test signal running...', true);
+    let ph = 0;
+    simInterval = setInterval(() => {
+        ph++;
+        let db = 30 + Math.sin(ph * 0.065) * 45 + Math.sin(ph * 0.028) * 20;
+        db = Math.max(MIN_DB, Math.min(MAX_DB, db));
+        setLevel(db);
+    }, 55);
 });
 
 document.getElementById('btnReset').addEventListener('click', () => {
-  stopSim(); resetMeter();
+    stopSim(); resetMeter();
 });
 
 document.getElementById('btnMic').addEventListener('click', async () => {
-  if (simMode === 'mic') { stopSim(); return; }
-  try {
-    const stream   = await navigator.mediaDevices.getUserMedia({ audio: true });
-    stopSim(); simMode = 'mic';
-    document.getElementById('btnMic').classList.add('active');
-    const actx     = new AudioContext();
-    const src      = actx.createMediaStreamSource(stream);
-    const analyser = actx.createAnalyser();
-    analyser.fftSize = 512;
-    src.connect(analyser);
-    const buf = new Float32Array(analyser.fftSize);
-    simInterval = setInterval(() => {
-      analyser.getFloatTimeDomainData(buf);
-      let sum = 0; buf.forEach(v => sum += v * v);
-      const rms = Math.sqrt(sum / buf.length);
-      const db  = rms > 0
-        ? Math.max(MIN_DB, Math.min(MAX_DB, 20 * Math.log10(rms) + 90))
-        : MIN_DB;
-      setLevel(db);
-    }, 55);
-  } catch(e) { alert('Microphone access denied.'); }
+    if (simMode === 'mic') { stopSim(); setStatus('Stopped'); return; }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stopSim(); simMode = 'mic';
+        document.getElementById('btnMic').classList.add('active');
+        setStatus('Microphone active...', true);
+        const actx     = new AudioContext();
+        const src      = actx.createMediaStreamSource(stream);
+        const analyser = actx.createAnalyser();
+        analyser.fftSize = 512;
+        src.connect(analyser);
+        const buf = new Float32Array(analyser.fftSize);
+        simInterval = setInterval(() => {
+            analyser.getFloatTimeDomainData(buf);
+            let sum = 0; buf.forEach(v => sum += v * v);
+            const rms = Math.sqrt(sum / buf.length);
+            const db  = rms > 0
+                ? Math.max(MIN_DB, Math.min(MAX_DB, 20 * Math.log10(rms) + 90))
+                : MIN_DB;
+            setLevel(db);
+        }, 55);
+    } catch(e) { setStatus('Microphone access denied'); }
 });
 </script>
 </body>
