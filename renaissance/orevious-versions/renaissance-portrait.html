@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RENAISSANCE: MOBILE FEED</title>
+    <link rel="preload" href="https://files.catbox.moe/azs98z.mp3" as="media">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --crt-color: #33ccff; 
+            --glow: rgba(51, 204, 255, 0.4);
+            --bg-color: #131413;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--crt-color);
+            font-family: 'VT323', monospace;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        /* CRT Overlay Scanlines */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .crt-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--crt-color);
+            box-sizing: border-box;
+            background: rgba(19, 20, 19, 0.9);
+        }
+
+        /* TOP SECTION: SCROLLER */
+        .scroller-container {
+            height: 35%;
+            border-bottom: 1px solid var(--crt-color);
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scroller-text {
+            position: absolute;
+            width: 85%;
+            animation: scroll-up 120s linear forwards;
+            font-size: 1.1rem;
+            line-height: 1.3;
+            color: var(--crt-color);
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        #cover-art {
+            max-width: 70%;
+            border: 1px solid var(--crt-color);
+            opacity: 0;
+            transition: opacity 2s ease;
+            box-shadow: 0 0 15px var(--glow);
+            filter: grayscale(100%) brightness(1.1) contrast(1.1);
+            position: absolute;
+            z-index: 5;
+        }
+
+        .show-art { opacity: 0.8 !important; animation: flicker 0.2s infinite; }
+
+        /* BOTTOM SECTION: PLAYER UI */
+        .player-content {
+            height: 65%;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            box-sizing: border-box;
+            justify-content: space-between;
+        }
+
+        #disc-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            border-bottom: 1px solid var(--crt-color);
+            padding-bottom: 10px;
+        }
+
+        .disc-btn {
+            background: transparent;
+            border: 1px solid var(--crt-color);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            padding: 8px 2px;
+            font-size: 0.8rem;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: 1px solid var(--crt-color);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            padding: 10px;
+            width: 100%;
+            box-shadow: 0 0 5px var(--glow);
+        }
+
+        .active-disc { background: var(--crt-color); color: #000; }
+
+        #timer { 
+            font-size: 4.5rem; 
+            color: #fff; 
+            text-align: center;
+            margin: 5px 0;
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        #now-playing { 
+            flex-grow: 1; 
+            text-align: center;
+            font-size: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px dashed rgba(51, 204, 255, 0.3);
+            margin: 10px 0;
+            padding: 5px;
+        }
+
+        .label { font-size: 0.9rem; opacity: 0.6; display: block; margin-top: 5px; }
+        .data { color: #fff; display: block; overflow-wrap: break-word; }
+
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        @keyframes scroll-up {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-180%); }
+        }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes flicker { 0% { opacity: 0.7; } 50% { opacity: 0.8; } 100% { opacity: 0.75; } }
+    </style>
+</head>
+<body>
+
+<div id="boot-screen" onclick="bootSystem()">
+    <h1 style="color: #33ccff; font-size: 2.2rem; text-align: center;">RENAISSANCE_1994</h1>
+    <p style="color: #fff; animation: blink 1s infinite;">[ TAP TO START SYSTEM ]</p>
+</div>
+
+<audio id="crt-audio" preload="auto" crossorigin="anonymous"></audio>
+
+<div class="crt-container">
+    <div class="scroller-container">
+        <div class="scroller-text" id="text-feed">
+            RENAISSANCE: THE MIX COLLECTION (1994)
+            <br><br>
+            Released on 14 October 1994, this stands as the definitive debut mix album from Sasha & John Digweed.
+            <br><br>
+            THE LEGACY:
+            Earning a Silver certification in the UK, it professionalized the "mix CD" as a high art form.
+            <br><br>
+            Resident Advisor called it the "Cornerstone for all things progressive."
+        </div>
+        <img id="cover-art" src="https://github.com/aherndavid/dpaulstudio/raw/main/renaissance/images/renaissance-cover.jpg" alt="Renaissance Cover">
+    </div>
+
+    <div class="player-content">
+        <div id="disc-selector">
+            <button class="disc-btn" onclick="changeDisc('blue')">CD01:BLUE</button>
+            <button class="disc-btn" onclick="changeDisc('orange')">CD02:ORG</button>
+            <button class="disc-btn" onclick="changeDisc('green')">CD03:GRN</button>
+        </div>
+
+        <div id="ui-header" style="font-size: 0.9rem; text-align: center;">
+            SYS_ID: RENA_94 // <span id="mix-id">STANDBY</span><br>
+            <span id="status-led" style="color:gray;">● OFFLINE</span>
+        </div>
+
+        <div id="timer">00:00</div>
+
+        <div id="now-playing">
+            <span class="data">SYSTEM_READY...<br>SELECT FEED</span>
+        </div>
+
+        <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">[ PLAY ]</button>
+    </div>
+</div>
+
+<script>
+const audio = document.getElementById('crt-audio');
+const timerEl = document.getElementById('timer');
+const displayEl = document.getElementById('now-playing');
+const statusLed = document.getElementById('status-led');
+const textFeed = document.getElementById('text-feed');
+const coverArt = document.getElementById('cover-art');
+const playBtn = document.getElementById('play-pause-btn');
+
+textFeed.addEventListener('animationend', () => { coverArt.classList.add('show-art'); });
+
+const data = {
+    blue: {
+        color: '#33ccff', label: 'BLUE_MIX',
+        file: 'https://files.catbox.moe/azs98z.mp3',
+        tracks: [
+            { time: 0, art: "LEFTFIELD", trk: "SONG OF LIFE (LEMON MIX)" },
+            { time: 326, art: "LEFTFIELD", trk: "SONG OF LIFE (DUB)" },
+            { time: 704, art: "BEDROCK", trk: "FOR WHAT YOU DREAM OF" },
+            { time: 1240, art: "DISCO EVANGELISTS", trk: "DE NIRO" },
+            { time: 2037, art: "SUNSCREEM", trk: "PERFECT MOTION" },
+            { time: 4215, art: "M PEOPLE", trk: "RENAISSANCE" }
+        ]
+    }
+};
+
+function bootSystem() {
+    audio.play().then(() => { audio.pause(); }).catch(e => console.log("Init"));
+    document.getElementById('boot-screen').style.display = 'none';
+}
+
+function togglePlay() {
+    if (!audio.src) return;
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerText = "[ PAUSE ]";
+        statusLed.innerText = "● LIVE_STREAM";
+        statusLed.style.animation = "blink 1s infinite";
+        statusLed.style.color = "red";
+    } else {
+        audio.pause();
+        playBtn.innerText = "[ PLAY ]";
+        statusLed.innerText = "● PAUSED";
+        statusLed.style.animation = "none";
+        statusLed.style.color = "yellow";
+    }
+}
+
+function changeDisc(disc) {
+    if(!data[disc]) return;
+    const mix = data[disc];
+    document.documentElement.style.setProperty('--crt-color', mix.color);
+    document.getElementById('mix-id').innerText = mix.label;
+    audio.src = mix.file;
+    audio.load();
+    audio.play();
+    playBtn.innerText = "[ PAUSE ]";
+    statusLed.innerText = "● LIVE_STREAM";
+    statusLed.style.color = "red";
+    statusLed.style.animation = "blink 1s infinite";
+
+    document.querySelectorAll('.disc-btn').forEach(btn => {
+        btn.classList.remove('active-disc');
+        if(btn.innerText.includes(disc.toUpperCase().substring(0,3))) btn.classList.add('active-disc');
+    });
+}
+
+audio.ontimeupdate = () => {
+    const ct = audio.currentTime;
+    let m = Math.floor(ct / 60), s = Math.floor(ct % 60);
+    timerEl.innerText = `${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+    
+    const playlist = data.blue.tracks;
+    let current = playlist[0];
+    for (let i = 0; i < playlist.length; i++) {
+        if (ct >= playlist[i].time) current = playlist[i];
+    }
+    displayEl.innerHTML = `<span class="label">ARTIST</span><span class="data">${current.art}</span><span class="label">TRACK</span><span class="data">${current.trk}</span>`;
+};
+</script>
+</body>
+</html>
