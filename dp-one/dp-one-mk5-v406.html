@@ -1332,15 +1332,22 @@
         const DESIGN_WIDTH = 1080;
         const scaler = document.getElementById('synthScaler');
 
-        function applyScale() {
-        const vw = screen.width;
-            const scale = vw / DESIGN_WIDTH;
-            scaler.style.transform = `scale(${scale})`;
-            scaler.style.width = DESIGN_WIDTH + 'px';
-            // Keep body height in sync so page doesn't over-scroll
-            const scaledH = scaler.offsetHeight * scale;
-            document.body.style.height = scaledH + 'px';
-        }
+       function applyScale() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const scaleX = vw / DESIGN_WIDTH;
+    const scaleH = scaler.offsetHeight;
+    const scaleY = vh / scaleH;
+    const scale = Math.min(scaleX, scaleY);
+    scaler.style.transform = `scale(${scale})`;
+    scaler.style.width = DESIGN_WIDTH + 'px';
+    scaler.style.position = 'absolute';
+    scaler.style.left = '50%';
+    scaler.style.top = '50%';
+    scaler.style.marginLeft = `-${(DESIGN_WIDTH * scale) / 2}px`;
+    scaler.style.marginTop = `-${(scaleH * scale) / 2}px`;
+    document.body.style.height = '100vh';
+}
 
         window.addEventListener('resize', applyScale);
         // Run after layout so offsetHeight is accurate
