@@ -214,6 +214,8 @@ const displayEl  = document.getElementById('now-playing');
 const statusLed  = document.getElementById('status-led');
 const playBtn    = document.getElementById('play-pause-btn');
 
+let activeDisc = 'blue';
+
 const data = {
     blue: {
         color: '#33ccff',
@@ -226,6 +228,22 @@ const data = {
             { time: 1240, art: "DISCO EVANGELISTS",  trk: "DE NIRO" },
             { time: 2037, art: "SUNSCREEM",          trk: "PERFECT MOTION" },
             { time: 4215, art: "M PEOPLE",           trk: "RENAISSANCE" }
+        ]
+    },
+    orange: {
+        color: '#ff8800',
+        label: '02 // ORANGE_MIX',
+        file: 'https://files.catbox.moe/6zk865.mp3',
+        tracks: [
+            { time: 0, art: "CD_02", trk: "ORANGE MIX" }
+        ]
+    },
+    green: {
+        color: '#00ff88',
+        label: '03 // GREEN_MIX',
+        file: '',
+        tracks: [
+            { time: 0, art: "CD_03", trk: "GREEN MIX" }
         ]
     }
 };
@@ -253,6 +271,7 @@ function togglePlay() {
 
 function changeDisc(disc) {
     if (!data[disc] || !data[disc].file) return;
+    activeDisc = disc;
     const mix = data[disc];
     document.documentElement.style.setProperty('--crt-color', mix.color);
     document.documentElement.style.setProperty('--glow', mix.color + '66');
@@ -282,7 +301,7 @@ audio.ontimeupdate = () => {
     const secs = Math.floor(t % 60);
     timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
 
-    const playlist = data.blue.tracks;
+    const playlist = data[activeDisc].tracks;
     let currentTrack = playlist[0];
     for (let i = 0; i < playlist.length; i++) {
         if (t >= playlist[i].time) currentTrack = playlist[i];
