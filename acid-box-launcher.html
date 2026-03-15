@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ACID-BOX</title>
+  <title>dPaul TTS</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -15,20 +15,59 @@
       overflow: hidden;
     }
     iframe {
-      width: 100%;
-      height: 100%;
+      width: 50%;
+      height: 50%;
       border: none;
       display: block;
-      transform: scale(1);
+      transform: scale(2);
       transform-origin: center center;
     }
+    .size-controls {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .size-btn {
+      background: #333;
+      border: 1px solid #aaa;
+      color: #fff;
+      font-size: 0.75rem;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 3px;
+      line-height: 1;
+    }
+    .size-btn:hover { border-color: #fff; color: #fff; }
   </style>
 </head>
 <body>
+
+  <div class="size-controls">
+    <button class="size-btn" onclick="adjustScale(0.1)">▲</button>
+    <button class="size-btn" onclick="adjustScale(-0.1)">▼</button>
+  </div>
+
   <iframe
-    src="https://raw.githack.com/aherndavid/dpaulstudio/main/acid-box/acid-box-v2.html"
-    allow="midi; midi-sysex"
+    id="tts-frame"
+    src="https://raw.githack.com/aherndavid/dpaulstudio/main/tts/tts-v211.html"
     scrolling="no">
   </iframe>
+
+  <script>
+    let scale = 2;
+    const frame = document.getElementById('tts-frame');
+    function adjustScale(delta) {
+      scale = Math.min(4, Math.max(0.5, scale + delta));
+      frame.style.transform = `scale(${scale})`;
+    }
+  </script>
+
 </body>
 </html>
