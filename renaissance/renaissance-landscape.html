@@ -193,9 +193,9 @@
         </div>
 
         <div class="controls">
-            <button class="control-btn" onclick="prevTrack()">[ &#9664;&#9664; ]</button>
-            <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">[ &#9646;&#9646; ]</button>
-            <button class="control-btn" onclick="nextTrack()">[ &#9654;&#9654; ]</button>
+            <button class="control-btn" onclick="prevTrack()">&#9664;&#9664;</button>
+            <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">&#9646;&#9646;</button>
+            <button class="control-btn" onclick="nextTrack()">&#9654;&#9654;</button>
         </div>
 
         <div id="now-playing">
@@ -255,7 +255,7 @@ const data = {
     green: {
         color: '#00ff88',
         label: '03 // GREEN_MIX',
-        file: 'https://files.catbox.moe/3548bf.mp3',
+        file: 'https://files.catbox.moe/2rv84h.mp3',
         tracks: [
             { time: 0,    art: "M PEOPLE",                        trk: "HOW CAN I LOVE YOU MORE\n(QAT MIX)" },
             { time: 441,  art: "MOBY",                            trk: "GO\n(NIGHT TIME MIX)" },
@@ -285,7 +285,7 @@ function togglePlay() {
         statusLed.style.animation = "blink 1s infinite";
     } else {
         audio.pause();
-        playBtn.innerHTML = "[ &#9654; ]";
+        playBtn.innerHTML = "&#9654;";";
         statusLed.innerText = "● PAUSED";
         statusLed.style.animation = "none";
     }
