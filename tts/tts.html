@@ -504,8 +504,7 @@ function setMode(m) {
 function saveKey() {
     const k = document.getElementById('apiKey').value.trim();
     if (!k) { setStatus('No key entered', false, true); return; }
-    localStorage.setItem('el_api_key', k);
-    setStatus('Key saved — loading voices...', true);
+    setStatus('Loading voices...', true);
     loadElevenVoices(k);
 }
 function getKey() {
