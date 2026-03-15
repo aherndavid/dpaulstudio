@@ -231,7 +231,7 @@ const data = {
     orange: {
         color: '#ff8800',
         label: '02 // ORANGE_MIX',
-        file: 'https://files.catbox.moe/2lmlrg.mp3,
+        file: 'https://files.catbox.moe/2lmlrg.mp3',
         tracks: [
             { time: 0,    art: "TOMITA",                   trk: "A SPACE SHIP LANDS EMITTING SILVERY LIGHT\n(THE ARRIVAL OF A UFO)" },
             { time: 127,  art: "FLUKE",                    trk: "SLID\n(PDF MIX)" },
@@ -285,7 +285,7 @@ function togglePlay() {
         statusLed.style.animation = "blink 1s infinite";
     } else {
         audio.pause();
-        playBtn.innerHTML = "&#9654;";";
+        playBtn.innerHTML = "&#9654;";
         statusLed.innerText = "● PAUSED";
         statusLed.style.animation = "none";
     }
