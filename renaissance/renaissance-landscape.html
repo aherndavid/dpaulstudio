@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RENAISSANCE: TRILOGY FEED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --crt-color: #33ccff;
+            --glow: rgba(51, 204, 255, 0.4);
+            --bg-color: #131413;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--crt-color);
+            font-family: 'VT323', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 10;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .crt-container {
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--crt-color);
+            background: rgba(19, 20, 19, 0.8);
+            box-shadow: inset 0 0 15px var(--glow), 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            zoom: 0.75;
+        }
+
+        .art-panel {
+            width: 32%;
+            height: 100%;
+            border-right: 1px solid var(--crt-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-color);
+        }
+
+        #cover-art {
+            max-width: 88%;
+            border: 1px solid var(--crt-color);
+            opacity: 0.85;
+            box-shadow: 0 0 20px var(--glow);
+            filter: brightness(1.05) contrast(1.05);
+            animation: flicker 4s infinite;
+        }
+
+        @keyframes flicker {
+            0%   { opacity: 0.85; }
+            92%  { opacity: 0.85; }
+            93%  { opacity: 0.6; }
+            94%  { opacity: 0.85; }
+            97%  { opacity: 0.75; }
+            100% { opacity: 0.85; }
+        }
+
+        .player-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        #disc-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--crt-color);
+            padding-bottom: 14px;
+            justify-content: center;
+        }
+
+        .disc-btn {
+            background: transparent;
+            border: 2px solid var(--crt-color);
+            color: var(--crt-color);
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            font-size: 1.6rem;
+            padding: 6px 20px;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            box-shadow: 0 0 6px var(--glow);
+            line-height: 1.1;
+        }
+
+        .disc-btn:hover, .active-disc {
+            background: var(--crt-color);
+            color: #000;
+            box-shadow: 0 0 18px var(--glow);
+        }
+
+        #header {
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin-bottom: 4px;
+        }
+
+        #timer {
+            font-size: 7.2rem;
+            color: #fff;
+            line-height: 1;
+            margin: 6px 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin: 8px auto;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: 2px solid var(--crt-color);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            cursor: pointer;
+            font-size: 2.2rem;
+            padding: 6px 16px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px var(--glow);
+        }
+
+        .control-btn:hover { background: var(--crt-color); color: #000; }
+
+        #play-pause-btn { font-size: 2.8rem; padding: 6px 24px; }
+
+        #now-playing {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-top: -10px;
+        }
+
+        .label { font-size: 0.9rem; opacity: 0.6; display: block; }
+        .data  { color: #fff; margin-bottom: 16px; display: block; }
+
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<audio id="crt-audio" preload="auto" crossorigin="anonymous"></audio>
+
+<div class="crt-container">
+
+    <div class="art-panel">
+        <img id="cover-art"
+             src="https://github.com/aherndavid/dpaulstudio/raw/main/renaissance/images/renaissance-cover.jpg"
+             alt="Renaissance Cover">
+    </div>
+
+    <div class="player-content">
+
+        <div id="disc-selector">
+            <button class="disc-btn" onclick="changeDisc('blue')">CD_01<br>BLUE</button>
+            <button class="disc-btn" onclick="changeDisc('orange')">CD_02<br>ORANGE</button>
+            <button class="disc-btn" onclick="changeDisc('green')">CD_03<br>GREEN</button>
+        </div>
+
+        <div id="header">
+            SYS_ID: RENAISSANCE_1994 // <span id="mix-id">STANDBY</span><br>
+            FEED: <span id="status-led" style="color:gray;">● OFFLINE</span>
+            <div id="timer">00:00</div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="prevTrack()">[ &#9664;&#9664; ]</button>
+            <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">[ &#9646;&#9646; ]</button>
+            <button class="control-btn" onclick="nextTrack()">[ &#9654;&#9654; ]</button>
+        </div>
+
+        <div id="now-playing">
+            <span class="data">SYSTEM_READY...<br>AWAITING FEED SELECTION</span>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const audio     = document.getElementById('crt-audio');
+const timerEl   = document.getElementById('timer');
+const displayEl = document.getElementById('now-playing');
+const statusLed = document.getElementById('status-led');
+const playBtn   = document.getElementById('play-pause-btn');
+
+let activeDisc = 'blue';
+
+const data = {
+    blue: {
+        color: '#33ccff',
+        label: '01 // BLUE_MIX',
+        file: 'https://files.catbox.moe/azs98z.mp3',
+        tracks: [
+            { time: 0,    art: "LEFTFIELD",         trk: "SONG OF LIFE\n(LEMON INTERRUPT MIX)" },
+            { time: 326,  art: "LEFTFIELD",         trk: "SONG OF LIFE\n(DUB FOR LIFE MIX)" },
+            { time: 704,  art: "BEDROCK",           trk: "FOR WHAT YOU DREAM OF" },
+            { time: 1240, art: "DISCO EVANGELISTS", trk: "DE NIRO" },
+            { time: 2037, art: "SUNSCREEM",         trk: "PERFECT MOTION" },
+            { time: 4215, art: "M PEOPLE",          trk: "RENAISSANCE" }
+        ]
+    },
+    orange: {
+        color: '#ff8800',
+        label: '02 // ORANGE_MIX',
+        file: 'https://files.catbox.moe/6zk865.mp3',
+        tracks: [
+            { time: 0,    art: "TOMITA",                   trk: "A SPACE SHIP LANDS EMITTING SILVERY LIGHT\n(THE ARRIVAL OF A UFO)" },
+            { time: 127,  art: "FLUKE",                    trk: "SLID\n(PDF MIX)" },
+            { time: 284,  art: "FUNK MACHINE",             trk: "LET'S GET THIS PARTY STARTED\n(PARTY MIX)" },
+            { time: 604,  art: "FLUKE",                    trk: "SLID\n(SCAT AND SAX FRENZY)" },
+            { time: 905,  art: "CORRADO",                  trk: "TRUST\n(PINK MIX)" },
+            { time: 1208, art: "DJ MBG",                   trk: "TRANCE WAVE ONE\n(MBG ORIENTAL PSYCO ESTMIX)" },
+            { time: 1330, art: "HYSTERIX",                 trk: "TALK TO ME\n(SASHA'S FULL MUSIC MASTER)" },
+            { time: 1755, art: "ANNA DIN",                 trk: "ANGEL" },
+            { time: 2193, art: "VIRTUALMISMO",             trk: "MISMOPLASTICO\n(DIRTYSYNCOMIX)" },
+            { time: 2335, art: "VIRTUALMISMO",             trk: "MISMOPLASTICO\n(RUBBER MIX)" },
+            { time: 2403, art: "VIRTUALMISMO",             trk: "MISMOPLASTICO\n(ORIGINAL REMIX)" },
+            { time: 2733, art: "FISHBONE BEAT",            trk: "ALWAYS\n(PSYCHEDELIC MARTINI REMIX)" },
+            { time: 2953, art: "STATE OF GRACE",           trk: "NOT OVER YET\n(PERFECTO MIX)" },
+            { time: 3300, art: "SECRET LIFE",              trk: "SHE HOLDS THE KEY\n(H.A.L.F. I'M A BELIEVER MIX)" },
+            { time: 3557, art: "FUNTOPIA FEAT. JIMI POLO", trk: "DO YOU WANNA KNOW?\n(GUT DRUM MIX)" },
+            { time: 3865, art: "V.F.R.",                   trk: "TRANCEILLUSION" },
+            { time: 4061, art: "KYM MAZELLE",              trk: "WAS THAT ALL IT WAS\n(DEF MIX)" }
+        ]
+    },
+    green: {
+        color: '#00ff88',
+        label: '03 // GREEN_MIX',
+        file: 'https://files.catbox.moe/3548bf.mp3',
+        tracks: [
+            { time: 0,    art: "M PEOPLE",                        trk: "HOW CAN I LOVE YOU MORE\n(QAT MIX)" },
+            { time: 441,  art: "MOBY",                            trk: "GO\n(NIGHT TIME MIX)" },
+            { time: 760,  art: "JACO",                            trk: "SHOW SOME LOVE\n(ORIGINAL DUB)" },
+            { time: 1159, art: "SPOOKY",                          trk: "LITTLE BULLET\n(HIGH VELOCITY MIX)" },
+            { time: 1539, art: "SUBLIME",                         trk: "SUBLIME\n(DUB)" },
+            { time: 1768, art: "SHAWN CHRISTOPHER",               trk: "ANOTHER SLEEPLESS NIGHT\n(BASSMAN MIX)" },
+            { time: 2025, art: "UNITY 3",                         trk: "THE AGE OF LOVE SUITE\n(TRANCE DUB + FANTASY DUB)" },
+            { time: 2314, art: "EMF",                             trk: "THEY'RE HERE\n(D:REAM DREAM)" },
+            { time: 2684, art: "SOLAR PLEXUS",                    trk: "SOLAR PLEXUS" },
+            { time: 2896, art: "HAVANA",                          trk: "ETHNIC PRAYER\n(EURO MIX)" },
+            { time: 3229, art: "2 BAD MICE",                      trk: "BOMB SCARE" },
+            { time: 3441, art: "AGE OF LOVE",                     trk: "THE AGE OF LOVE\n(WATCH OUT FOR STELLA CLUB MIX)" },
+            { time: 3816, art: "MY FRIEND SAM FEAT. VIOLA WILLS", trk: "IT'S MY PLEASURE\n(CLUB MIX)" },
+            { time: 4140, art: "LEMON INTERRUPT",                 trk: "DIRTY" }
+        ]
+    }
+};
+
+function togglePlay() {
+    if (!audio.src) return;
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerHTML = "[ &#9646;&#9646; ]";
+        statusLed.innerText = "● LIVE_STREAM";
+        statusLed.style.color = '';
+        statusLed.style.animation = "blink 1s infinite";
+    } else {
+        audio.pause();
+        playBtn.innerHTML = "[ &#9654; ]";
+        statusLed.innerText = "● PAUSED";
+        statusLed.style.animation = "none";
+    }
+}
+
+function changeDisc(disc) {
+    if (!data[disc] || !data[disc].file) return;
+    activeDisc = disc;
+    const mix = data[disc];
+    document.documentElement.style.setProperty('--crt-color', mix.color);
+    document.documentElement.style.setProperty('--glow', mix.color + '66');
+    document.getElementById('mix-id').innerText = mix.label;
+
+    statusLed.style.color = 'red';
+    statusLed.style.animation = 'blink 1s infinite';
+    statusLed.innerText = '● LIVE_STREAM';
+
+    audio.src = mix.file;
+    audio.load();
+    audio.oncanplay = () => {
+        audio.play();
+        playBtn.innerHTML = "[ &#9646;&#9646; ]";
+        audio.oncanplay = null;
+    };
+
+    document.querySelectorAll('.disc-btn').forEach(btn => {
+        btn.classList.remove('active-disc');
+        if (btn.innerText.includes(disc.toUpperCase())) btn.classList.add('active-disc');
+    });
+}
+
+audio.ontimeupdate = () => {
+    const t = audio.currentTime;
+    const mins = Math.floor(t / 60);
+    const secs = Math.floor(t % 60);
+    timerEl.innerText = (mins < 10 ? "0"+mins : mins) + ":" + (secs < 10 ? "0"+secs : secs);
+
+    const playlist = data[activeDisc].tracks;
+    let currentTrack = playlist[0];
+    for (let i = 0; i < playlist.length; i++) {
+        if (t >= playlist[i].time) currentTrack = playlist[i];
+    }
+    displayEl.innerHTML = `<span class="label">ARTIST:</span><span class="data">${currentTrack.art}</span><span class="label">TRACK:</span><span class="data">${currentTrack.trk}</span>`;
+};
+
+function getCurrentTrackIndex() {
+    const t = audio.currentTime;
+    const playlist = data[activeDisc].tracks;
+    let idx = 0;
+    for (let i = 0; i < playlist.length; i++) {
+        if (t >= playlist[i].time) idx = i;
+    }
+    return idx;
+}
+
+function nextTrack() {
+    const playlist = data[activeDisc].tracks;
+    const idx = getCurrentTrackIndex();
+    if (idx < playlist.length - 1) {
+        audio.currentTime = playlist[idx + 1].time;
+    }
+}
+
+function prevTrack() {
+    const playlist = data[activeDisc].tracks;
+    const idx = getCurrentTrackIndex();
+    if (audio.currentTime - playlist[idx].time > 3 || idx === 0) {
+        audio.currentTime = playlist[idx].time;
+    } else {
+        audio.currentTime = playlist[idx - 1].time;
+    }
+}
+</script>
+</body>
+</html>
