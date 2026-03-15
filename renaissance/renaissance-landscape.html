@@ -279,7 +279,7 @@ function togglePlay() {
     if (!audio.src) return;
     if (audio.paused) {
         audio.play();
-        playBtn.innerHTML = "[ &#9646;&#9646; ]";
+        playBtn.innerHTML = " &#9646;&#9646; ";
         statusLed.innerText = "● LIVE_STREAM";
         statusLed.style.color = '';
         statusLed.style.animation = "blink 1s infinite";
