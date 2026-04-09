@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools — dPaul Technologies (Mobile)</title>
+    
+    <style>
+        /* ── THEME VARIABLES ── */
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Courier New', Courier, monospace;
+            font-size: calc(110% * var(--font-scale)); 
+            margin: 0;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Scanline Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px; 
+            background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        /* ── PAGE CONTENT ── */
+        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
+
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 24px; color: #fff; font-weight: 900; }
+        .hero h1 em { color: var(--orange); font-style: normal; }
+        .hero-intro { font-size: 1.1rem; border-left: 2px solid var(--orange); padding-left: 16px; margin-bottom: 24px; }
+
+        /* TTS PLAYER (Mobile Optimized) */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+        }
+        .tts-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: inherit; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-btn.active { background: var(--orange); color: #000; }
+        .tts-voice-sel { 
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
+            padding: 8px; font-family: inherit; font-size: 0.85rem; width: 100%;
+        }
+        .tts-highlight { background: rgba(255,102,0,0.2); border-radius: 2px; }
+
+        /* TOOL BLOCKS */
+        .instrument { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .instrument-eyebrow { font-size: 0.75rem; color: var(--orange); text-transform: uppercase; margin-bottom: 8px; }
+        .instrument-name { font-size: 1.6rem; color: #fff; font-weight: 900; margin-bottom: 24px; }
+        .instrument-story { font-size: 1.05rem; margin-bottom: 24px; }
+        
+        /* Specs */
+        .spec-list { list-style: none; margin: 24px 0; background: var(--bg2); padding: 12px; border-radius: 4px; }
+        .spec-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-dim); font-size: 0.9rem; }
+        .spec-list li:last-child { border-bottom: none; }
+        .spec-key { color: var(--dim); text-transform: uppercase; font-size: 0.75rem; }
+        .spec-val { color: var(--cream); text-align: right; }
+
+        .tool-render-img { width: 100%; height: auto; border-radius: 4px; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.5)); margin-bottom: 12px; }
+        .visual-caption { font-size: 0.7rem; color: var(--dim); text-align: center; text-transform: uppercase; margin-bottom: 24px; }
+
+        .launch-btn { 
+            display: block; padding: 16px; border: 1px solid var(--orange); 
+            color: var(--orange); text-decoration: none; font-size: 0.85rem; 
+            text-transform: uppercase; letter-spacing: 0.1em; border-radius: 3px; 
+            text-align: center; font-weight: bold; margin-bottom: 32px;
+        }
+
+        /* PHILOSOPHY */
+        .learning-section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .learning-body { font-size: 1.05rem; margin-bottom: 24px; }
+        
+        .aside-block { background: rgba(255,102,0,0.05); padding: 24px; border-radius: 4px; margin-top: 32px; border: 1px solid var(--border-dim); }
+        .aside-label { font-size: 0.75rem; color: var(--orange); text-transform: uppercase; margin-bottom: 12px; }
+        .aside-text { font-size: 0.95rem; color: var(--text); }
+
+        /* FONT NUDGE */
+        .font-nudge {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+        }
+        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; }
+
+        .footer-toggle { text-align: center; padding: 60px 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html" class="active">tools</a>
+    <a href="video.html">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <a href="about.html">info</a>
+</div>
+
+<div class="page">
+    <section class="hero reveal">
+        <div class="hero-label">// Utility Lab</div>
+        <h1>Browser tools.<br>Built for<br><em>real use.</em></h1>
+        <p class="hero-intro">Function should never be boring. Every tool on this page started as a problem that needed solving during production or development. No installs, no accounts—just utilities that live in your browser.</p>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- VU METER -->
+    <section class="instrument reveal">
+        <div class="instrument-eyebrow">// 01 — Audio Utility</div>
+        <div class="instrument-name">dPaul VU</div>
+        <p class="instrument-story">Monitoring levels accurately is the difference between a clean take and a digital mess. The dPaul VU is a high-sensitivity monitoring tool that captures incoming audio via the Web Audio API to provide real-time decibel tracking and peak history.</p>
+        
+        <ul class="spec-list">
+            <li><span class="spec-key">Processing</span><span class="spec-val">Real-time FFT</span></li>
+            <li><span class="spec-key">Range</span><span class="spec-val">-40dB to +6dB</span></li>
+            <li><span class="spec-key">Features</span><span class="spec-val">Peak Hold · Test Tone</span></li>
+            <li><span class="spec-key">Engine</span><span class="spec-val">Web Audio API</span></li>
+        </ul>
+
+        <img src="../assets/vu-3d.png" alt="VU 3D render" class="tool-render-img">
+        <p class="visual-caption">3D Render — The VU as hardware</p>
+        
+        <a href="../launchers/vu-launcher-desktop.html" class="launch-btn">Launch VU Meter</a>
+    </section>
+
+    <!-- VU CONCEPT -->
+    <section class="instrument reveal">
+        <div class="instrument-eyebrow">// Concept — Hardware Translation</div>
+        <div class="instrument-name">Pocket VU Concept</div>
+        <p class="instrument-story">What would this look like as a physical object? This concept render explores a slim, pocket-sized VU meter in deep navy blue, running on battery power.</p>
+        <p class="instrument-story">The display carries over directly—large blue LED numerals for the decibel reading, signal bar across the middle, peak history below. It doesn't exist yet. But it could.</p>
+
+        <img src="../assets/vu-concept.png" alt="Pocket VU concept" class="tool-render-img" style="max-width: 260px; margin: 0 auto; display: block;">
+        <p class="visual-caption">Concept Render — Battery Powered Pocket VU</p>
+    </section>
+
+    <!-- TTS TOOL -->
+    <section class="instrument reveal">
+        <div class="instrument-eyebrow">// 02 — Voice Generation</div>
+        <div class="instrument-name">dPaul TTS</div>
+        <p class="instrument-story">Voiceover work often requires a quick turnaround. This tool bridges the gap between raw text and professional-grade audio by integrating high-fidelity AI voice models.</p>
+        
+        <ul class="spec-list">
+            <li><span class="spec-key">Integration</span><span class="spec-val">Unreal Speech AI</span></li>
+            <li><span class="spec-key">Controls</span><span class="spec-val">Pitch · Rate · Tone</span></li>
+            <li><span class="spec-key">Export</span><span class="spec-val">Direct WAV Download</span></li>
+            <li><span class="spec-key">Engine</span><span class="spec-val">AI Voice Models</span></li>
+        </ul>
+
+        <img src="../assets/tts-3d.png" alt="TTS 3D render" class="tool-render-img">
+        <p class="visual-caption">3D Render — TTS Engine Hardware</p>
+        
+        <a href="../launchers/tts-launcher-desktop.html" class="launch-btn">Launch TTS Engine</a>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="learning-section reveal">
+        <div class="section-label">// The Philosophy</div>
+        <div class="learning-body">
+            Building these tools taught more about JavaScript than any tutorial ever could. Dealing with the Web Audio API for the VU meter meant understanding buffers, sample rates, and how browsers handle real-time input.
+        </div>
+        <div class="learning-body">
+            The Text-to-Speech tool was a lesson in API integration—handling asynchronous requests and managing the handoff between local capabilities and remote AI processing.
+        </div>
+        <div class="learning-body">
+            HTML-Live came from personal frustration. Reading through hundreds of lines of code in a flat text editor adds friction. The solution was to build the tool that should have existed already.
+        </div>
+
+        <div class="aside-block">
+            <div class="aside-label">The Portability Strategy</div>
+            <p class="aside-text">The goal is always a single-file utility. No dependencies, no server, no setup. If a tool can run from one HTML file, it can live anywhere—on a USB stick, a shared folder, or a GitHub page.</p>
+        </div>
+    </section>
+
+    <div class="footer-toggle">
+        <a href="../tools.html">→ View Desktop Version</a>
+    </div>
+</div>
+
+<div class="font-nudge" id="fontNudge">
+    <button class="font-btn" onclick="adjustFont(1)">A+</button>
+    <button class="font-btn" onclick="adjustFont(-1)">A-</button>
+</div>
+
+<script>
+    // ── MENU LOGIC ──
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
+
+    // ── FONT SCALE ──
+    let fontScale = 1;
+    function adjustFont(dir) {
+        fontScale = Math.max(0.8, Math.min(1.5, fontScale + (dir * 0.1)));
+        document.documentElement.style.setProperty('--font-scale', fontScale);
+    }
+
+    // ── REVEAL ANIMATION ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── TTS ENGINE ──
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let currentIdx = 0;
+
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        if(!sel) return;
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        enVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
+        });
+        selectedVoice = enVoices[0];
+    }
+
+    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
+    
+    function buildChunks() {
+        chunks = [];
+        document.querySelectorAll('h1, .hero-intro, .instrument-story, .learning-body, .aside-text').forEach(el => {
+            chunks.push({ el, text: el.innerText });
+        });
+    }
+
+    window.ttsPlay = () => {
+        if (!chunks.length) buildChunks();
+        synth.cancel();
+        currentIdx = 0;
+        speak();
+        document.getElementById('ttsPlay').disabled = true;
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        document.getElementById('ttsPlay').disabled = false;
+    };
+
+    function speak() {
+        if (currentIdx >= chunks.length) { ttsStop(); return; }
+        const chunk = chunks[currentIdx];
+        chunk.el.classList.add('tts-highlight');
+        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => {
+            chunk.el.classList.remove('tts-highlight');
+            currentIdx++;
+            speak();
+        };
+        synth.speak(utter);
+    }
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+
+<style>
+  .eq-wrap { background: #000; padding: 16px; display: inline-block; border-radius: 6px; }
+  .eq-canvas { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+  .bar-col { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 28px; }
+  .seg { width: 28px; height: 10px; border-radius: 1px; background: #1a1a1a; transition: none; }
+  .seg.on { background: #00cc00; }
+  .seg.on.mid { background: #aacc00; }
+  .seg.on.top { background: #cc2200; }
+</style>
+<div class="eq-wrap">
+  <div class="eq-canvas" id="eq"></div>
+</div>
+<script>
+  const NUM_BANDS = 10;
+  const NUM_SEGS = 10;
+  const eq = document.getElementById('eq');
+  const levels = Array.from({length: NUM_BANDS}, () => Math.floor(Math.random() * NUM_SEGS) + 1);
+  const targets = [...levels];
+  const cols = [];
+
+  for (let b = 0; b < NUM_BANDS; b++) {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const segs = [];
+    for (let s = NUM_SEGS - 1; s >= 0; s--) {
+      const seg = document.createElement('div');
+      seg.className = 'seg';
+      col.appendChild(seg);
+      segs.push(seg);
+    }
+    eq.appendChild(col);
+    cols.push(segs);
+  }
+
+  function renderLevels() {
+    for (let b = 0; b < NUM_BANDS; b++) {
+      const lv = Math.round(levels[b]);
+      cols[b].forEach((seg, i) => {
+        const segNum = NUM_SEGS - i;
+        if (segNum <= lv) {
+          seg.classList.add('on');
+          if (segNum >= NUM_SEGS) seg.classList.add('top');
+          else if (segNum >= NUM_SEGS - 3) seg.classList.add('mid');
+          else { seg.classList.remove('mid'); seg.classList.remove('top'); }
+        } else {
+          seg.classList.remove('on', 'mid', 'top');
+        }
+      });
+    }
+  }
+
+  function animate() {
+    for (let b = 0; b < NUM_BANDS; b++) {
+      if (Math.random() < 0.05) {
+        targets[b] = Math.floor(Math.random() * NUM_SEGS) + 1;
+      }
+      const diff = targets[b] - levels[b];
+      levels[b] += diff * 0.12 + (Math.random() - 0.5) * 0.4;
+      levels[b] = Math.max(0.5, Math.min(NUM_SEGS, levels[b]));
+    }
+    renderLevels();
+    requestAnimationFrame(animate);
+  }
+
+  renderLevels();
+  animate();
+</script>

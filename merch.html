@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merch — dPaul Technologies</title>
+    
+    <style>
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --orange-dim:#cc5200;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 130%; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* ── FONT NUDGE ── */
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 12px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
+        }
+        nav a {
+            font-family: 'Courier New', Courier, monospace; font-size: 1.4rem;
+            color: var(--cream); text-decoration: none; padding: 10px 20px;
+            border: 1px solid transparent; border-radius: 3px;
+            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
+        }
+        nav a:hover  { border-color: var(--orange); color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav .spacer  { flex: 1; }
+
+        /* ── PAGE WRAPPER ── */
+        .page { max-width: 1440px; margin: 0 auto; padding: 56px 56px 120px; }
+
+        /* ── HERO ── */
+        .hero { padding: 64px 0 56px; border-bottom: 1px solid var(--border); max-width: 1000px; }
+        .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; }
+        .hero h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; letter-spacing: -0.02em; }
+        .hero h1 span { color: var(--orange); }
+        .hero p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); max-width: 660px; border-left: 2px solid var(--orange); padding-left: 20px; }
+
+        /* ── TTS PLAYER ── */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
+        .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none; max-width: 240px;
+        }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+
+        /* ── SECTIONS ── */
+        .badge { display: inline-block; margin-top: 32px; padding: 8px 18px; border: 1px solid var(--orange); color: var(--orange); font-size: 0.91rem; letter-spacing: 0.25em; text-transform: uppercase; animation: pulse 2.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+        .section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 1.04rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
+        .section h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #fff; margin-bottom: 20px; }
+        .section-intro { font-size: 1.25rem; line-height: 1.85; max-width: 700px; margin-bottom: 48px; color: var(--text); }
+
+        /* Updated grid to handle 4 items better */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .product-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; cursor: default; }
+        .product-card:hover { border-color: var(--orange); transform: translateY(-4px); }
+        .product-card-img { width: 100%; aspect-ratio: 1; background: #0e0f0e; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Updated overlay: visible on hover, but slightly opaque initially if you want it always there */
+        .product-card-img .overlay { position: absolute; inset: 0; background: rgba(19,20,19,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; z-index: 2; }
+        .product-card:hover .overlay { opacity: 1; }
+        .overlay-text { font-size: 0.9rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; border: 1px solid var(--orange); padding: 12px 24px; border-radius: 2px; }
+        
+        .product-card-label { padding: 20px; border-top: 1px solid var(--border); }
+        .product-card-label .name { font-size: 1.1rem; color: #fff; letter-spacing: 0.06em; margin-bottom: 6px; }
+        .product-card-label .detail { font-size: 0.85rem; color: var(--orange); letter-spacing: 0.12em; text-transform: uppercase; }
+
+        .split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: start; }
+        .split-text p { font-size: 1.2rem; line-height: 1.9; color: var(--text); margin-bottom: 24px; }
+        .split-text p strong { color: var(--orange); font-weight: bold; }
+        .mockup-frame { width: 100%; background: #0e0f0e; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .mockup-frame img { width: 100%; display: block; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+        .tag { font-size: 0.85rem; letter-spacing: 0.1em; padding: 6px 14px; border: 1px solid var(--border); border-radius: 3px; color: var(--cream); text-transform: uppercase; transition: all 0.2s; }
+        .tag:hover { border-color: var(--orange); color: var(--orange); }
+
+        @media (max-width: 900px) {
+            nav { padding: 0 24px; }
+            .page { padding: 32px 24px 80px; }
+            .product-grid { grid-template-columns: 1fr 1fr; }
+            .split { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)">A&#8722;</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
+</div>
+
+<nav>
+    <a href="design.html">design</a>
+    <a href="merch.html" class="active">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <div class="spacer"></div>
+    <a href="about.html">info</a>
+</nav>
+
+<div class="page">
+
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Merch</div>
+        <h1>Limited-run pieces.<br>Built on the <span>studio aesthetic.</span></h1>
+        <p>The dpaul.studio exclusive merch collection is on its way. These are limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.</p>
+
+        <div class="tts-player" id="ttsPlayer">
+            <span class="tts-label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <div class="tts-sep"></div>
+                <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95">
+                <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                    <option value="">Loading voices...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="badge">// Debut collection — available very soon</div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 01 — Debut Collection</div>
+        <h2>Hoodie, Tee &amp; Mug</h2>
+        <p class="section-intro">The first drop features four pieces — each carrying the signature dPaul character artwork.</p>
+
+        <div class="product-grid">
+            
+            <!-- MERCEDES TEE -->
+            <div class="product-card">
+                <div class="product-card-img">
+                    <img src="https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/mercedes-man-cartoon.png" alt="Mercedes Man Cartoon T-Shirt">
+                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
+                </div>
+                <div class="product-card-label">
+                    <div class="name">Mercedes Cartoon Tee</div>
+                    <div class="detail">White — Limited Run</div>
+                </div>
+            </div>
+
+            <!-- ELECTRICITY TEE -->
+            <div class="product-card">
+                <div class="product-card-img">
+                    <img src="https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/ai-is-the-new.png" alt="AI is the new electricity T-Shirt">
+                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
+                </div>
+                <div class="product-card-label">
+                    <div class="name">Electricity Tee</div>
+                    <div class="detail">White — Limited Run</div>
+                </div>
+            </div>
+
+            <!-- STUDIO TEE -->
+            <div class="product-card">
+                <div class="product-card-img">
+                    <img src="../assets/tshirt-design-001.png" alt="dPaul T-Shirt">
+                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
+                </div>
+                <div class="product-card-label">
+                    <div class="name">Studio Tee</div>
+                    <div class="detail">Black — Limited Run</div>
+                </div>
+            </div>
+
+            <!-- STUDIO MUG -->
+            <div class="product-card">
+                <div class="product-card-img">
+                    <img src="../assets/tshirt-design-001b.png" alt="dPaul Mug">
+                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
+                </div>
+                <div class="product-card-label">
+                    <div class="name">Studio Mug</div>
+                    <div class="detail">White — Limited Run</div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 02 — The Design</div>
+        <h2>Signature character. Studio voice.</h2>
+        <div class="split">
+            <div class="split-text">
+                <p>Each piece carries the <strong>dPaul character</strong> — rendered in a retro comic style with speech bubble slogans that reflect the studio's philosophy.</p>
+                <p><strong>"The journey is the fun part..."</strong> — a reminder that the process matters as much as the output.</p>
+                <div class="tags">
+                    <div class="tag">Retro Comic Style</div>
+                    <div class="tag">Screen Printed</div>
+                    <div class="tag">Unisex Sizing</div>
+                </div>
+            </div>
+            <div class="split-visual">
+                <div class="mockup-frame">
+                    <img src="../assets/the-journey-is-the-fun-part.png" alt="Merch collection mockup">
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // FONT NUDGE, SCROLL REVEAL, and TTS scripts remain the same as your original functional versions.
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+    
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    function dismissNudge() {
+        const nudge = document.getElementById('fontNudge');
+        nudge.style.opacity = '0';
+        nudge.style.pointerEvents = 'none';
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

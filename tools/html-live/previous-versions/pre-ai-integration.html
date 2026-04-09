@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Live Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Courier New', monospace; background: #1a1a1a; color: #ccc; height: 100vh; overflow: hidden; }
+  #app { display: flex; flex-direction: column; height: 100vh; width: 100%; }
+
+  #top-toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #222; border-bottom: 1px solid #333; flex-shrink: 0; user-select: none; flex-wrap: nowrap; overflow: hidden; }
+  #top-toolbar span.label { font-size: 19px; color: #ccc; letter-spacing: 2px; text-transform: uppercase; }
+  #version-badge { font-size: 11px; color: #555; font-family: 'Courier New', monospace; letter-spacing: 1px; align-self: flex-end; margin-bottom: 2px; }
+  #home-btn .brand-dp { color: #ff8800; }
+  #home-btn .brand-studio { color: #999; }
+  .sep { width: 1px; height: 18px; background: #444; margin: 0 4px; }
+  #font-label { font-size: 19px; color: #888; }
+  #font-size-slider { width: 80px; accent-color: #666; cursor: pointer; }
+  #font-size-val { font-size: 19px; color: #888; min-width: 36px; }
+  .tbtn { font-size: 19px; padding: 5px 12px; border: 1px solid #444; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; }
+  .tbtn:hover { background: #2a2a2a; color: #ccc; }
+  #home-btn { margin-left: auto; color: #aaaaff; border-color: #555577; }
+  #home-btn:hover { background: #22223a; color: #ccccff; border-color: #aaaaff; }
+
+  #inspect-btn { color: #888; border-color: #444; transition: all 0.15s; }
+  #inspect-btn.inspect-on { color: #ff8800; border-color: #ff8800; background: rgba(255,136,0,0.08); box-shadow: 0 0 6px rgba(255,136,0,0.3); }
+
+  /* Debug btn states */
+  #debug-btn { color: #888; border-color: #444; transition: all 0.15s; position: relative; }
+  #debug-btn.debug-on { color: #ff8800; border-color: #ff8800; background: rgba(255,136,0,0.08); box-shadow: 0 0 6px rgba(255,136,0,0.3); }
+  #debug-btn.has-errors { color: #ff4444; border-color: #ff4444; background: rgba(255,68,68,0.08); }
+  #debug-btn.has-warnings { color: #ffaa00; border-color: #ffaa00; background: rgba(255,170,0,0.08); }
+  #debug-badge {
+    position: absolute; top: -6px; right: -6px;
+    background: #ff4444; color: #fff;
+    font-size: 9px; font-family: 'Courier New', monospace;
+    min-width: 16px; height: 16px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; pointer-events: none; opacity: 0;
+    transition: opacity 0.2s;
+  }
+  #debug-badge.visible { opacity: 1; }
+  #debug-badge.warn { background: #ffaa00; color: #000; }
+
+  #h-divider { height: 4px; background: #2a2a2a; cursor: row-resize; flex-shrink: 0; }
+  #h-divider:hover { background: #555; }
+
+  #main { display: flex; flex: 1; min-height: 0; }
+
+  /* ── LEFT PANEL ── */
+  #left { width: 45%; display: flex; flex-direction: column; border-right: 1px solid #333; position: relative; }
+  #editor-toolbar { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid #333; background: #222; flex-shrink: 0; }
+  #editor-toolbar span { font-size: 19px; color: #888; letter-spacing: 1px; text-transform: uppercase; flex: 1; }
+
+  /* Editor + debug panel container */
+  #left-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+  /* ── EDITOR WRAPPER with line numbers ── */
+  #editor-wrapper {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+  }
+
+  #line-numbers {
+    width: 44px;
+    flex-shrink: 0;
+    background: #141414;
+    border-right: 1px solid #252525;
+    padding: 14px 0;
+    overflow: hidden;
+    user-select: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  #line-numbers-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 8px;
+  }
+
+  .line-num {
+    display: block;
+    color: #3a3a3a;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    transition: color 0.1s;
+    white-space: nowrap;
+  }
+  .line-num.active { color: #ff8800; }
+  .line-num.highlighted { color: #cc6600; }
+  .line-num.has-error { color: #ff4444 !important; }
+  .line-num.has-warning { color: #ffaa00 !important; }
+
+  #editor {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #ddd;
+    background: #1a1a1a;
+    tab-size: 2;
+    overflow-y: auto;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  #editor::placeholder { color: #444; }
+
+  #highlight-overlay {
+    position: absolute;
+    left: 44px; right: 0;
+    background: rgba(255, 136, 0, 0.18);
+    border-left: 2px solid #ff8800;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    z-index: 10;
+  }
+  #highlight-overlay.visible { opacity: 1; }
+
+  /* Error highlight overlay */
+  #error-highlight-overlay {
+    position: absolute;
+    left: 44px; right: 0;
+    background: rgba(255, 68, 68, 0.12);
+    border-left: 2px solid #ff4444;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 9;
+  }
+  #error-highlight-overlay.visible { opacity: 1; }
+
+  #line-badge {
+    position: absolute;
+    left: 50px;
+    background: #ff8800;
+    color: #000;
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+    padding: 1px 6px;
+    border-radius: 3px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    z-index: 11;
+    white-space: nowrap;
+  }
+  #line-badge.visible { opacity: 1; }
+
+  #gutter-cursor {
+    position: absolute;
+    left: 0;
+    width: 44px;
+    background: rgba(255,136,0,0.06);
+    border-right: 2px solid rgba(255,136,0,0.3);
+    pointer-events: none;
+    z-index: 3;
+    transition: top 0.05s;
+  }
+
+  /* ── DEBUG PANEL ── */
+  #debug-panel {
+    height: 0;
+    overflow: hidden;
+    border-top: 0 solid #333;
+    background: #141414;
+    display: flex;
+    flex-direction: column;
+    transition: height 0.2s ease, border-top-width 0.2s ease;
+    flex-shrink: 0;
+  }
+  #debug-panel.open {
+    height: 200px;
+    border-top-width: 1px;
+  }
+
+  #debug-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    border-bottom: 1px solid #1e1e1e;
+    background: #1a1a1a;
+    flex-shrink: 0;
+  }
+  #debug-header-title {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    flex: 1;
+  }
+  #debug-summary {
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    color: #555;
+    letter-spacing: 1px;
+  }
+  #debug-summary.has-errors { color: #ff4444; }
+  #debug-summary.has-warnings { color: #ffaa00; }
+  #debug-summary.clean { color: #44aa66; }
+
+  #debug-filter-bar {
+    display: flex;
+    gap: 6px;
+    padding: 0 12px;
+  }
+  .dfbtn {
+    font-size: 10px; padding: 2px 8px; border: 1px solid #2a2a2a;
+    background: transparent; color: #555; border-radius: 4px;
+    cursor: pointer; font-family: 'Courier New', monospace;
+    letter-spacing: 1px; text-transform: uppercase; transition: all 0.1s;
+  }
+  .dfbtn.active { background: #2a2a2a; color: #ccc; border-color: #444; }
+  .dfbtn.error-f.active { color: #ff4444; border-color: #ff4444; background: rgba(255,68,68,0.08); }
+  .dfbtn.warn-f.active  { color: #ffaa00; border-color: #ffaa00; background: rgba(255,170,0,0.08); }
+  .dfbtn.info-f.active  { color: #4488ff; border-color: #4488ff; background: rgba(68,136,255,0.08); }
+
+  #debug-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
+  #debug-scroll::-webkit-scrollbar { width: 4px; }
+  #debug-scroll::-webkit-scrollbar-track { background: transparent; }
+  #debug-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+
+  .debug-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #1a1a1a;
+    transition: background 0.1s;
+  }
+  .debug-item:hover { background: #1e1e1e; }
+  .debug-item.active-hint { background: rgba(255,136,0,0.07); }
+
+  .debug-icon {
+    font-size: 11px;
+    width: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-style: normal;
+  }
+  .err-icon  { color: #ff4444; }
+  .warn-icon { color: #ffaa00; }
+  .info-icon { color: #4488ff; }
+
+  .debug-line-num {
+    font-size: 11px;
+    color: #555;
+    font-family: 'Courier New', monospace;
+    min-width: 38px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .debug-rule {
+    font-size: 10px;
+    color: #444;
+    font-family: 'Courier New', monospace;
+    min-width: 140px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+  .debug-msg {
+    font-size: 11px;
+    color: #aaa;
+    font-family: 'Courier New', monospace;
+    flex: 1;
+    line-height: 1.5;
+  }
+  .debug-msg em {
+    font-style: normal;
+    color: #ff8800;
+    font-family: 'Courier New', monospace;
+  }
+
+  #debug-empty {
+    padding: 20px 12px;
+    font-size: 12px;
+    color: #3a3a3a;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  #debug-empty.clean { color: #44aa66; }
+
+  /* Debug panel resize handle */
+  #debug-resize {
+    height: 4px;
+    background: #1e1e1e;
+    cursor: row-resize;
+    flex-shrink: 0;
+    border-top: 1px solid #222;
+    display: none;
+  }
+  #debug-resize:hover { background: #333; }
+  #debug-panel.open ~ #debug-resize,
+  #debug-resize.show { display: block; }
+
+  #v-divider { width: 4px; background: #2a2a2a; cursor: col-resize; flex-shrink: 0; }
+  #v-divider:hover { background: #444; }
+
+  #right { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #preview-bar { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-bottom: 1px solid #333; background: #222; flex-shrink: 0; }
+  #preview-bar-left { flex: 1; display: flex; align-items: center; gap: 6px; }
+  #preview-label { font-size: 19px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+  #status { font-size: 19px; color: #555; margin-left: auto; }
+  .dev-btn { font-size: 19px; padding: 5px 12px; border: 1px solid #444; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; }
+  .dev-btn:hover { background: #2a2a2a; color: #ccc; }
+  .dev-btn.active { background: #333; color: #fff; border-color: #666; }
+
+  .zoom-sep { width: 1px; height: 18px; background: #444; margin: 0 2px; }
+  #zoom-out-btn, #zoom-in-btn, #zoom-reset-btn {
+    font-size: 17px; padding: 4px 10px; border: 1px solid #444; background: transparent;
+    color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace;
+    line-height: 1; transition: background 0.15s, color 0.15s;
+  }
+  #zoom-out-btn:hover, #zoom-in-btn:hover, #zoom-reset-btn:hover { background: #2a2a2a; color: #ccc; }
+  #zoom-level-display {
+    font-size: 13px; color: #666; font-family: 'Courier New', monospace;
+    min-width: 38px; text-align: center; letter-spacing: 1px;
+  }
+
+  #border-btn { font-size: 19px; padding: 5px 12px; border: 1px solid #444; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; transition: all 0.15s; }
+  #border-btn:hover { background: #2a2a2a; color: #ccc; }
+  #border-btn.border-on { color: #ff8800; border-color: #ff8800; background: rgba(255,136,0,0.08); box-shadow: 0 0 6px rgba(255,136,0,0.3); }
+
+  #rollback-btn { font-size: 19px; padding: 5px 12px; border: 1px solid #444; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; transition: all 0.15s; }
+  #rollback-btn:hover:not(:disabled) { background: #2a2a2a; color: #ccc; }
+  #rollback-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  #rollback-btn.has-history { color: #ff8800; border-color: #ff8800; }
+
+  #rollback-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }
+  #rollback-overlay.visible { display: flex; }
+  #rollback-box { background: #1e1e1e; border: 1px solid #444; border-radius: 10px; padding: 28px 32px; width: 520px; max-width: 94vw; }
+  #rollback-box h3 { font-family: 'Courier New', monospace; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: #ccc; margin-bottom: 18px; }
+  #rollback-list { display: flex; flex-direction: column; gap: 6px; max-height: 340px; overflow-y: auto; margin-bottom: 18px; }
+  .rb-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #2a2a2a; border: 1px solid #333; border-radius: 6px; cursor: pointer; transition: border-color 0.1s, background 0.1s; }
+  .rb-item:hover { background: #333; border-color: #555; }
+  .rb-item.current { border-color: #ff8800; background: rgba(255,136,0,0.06); }
+  .rb-item-meta { flex: 1; }
+  .rb-item-time { font-size: 12px; color: #ff8800; font-family: 'Courier New', monospace; letter-spacing: 1px; }
+  .rb-item-stats { font-size: 11px; color: #555; font-family: 'Courier New', monospace; margin-top: 2px; }
+  .rb-item-preview { font-size: 11px; color: #444; font-family: 'Courier New', monospace; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; }
+  .rb-restore-btn { font-size: 12px; padding: 4px 12px; border: 1px solid #ff8800; background: transparent; color: #ff8800; border-radius: 4px; cursor: pointer; font-family: 'Courier New', monospace; white-space: nowrap; transition: background 0.1s, color 0.1s; }
+  .rb-restore-btn:hover { background: #ff8800; color: #000; }
+  .rb-current-label { font-size: 11px; color: #ff8800; font-family: 'Courier New', monospace; padding: 4px 10px; border: 1px solid #ff8800; border-radius: 4px; opacity: 0.6; }
+  #rollback-close { font-size: 13px; padding: 6px 20px; border: 1px solid #555; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; }
+  #rollback-close:hover { background: #333; color: #ccc; }
+  #rollback-empty { color: #555; font-family: 'Courier New', monospace; font-size: 13px; text-align: center; padding: 20px 0; }
+
+  #preview-area { flex: 1; display: flex; align-items: center; justify-content: center; overflow: auto; background: #1a1a1a; position: relative; }
+  #preview-area.device-mode { padding: 20px; background: #111; }
+  #preview-area.inspecting { cursor: crosshair; }
+
+  #zoom-wrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transform-origin: top center;
+    transition: transform 0.15s ease;
+    width: 100%;
+    height: 100%;
+  }
+
+  #preview { border: none; background: #fff; }
+  #preview.desktop { width: 100%; height: 100%; }
+  #preview.tablet  { width: 768px; height: 1024px; border: 6px solid #444; border-radius: 12px; flex-shrink: 0; }
+  #preview.mobile  { width: 375px; height: 812px;  border: 6px solid #444; border-radius: 20px; flex-shrink: 0; }
+
+  #page-border {
+    position: absolute; inset: 0;
+    border: 2px solid #ff8800; border-radius: 3px;
+    pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 5;
+    box-shadow: inset 0 0 0 1px rgba(255,136,0,0.15), 0 0 20px rgba(255,136,0,0.08);
+  }
+  #page-border.visible { opacity: 1; }
+  #page-border::before, #page-border::after { content: ''; position: absolute; background: #ff8800; opacity: 0.4; }
+  #page-border::before { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
+  #page-border::after  { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
+
+  #size-badge-w, #size-badge-h {
+    position: absolute; background: rgba(255,136,0,0.85); color: #000;
+    font-size: 10px; font-family: 'Courier New', monospace; padding: 2px 6px;
+    border-radius: 3px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 6; white-space: nowrap;
+  }
+  #size-badge-w { bottom: 6px; left: 50%; transform: translateX(-50%); }
+  #size-badge-h { top: 50%; right: 6px; transform: translateY(-50%) rotate(90deg); transform-origin: right center; }
+  #size-badge-w.visible, #size-badge-h.visible { opacity: 1; }
+
+  #inspect-tip {
+    position: fixed; background: #ff8800; color: #000; font-size: 11px;
+    font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 4px;
+    pointer-events: none; display: none; z-index: 9000; white-space: nowrap;
+  }
+
+  #about-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+  #about-overlay.visible { display: flex; }
+  #about-box { background: #222; border: 1px solid #444; border-radius: 10px; padding: 36px 40px; max-width: 420px; width: 90%; text-align: center; }
+  #about-box h2 { font-family: 'Courier New', monospace; font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-bottom: 8px; }
+  #about-box .version { font-size: 13px; color: #555; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+  #about-box p { font-size: 15px; color: #aaa; line-height: 1.7; margin-bottom: 24px; }
+  #about-box .site { font-size: 15px; color: #ccc; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 28px; }
+  #about-close { font-size: 13px; padding: 6px 20px; border: 1px solid #555; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; }
+  #about-close:hover { background: #333; color: #ccc; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top-toolbar">
+    <span class="label">HTML Preview</span>
+    <span id="version-badge">v1.5</span>
+    <div class="sep"></div>
+    <span id="font-label">Font</span>
+    <input type="range" id="font-size-slider" min="10" max="24" value="13" step="1">
+    <span id="font-size-val">13px</span>
+    <div class="sep"></div>
+    <button class="tbtn" id="inspect-btn" title="Click elements in preview to highlight source (Ctrl+I)">Inspect</button>
+    <button class="tbtn" id="debug-btn" title="Toggle HTMLHint debug panel (Ctrl+D)">
+      Debug
+      <span id="debug-badge"></span>
+    </button>
+    <button class="tbtn" id="rollback-btn" disabled title="View and restore previous versions">Rollback</button>
+    <button class="tbtn" id="clear-btn">Clear</button>
+    <button class="tbtn" id="about-btn">About</button>
+    <button class="tbtn" id="home-btn" onclick="window.open('https://www.dpaul.studio','_blank')">&#8592; <span class="brand-dp">DPAUL</span><span class="brand-studio">.STUDIO</span></button>
+  </div>
+
+  <div id="h-divider"></div>
+
+  <div id="main">
+    <div id="left">
+      <div id="editor-toolbar"><span>HTML input</span></div>
+      <div id="left-body">
+        <div id="editor-wrapper">
+          <div id="line-numbers">
+            <div id="gutter-cursor"></div>
+            <div id="line-numbers-inner"></div>
+          </div>
+          <textarea id="editor" spellcheck="false" placeholder="Paste your HTML here..."></textarea>
+          <div id="highlight-overlay"></div>
+          <div id="error-highlight-overlay"></div>
+          <div id="line-badge"></div>
+        </div>
+
+        <!-- Debug Panel -->
+        <div id="debug-panel">
+          <div id="debug-header">
+            <span id="debug-header-title">&#128295; HTMLHint</span>
+            <div id="debug-filter-bar">
+              <button class="dfbtn error-f active" data-filter="error">&#9679; Errors</button>
+              <button class="dfbtn warn-f active" data-filter="warning">&#9650; Warnings</button>
+            </div>
+            <span id="debug-summary">—</span>
+          </div>
+          <div id="debug-scroll">
+            <div id="debug-empty">No document loaded</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="v-divider"></div>
+    <div id="right">
+      <div id="preview-bar">
+        <div id="preview-bar-left">
+          <span id="preview-label">Preview</span>
+          <button class="dev-btn active" data-mode="desktop">Desktop</button>
+          <button class="dev-btn" data-mode="tablet">Tablet</button>
+          <button class="dev-btn" data-mode="mobile">Mobile</button>
+          <div class="zoom-sep"></div>
+          <button id="zoom-out-btn" title="Zoom out (-)">−</button>
+          <span id="zoom-level-display">100%</span>
+          <button id="zoom-in-btn" title="Zoom in (+)">+</button>
+          <button id="zoom-reset-btn" title="Reset zoom">↺</button>
+          <div class="zoom-sep"></div>
+          <button id="border-btn" title="Toggle page border">Border</button>
+        </div>
+        <span id="status"></span>
+      </div>
+      <div id="preview-area">
+        <div id="zoom-wrapper">
+          <iframe id="preview" class="desktop" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+        <div id="page-border"></div>
+        <div id="size-badge-w"></div>
+        <div id="size-badge-h"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="inspect-tip"></div>
+
+<div id="about-overlay">
+  <div id="about-box">
+    <h2>HTML Live Preview</h2>
+    <div class="version">Version 1.5</div>
+    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel with HTMLHint (Ctrl+D), zoom controls, and version rollback.</p>
+    <div class="site">DPAUL.STUDIO</div>
+    <button id="about-close">Close</button>
+  </div>
+</div>
+
+<div id="drag-overlay" style="display:none;position:fixed;inset:0;z-index:9999;"></div>
+
+<div id="rollback-overlay">
+  <div id="rollback-box">
+    <h3>&#8635; Version History</h3>
+    <div id="rollback-list"></div>
+    <button id="rollback-close">Close</button>
+  </div>
+</div>
+
+<!-- HTMLHint via esm.sh (browser-compatible ESM build) -->
+<script type="module">
+  import { HTMLHint } from 'https://esm.sh/htmlhint@1.4.0';
+  window.__HTMLHint = HTMLHint;
+  window.dispatchEvent(new Event('htmlhint-ready'));
+</script>
+
+<script>
+  const editor           = document.getElementById('editor');
+  const preview          = document.getElementById('preview');
+  const previewArea      = document.getElementById('preview-area');
+  const zoomWrapper      = document.getElementById('zoom-wrapper');
+  const pageBorder       = document.getElementById('page-border');
+  const sizeBadgeW       = document.getElementById('size-badge-w');
+  const sizeBadgeH       = document.getElementById('size-badge-h');
+  const status           = document.getElementById('status');
+  const clearBtn         = document.getElementById('clear-btn');
+  const vDivider         = document.getElementById('v-divider');
+  const hDivider         = document.getElementById('h-divider');
+  const left             = document.getElementById('left');
+  const main             = document.getElementById('main');
+  const devBtns          = document.querySelectorAll('.dev-btn');
+  const fontSlider       = document.getElementById('font-size-slider');
+  const fontVal          = document.getElementById('font-size-val');
+  const topToolbar       = document.getElementById('top-toolbar');
+  const aboutBtn         = document.getElementById('about-btn');
+  const aboutOverlay     = document.getElementById('about-overlay');
+  const aboutClose       = document.getElementById('about-close');
+  const dragOverlay      = document.getElementById('drag-overlay');
+  const inspectBtn       = document.getElementById('inspect-btn');
+  const highlightOverlay = document.getElementById('highlight-overlay');
+  const errorHighlight   = document.getElementById('error-highlight-overlay');
+  const lineBadge        = document.getElementById('line-badge');
+  const inspectTip       = document.getElementById('inspect-tip');
+  const zoomInBtn        = document.getElementById('zoom-in-btn');
+  const zoomOutBtn       = document.getElementById('zoom-out-btn');
+  const zoomResetBtn     = document.getElementById('zoom-reset-btn');
+  const zoomDisplay      = document.getElementById('zoom-level-display');
+  const borderBtn        = document.getElementById('border-btn');
+  const lineNumbersEl    = document.getElementById('line-numbers');
+  const lineNumbersInner = document.getElementById('line-numbers-inner');
+  const gutterCursor     = document.getElementById('gutter-cursor');
+  const rollbackBtn      = document.getElementById('rollback-btn');
+  const rollbackOverlay  = document.getElementById('rollback-overlay');
+  const rollbackList     = document.getElementById('rollback-list');
+  const rollbackClose    = document.getElementById('rollback-close');
+
+  // Debug panel elements
+  const debugBtn       = document.getElementById('debug-btn');
+  const debugBadge     = document.getElementById('debug-badge');
+  const debugPanel     = document.getElementById('debug-panel');
+  const debugScroll    = document.getElementById('debug-scroll');
+  const debugEmpty     = document.getElementById('debug-empty');
+  const debugSummary   = document.getElementById('debug-summary');
+  const debugFilterBtns = document.querySelectorAll('.dfbtn');
+
+  let debounceTimer;
+  let inspectMode   = false;
+  let debugOpen     = false;
+  let highlightTimer = null;
+  let zoomLevel     = 1.0;
+  let borderMode    = false;
+  let currentMode   = 'desktop';
+  let currentLineH  = 20.8;
+  let currentFontSize = 13;
+  let activeLine    = 1;
+
+  // HTMLHint state
+  let HTMLHint      = null;
+  let hintResults   = [];
+  let activeFilters = new Set(['error', 'warning']);
+  let activeHintIndex = -1;
+
+  window.addEventListener('htmlhint-ready', () => {
+    HTMLHint = window.__HTMLHint;
+    if (editor.value.trim()) runHint();
+  });
+
+  // ── HTMLHint ruleset ─────────────────────────────────────────────────────
+  const HINT_RULES = {
+    'tagname-lowercase':          true,
+    'attr-lowercase':             true,
+    'attr-value-double-quotes':   true,
+    'attr-no-duplication':        true,
+    'doctype-first':              true,
+    'tag-pair':                   true,
+    'tag-self-close':             false,
+    'spec-char-escape':           true,
+    'id-unique':                  true,
+    'src-not-empty':              true,
+    'alt-require':                true,
+    'space-tab-mixed-disabled':   'space',
+    'id-class-ad-disabled':       true,
+    'href-abs-or-rel':            false,
+    'attr-unsafe-chars':          true,
+    'title-require':              true
+  };
+
+  function runHint() {
+    if (!HTMLHint || !editor.value.trim()) {
+      hintResults = [];
+      renderDebugPanel();
+      updateDebugBadge();
+      clearGutterErrors();
+      return;
+    }
+    try {
+      hintResults = HTMLHint.verify(editor.value, HINT_RULES);
+    } catch(e) {
+      hintResults = [];
+    }
+    renderDebugPanel();
+    updateDebugBadge();
+    markGutterErrors();
+  }
+
+  function updateDebugBadge() {
+    const errors   = hintResults.filter(r => r.type === 'error').length;
+    const warnings = hintResults.filter(r => r.type === 'warning').length;
+    const total    = errors + warnings;
+
+    debugBtn.classList.remove('has-errors', 'has-warnings', 'debug-on');
+    debugBadge.classList.remove('visible', 'warn');
+
+    if (total > 0) {
+      debugBadge.textContent = total > 99 ? '99+' : total;
+      debugBadge.classList.add('visible');
+      if (errors > 0) {
+        debugBtn.classList.add('has-errors');
+      } else {
+        debugBtn.classList.add('has-warnings');
+        debugBadge.classList.add('warn');
+      }
+    }
+    if (debugOpen) debugBtn.classList.add('debug-on');
+  }
+
+  function markGutterErrors() {
+    clearGutterErrors();
+    const nums = lineNumbersInner.children;
+    hintResults.forEach(r => {
+      const idx = r.line - 1;
+      if (idx >= 0 && idx < nums.length) {
+        nums[idx].classList.add(r.type === 'error' ? 'has-error' : 'has-warning');
+      }
+    });
+  }
+
+  function clearGutterErrors() {
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) {
+      nums[i].classList.remove('has-error', 'has-warning');
+    }
+  }
+
+  function renderDebugPanel() {
+    debugScroll.innerHTML = '';
+    const src = editor.value.trim();
+
+    // Summary bar
+    const errors   = hintResults.filter(r => r.type === 'error').length;
+    const warnings = hintResults.filter(r => r.type === 'warning').length;
+
+    if (!src) {
+      debugSummary.textContent = '—';
+      debugSummary.className = '';
+      const el = document.createElement('div');
+      el.id = 'debug-empty';
+      el.textContent = 'No document loaded';
+      debugScroll.appendChild(el);
+      return;
+    }
+
+    if (hintResults.length === 0) {
+      debugSummary.textContent = '✓ No issues';
+      debugSummary.className = 'clean';
+      const el = document.createElement('div');
+      el.id = 'debug-empty';
+      el.className = 'clean';
+      el.textContent = '✓ All clear — no issues found';
+      debugScroll.appendChild(el);
+      return;
+    }
+
+    if (errors > 0 && warnings > 0) {
+      debugSummary.textContent = errors + ' error' + (errors > 1 ? 's' : '') + ' · ' + warnings + ' warning' + (warnings > 1 ? 's' : '');
+      debugSummary.className = 'has-errors';
+    } else if (errors > 0) {
+      debugSummary.textContent = errors + ' error' + (errors > 1 ? 's' : '');
+      debugSummary.className = 'has-errors';
+    } else {
+      debugSummary.textContent = warnings + ' warning' + (warnings > 1 ? 's' : '');
+      debugSummary.className = 'has-warnings';
+    }
+
+    const filtered = hintResults.filter(r => activeFilters.has(r.type));
+
+    if (filtered.length === 0) {
+      const el = document.createElement('div');
+      el.id = 'debug-empty';
+      el.textContent = 'No items match current filters';
+      debugScroll.appendChild(el);
+      return;
+    }
+
+    filtered.forEach((r, i) => {
+      const item = document.createElement('div');
+      item.className = 'debug-item';
+      item.dataset.index = i;
+
+      const icon = document.createElement('span');
+      icon.className = 'debug-icon ' + (r.type === 'error' ? 'err-icon' : 'warn-icon');
+      icon.textContent = r.type === 'error' ? '✖' : '▲';
+
+      const lineNum = document.createElement('span');
+      lineNum.className = 'debug-line-num';
+      lineNum.textContent = 'L' + r.line + ':' + r.col;
+
+      const rule = document.createElement('span');
+      rule.className = 'debug-rule';
+      rule.textContent = r.rule.id;
+
+      const msg = document.createElement('span');
+      msg.className = 'debug-msg';
+      // Highlight code-like tokens in the message
+      msg.innerHTML = r.message.replace(/`([^`]+)`/g, '<em>$1</em>')
+                               .replace(/&lt;([a-zA-Z][^>]*)&gt;/g, '<em>&lt;$1&gt;</em>');
+
+      item.appendChild(icon);
+      item.appendChild(lineNum);
+      item.appendChild(rule);
+      item.appendChild(msg);
+
+      item.addEventListener('click', () => jumpToHintLine(r, item));
+      debugScroll.appendChild(item);
+    });
+  }
+
+  function jumpToHintLine(r, itemEl) {
+    // De-highlight previous
+    document.querySelectorAll('.debug-item.active-hint').forEach(el => el.classList.remove('active-hint'));
+    itemEl.classList.add('active-hint');
+
+    const lineH  = getLineHeight();
+    const padTop = 14;
+    const lineIdx = r.line - 1;
+    const topPx  = padTop + lineIdx * lineH;
+
+    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH);
+    syncGutterScroll();
+
+    // Flash error highlight overlay
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
+
+    errorHighlight.style.top    = relTop + 'px';
+    errorHighlight.style.height = lineH + 'px';
+    errorHighlight.classList.add('visible');
+    setTimeout(() => errorHighlight.classList.remove('visible'), 2000);
+
+    // Move cursor to the line
+    const lines   = editor.value.split('\n');
+    let charPos   = 0;
+    for (let i = 0; i < Math.min(r.line - 1, lines.length); i++) charPos += lines[i].length + 1;
+    charPos += Math.min(r.col - 1, (lines[r.line - 1] || '').length);
+    editor.focus();
+    editor.selectionStart = editor.selectionEnd = charPos;
+    updateActiveLine();
+  }
+
+  // Filter buttons
+  debugFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      if (activeFilters.has(f)) {
+        // Keep at least one filter active
+        if (activeFilters.size > 1) {
+          activeFilters.delete(f);
+          btn.classList.remove('active');
+        }
+      } else {
+        activeFilters.add(f);
+        btn.classList.add('active');
+      }
+      renderDebugPanel();
+    });
+  });
+
+  // Toggle debug panel
+  function setDebugOpen(on) {
+    debugOpen = on;
+    debugPanel.classList.toggle('open', on);
+    debugBtn.classList.toggle('debug-on', on);
+    if (on) { runHint(); }
+  }
+  debugBtn.addEventListener('click', () => setDebugOpen(!debugOpen));
+
+  // ── Line Numbers ─────────────────────────────────────────────────────────
+  function getLineHeight() {
+    return parseFloat(getComputedStyle(editor).lineHeight) || currentFontSize * 1.6;
+  }
+
+  function updateLineNumbers() {
+    const src = editor.value;
+    const count = src.split('\n').length;
+    currentLineH = getLineHeight();
+
+    const existing = lineNumbersInner.children;
+    while (existing.length < count) {
+      const span = document.createElement('span');
+      span.className = 'line-num';
+      lineNumbersInner.appendChild(span);
+    }
+    while (existing.length > count) {
+      lineNumbersInner.removeChild(lineNumbersInner.lastChild);
+    }
+
+    for (let i = 0; i < count; i++) {
+      existing[i].textContent = i + 1;
+      existing[i].style.lineHeight = currentLineH + 'px';
+      existing[i].style.height = currentLineH + 'px';
+    }
+
+    syncGutterScroll();
+    updateActiveLine();
+  }
+
+  function syncGutterScroll() {
+    lineNumbersEl.scrollTop = editor.scrollTop;
+  }
+
+  function updateActiveLine() {
+    const src = editor.value;
+    const pos = editor.selectionStart;
+    const linesBefore = src.substring(0, pos).split('\n');
+    activeLine = linesBefore.length;
+
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) {
+      nums[i].classList.toggle('active', i + 1 === activeLine);
+    }
+
+    const lineH = getLineHeight();
+    const padTop = 14;
+    const top = padTop + (activeLine - 1) * lineH - editor.scrollTop;
+    gutterCursor.style.top = top + 'px';
+    gutterCursor.style.height = lineH + 'px';
+    gutterCursor.style.display = 'block';
+  }
+
+  editor.addEventListener('scroll', syncGutterScroll);
+  editor.addEventListener('input', updateLineNumbers);
+  editor.addEventListener('keyup', updateActiveLine);
+  editor.addEventListener('click', updateActiveLine);
+  editor.addEventListener('mouseup', updateActiveLine);
+
+  // ── Version history ───────────────────────────────────────────────────────
+  const MAX_HISTORY = 20;
+  let history       = [];
+  let snapshotTimer = null;
+
+  function takeSnapshot(code) {
+    if (!code.trim()) return;
+    if (history.length > 0 && history[history.length - 1].code === code) return;
+    const now   = new Date();
+    const lines = code.split('\n').length;
+    const bytes = new Blob([code]).size;
+    history.push({
+      code, timestamp: now,
+      label: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      lines, bytes
+    });
+    if (history.length > MAX_HISTORY) history.shift();
+    updateRollbackBtn();
+  }
+
+  function updateRollbackBtn() {
+    const has = history.length > 1;
+    rollbackBtn.disabled = !has;
+    rollbackBtn.classList.toggle('has-history', has);
+  }
+
+  function openRollbackDialog() {
+    rollbackList.innerHTML = '';
+    if (history.length <= 1) {
+      rollbackList.innerHTML = '<div id="rollback-empty">No previous versions yet.<br>Keep editing to build history.</div>';
+    } else {
+      const items = [...history].reverse();
+      items.forEach((snap, idx) => {
+        const isCurrent = idx === 0;
+        const item = document.createElement('div');
+        item.className = 'rb-item' + (isCurrent ? ' current' : '');
+        const meta = document.createElement('div'); meta.className = 'rb-item-meta';
+        const timeEl = document.createElement('div'); timeEl.className = 'rb-item-time';
+        timeEl.textContent = snap.label + (isCurrent ? '  ← current' : '');
+        const statsEl = document.createElement('div'); statsEl.className = 'rb-item-stats';
+        statsEl.textContent = snap.lines + ' lines · ' + (snap.bytes > 1024 ? (snap.bytes/1024).toFixed(1) + ' kb' : snap.bytes + ' b');
+        const previewEl = document.createElement('div'); previewEl.className = 'rb-item-preview';
+        previewEl.textContent = snap.code.trim().substring(0, 80).replace(/\s+/g, ' ');
+        meta.appendChild(timeEl); meta.appendChild(statsEl); meta.appendChild(previewEl);
+        item.appendChild(meta);
+        if (isCurrent) {
+          const label = document.createElement('span'); label.className = 'rb-current-label'; label.textContent = 'active';
+          item.appendChild(label);
+        } else {
+          const btn = document.createElement('button'); btn.className = 'rb-restore-btn'; btn.textContent = 'Restore';
+          btn.addEventListener('click', () => restoreSnapshot(snap));
+          item.appendChild(btn);
+        }
+        rollbackList.appendChild(item);
+      });
+    }
+    rollbackOverlay.classList.add('visible');
+  }
+
+  function restoreSnapshot(snap) {
+    takeSnapshot(editor.value);
+    editor.value = snap.code;
+    updatePreview();
+    updateLineNumbers();
+    hideHighlight();
+    rollbackOverlay.classList.remove('visible');
+    updateRollbackBtn();
+    if (debugOpen) runHint();
+    const tb = document.getElementById('editor-toolbar');
+    tb.style.transition = 'background 0.1s';
+    tb.style.background = 'rgba(40,180,40,0.25)';
+    setTimeout(() => { tb.style.background = ''; }, 600);
+  }
+
+  rollbackBtn.addEventListener('click', openRollbackDialog);
+  rollbackClose.addEventListener('click', () => rollbackOverlay.classList.remove('visible'));
+  rollbackOverlay.addEventListener('click', (e) => { if (e.target === rollbackOverlay) rollbackOverlay.classList.remove('visible'); });
+
+  // ── Zoom ──────────────────────────────────────────────────────────────────
+  function applyZoom() {
+    zoomWrapper.style.transform = `scale(${zoomLevel})`;
+    zoomWrapper.style.transformOrigin = 'top center';
+    zoomDisplay.textContent = Math.round(zoomLevel * 100) + '%';
+    updateSizeBadges();
+  }
+
+  function updateSizeBadges() {
+    if (!borderMode) return;
+    sizeBadgeW.textContent = Math.round(preview.offsetWidth) + 'px';
+    sizeBadgeH.textContent = Math.round(preview.offsetHeight) + 'px';
+  }
+
+  zoomInBtn.addEventListener('click',    () => { zoomLevel = Math.min(2.0, +(zoomLevel + 0.1).toFixed(2)); applyZoom(); });
+  zoomOutBtn.addEventListener('click',   () => { zoomLevel = Math.max(0.2, +(zoomLevel - 0.1).toFixed(2)); applyZoom(); });
+  zoomResetBtn.addEventListener('click', () => { zoomLevel = 1.0; applyZoom(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); zoomLevel = Math.min(2.0, +(zoomLevel + 0.1).toFixed(2)); applyZoom(); }
+      if (e.key === '-')                  { e.preventDefault(); zoomLevel = Math.max(0.2, +(zoomLevel - 0.1).toFixed(2)); applyZoom(); }
+      if (e.key === '0')                  { e.preventDefault(); zoomLevel = 1.0; applyZoom(); }
+      if (e.key === 'i')                  { e.preventDefault(); setInspectMode(!inspectMode); }
+      if (e.key === 'd')                  { e.preventDefault(); setDebugOpen(!debugOpen); }
+    }
+  });
+
+  // ── Border mode ───────────────────────────────────────────────────────────
+  function setBorderMode(on) {
+    borderMode = on;
+    borderBtn.classList.toggle('border-on', on);
+    pageBorder.classList.toggle('visible', on);
+    sizeBadgeW.classList.toggle('visible', on);
+    sizeBadgeH.classList.toggle('visible', on);
+    if (on) updateSizeBadges();
+  }
+  borderBtn.addEventListener('click', () => setBorderMode(!borderMode));
+
+  // ── Inject inspect script ─────────────────────────────────────────────────
+  const INJECT_SCRIPT = `
+    (function() {
+      let inspecting = false;
+      let hoverEl = null;
+      const OUTLINE = '2px solid #ff8800';
+      window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'inspectMode') {
+          inspecting = e.data.value;
+          if (!inspecting && hoverEl) { hoverEl.style.outline = ''; hoverEl = null; }
+        }
+      });
+      document.addEventListener('mouseover', function(e) {
+        if (!inspecting) return;
+        if (hoverEl && hoverEl !== e.target) hoverEl.style.outline = '';
+        hoverEl = e.target;
+        if (hoverEl && hoverEl !== document.documentElement && hoverEl !== document.body)
+          hoverEl.style.outline = OUTLINE;
+      }, true);
+      document.addEventListener('mouseout', function(e) {
+        if (!inspecting) return;
+        if (e.target && e.target.style) e.target.style.outline = '';
+      }, true);
+      document.addEventListener('click', function(e) {
+        if (!inspecting) return;
+        e.preventDefault(); e.stopPropagation();
+        const el  = e.target;
+        const tag = el.tagName.toLowerCase();
+        const id  = el.id ? '#' + el.id : '';
+        const cls = el.className && typeof el.className === 'string'
+          ? '.' + el.className.trim().split(/\\s+/).join('.') : '';
+        const outer = el.outerHTML.substring(0, 500);
+        window.parent.postMessage({ type: 'inspectClick', tag, id, cls, outer }, '*');
+      }, true);
+    })();
+  `;
+
+  function injectInspectScript() {
+    try {
+      const doc = preview.contentDocument;
+      if (!doc) return;
+      const s = doc.createElement('script');
+      s.textContent = INJECT_SCRIPT;
+      (doc.head || doc.documentElement).appendChild(s);
+      preview.contentWindow.postMessage({ type: 'inspectMode', value: inspectMode }, '*');
+    } catch(e) {}
+  }
+
+  // ── Preview update ────────────────────────────────────────────────────────
+  let hintDebounce;
+  function updatePreview() {
+    const html = editor.value;
+    if (!html.trim()) { preview.srcdoc = ''; status.textContent = ''; return; }
+    preview.srcdoc = html;
+    const lines = html.split('\n').length;
+    const bytes = new Blob([html]).size;
+    status.textContent = lines + ' lines · ' + (bytes > 1024 ? (bytes/1024).toFixed(1) + ' kb' : bytes + ' b');
+    if (borderMode) setTimeout(updateSizeBadges, 200);
+  }
+
+  preview.addEventListener('load', () => {
+    injectInspectScript();
+    if (borderMode) setTimeout(updateSizeBadges, 100);
+  });
+
+  // ── Inspect mode ──────────────────────────────────────────────────────────
+  function setInspectMode(on) {
+    inspectMode = on;
+    inspectBtn.classList.toggle('inspect-on', on);
+    previewArea.classList.toggle('inspecting', on);
+    try { preview.contentWindow.postMessage({ type: 'inspectMode', value: on }, '*'); } catch(e) {}
+    if (!on) { hideHighlight(); inspectTip.style.display = 'none'; }
+  }
+  inspectBtn.addEventListener('click', () => setInspectMode(!inspectMode));
+
+  previewArea.addEventListener('mousemove', (e) => {
+    if (!inspectMode) return;
+    inspectTip.style.display = 'block';
+    inspectTip.style.left = (e.clientX + 14) + 'px';
+    inspectTip.style.top  = (e.clientY + 14) + 'px';
+    inspectTip.textContent = 'Click to find source';
+  });
+  previewArea.addEventListener('mouseleave', () => { inspectTip.style.display = 'none'; });
+
+  window.addEventListener('message', (e) => {
+    if (!e.data || e.data.type !== 'inspectClick') return;
+    const { tag, id, cls, outer } = e.data;
+    findAndHighlight(outer, tag, id, cls);
+    setInspectMode(false);
+    inspectTip.style.display = 'none';
+  });
+
+  // ── Find & highlight ──────────────────────────────────────────────────────
+  function findAndHighlight(outerHTML, tag, id, cls) {
+    const src = editor.value;
+    if (!src.trim()) return;
+    let searchStr = null, matchIndex = -1;
+
+    if (id) {
+      const idAttr = id.replace('#','');
+      const pattern = new RegExp('<' + tag + '[^>]*id=["\']' + escapeRegex(idAttr) + '["\']', 'i');
+      const m = src.match(pattern);
+      if (m) { searchStr = m[0]; matchIndex = src.search(pattern); }
+    }
+    if (matchIndex === -1) {
+      const openTagMatch = outerHTML.match(/^(<[a-z][^\n>]{0,200}>)/i);
+      if (openTagMatch) { matchIndex = src.indexOf(openTagMatch[1]); if (matchIndex !== -1) searchStr = openTagMatch[1]; }
+    }
+    if (matchIndex === -1 && cls) {
+      const firstCls = cls.replace(/^\./, '').split('.')[0];
+      if (firstCls) {
+        const pattern = new RegExp('<' + tag + '[^>]*class=["\'][^"\']*' + escapeRegex(firstCls), 'i');
+        const m = src.match(pattern);
+        if (m) { searchStr = m[0]; matchIndex = src.search(pattern); }
+      }
+    }
+    if (matchIndex === -1) {
+      const pattern = new RegExp('<' + escapeRegex(tag) + '[\\s>/]', 'i');
+      matchIndex = src.search(pattern);
+      if (matchIndex !== -1) searchStr = tag;
+    }
+    if (matchIndex === -1) { flashNone(); return; }
+
+    const before    = src.substring(0, matchIndex);
+    const startLine = before.split('\n').length;
+    const snippet   = src.substring(matchIndex);
+    const closingTag = '</' + tag + '>';
+    let endOffset = snippet.indexOf(closingTag);
+    let endLine;
+    if (endOffset !== -1) {
+      endLine = src.substring(0, matchIndex + endOffset + closingTag.length).split('\n').length;
+    } else {
+      const eol = snippet.indexOf('\n');
+      endLine = startLine + (eol === -1 ? 0 : src.substring(matchIndex, matchIndex + eol).split('\n').length - 1);
+    }
+    endLine = Math.min(endLine, startLine + 30);
+    scrollEditorToLine(startLine, endLine, tag, id, cls);
+  }
+
+  function flashNone() {
+    const tb = document.getElementById('editor-toolbar');
+    tb.style.transition = 'background 0.1s';
+    tb.style.background = 'rgba(200,40,40,0.3)';
+    setTimeout(() => { tb.style.background = ''; }, 400);
+  }
+
+  function escapeRegex(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function scrollEditorToLine(startLine, endLine, tag, id, cls) {
+    const lineH  = getLineHeight();
+    const padTop = 14;
+    const topPx  = padTop + (startLine - 1) * lineH;
+    const heightPx = (endLine - startLine + 1) * lineH;
+    const editorH  = editor.clientHeight;
+    editor.scrollTop = Math.max(0, topPx - editorH / 2 + heightPx / 2);
+    syncGutterScroll();
+
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const relTop     = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
+
+    highlightOverlay.style.top    = relTop + 'px';
+    highlightOverlay.style.height = heightPx + 'px';
+    highlightOverlay.classList.add('visible');
+
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) {
+      nums[i].classList.toggle('highlighted', i + 1 >= startLine && i + 1 <= endLine);
+    }
+
+    const selector = (id || cls) ? (tag + (id||'') + (cls||'').split('.').slice(0,2).join('.')) : tag;
+    lineBadge.textContent = 'L' + startLine + '  ' + selector;
+    lineBadge.style.top   = (relTop - 18) + 'px';
+    lineBadge.classList.add('visible');
+
+    clearTimeout(highlightTimer);
+    highlightTimer = setTimeout(() => {
+      hideHighlight();
+      for (let i = 0; i < nums.length; i++) nums[i].classList.remove('highlighted');
+    }, 2500);
+  }
+
+  function hideHighlight() {
+    highlightOverlay.classList.remove('visible');
+    lineBadge.classList.remove('visible');
+  }
+
+  editor.addEventListener('input', () => {
+    hideHighlight();
+    clearTimeout(debounceTimer);
+    clearTimeout(snapshotTimer);
+    clearTimeout(hintDebounce);
+    debounceTimer  = setTimeout(updatePreview, 300);
+    snapshotTimer  = setTimeout(() => takeSnapshot(editor.value), 2000);
+    hintDebounce   = setTimeout(runHint, 600);
+    updateLineNumbers();
+  });
+
+  editor.addEventListener('paste', () => {
+    setTimeout(() => {
+      takeSnapshot(editor.value);
+      updateLineNumbers();
+      runHint();
+    }, 50);
+  });
+
+  // ── Device mode ───────────────────────────────────────────────────────────
+  function setMode(mode) {
+    currentMode = mode;
+    preview.className = mode;
+    previewArea.className = (mode === 'desktop' ? '' : 'device-mode') + (inspectMode ? ' inspecting' : '');
+    devBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    if (borderMode) setTimeout(updateSizeBadges, 100);
+  }
+  devBtns.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+
+  editor.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = editor.selectionStart;
+      editor.value = editor.value.slice(0, s) + '  ' + editor.value.slice(editor.selectionEnd);
+      editor.selectionStart = editor.selectionEnd = s + 2;
+      updateLineNumbers();
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    takeSnapshot(editor.value);
+    editor.value = '';
+    preview.srcdoc = '';
+    status.textContent = '';
+    hideHighlight();
+    hintResults = [];
+    updateLineNumbers();
+    renderDebugPanel();
+    updateDebugBadge();
+    editor.focus();
+  });
+
+  // ── Font size ─────────────────────────────────────────────────────────────
+  fontSlider.addEventListener('input', () => {
+    currentFontSize = parseInt(fontSlider.value);
+    editor.style.fontSize = currentFontSize + 'px';
+    fontVal.textContent = currentFontSize + 'px';
+    lineNumbersInner.style.fontSize = currentFontSize + 'px';
+    setTimeout(updateLineNumbers, 50);
+  });
+
+  aboutBtn.addEventListener('click',  () => aboutOverlay.classList.add('visible'));
+  aboutClose.addEventListener('click', () => aboutOverlay.classList.remove('visible'));
+  aboutOverlay.addEventListener('click', (e) => { if (e.target === aboutOverlay) aboutOverlay.classList.remove('visible'); });
+
+  // ── Divider drag ──────────────────────────────────────────────────────────
+  let vDrag = false, hDrag = false, hStartY, hStartH;
+
+  vDivider.addEventListener('mousedown', (e) => {
+    vDrag = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    dragOverlay.style.display = 'block';
+    dragOverlay.style.cursor = 'col-resize';
+    e.preventDefault();
+  });
+
+  hDivider.addEventListener('mousedown', (e) => {
+    hDrag = true; hStartY = e.clientY; hStartH = topToolbar.offsetHeight;
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (vDrag) {
+      const rect = main.getBoundingClientRect();
+      const newLeft = Math.min(Math.max(e.clientX - rect.left, 200), rect.width - 200);
+      left.style.width = newLeft + 'px';
+      left.style.flex = 'none';
+    }
+    if (hDrag) {
+      const delta = e.clientY - hStartY;
+      const newH = Math.min(Math.max(hStartH + delta, 36), 120);
+      topToolbar.style.height = newH + 'px';
+      topToolbar.style.flexWrap = newH > 55 ? 'wrap' : 'nowrap';
+    }
+  });
+
+  document.addEventListener('mouseup', () => {
+    vDrag = false; hDrag = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    dragOverlay.style.display = 'none';
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  updateLineNumbers();
+</script>
+</body>
+</html>

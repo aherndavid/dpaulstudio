@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music — dPaul Technologies</title>
+    
+    <style>
+        :root {
+            --bg:         #131413;
+            --bg2:        #1a1c1a;
+            --orange:     #FF6600;
+            --cream:      #D4C4A8;
+            --text:       #c8c8c0;
+            --dim:        #7a7a70;
+            --border:     rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 130%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            padding: 0 24px; display: flex; align-items: center; gap: 4px; height: 72px;
+        }
+        nav a {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.4rem; color: var(--cream);
+            text-decoration: none; padding: 10px 20px;
+            border: 1px solid transparent; border-radius: 3px;
+            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
+        }
+        nav a:hover { border-color: var(--orange); color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav .spacer { flex: 1; }
+
+        /* ── PAGE ── */
+        .page { max-width: 1400px; margin: 0 auto; padding: 0 56px 80px; }
+
+        /* ── HERO ── */
+        .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 {
+            font-size: clamp(2.86rem, 5.5vw, 5.2rem);
+            font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 20px;
+        }
+        .hero h1 span { color: var(--orange); }
+        .hero p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; max-width: 600px; color: var(--text); }
+
+        /* ── TTS PLAYER ── */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 7px 16px; cursor: pointer; border-radius: 3px; font-family: inherit;
+        }
+        .tts-btn.active { background: var(--orange); color: #000; font-weight: bold; }
+        .tts-highlight { background: rgba(255,102,0,0.15); border-radius: 2px; }
+
+        /* ── SECTIONS ── */
+        .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 1.17rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
+        .section h2 { font-size: clamp(1.82rem, 3.2vw, 2.6rem); font-weight: 700; color: #fff; margin-bottom: 14px; }
+        .section-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.85; max-width: 620px; margin-bottom: 40px; }
+
+        /* ── SPLIT / ALBUM ── */
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+        .split-text p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; margin-bottom: 14px; }
+        .split-text p strong { color: var(--orange); font-weight: normal; }
+        
+        .album-link { text-decoration: none; display: block; width: 100%; max-width: 340px; }
+        .album-cover {
+            width: 100%; aspect-ratio: 1; border: 1px solid var(--border); border-radius: 4px;
+            overflow: hidden; position: relative; background: #0e0f0e; transition: all 0.3s ease;
+        }
+        .album-cover:hover { border-color: var(--orange); }
+        .album-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .click-hint {
+            position: absolute; bottom: 12px; left: 0; right: 0; text-align: center;
+            font-size: 0.8rem; letter-spacing: 0.15em; color: var(--orange); text-transform: uppercase;
+            opacity: 0; transition: opacity 0.2s; pointer-events: none;
+        }
+        .album-cover:hover .click-hint { opacity: 1; }
+
+        /* ── PROCESS ── */
+        .process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+        .process-card { background: var(--bg2); border: 1px solid var(--border); padding: 22px 20px; border-radius: 6px; }
+        .card-label { font-size: 0.78rem; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
+        
+        .outcome-strip {
+            margin-top: 40px; padding: 28px 32px; border: 1px solid var(--orange);
+            border-radius: 6px; background: rgba(255,102,0,0.04);
+        }
+
+        .cta-btn {
+            display: inline-block; padding: 14px 36px; background: var(--orange); color: #000;
+            text-decoration: none; font-weight: bold; border-radius: 3px; letter-spacing: 0.15em; text-transform: uppercase;
+        }
+
+        /* ── FONT NUDGE ── */
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border); padding: 12px 16px; border-radius: 4px;
+        }
+        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 32px; height: 32px; cursor: pointer; }
+
+        .reveal { opacity: 0; transform: translateY(22px); transition: 0.55s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        @media (max-width: 760px) {
+            .split, .process-grid { grid-template-columns: 1fr; }
+            .page { padding: 0 20px 80px; }
+            nav a { font-size: 1rem; padding: 5px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div style="font-size: 0.65rem; color: var(--orange); text-transform: uppercase; margin-bottom: 8px;">Text size</div>
+    <button class="font-btn" onclick="adjustFont(-1)">-</button>
+    <span id="fontIndicator" style="font-size: 0.7rem; margin: 0 8px;">100%</span>
+    <button class="font-btn" onclick="adjustFont(1)">+</button>
+</div>
+
+<nav>
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html" class="active">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <div class="spacer"></div>
+    <a href="about.html">info</a>
+</nav>
+
+<div class="page">
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Music</div>
+        <h1>The Renaissance<br><span>"Trilogy Feed"</span> Archive</h1>
+        <p>An interactive archive built from three 70-minute master recordings — engineered in Logic Pro and presented as a zero-delay, high-fidelity experience.</p>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+            <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
+            <select id="ttsVoiceSel" onchange="ttsSetVoice(this.value)" style="background: #111; color: #fff; border: 1px solid #333; padding: 5px;"></select>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 01 — The Release</div>
+        <h2>Sasha & John Digweed — Renaissance</h2>
+
+        <div class="split">
+            <div style="display: flex; justify-content: center;">
+                <a href="https://aherndavid.github.io/dpaulstudio/launchers/renaissance-launcher.html" target="_blank" class="album-link">
+                    <div class="album-cover" id="albumCover">
+                        <img src="../assets/renaissance-cover.jpg" alt="Renaissance Cover">
+                        <div class="click-hint">// Click to enjoy</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="split-text">
+                <p>In 1994, Sasha & John Digweed changed electronic music with <strong>Renaissance: The Mix Collection</strong> — the first official nightclub "sampler."</p>
+                <p>The album was a masterclass in early 90s <strong>progressive house and trance</strong>. It wasn't just a hit — it was a cultural milestone.</p>
+                <p>From its iconic Sistine Chapel artwork to the triple-CD package, it defined the sound of a generation.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 02 — The Build Process</div>
+        <h2>Engineering a web archive</h2>
+        <p class="section-intro">This project demonstrated how DAW expertise and web infrastructure can deliver professional-grade interactive audio.</p>
+
+        <div class="process-grid">
+            <div class="process-card">
+                <div class="card-label">// Media Engineering</div>
+                <h3>Logic Pro Masters</h3>
+                <p>Three separate 70-minute masters mixed specifically for web streaming constraints.</p>
+            </div>
+            <div class="process-card">
+                <div class="card-label">// Infrastructure</div>
+                <h3>Latency control</h3>
+                <p>Extensive testing ensured the "Feed" remained stable without drop-outs or lag.</p>
+            </div>
+        </div>
+
+        <div class="outcome-strip">
+            <p><strong>The Outcome:</strong> A zero-delay, interactive archive taking a creative concept into a finished digital reality.</p>
+        </div>
+    </section>
+
+    <div class="cta-block reveal">
+        <h2>Want something built?</h2>
+        <p>Custom audio players or interactive archives for your music project.</p>
+        <a href="about.html" class="cta-btn">Get in touch</a>
+    </div>
+</div>
+
+<script>
+    // FONT NUDGE logic
+    let fontIdx = 0;
+    const scales = [1, 1.15, 1.3, 1.5];
+    const labels = ['100%', '115%', '130%', '150%'];
+    function adjustFont(dir) {
+        fontIdx = Math.max(0, Math.min(scales.length - 1, fontIdx + dir));
+        document.documentElement.style.setProperty('--font-scale', scales[fontIdx]);
+        document.getElementById('fontIndicator').innerText = labels[fontIdx];
+    }
+
+    // REVEAL logic
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // PARALLAX logic
+    const cover = document.getElementById('albumCover');
+    window.addEventListener('scroll', () => {
+        if(window.innerWidth > 760) {
+            cover.style.transform = `translateY(${window.scrollY * 0.15}px)`;
+        }
+    });
+
+    // TTS logic
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let cur = 0;
+
+    function populateVoices() {
+        const v = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        sel.innerHTML = '';
+        const en = v.filter(x => x.lang.startsWith('en'));
+        en.forEach(x => {
+            const o = document.createElement('option');
+            o.value = x.name; o.textContent = x.name;
+            sel.appendChild(o);
+        });
+        selectedVoice = en[0];
+    }
+
+    window.ttsSetVoice = (n) => { selectedVoice = synth.getVoices().find(x => x.name === n); };
+    
+    function speak() {
+        if(cur >= chunks.length) { ttsStop(); return; }
+        const u = new SpeechSynthesisUtterance(chunks[cur].text);
+        if(selectedVoice) u.voice = selectedVoice;
+        chunks[cur].el.classList.add('tts-highlight');
+        u.onend = () => { chunks[cur].el.classList.remove('tts-highlight'); cur++; speak(); };
+        synth.speak(u);
+    }
+
+    window.ttsPlay = () => {
+        if(!chunks.length) {
+            document.querySelectorAll('h1, h2, p').forEach(el => chunks.push({el, text: el.innerText}));
+        }
+        synth.cancel(); cur = 0; speak();
+        document.getElementById('ttsPlay').classList.add('active');
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if(chunks[cur]) chunks[cur].el.classList.remove('tts-highlight');
+        document.getElementById('ttsPlay').classList.remove('active');
+    };
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
+</script>
+
+</body>
+</html>

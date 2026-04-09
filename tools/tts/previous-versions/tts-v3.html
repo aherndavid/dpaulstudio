@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>dPaul TTS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #131413;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .outer-wrap {
+            width: 100%;
+            max-width: 392px;
+        }
+
+        .container {
+            width: 100%;
+            background: linear-gradient(145deg, #4a0a0a, #6a1010);
+            border-radius: 9px;
+            padding: 17px;
+            box-shadow: 0 14px 39px rgba(0,0,0,0.7),
+                        inset 0 1px 0 rgba(255,255,255,0.1),
+                        inset 0 -1px 0 rgba(0,0,0,0.3);
+            border: 1px solid rgba(58,5,5,0.3);
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 35%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 9px 9px 0 0;
+            pointer-events: none;
+        }
+
+        /* ── Square LED top-right ── */
+        .pwr-led-wrap {
+            position: absolute; top: 14px; right: 17px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; z-index: 10;
+        }
+        .pwr-led {
+            width: 10px; height: 10px; border-radius: 2px;
+            background: #1a0000; border: 1px solid #2a0000;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+            transition: background 0.08s, box-shadow 0.08s;
+        }
+        .pwr-led.on {
+            background: #dd0000; border-color: #aa0000;
+            box-shadow: 0 0 6px rgba(220,0,0,0.95), 0 0 14px rgba(220,0,0,0.5);
+        }
+        .pwr-led-label {
+            font-family: 'Courier New', monospace;
+            font-size: 5.5px; font-weight: bold; letter-spacing: 1px;
+            color: #3a0000; text-transform: uppercase;
+        }
+
+        h1 {
+            color: #000;
+            font-size: 23px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            font-family: Impact, 'Arial Black', sans-serif;
+        }
+
+        .main-layout { display: flex; flex-direction: column; gap: 10px; }
+        .display-section { width: 100%; }
+        .controls-layout { display: flex; gap: 10px; }
+        .left-controls { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+
+        .section {
+            background: #0a0a0a;
+            border-radius: 5px;
+            padding: 7px;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5),
+                        inset 0 -1px 0 rgba(255,255,255,0.05),
+                        0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid #000;
+        }
+
+        .section-title {
+            color: #888;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        label {
+            display: block;
+            color: #666;
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            background: #001a00;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #00dd00;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            resize: none;
+            line-height: 1.4;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
+        }
+        textarea::placeholder { color: #004400; font-size: 9px; }
+        textarea:focus { outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25); }
+
+        select {
+            padding: 5px 4px;
+            background: #0a0a0a;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 9px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
+        }
+        select:focus { outline: none; }
+        select option { background: #1a1a1a; color: #fff; }
+
+        .inc-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .inc-btn {
+            width: 32px !important;
+            height: 32px !important;
+            min-height: unset !important;
+            padding: 0 !important;
+            font-size: 18px !important;
+            font-weight: 900 !important;
+            flex: none !important;
+            border-radius: 4px !important;
+            line-height: 1 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .inc-value {
+            flex: 1;
+            text-align: center;
+            color: #00dd00;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            background: #001a00;
+            border: 1px solid #000;
+            border-radius: 3px;
+            padding: 4px 0;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+        }
+
+        .button-group { display: flex; flex-direction: row; gap: 8px; }
+
+        button {
+            padding: 10px 16px;
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #888;
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            flex: 1;
+        }
+        button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
+        button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        button:disabled:hover { background: linear-gradient(145deg, #3a3a3a, #1a1a1a); transform: none; }
+
+        .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
+        .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
+
+        .status {
+            margin-top: 10px;
+            padding: 8px;
+            background: #001a00;
+            border-radius: 3px;
+            text-align: center;
+            color: #00aa00;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,80,0,0.15);
+            border: 1px solid #000;
+        }
+        .status.active { color: #00dd00; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25); }
+    </style>
+</head>
+<body>
+<div class="outer-wrap">
+    <div class="container">
+
+        <!-- Square LED top-right -->
+        <div class="pwr-led-wrap">
+            <div class="pwr-led" id="pwrLed"></div>
+            <div class="pwr-led-label">PWR</div>
+        </div>
+
+        <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v2.10</span></h1>
+
+        <div class="main-layout">
+
+            <div class="display-section">
+                <div class="section">
+                    <label>SCRIPT DISPLAY</label>
+                    <textarea id="textInput" placeholder="Enter your text here and select the voice. Adjust pitch and speed."></textarea>
+                </div>
+
+                <div class="button-group" style="margin-top:10px;">
+                    <button class="btn-primary" id="speakBtn">SPEAK</button>
+                    <button id="clearBtn">CLEAR</button>
+                    <button id="stopBtn" disabled>STOP</button>
+                </div>
+
+                <div class="status" id="status">Ready</div>
+            </div>
+
+            <div class="controls-layout">
+                <div class="left-controls">
+
+                    <div class="section">
+                        <div class="section-title">VOICE</div>
+                        <select id="voiceSelect"><option value="">Loading voices...</option></select>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">SPEED</div>
+                        <div class="inc-row">
+                            <button class="inc-btn" id="rateDown">−</button>
+                            <div class="inc-value" id="rateDisplay">1.0×</div>
+                            <button class="inc-btn" id="rateUp">+</button>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">PITCH</div>
+                        <div class="inc-row">
+                            <button class="inc-btn" id="pitchDown">−</button>
+                            <div class="inc-value" id="pitchDisplay">1.0</div>
+                            <button class="inc-btn" id="pitchUp">+</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+// ── LED blink on speaking ──────────────────────────
+const pwrLed = document.getElementById('pwrLed');
+let blinkInterval = null;
+
+function ledOn()  { pwrLed.classList.add('on'); }
+function ledOff() { pwrLed.classList.remove('on'); }
+
+function startBlink() {
+    ledOn();
+    blinkInterval = setInterval(() => pwrLed.classList.toggle('on'), 400);
+}
+function stopBlink() {
+    clearInterval(blinkInterval); blinkInterval = null; ledOff();
+}
+
+// Steady on at all times (power-on indicator)
+ledOn();
+// ──────────────────────────────────────────────────
+
+const params = {
+    rate:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
+    pitch: { val: 1.0, min: 0.5, max: 2.0, step: 0.1 }
+};
+
+function fmt(key) {
+    const v = params[key].val;
+    if (key === 'rate')  return v.toFixed(1) + '×';
+    if (key === 'pitch') return v.toFixed(1);
+}
+
+function updateDisplay(key) {
+    const ids = { rate: 'rateDisplay', pitch: 'pitchDisplay' };
+    document.getElementById(ids[key]).textContent = fmt(key);
+}
+
+function step(key, dir) {
+    const p = params[key];
+    p.val = Math.round((p.val + dir * p.step) * 1000) / 1000;
+    p.val = Math.max(p.min, Math.min(p.max, p.val));
+    updateDisplay(key);
+}
+
+document.getElementById('rateDown').addEventListener('click',  () => step('rate', -1));
+document.getElementById('rateUp').addEventListener('click',    () => step('rate', +1));
+document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
+document.getElementById('pitchUp').addEventListener('click',   () => step('pitch', +1));
+
+const synth = window.speechSynthesis;
+
+function loadVoices() {
+    let all = synth.getVoices();
+    let list = all.filter(v => v.name.toLowerCase().includes('google'));
+    if (!list.length) list = all;
+
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    if (!list.length) { sel.innerHTML = '<option>No voices found</option>'; return; }
+
+    let ukIdx = -1;
+    list.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${v.name} (${v.lang})`;
+        sel.appendChild(opt);
+        if (v.name.toLowerCase().includes('uk') && v.name.toLowerCase().includes('male')) ukIdx = i;
+    });
+    if (ukIdx !== -1) sel.value = ukIdx;
+    window._ttsVoices = list;
+}
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+loadVoices();
+
+function setStatus(msg, active = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.toggle('active', active);
+}
+
+function setBusy(busy) {
+    document.getElementById('speakBtn').disabled = busy;
+    document.getElementById('stopBtn').disabled = !busy;
+    busy ? startBlink() : stopBlink();
+    if (!busy) ledOn(); // back to steady after speaking
+}
+
+function getVoice() {
+    const idx = document.getElementById('voiceSelect').value;
+    return (window._ttsVoices && window._ttsVoices[idx]) ? window._ttsVoices[idx] : null;
+}
+
+function speak(text) {
+    synth.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.voice = getVoice();
+    utt.rate  = params.rate.val;
+    utt.pitch = params.pitch.val;
+    utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
+    utt.onend   = () => { setStatus('Finished'); setBusy(false); };
+    utt.onerror = e => { setStatus('Error: ' + e.error); setBusy(false); };
+    synth.speak(utt);
+}
+
+document.getElementById('speakBtn').addEventListener('click', () => {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) { setStatus('Please enter text'); return; }
+    speak(text);
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('textInput').value = '';
+    setStatus('Cleared');
+});
+
+document.getElementById('stopBtn').addEventListener('click', () => {
+    synth.cancel();
+    setStatus('Stopped');
+    setBusy(false);
+});
+</script>
+</body>
+</html>

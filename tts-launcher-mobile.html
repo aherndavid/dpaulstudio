@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>dPaul TTS — Mobile</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #131413;
+      overflow: hidden;
+    }
+
+    .frame-wrap {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    iframe {
+      width: 430px;
+      height: 900px;
+      border: none;
+      display: block;
+      transform-origin: center center;
+    }
+
+    .zoom-controls {
+      position: fixed;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 999;
+    }
+
+    .zoom-btn {
+      width: 26px;
+      height: 26px;
+      background: rgba(30,30,30,0.85);
+      border: 1px solid #2a2a2a;
+      border-radius: 4px;
+      color: #666;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .zoom-btn:active {
+      background: #cc5500;
+      color: #fff;
+      border-color: #cc5500;
+    }
+
+    .zoom-label {
+      color: #333;
+      font-size: 7px;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="frame-wrap">
+    <iframe
+      src="https://lab.dpaul.studio/tools/tts/tts-mobile.html"
+      id="appFrame"
+      allow="autoplay"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="zoom-controls">
+    <button class="zoom-btn" onclick="adjustZoom(0.05)">+</button>
+    <button class="zoom-btn" onclick="adjustZoom(-0.05)">−</button>
+    <div class="zoom-label" id="zoomLabel">100%</div>
+  </div>
+
+  <script>
+    const frame = document.getElementById('appFrame');
+    const label = document.getElementById('zoomLabel');
+
+    const IFRAME_W = 430;
+    const IFRAME_H = 900;
+    const MIN = 0.4;
+    const MAX = 1.4;
+
+    let zoom = 1.0;
+
+    function fitToScreen() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      // Scale to fit whichever dimension is tighter, with a little breathing room
+      const scaleW = vw / IFRAME_W;
+      const scaleH = vh / IFRAME_H;
+      zoom = Math.round(Math.min(scaleW, scaleH) * 100) / 100;
+      zoom = Math.max(MIN, Math.min(MAX, zoom));
+      applyZoom();
+    }
+
+    function applyZoom() {
+      frame.style.transform = `scale(${zoom})`;
+      label.textContent = Math.round(zoom * 100) + '%';
+    }
+
+    function adjustZoom(delta) {
+      zoom = Math.round((zoom + delta) * 100) / 100;
+      zoom = Math.max(MIN, Math.min(MAX, zoom));
+      applyZoom();
+    }
+
+    // Fit on load and on resize/orientation change
+    fitToScreen();
+    window.addEventListener('resize', fitToScreen);
+  </script>
+
+</body>
+</html>

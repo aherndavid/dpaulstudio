@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>dPaul TTS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #131413;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .outer-wrap { width: 100%; max-width: 760px; }
+        .container {
+            width: 100%;
+            background: linear-gradient(145deg, #4a0a0a, #6a1010);
+            border-radius: 9px;
+            padding: 17px;
+            box-shadow: 0 14px 39px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.3);
+            border: 1px solid rgba(58,5,5,0.3);
+            position: relative;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 35%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 9px 9px 0 0;
+            pointer-events: none;
+        }
+        .pwr-led-wrap {
+            position: absolute; top: 14px; right: 17px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; z-index: 10;
+        }
+        .pwr-led {
+            width: 10px; height: 10px; border-radius: 2px;
+            background: #1a0000; border: 1px solid #2a0000;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+            transition: background 0.08s, box-shadow 0.08s;
+        }
+        .pwr-led.on { background: #dd0000; border-color: #aa0000; box-shadow: 0 0 6px rgba(220,0,0,0.95), 0 0 14px rgba(220,0,0,0.5); }
+        .pwr-led-label { font-family: 'Courier New', monospace; font-size: 5.5px; font-weight: bold; letter-spacing: 1px; color: #3a0000; text-transform: uppercase; }
+        h1 { color: #000; font-size: 23px; font-weight: 900; margin-bottom: 12px; letter-spacing: 0.5px; font-family: Impact, 'Arial Black', sans-serif; }
+        .main-layout { display: flex; flex-direction: row; gap: 12px; align-items: flex-start; }
+        .col-left { display: flex; flex-direction: column; gap: 6px; width: 320px; flex-shrink: 0; }
+        .col-right { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .section {
+            background: #0a0a0a; border-radius: 5px; padding: 7px;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.05), 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid #000;
+        }
+        .section-title { color: #888; font-size: 18px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
+        label { display: block; color: #666; font-size: 9px; font-weight: 700; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .api-row { display: flex; gap: 6px; align-items: center; }
+        .api-input {
+            flex: 1; padding: 6px 8px; background: #001a00; border: 1px solid #000; border-radius: 3px;
+            color: #00dd00; font-size: 10px; font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+        }
+        .api-input::placeholder { color: #004400; font-size: 9px; }
+        .api-input:focus { outline: none; }
+        .btn-save-key { padding: 6px 10px !important; font-size: 8px !important; flex: none !important; white-space: nowrap; }
+        textarea {
+            width: 100%; height: 100%; min-height: 180px; padding: 10px;
+            background: #001a00; border: 1px solid #000; border-radius: 3px;
+            color: #00dd00; font-size: 11px; font-family: 'Courier New', monospace;
+            resize: none; line-height: 1.4;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
+        }
+        textarea::placeholder { color: #004400; font-size: 9px; }
+        textarea:focus { outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25); }
+        select {
+            padding: 5px 4px; background: #0a0a0a; border: 1px solid #000; border-radius: 3px;
+            color: #fff; font-size: 9px; cursor: pointer; width: 100%;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
+        }
+        select:focus { outline: none; }
+        select option { background: #1a1a1a; color: #fff; }
+        .slider-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .slider-label { color: #555; font-size: 8px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.4px; width: 60px; flex-shrink: 0; }
+        input[type=range] { flex: 1; -webkit-appearance: none; height: 4px; background: #001a00; border-radius: 2px; border: 1px solid #000; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 2px; background: linear-gradient(145deg, #666, #444); border: 1px solid #000; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .slider-val { color: #00dd00; font-size: 9px; font-family: 'Courier New', monospace; width: 26px; text-align: right; }
+        .inc-row { display: flex; align-items: center; gap: 6px; }
+        .inc-btn {
+            width: 32px !important; height: 32px !important; min-height: unset !important;
+            padding: 0 !important; font-size: 18px !important; font-weight: 900 !important;
+            flex: none !important; border-radius: 4px !important; line-height: 1 !important;
+            display: flex !important; align-items: center !important; justify-content: center !important;
+        }
+        .inc-value {
+            flex: 1; text-align: center; color: #00dd00; font-size: 14px; font-weight: 700;
+            font-family: 'Courier New', monospace; background: #001a00; border: 1px solid #000;
+            border-radius: 3px; padding: 4px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+        }
+        .button-group { display: flex; flex-direction: row; gap: 8px; }
+        button {
+            padding: 10px 16px; background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border: 1px solid #000; border-radius: 3px; color: #888;
+            font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+            letter-spacing: 0.5px; text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            flex: 1;
+        }
+        button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
+        button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        button:disabled:hover { background: linear-gradient(145deg, #3a3a3a, #1a1a1a); transform: none; }
+        .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
+        .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
+        .status {
+            padding: 8px; background: #001a00; border-radius: 3px; text-align: center;
+            color: #00aa00; font-size: 9px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px; font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,80,0,0.15);
+            border: 1px solid #000;
+        }
+        .status.active { color: #00dd00; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25); }
+        .status.error { color: #dd4444; }
+        audio { width: 100%; border-radius: 3px; height: 28px; display: none; }
+        audio.visible { display: block; }
+        .mode-toggle { display: flex; gap: 5px; }
+        .mode-btn { flex: 1; padding: 5px !important; font-size: 8px !important; }
+        .mode-btn.active { background: linear-gradient(145deg, #550000, #330000) !important; color: #ff6666 !important; border-color: #440000 !important; }
+        .api-note { color: #444; font-size: 8px; font-family: 'Courier New', monospace; text-align: center; margin-top: 5px; }
+        .api-note a { color: #555; }
+        #downloadBtn { margin-top: 8px; background: linear-gradient(145deg, #1a3a1a, #0a1a0a); color: #00dd00; display: none; }
+        #downloadBtn.visible { display: block; }
+    </style>
+</head>
+<body>
+<div class="outer-wrap">
+    <div class="container">
+        <div class="pwr-led-wrap">
+            <div class="pwr-led" id="pwrLed"></div>
+            <div class="pwr-led-label">PWR</div>
+        </div>
+
+        <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v3.5</span></h1>
+
+        <div class="main-layout">
+
+            <div class="col-left">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="modeUnreal" onclick="setMode('unreal')">&#9889; UNREAL SPEECH</button>
+                    <button class="mode-btn" id="modeBrowser" onclick="setMode('browser')">BROWSER TTS</button>
+                </div>
+
+                <div id="unrealPanel">
+                    <div class="section" style="margin-bottom:6px;">
+                        <label>Unreal Speech API Key</label>
+                        <div class="api-row">
+                            <input type="password" class="api-input" id="apiKey" placeholder="Paste your API key here...">
+                            <button class="btn-save-key" onclick="saveKey()">SAVE</button>
+                        </div>
+                        <div class="api-note">Free tier · <a href="https://unrealspeech.com" target="_blank">unrealspeech.com</a></div>
+                    </div>
+
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">VOICE</div>
+                        <select id="unrealVoiceSelect">
+                            <option value="Scarlett">Scarlett</option>
+                            <option value="Dan">Dan — Male</option>
+                            <option value="Liv">Liv — Female</option>
+                            <option value="Will">Will — Male</option>
+                            <option value="Amy">Amy — Female</option>
+                        </select>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">VOICE SETTINGS</div>
+                        <div class="slider-row">
+                            <span class="slider-label">Speed</span>
+                            <input type="range" id="unrealSpeed" min="-100" max="100" value="0">
+                            <span class="slider-val" id="unrealSpeedVal">0.0</span>
+                        </div>
+                        <div class="slider-row" style="margin-top:6px;">
+                            <span class="slider-label">Pitch</span>
+                            <input type="range" id="unrealPitch" min="50" max="150" value="100">
+                            <span class="slider-val" id="unrealPitchVal">1.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="browserPanel" style="display:none;">
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">VOICE</div>
+                        <select id="voiceSelect"><option value="">Loading voices...</option></select>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <div class="section" style="flex:1;">
+                            <div class="section-title">SPEED</div>
+                            <div class="inc-row">
+                                <button class="inc-btn" id="rateDown">&#8722;</button>
+                                <div class="inc-value" id="rateDisplay">1.0x</div>
+                                <button class="inc-btn" id="rateUp">+</button>
+                            </div>
+                        </div>
+                        <div class="section" style="flex:1;">
+                            <div class="section-title">PITCH</div>
+                            <div class="inc-row">
+                                <button class="inc-btn" id="pitchDown">&#8722;</button>
+                                <div class="inc-value" id="pitchDisplay">1.0</div>
+                                <button class="inc-btn" id="pitchUp">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-right">
+                <div class="section">
+                    <label>SCRIPT</label>
+                    <textarea id="textInput" placeholder="Enter your script here..."></textarea>
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" id="speakBtn">SPEAK</button>
+                    <button id="clearBtn">CLEAR</button>
+                    <button id="stopBtn" disabled>STOP</button>
+                </div>
+                <div class="status" id="status">Ready</div>
+                <audio id="audioPlayer" controls></audio>
+                <button id="downloadBtn" onclick="downloadAudio()">DOWNLOAD MP3</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+const pwrLed = document.getElementById('pwrLed');
+let blinkInterval = null;
+
+function ledOn()  { pwrLed.classList.add('on'); }
+function ledOff() { pwrLed.classList.remove('on'); }
+function startBlink() { ledOn(); blinkInterval = setInterval(() => pwrLed.classList.toggle('on'), 400); }
+function stopBlink()  { clearInterval(blinkInterval); blinkInterval = null; ledOff(); }
+ledOn();
+
+let currentMode = 'unreal';
+function setMode(m) {
+    currentMode = m;
+    document.getElementById('unrealPanel').style.display  = m === 'unreal'  ? '' : 'none';
+    document.getElementById('browserPanel').style.display = m === 'browser' ? '' : 'none';
+    document.getElementById('modeUnreal').classList.toggle('active',  m === 'unreal');
+    document.getElementById('modeBrowser').classList.toggle('active', m === 'browser');
+    document.getElementById('audioPlayer').classList.remove('visible');
+    document.getElementById('downloadBtn').classList.remove('visible');
+    document.getElementById('stopBtn').disabled = true;
+    setStatus('Ready');
+    ledOn();
+}
+
+// Security: Strip non-ASCII characters that cause "ISO-8859-1 code point" header errors
+function sanitize(str) {
+    return str.replace(/[^\x00-\x7F]/g, "").trim();
+}
+
+function saveKey() {
+    const kInput = document.getElementById('apiKey');
+    kInput.value = sanitize(kInput.value);
+    if (!kInput.value) { setStatus('No key entered', false, true); return; }
+    setStatus('Key saved — ready', true);
+}
+
+function getKey() {
+    return sanitize(document.getElementById('apiKey').value);
+}
+
+// Sliders
+document.getElementById('unrealSpeed').addEventListener('input', function() {
+    document.getElementById('unrealSpeedVal').textContent = (this.value / 100).toFixed(1);
+});
+document.getElementById('unrealPitch').addEventListener('input', function() {
+    document.getElementById('unrealPitchVal').textContent = (this.value / 100).toFixed(1);
+});
+
+// Browser TTS
+const synth = window.speechSynthesis;
+const params = {
+    rate:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
+    pitch: { val: 1.0, min: 0.5, max: 2.0, step: 0.1 }
+};
+function fmt(key) { const v = params[key].val; return key === 'rate' ? v.toFixed(1) + 'x' : v.toFixed(1); }
+function updateDisplay(key) { document.getElementById(key === 'rate' ? 'rateDisplay' : 'pitchDisplay').textContent = fmt(key); }
+function step(key, dir) {
+    const p = params[key];
+    p.val = Math.round((p.val + dir * p.step) * 1000) / 1000;
+    p.val = Math.max(p.min, Math.min(p.max, p.val));
+    updateDisplay(key);
+}
+document.getElementById('rateDown').addEventListener('click',  () => step('rate', -1));
+document.getElementById('rateUp').addEventListener('click',    () => step('rate', +1));
+document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
+document.getElementById('pitchUp').addEventListener('click',   () => step('pitch', +1));
+
+function loadBrowserVoices() {
+    let all = synth.getVoices();
+    let list = all.filter(v => v.name.toLowerCase().includes('google'));
+    if (!list.length) list = all;
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    if (!list.length) { sel.innerHTML = '<option>No voices found</option>'; return; }
+    let ukIdx = -1;
+    list.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = v.name + ' (' + v.lang + ')';
+        sel.appendChild(opt);
+        if (v.name.toLowerCase().includes('uk') && v.name.toLowerCase().includes('male')) ukIdx = i;
+    });
+    if (ukIdx !== -1) sel.value = ukIdx;
+    window._ttsVoices = list;
+}
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadBrowserVoices;
+loadBrowserVoices();
+
+function browserSpeak(text) {
+    synth.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    const idx = document.getElementById('voiceSelect').value;
+    utt.voice = (window._ttsVoices && window._ttsVoices[idx]) ? window._ttsVoices[idx] : null;
+    utt.rate  = params.rate.val;
+    utt.pitch = params.pitch.val;
+    utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
+    utt.onend   = () => { setStatus('Finished'); setBusy(false); };
+    utt.onerror = e => { setStatus('Error: ' + e.error, false, true); setBusy(false); };
+    synth.speak(utt);
+}
+
+// Unreal Speech
+let currentAudioUrl = null;
+async function unrealSpeak(text) {
+    const apiKey = getKey();
+    if (!apiKey) { setStatus('Paste & SAVE API Key first', false, true); return; }
+
+    const voiceId = document.getElementById('unrealVoiceSelect').value;
+    const speed   = parseFloat(document.getElementById('unrealSpeed').value) / 100;
+    const pitch   = parseFloat(document.getElementById('unrealPitch').value) / 100;
+
+    setBusy(true);
+    setStatus('Generating...', true);
+    document.getElementById('downloadBtn').classList.remove('visible');
+
+    try {
+        const res = await fetch('https://api.v8.unrealspeech.com/stream', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                Text: text,
+                VoiceId: voiceId,
+                Bitrate: '192k',
+                Speed: speed,
+                Pitch: pitch
+            })
+        });
+
+        if (!res.ok) {
+            let errorMsg = 'HTTP ' + res.status;
+            try {
+                const errData = await res.json();
+                errorMsg = errData.message || errorMsg;
+            } catch(e) {}
+            throw new Error(errorMsg);
+        }
+
+        const blob = await res.blob();
+        if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+        currentAudioUrl = URL.createObjectURL(blob);
+
+        const player = document.getElementById('audioPlayer');
+        player.src = currentAudioUrl;
+        player.classList.add('visible');
+        document.getElementById('downloadBtn').classList.add('visible');
+        player.play();
+        player.onended = () => { setStatus('Finished'); setBusy(false); };
+        setStatus('Playing...', true);
+
+    } catch(e) {
+        // Specifically check for 401/400 to help the user
+        let msg = e.message;
+        if (msg.includes('401')) msg = "Invalid API Key";
+        if (msg.includes('400')) msg = "Bad Request (Check settings)";
+        setStatus('Error: ' + msg, false, true);
+        setBusy(false);
+    }
+}
+
+function downloadAudio() {
+    if (!currentAudioUrl) return;
+    const a = document.createElement('a');
+    a.href = currentAudioUrl;
+    a.download = `dpaul-tts-${Date.now()}.mp3`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+function setStatus(msg, active = false, isError = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.toggle('active', active && !isError);
+    el.classList.toggle('error', isError);
+}
+
+function setBusy(busy) {
+    document.getElementById('speakBtn').disabled = busy;
+    document.getElementById('stopBtn').disabled  = !busy;
+    busy ? startBlink() : (stopBlink(), ledOn());
+}
+
+document.getElementById('speakBtn').addEventListener('click', () => {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) { setStatus('Please enter text'); return; }
+    currentMode === 'unreal' ? unrealSpeak(text) : browserSpeak(text);
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('textInput').value = '';
+    document.getElementById('audioPlayer').classList.remove('visible');
+    document.getElementById('downloadBtn').classList.remove('visible');
+    if (currentAudioUrl) { URL.revokeObjectURL(currentAudioUrl); currentAudioUrl = null; }
+    setStatus('Cleared');
+});
+
+document.getElementById('stopBtn').addEventListener('click', () => {
+    if (currentMode === 'unreal') { 
+        const p = document.getElementById('audioPlayer'); 
+        p.pause(); 
+        p.currentTime = 0; 
+    } else {
+        synth.cancel();
+    }
+    setStatus('Stopped');
+    setBusy(false);
+});
+</script>
+</body>
+</html>

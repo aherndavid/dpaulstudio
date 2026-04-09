@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>dPaul TTS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #131413;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .outer-wrap {
+            width: 100%;
+            max-width: 760px;
+        }
+
+        .container {
+            width: 100%;
+            background: linear-gradient(145deg, #4a0a0a, #6a1010);
+            border-radius: 9px;
+            padding: 17px;
+            box-shadow: 0 14px 39px rgba(0,0,0,0.7),
+                        inset 0 1px 0 rgba(255,255,255,0.1),
+                        inset 0 -1px 0 rgba(0,0,0,0.3);
+            border: 1px solid rgba(58,5,5,0.3);
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 35%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 9px 9px 0 0;
+            pointer-events: none;
+        }
+
+        .pwr-led-wrap {
+            position: absolute; top: 14px; right: 17px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; z-index: 10;
+        }
+        .pwr-led {
+            width: 10px; height: 10px; border-radius: 2px;
+            background: #1a0000; border: 1px solid #2a0000;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+            transition: background 0.08s, box-shadow 0.08s;
+        }
+        .pwr-led.on {
+            background: #dd0000; border-color: #aa0000;
+            box-shadow: 0 0 6px rgba(220,0,0,0.95), 0 0 14px rgba(220,0,0,0.5);
+        }
+        .pwr-led-label {
+            font-family: 'Courier New', monospace;
+            font-size: 5.5px; font-weight: bold; letter-spacing: 1px;
+            color: #3a0000; text-transform: uppercase;
+        }
+
+        h1 {
+            color: #000;
+            font-size: 23px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            font-family: Impact, 'Arial Black', sans-serif;
+        }
+
+        /* ── HORIZONTAL MAIN LAYOUT ── */
+        .main-layout {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .col-left {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        .col-right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .section {
+            background: #0a0a0a;
+            border-radius: 5px;
+            padding: 7px;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5),
+                        inset 0 -1px 0 rgba(255,255,255,0.05),
+                        0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid #000;
+        }
+
+        .section-title {
+            color: #888;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        label {
+            display: block;
+            color: #666;
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .api-row { display: flex; gap: 6px; align-items: center; }
+        .api-input {
+            flex: 1;
+            padding: 6px 8px;
+            background: #001a00;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #00dd00;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+        }
+        .api-input::placeholder { color: #004400; font-size: 9px; }
+        .api-input:focus { outline: none; }
+
+        .btn-save-key {
+            padding: 6px 10px !important;
+            font-size: 8px !important;
+            flex: none !important;
+            white-space: nowrap;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            min-height: 180px;
+            padding: 10px;
+            background: #001a00;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #00dd00;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            resize: none;
+            line-height: 1.4;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
+        }
+        textarea::placeholder { color: #004400; font-size: 9px; }
+        textarea:focus { outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25); }
+
+        select {
+            padding: 5px 4px;
+            background: #0a0a0a;
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 9px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
+        }
+        select:focus { outline: none; }
+        select option { background: #1a1a1a; color: #fff; }
+
+        .voice-meta { margin-top: 5px; display: flex; gap: 5px; flex-wrap: wrap; }
+        .badge {
+            background: #1a0000; border: 1px solid #3a0000; border-radius: 2px;
+            color: #aa4444; font-size: 8px; font-family: 'Courier New', monospace;
+            padding: 2px 5px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge.highlight { background: #001a00; border-color: #003a00; color: #00aa00; }
+
+        .slider-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .slider-label {
+            color: #555; font-size: 8px; font-family: 'Courier New', monospace;
+            text-transform: uppercase; letter-spacing: 0.4px; width: 60px; flex-shrink: 0;
+        }
+        input[type=range] {
+            flex: 1; -webkit-appearance: none; height: 4px;
+            background: #001a00; border-radius: 2px; border: 1px solid #000; cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 12px; height: 12px; border-radius: 2px;
+            background: linear-gradient(145deg, #666, #444); border: 1px solid #000;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .slider-val { color: #00dd00; font-size: 9px; font-family: 'Courier New', monospace; width: 26px; text-align: right; }
+
+        .inc-row { display: flex; align-items: center; gap: 6px; }
+        .inc-btn {
+            width: 32px !important; height: 32px !important; min-height: unset !important;
+            padding: 0 !important; font-size: 18px !important; font-weight: 900 !important;
+            flex: none !important; border-radius: 4px !important; line-height: 1 !important;
+            display: flex !important; align-items: center !important; justify-content: center !important;
+        }
+        .inc-value {
+            flex: 1; text-align: center; color: #00dd00; font-size: 14px; font-weight: 700;
+            font-family: 'Courier New', monospace; background: #001a00; border: 1px solid #000;
+            border-radius: 3px; padding: 4px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+        }
+
+        .button-group { display: flex; flex-direction: row; gap: 8px; }
+
+        button {
+            padding: 10px 16px;
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border: 1px solid #000; border-radius: 3px; color: #888;
+            font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+            letter-spacing: 0.5px; text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            flex: 1;
+        }
+        button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
+        button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        button:disabled:hover { background: linear-gradient(145deg, #3a3a3a, #1a1a1a); transform: none; }
+
+        .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
+        .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
+
+        .status {
+            padding: 8px; background: #001a00; border-radius: 3px; text-align: center;
+            color: #00aa00; font-size: 9px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px; font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,80,0,0.15);
+            border: 1px solid #000;
+        }
+        .status.active { color: #00dd00; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25); }
+        .status.error { color: #dd4444; }
+
+        audio { width: 100%; border-radius: 3px; height: 28px; display: none; }
+        audio.visible { display: block; }
+
+        .mode-toggle { display: flex; gap: 5px; }
+        .mode-btn { flex: 1; padding: 5px !important; font-size: 8px !important; }
+        .mode-btn.active {
+            background: linear-gradient(145deg, #550000, #330000) !important;
+            color: #ff6666 !important; border-color: #440000 !important;
+        }
+
+        .eleven-note { color: #444; font-size: 8px; font-family: 'Courier New', monospace; text-align: center; margin-top: 5px; }
+        .eleven-note a { color: #555; }
+
+        .script-section { display: flex; flex-direction: column; flex: 1; }
+        .script-section .section { flex: 1; display: flex; flex-direction: column; }
+        .script-section .section textarea { flex: 1; }
+    </style>
+</head>
+<body>
+<div class="outer-wrap">
+    <div class="container">
+
+        <div class="pwr-led-wrap">
+            <div class="pwr-led" id="pwrLed"></div>
+            <div class="pwr-led-label">PWR</div>
+        </div>
+
+        <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v3.0</span></h1>
+
+        <div class="main-layout">
+
+            <!-- ── LEFT COLUMN: settings ── -->
+            <div class="col-left">
+
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="modeEleven" onclick="setMode('eleven')">⚡ ELEVENLABS AI</button>
+                    <button class="mode-btn" id="modeBrowser" onclick="setMode('browser')">BROWSER TTS</button>
+                </div>
+
+                <!-- ELEVENLABS PANEL -->
+                <div id="elevenPanel">
+                    <div class="section" style="margin-bottom:6px;">
+                        <label>ElevenLabs API Key</label>
+                        <div class="api-row">
+                            <input type="password" class="api-input" id="apiKey" placeholder="Paste your API key here...">
+                            <button class="btn-save-key" onclick="saveKey()">SAVE</button>
+                        </div>
+                        <div class="eleven-note">Free tier: 10,000 chars/mo · <a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a></div>
+                    </div>
+
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">VOICE</div>
+                        <select id="elevenVoiceSelect">
+                            <option value="">-- Enter API key to load voices --</option>
+                        </select>
+                        <div class="voice-meta" id="voiceMeta"></div>
+                    </div>
+
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">MODEL</div>
+                        <select id="modelSelect">
+                            <option value="eleven_turbo_v2_5">Turbo v2.5 — fastest, lowest cost</option>
+                            <option value="eleven_multilingual_v2" selected>Multilingual v2 — best quality</option>
+                            <option value="eleven_flash_v2_5">Flash v2.5 — ultra low latency</option>
+                        </select>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">VOICE SETTINGS</div>
+                        <div class="slider-row">
+                            <span class="slider-label">Stability</span>
+                            <input type="range" id="stability" min="0" max="100" value="50">
+                            <span class="slider-val" id="stabilityVal">0.50</span>
+                        </div>
+                        <div class="slider-row" style="margin-top:6px;">
+                            <span class="slider-label">Similarity</span>
+                            <input type="range" id="similarity" min="0" max="100" value="75">
+                            <span class="slider-val" id="similarityVal">0.75</span>
+                        </div>
+                        <div class="slider-row" style="margin-top:6px;">
+                            <span class="slider-label">Style</span>
+                            <input type="range" id="styleExag" min="0" max="100" value="0">
+                            <span class="slider-val" id="styleVal">0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BROWSER TTS PANEL -->
+                <div id="browserPanel" style="display:none;">
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">VOICE</div>
+                        <select id="voiceSelect"><option value="">Loading voices...</option></select>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <div class="section" style="flex:1;">
+                            <div class="section-title">SPEED</div>
+                            <div class="inc-row">
+                                <button class="inc-btn" id="rateDown">−</button>
+                                <div class="inc-value" id="rateDisplay">1.0×</div>
+                                <button class="inc-btn" id="rateUp">+</button>
+                            </div>
+                        </div>
+                        <div class="section" style="flex:1;">
+                            <div class="section-title">PITCH</div>
+                            <div class="inc-row">
+                                <button class="inc-btn" id="pitchDown">−</button>
+                                <div class="inc-value" id="pitchDisplay">1.0</div>
+                                <button class="inc-btn" id="pitchUp">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── RIGHT COLUMN: script + controls ── -->
+            <div class="col-right">
+                <div class="section" style="flex:1; display:flex; flex-direction:column;">
+                    <label>SCRIPT</label>
+                    <textarea id="textInput" placeholder="Enter your script here..." style="flex:1; min-height:200px;"></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" id="speakBtn">SPEAK</button>
+                    <button id="clearBtn">CLEAR</button>
+                    <button id="stopBtn" disabled>STOP</button>
+                </div>
+
+                <div class="status" id="status">Ready</div>
+                <audio id="audioPlayer" controls></audio>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+const pwrLed = document.getElementById('pwrLed');
+let blinkInterval = null;
+function ledOn()  { pwrLed.classList.add('on'); }
+function ledOff() { pwrLed.classList.remove('on'); }
+function startBlink() { ledOn(); blinkInterval = setInterval(() => pwrLed.classList.toggle('on'), 400); }
+function stopBlink()  { clearInterval(blinkInterval); blinkInterval = null; ledOff(); }
+ledOn();
+
+let currentMode = 'eleven';
+function setMode(m) {
+    currentMode = m;
+    document.getElementById('elevenPanel').style.display  = m === 'eleven'  ? '' : 'none';
+    document.getElementById('browserPanel').style.display = m === 'browser' ? '' : 'none';
+    document.getElementById('modeEleven').classList.toggle('active',  m === 'eleven');
+    document.getElementById('modeBrowser').classList.toggle('active', m === 'browser');
+    document.getElementById('audioPlayer').classList.remove('visible');
+    document.getElementById('stopBtn').disabled = true;
+    setStatus('Ready');
+    ledOn();
+}
+
+function saveKey() {
+    const k = document.getElementById('apiKey').value.trim();
+    if (!k) { setStatus('No key entered', false, true); return; }
+    setStatus('Loading voices...', true);
+    loadElevenVoices(k);
+}
+function getKey() {
+    return document.getElementById('apiKey').value.trim() || '';
+}
+
+let elevenVoices = [];
+async function loadElevenVoices(apiKey) {
+    try {
+        const res = await fetch('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': apiKey } });
+        if (!res.ok) throw new Error('Auth failed — check your API key');
+        const data = await res.json();
+        elevenVoices = data.voices || [];
+        const sel = document.getElementById('elevenVoiceSelect');
+        sel.innerHTML = '';
+        elevenVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.voice_id;
+            opt.textContent = v.name + (v.labels?.accent ? ` · ${v.labels.accent}` : '');
+            sel.appendChild(opt);
+        });
+        setStatus(`${elevenVoices.length} voices loaded`, true);
+        updateVoiceMeta();
+    } catch(e) { setStatus('Error: ' + e.message, false, true); }
+}
+
+document.getElementById('elevenVoiceSelect').addEventListener('change', updateVoiceMeta);
+function updateVoiceMeta() {
+    const sel   = document.getElementById('elevenVoiceSelect');
+    const voice = elevenVoices.find(v => v.voice_id === sel.value);
+    const meta  = document.getElementById('voiceMeta');
+    meta.innerHTML = '';
+    if (!voice) return;
+    const labels = voice.labels || {};
+    ['gender','age','accent','use case','description'].forEach(k => {
+        if (labels[k]) {
+            const b = document.createElement('span');
+            b.className = 'badge' + (k === 'accent' ? ' highlight' : '');
+            b.textContent = labels[k];
+            meta.appendChild(b);
+        }
+    });
+    if (voice.category) {
+        const b = document.createElement('span');
+        b.className = 'badge highlight';
+        b.textContent = voice.category;
+        meta.appendChild(b);
+    }
+}
+
+function setupSlider(id, displayId, decimals) {
+    const el = document.getElementById(id), disp = document.getElementById(displayId);
+    el.addEventListener('input', () => { disp.textContent = (el.value / 100).toFixed(decimals); });
+}
+setupSlider('stability',  'stabilityVal', 2);
+setupSlider('similarity', 'similarityVal', 2);
+setupSlider('styleExag',  'styleVal', 2);
+
+const synth = window.speechSynthesis;
+const params = {
+    rate:  { val: 1.0, min: 0.5, max: 2.0, step: 0.1 },
+    pitch: { val: 1.0, min: 0.5, max: 2.0, step: 0.1 }
+};
+function fmt(key) { const v = params[key].val; return key === 'rate' ? v.toFixed(1) + '×' : v.toFixed(1); }
+function updateDisplay(key) { document.getElementById(key === 'rate' ? 'rateDisplay' : 'pitchDisplay').textContent = fmt(key); }
+function step(key, dir) {
+    const p = params[key];
+    p.val = Math.round((p.val + dir * p.step) * 1000) / 1000;
+    p.val = Math.max(p.min, Math.min(p.max, p.val));
+    updateDisplay(key);
+}
+document.getElementById('rateDown').addEventListener('click',  () => step('rate', -1));
+document.getElementById('rateUp').addEventListener('click',    () => step('rate', +1));
+document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
+document.getElementById('pitchUp').addEventListener('click',   () => step('pitch', +1));
+
+function loadBrowserVoices() {
+    let all = synth.getVoices();
+    let list = all.filter(v => v.name.toLowerCase().includes('google'));
+    if (!list.length) list = all;
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    if (!list.length) { sel.innerHTML = '<option>No voices found</option>'; return; }
+    let ukIdx = -1;
+    list.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${v.name} (${v.lang})`;
+        sel.appendChild(opt);
+        if (v.name.toLowerCase().includes('uk') && v.name.toLowerCase().includes('male')) ukIdx = i;
+    });
+    if (ukIdx !== -1) sel.value = ukIdx;
+    window._ttsVoices = list;
+}
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadBrowserVoices;
+loadBrowserVoices();
+
+function browserSpeak(text) {
+    synth.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    const idx = document.getElementById('voiceSelect').value;
+    utt.voice = (window._ttsVoices && window._ttsVoices[idx]) ? window._ttsVoices[idx] : null;
+    utt.rate  = params.rate.val;
+    utt.pitch = params.pitch.val;
+    utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
+    utt.onend   = () => { setStatus('Finished'); setBusy(false); };
+    utt.onerror = e => { setStatus('Error: ' + e.error, false, true); setBusy(false); };
+    synth.speak(utt);
+}
+
+let currentAudioUrl = null;
+async function elevenSpeak(text) {
+    const apiKey = getKey();
+    if (!apiKey) { setStatus('No API key — paste & save your key', false, true); return; }
+    const voiceId = document.getElementById('elevenVoiceSelect').value;
+    if (!voiceId) { setStatus('Select a voice first', false, true); return; }
+    const model      = document.getElementById('modelSelect').value;
+    const stability  = parseFloat(document.getElementById('stability').value) / 100;
+    const similarity = parseFloat(document.getElementById('similarity').value) / 100;
+    const style      = parseFloat(document.getElementById('styleExag').value) / 100;
+    setBusy(true);
+    setStatus('Generating audio...', true);
+    try {
+        const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+            method: 'POST',
+            headers: { 'xi-api-key': apiKey, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg' },
+            body: JSON.stringify({ text, model_id: model, voice_settings: { stability, similarity_boost: similarity, style, use_speaker_boost: true } })
+        });
+        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.detail?.message || `HTTP ${res.status}`); }
+        const blob = await res.blob();
+        if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+        currentAudioUrl = URL.createObjectURL(blob);
+        const player = document.getElementById('audioPlayer');
+        player.src = currentAudioUrl;
+        player.classList.add('visible');
+        player.play();
+        player.onended = () => { setStatus('Finished'); setBusy(false); };
+        setStatus('Playing...', true);
+    } catch(e) { setStatus('Error: ' + e.message, false, true); setBusy(false); }
+}
+
+function setStatus(msg, active = false, isError = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.toggle('active', active && !isError);
+    el.classList.toggle('error', isError);
+}
+function setBusy(busy) {
+    document.getElementById('speakBtn').disabled = busy;
+    document.getElementById('stopBtn').disabled  = !busy;
+    busy ? startBlink() : (stopBlink(), ledOn());
+}
+
+document.getElementById('speakBtn').addEventListener('click', () => {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) { setStatus('Please enter text'); return; }
+    currentMode === 'eleven' ? elevenSpeak(text) : browserSpeak(text);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('textInput').value = '';
+    document.getElementById('audioPlayer').classList.remove('visible');
+    setStatus('Cleared');
+});
+document.getElementById('stopBtn').addEventListener('click', () => {
+    if (currentMode === 'eleven') { const p = document.getElementById('audioPlayer'); p.pause(); p.currentTime = 0; }
+    else synth.cancel();
+    setStatus('Stopped');
+    setBusy(false);
+});
+</script>
+</body>
+</html>

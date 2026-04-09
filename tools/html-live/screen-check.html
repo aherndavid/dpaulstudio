@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro CRT Terminal</title>
+    <style>
+        /* Base page styling to center the terminal and handle background */
+        body {
+            background-color: #051a05;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace; /* Monospaced font necessary for alignment */
+        }
+
+        /* The main monitor casing */
+        .monitor {
+            background-color: #000;
+            width: 80vw;
+            height: 80vh;
+            max-width: 1200px;
+            max-height: 800px;
+            border-radius: 50px; /* Gives the chassis rounded edges */
+            position: relative;
+            box-shadow: 
+                0 0 0 15px #111, /* Inner bezel */
+                0 0 0 25px #333, /* Outer bezel */
+                0 30px 50px rgba(0, 0, 0, 0.8); /* Screen shadow */
+            overflow: hidden; /* Clips the curved screen contents */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The curved screen surface */
+        .screen-curve {
+            position: absolute;
+            top: 2%;
+            left: 2%;
+            width: 96%;
+            height: 96%;
+            background-color: #000;
+            border-radius: 40px; /* Slight screen curvature */
+            overflow: hidden;
+            box-shadow: inset 0 0 100px rgba(0, 255, 0, 0.1); /* Subtle screen edge glow */
+        }
+
+        /* The content area with the green phosphor effect */
+        .terminal-content {
+            color: #3f3; /* Bright green phosphor */
+            text-shadow: 0 0 5px #3f3, 0 0 10px #3f3; /* Bloom/glow effect */
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Preformatted text to preserve spaces and line breaks */
+        pre {
+            margin: 0;
+            line-height: 1.1; /* Tighter line height for retro feel */
+            font-size: 1.2vw; /* Scalable font size based on viewport */
+        }
+
+        @media (max-width: 800px) {
+            pre { font-size: 1.5vw; }
+        }
+
+        /* The background code matrix rain/grid */
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15; /* Dimmer than foreground */
+            z-index: 1;
+        }
+
+        /* CSS Grid to arrange the background character grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(60, 1fr);
+            grid-template-rows: repeat(40, 1fr);
+            width: 100%;
+            height: 100%;
+            color: #1a1;
+            font-size: 10px;
+        }
+
+        /* Overlay effects: scanlines and vignette */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none; /* Allows interaction with text underneath */
+            
+            /* Scanlines using a repeating linear gradient */
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+
+            /* Radial gradient vignette for screen curvature and edge darkening */
+            background-image: radial-gradient(
+                circle,
+                transparent 50%,
+                rgba(0, 0, 0, 0.5) 90%,
+                rgba(0, 0, 0, 0.9) 100%
+            );
+        }
+
+        /* Optional flicker animation */
+        @keyframes flicker {
+            0% { opacity: 0.98; }
+            5% { opacity: 0.95; }
+            10% { opacity: 0.99; }
+            15% { opacity: 0.96; }
+            20% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+
+        .flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="monitor">
+        <div class="screen-curve">
+            
+            <div class="matrix-bg">
+                <div class="grid-container">
+                    </div>
+            </div>
+
+            <div class="terminal-content flicker">
+<pre>
+*** COMMODORE 64 BASIC V2 ***
+64K RAM SYSTEM  38911 BASIC BYTES FREE
+
+READY.
+RUN "HTML-LIVE!"
+LOADING...
+</pre>
+            </div>
+
+            <div class="overlay"></div>
+        </div>
+    </div>
+
+    <script>
+        const grid = document.querySelector('.grid-container');
+        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*+-/=[]{}()<>";
+        const totalCells = 60 * 40; // Columns * Rows
+
+        for (let i = 0; i < totalCells; i++) {
+            const span = document.createElement('span');
+            // Randomly select character and sometimes leave blank for variance
+            if (Math.random() > 0.2) {
+                span.textContent = chars.charAt(Math.floor(Math.random() * chars.length));
+            } else {
+                span.textContent = " ";
+            }
+            grid.appendChild(span);
+        }
+    </script>
+
+</body>
+</html>

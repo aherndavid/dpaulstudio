@@ -1,0 +1,41 @@
+/* --- SHARED MOBILE NAV CSS --- */
+#mobile-nav-container {
+    position: sticky; top: 0; z-index: 1000;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    height: 64px;
+}
+
+.nav-wrapper {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 20px; height: 100%;
+}
+
+.nav-brand { font-size: 0.9rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* The Burger Button */
+.burger {
+    background: none; border: none; cursor: pointer;
+    width: 30px; height: 24px; position: relative; display: flex; flex-direction: column; justify-content: space-between;
+}
+.burger span {
+    display: block; width: 100%; height: 2px; background: var(--cream);
+    transition: all 0.3s ease;
+}
+/* Animation for when active */
+.burger.active span:nth-child(1) { transform: translateY(11px) rotate(45deg); background: var(--orange); }
+.burger.active span:nth-child(2) { transform: rotate(-45deg) translateY(-11px); background: var(--orange); }
+
+/* The Full Screen Menu Overlay */
+.mobile-menu {
+    position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+    background: var(--bg); overflow: hidden;
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+}
+.mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+
+.mobile-menu a {
+    font-size: 1.8rem; color: var(--cream); text-decoration: none;
+    text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+}
+.mobile-menu a:hover { color: var(--orange); }

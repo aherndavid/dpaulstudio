@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dpaul studio — mobile</title>
+    <link rel="stylesheet" href="../assets/global.css">
+    
+    <style>
+        :root {
+            --bg: #131413;
+            --orange: #FF6600;
+            --cream: #D4C4A8;
+            --border: rgba(255, 102, 0, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; /* Changed to stack Nav + Content */
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+        }
+
+        /* Shared Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.4;
+        }
+
+        /* --- MOBILE HAMBURGER NAV CSS (Consistent with other pages) --- */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            height: 64px;
+            width: 100%;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.9rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 28px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px; background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.6rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em;
+        }
+
+        /* ── SPLASH CONTENT ── */
+        .site-wrap {
+            flex: 1; /* Fills remaining space below nav */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers the EQ and Wordmark vertically */
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .eq-canvas {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 25vh;
+            width: 100%;
+        }
+
+        .bar-col { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .seg { width: 100%; height: 6px; border-radius: 1px; background: #1a1a1a; }
+        .seg.on { background: var(--orange); }
+        .seg.on.mid { background: #aacc00; }
+        .seg.on.top { background: #cc2200; }
+
+        .wordmark-panel {
+            width: 100%;
+            background: var(--bg);
+            border: 2px solid var(--orange);
+            padding: 30px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wordmark {
+            font-size: 11vw;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1;
+            z-index: 5;
+            text-align: center;
+        }
+
+        .avatar {
+            position: absolute;
+            right: -10px; bottom: -20px;
+            height: 120%;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .avatar img { height: 100%; width: auto; object-fit: contain; }
+
+        .nav-bar {
+            width: 100%;
+            background: var(--bg);
+            border: 2px solid var(--orange);
+            border-top: none;
+            padding: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .nav-bar a {
+            font-weight: 700; font-size: 14px;
+            color: var(--orange); text-decoration: none;
+            padding: 15px 5px;
+            border: 1px solid var(--orange);
+            border-radius: 3px;
+            text-transform: lowercase; text-align: center;
+            background: rgba(255, 102, 0, 0.05);
+        }
+
+        .nav-bar a:active { background: var(--orange); color: #131413; }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container"></div>
+
+<div class="site-wrap">
+    <div class="eq-wrap">
+        <div id="eq" class="eq-canvas"></div>
+    </div>
+
+    <div class="wordmark-panel">
+        <div class="wordmark">dpaul.studio</div>
+        <div class="avatar">
+            <img src="../assets/man-standing.png" alt="dPaul">
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="design.html">design</a>
+        <a href="merch.html">merch</a>
+        <a href="music.html">music</a>
+        <a href="synths.html">synths</a>
+        <a href="tools.html">tools</a>
+        <a href="video.html">video</a>
+        <a href="dev-tools.html">dev tools</a>
+        <a href="about.html">about</a>
+    </nav>
+</div>
+
+<script src="nav-loader.js"></script>
+
+<script>
+  // EQ Logic
+  const NUM_BANDS = 14; 
+  const NUM_SEGS  = 12;
+  const eq = document.getElementById('eq');
+  const levels = Array.from({length: NUM_BANDS}, () => Math.floor(Math.random() * NUM_SEGS) + 1);
+  const targets = [...levels];
+  const cols = [];
+
+  for (let b = 0; b < NUM_BANDS; b++) {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const segs = [];
+    for (let s = NUM_SEGS - 1; s >= 0; s--) {
+      const seg = document.createElement('div');
+      seg.className = 'seg';
+      col.appendChild(seg);
+      segs.push(seg);
+    }
+    eq.appendChild(col);
+    cols.push(segs);
+  }
+
+  function renderLevels() {
+    for (let b = 0; b < NUM_BANDS; b++) {
+      const lv = Math.round(levels[b]);
+      cols[b].forEach((seg, i) => {
+        const segNum = NUM_SEGS - i;
+        if (segNum <= lv) {
+          seg.classList.add('on');
+          if (segNum >= NUM_SEGS) seg.classList.add('top');
+          else if (segNum >= NUM_SEGS - 2) seg.classList.add('mid');
+        } else {
+          seg.classList.remove('on', 'mid', 'top');
+        }
+      });
+    }
+  }
+
+  function animate() {
+    for (let b = 0; b < NUM_BANDS; b++) {
+      if (Math.random() < 0.08) { targets[b] = Math.floor(Math.random() * NUM_SEGS) + 1; }
+      const diff = targets[b] - levels[b];
+      levels[b] += diff * 0.15;
+      levels[b] = Math.max(1, Math.min(NUM_SEGS, levels[b]));
+    }
+    renderLevels();
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+</body>
+</html>

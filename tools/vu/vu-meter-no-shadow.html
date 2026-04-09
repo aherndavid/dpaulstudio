@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>dPaul VU Meter</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: #131413;
+        padding: 20px 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .outer-wrap {
+        width: 100%;
+        max-width: 392px;
+    }
+
+    .container {
+        width: 100%;
+        background: linear-gradient(145deg, #0a1a4a, #102060);
+        border-radius: 9px;
+        padding: 17px;
+        box-shadow: none;
+        border: 1px solid rgba(5,15,58,0.3);
+        position: relative;
+    }
+
+    .container::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 35%;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 9px 9px 0 0;
+        pointer-events: none;
+    }
+
+    h1 {
+        color: #000;
+        font-size: 23px;
+        font-weight: 900;
+        margin-bottom: 12px;
+        letter-spacing: 0.5px;
+        font-family: Impact, 'Arial Black', sans-serif;
+    }
+
+    .main-layout { display: flex; flex-direction: column; gap: 10px; }
+
+    .section {
+        background: #0a0a0a;
+        border-radius: 5px;
+        padding: 7px;
+        box-shadow: inset 0 2px 3px rgba(0,0,0,0.5),
+                    inset 0 -1px 0 rgba(255,255,255,0.05),
+                    0 1px 0 rgba(255,255,255,0.1);
+        border: 1px solid #000;
+    }
+
+    .section-title {
+        color: #888;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    label {
+        display: block;
+        color: #666;
+        font-size: 9px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* ── dB Big Display ── */
+    .db-readout {
+        text-align: center;
+        padding: 6px 0 4px;
+    }
+    .db-number {
+        font-family: 'Courier New', monospace;
+        font-size: 72px;
+        font-weight: 700;
+        line-height: 1;
+        color: #1a7fff;
+        letter-spacing: -2px;
+        text-shadow: 0 0 18px rgba(26,127,255,0.6), 0 0 50px rgba(26,127,255,0.2);
+        transition: color 0.08s, text-shadow 0.08s;
+    }
+    .db-number.peak {
+        color: #ff1830;
+        text-shadow: 0 0 18px rgba(255,24,48,0.8), 0 0 50px rgba(255,24,48,0.3);
+    }
+    .db-unit-label {
+        color: #666;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 2px;
+    }
+
+    /* ── Segment bar ── */
+    .segments {
+        display: flex;
+        gap: 2px;
+        height: 28px;
+        margin-bottom: 5px;
+    }
+    .seg {
+        flex: 1;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.05);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+        transition: background 0.04s, box-shadow 0.04s;
+    }
+    .seg.lit-blue   { background: #1a7fff; box-shadow: 0 0 5px rgba(26,127,255,0.5); }
+    .seg.lit-cyan   { background: #00c8ff; box-shadow: 0 0 5px rgba(0,200,255,0.5); }
+    .seg.lit-red    { background: #ff1830; box-shadow: 0 0 7px rgba(255,24,48,0.6); }
+
+    .bar-scale {
+        display: flex;
+        justify-content: space-between;
+        font-family: 'Courier New', monospace;
+        font-size: 9px;
+        color: #444;
+        padding: 0 1px;
+    }
+
+    /* ── Peak history ── */
+    .peak-list-wrap {
+        max-height: 130px;
+        overflow-y: auto;
+        scrollbar-width: none;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+    .peak-list-wrap::-webkit-scrollbar { display: none; }
+
+    .peak-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .peak-max-label {
+        color: #666;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .peak-max-val {
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        color: #1a7fff;
+    }
+
+    .peak-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 8px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 3px;
+        border-left: 2px solid #1a7fff;
+    }
+    .peak-row.high   { border-left-color: #00c8ff; }
+    .peak-row.danger { border-left-color: #ff1830; }
+
+    .peak-row-db {
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        color: #1a7fff;
+    }
+    .peak-row.high   .peak-row-db { color: #00c8ff; }
+    .peak-row.danger .peak-row-db { color: #ff1830; }
+
+    .peak-row-time {
+        font-family: 'Courier New', monospace;
+        font-size: 9px;
+        color: #444;
+        letter-spacing: 0.5px;
+    }
+
+    .peak-empty {
+        font-family: 'Courier New', monospace;
+        font-size: 9px;
+        color: #333;
+        letter-spacing: 1px;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    /* ── Buttons ── */
+    .button-group { display: flex; flex-direction: row; gap: 8px; }
+
+    button {
+        padding: 10px 16px;
+        background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+        border: 1px solid #000;
+        border-radius: 3px;
+        color: #888;
+        font-size: 9px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+        flex: 1;
+    }
+    button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
+    button:active, button.active {
+        transform: translateY(1px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        color: #1a7fff;
+        border-color: #1a7fff;
+    }
+
+    .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
+    .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
+
+    .status {
+        margin-top: 10px;
+        padding: 8px;
+        background: #000a1a;
+        border-radius: 3px;
+        text-align: center;
+        color: #005588;
+        font-size: 9px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-family: 'Courier New', monospace;
+        box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,60,120,0.15);
+        border: 1px solid #000;
+    }
+    .status.active { color: #1a7fff; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(26,100,255,0.25); }
+</style>
+</head>
+<body>
+<div class="outer-wrap">
+    <div class="container">
+        <h1>dPaul VU <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v2.01</span></h1>
+
+        <div class="main-layout">
+
+            <!-- dB readout -->
+            <div class="section">
+                <label>LEVEL DISPLAY</label>
+                <div class="db-readout">
+                    <div class="db-number" id="dbDisplay">—</div>
+                    <div class="db-unit-label">Decibels</div>
+                </div>
+            </div>
+
+            <!-- Segment bar -->
+            <div class="section">
+                <label>SIGNAL BAR</label>
+                <div class="segments" id="segments"></div>
+                <div class="bar-scale">
+                    <span>-40</span><span>-20</span><span>0</span><span>20</span><span>50</span><span>100</span>
+                </div>
+            </div>
+
+            <!-- Peak history -->
+            <div class="section">
+                <div class="peak-header-row">
+                    <label style="margin:0;">PEAK HISTORY</label>
+                    <span class="peak-max-val" id="peakMaxVal">Max: —</span>
+                </div>
+                <div class="peak-list-wrap" id="peakList">
+                    <div class="peak-empty" id="peakEmpty">No peaks recorded yet</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="button-group">
+                <button class="btn-primary" id="btnMic">MIC</button>
+                <button id="btnTest">TEST</button>
+                <button id="btnReset">RESET</button>
+            </div>
+
+            <div class="status" id="status">Ready</div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+const MIN_DB = -40, MAX_DB = 100;
+const NUM_SEGS = 36;
+const PEAK_THRESHOLD = 80;
+const PEAK_HOLD_MS   = 1200;
+
+const segsEl = document.getElementById('segments');
+for (let i = 0; i < NUM_SEGS; i++) {
+    const d = document.createElement('div');
+    d.className = 'seg';
+    segsEl.appendChild(d);
+}
+const segs = Array.from(segsEl.children);
+
+const idxCyan = Math.round((80 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+const idxRed  = Math.round((90 - MIN_DB) / (MAX_DB - MIN_DB) * (NUM_SEGS - 1));
+
+const dbDisplay  = document.getElementById('dbDisplay');
+const peakList   = document.getElementById('peakList');
+const peakEmpty  = document.getElementById('peakEmpty');
+const peakMaxVal = document.getElementById('peakMaxVal');
+
+let peakHistory  = [];
+let allTimePeak  = null;
+let lastPeakTime = 0;
+let lastDb       = MIN_DB;
+let peakHoldDb   = null;
+
+function nowStr() {
+    return new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+
+function setStatus(msg, active = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.toggle('active', active);
+}
+
+function recordPeak(db) {
+    const t = Date.now();
+    if (t - lastPeakTime < PEAK_HOLD_MS) return;
+    lastPeakTime = t;
+
+    peakHistory.unshift({ db, time: nowStr() });
+    if (peakHistory.length > 20) peakHistory.pop();
+
+    if (allTimePeak === null || db > allTimePeak) {
+        allTimePeak = db;
+        peakMaxVal.textContent = 'Max: ' + db.toFixed(1) + ' dB';
+    }
+
+    renderPeakList();
+}
+
+function renderPeakList() {
+    peakList.querySelectorAll('.peak-row').forEach(r => r.remove());
+    if (peakHistory.length === 0) {
+        peakEmpty.style.display = 'block';
+        return;
+    }
+    peakEmpty.style.display = 'none';
+    peakHistory.forEach(({db, time}) => {
+        const row = document.createElement('div');
+        row.className = 'peak-row' + (db >= 90 ? ' danger' : db >= 80 ? ' high' : '');
+        row.innerHTML = `<span class="peak-row-db">${db.toFixed(1)} dB</span><span class="peak-row-time">${time}</span>`;
+        peakList.appendChild(row);
+    });
+}
+
+function setLevel(db) {
+    const filled = Math.round(((db - MIN_DB) / (MAX_DB - MIN_DB)) * (NUM_SEGS - 1));
+    segs.forEach((s, i) => {
+        if (i <= filled) {
+            s.className = i >= idxRed ? 'seg lit-red' : i >= idxCyan ? 'seg lit-cyan' : 'seg lit-blue';
+        } else {
+            s.className = 'seg';
+        }
+    });
+
+    if (db <= MIN_DB) {
+        dbDisplay.textContent = '—';
+        dbDisplay.className = 'db-number';
+    } else {
+        dbDisplay.textContent = db.toFixed(1);
+        dbDisplay.className = 'db-number' + (db >= 90 ? ' peak' : '');
+    }
+
+    if (db > lastDb) {
+        peakHoldDb = db;
+    } else if (peakHoldDb !== null && db < peakHoldDb - 3 && peakHoldDb >= PEAK_THRESHOLD) {
+        recordPeak(peakHoldDb);
+        peakHoldDb = null;
+    }
+    lastDb = db;
+}
+
+function resetMeter() {
+    segs.forEach(s => s.className = 'seg');
+    dbDisplay.textContent = '—';
+    dbDisplay.className = 'db-number';
+    peakHistory = [];
+    allTimePeak = null;
+    lastDb = MIN_DB;
+    peakHoldDb = null;
+    peakMaxVal.textContent = 'Max: —';
+    renderPeakList();
+    setStatus('Ready');
+}
+
+resetMeter();
+
+let simInterval = null, simMode = null;
+
+function stopSim() {
+    clearInterval(simInterval); simInterval = null; simMode = null;
+    document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+}
+
+document.getElementById('btnTest').addEventListener('click', () => {
+    if (simMode === 'test') { stopSim(); setStatus('Stopped'); return; }
+    stopSim(); simMode = 'test';
+    document.getElementById('btnTest').classList.add('active');
+    setStatus('Test signal running...', true);
+    let ph = 0;
+    simInterval = setInterval(() => {
+        ph++;
+        let db = 30 + Math.sin(ph * 0.065) * 45 + Math.sin(ph * 0.028) * 20;
+        db = Math.max(MIN_DB, Math.min(MAX_DB, db));
+        setLevel(db);
+    }, 55);
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+    stopSim(); resetMeter();
+});
+
+document.getElementById('btnMic').addEventListener('click', async () => {
+    if (simMode === 'mic') { stopSim(); setStatus('Stopped'); return; }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stopSim(); simMode = 'mic';
+        document.getElementById('btnMic').classList.add('active');
+        setStatus('Microphone active...', true);
+        const actx     = new AudioContext();
+        const src      = actx.createMediaStreamSource(stream);
+        const analyser = actx.createAnalyser();
+        analyser.fftSize = 512;
+        src.connect(analyser);
+        const buf = new Float32Array(analyser.fftSize);
+        simInterval = setInterval(() => {
+            analyser.getFloatTimeDomainData(buf);
+            let sum = 0; buf.forEach(v => sum += v * v);
+            const rms = Math.sqrt(sum / buf.length);
+            const db  = rms > 0
+                ? Math.max(MIN_DB, Math.min(MAX_DB, 20 * Math.log10(rms) + 90))
+                : MIN_DB;
+            setLevel(db);
+        }, 55);
+    } catch(e) { setStatus('Microphone access denied'); }
+});
+</script>
+</body>
+</html>

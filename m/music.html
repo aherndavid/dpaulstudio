@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music — dPaul Technologies (Mobile)</title>
+    
+    <style>
+        /* ── THEME VARIABLES ── */
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Courier New', Courier, monospace;
+            font-size: calc(110% * var(--font-scale)); 
+            margin: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px; 
+            background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        /* ── PAGE CONTENT ── */
+        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
+
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 1.8rem; line-height: 1.2; margin-bottom: 20px; color: #fff; font-weight: 900; }
+        .hero h1 span { color: var(--orange); }
+        .hero p { font-size: 1.1rem; border-left: 2px solid var(--orange); padding-left: 16px; color: var(--text); }
+
+        /* TTS PLAYER */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+        }
+        .tts-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: inherit; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-btn.active { background: var(--orange); color: #000; }
+        .tts-voice-sel { 
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
+            padding: 8px; font-family: inherit; font-size: 0.85rem; width: 100%;
+        }
+        .tts-highlight { background: rgba(255,102,0,0.2); border-radius: 2px; }
+
+        /* SECTIONS */
+        .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 12px; }
+        .section h2 { font-size: 1.6rem; color: #fff; margin-bottom: 24px; line-height: 1.2; }
+        .section-intro { font-size: 1.05rem; line-height: 1.7; color: var(--text); margin-bottom: 32px; }
+
+        /* ALBUM COVER */
+        .album-visual { display: flex; justify-content: center; margin-bottom: 24px; }
+        .album-cover {
+            width: 100%; max-width: 320px; aspect-ratio: 1;
+            border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+            position: relative; background: #0e0f0e; cursor: pointer;
+        }
+        .album-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .click-hint {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(19,20,19,0.85); padding: 10px;
+            text-align: center; font-size: 0.7rem; color: var(--orange);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        /* PRIMARY LAUNCH BUTTON */
+        .launch-btn { 
+            display: block; padding: 18px; border: 1px solid var(--orange); 
+            color: #000; background: var(--orange); text-decoration: none; 
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.15em; 
+            border-radius: 3px; text-align: center; font-weight: bold; 
+            margin-bottom: 32px; box-shadow: 0 4px 20px rgba(255,102,0,0.2);
+        }
+
+        .split-text p { margin-bottom: 16px; font-size: 1rem; }
+        .split-text p strong { color: var(--orange); }
+
+        /* PROCESS GRID */
+        .process-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+        .process-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+        .card-label { font-size: 0.7rem; color: var(--orange); margin-bottom: 8px; letter-spacing: 0.1em; text-transform: uppercase; }
+        .process-card h3 { color: #fff; margin-bottom: 10px; font-size: 1.1rem; }
+        .process-card p { font-size: 0.95rem; line-height: 1.6; }
+
+        .outcome-strip {
+            margin-top: 32px; padding: 20px; border: 1px solid var(--orange);
+            border-radius: 6px; background: rgba(255,102,0,0.04);
+        }
+        .outcome-strip .label { font-size: 0.75rem; color: var(--orange); margin-bottom: 8px; text-transform: uppercase; }
+        .outcome-strip p { font-size: 1rem; line-height: 1.7; font-weight: bold; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+        .tag { font-size: 0.7rem; border: 1px solid var(--border-dim); padding: 4px 10px; color: var(--cream); text-transform: uppercase; }
+
+        .cta-block { padding: 64px 0 0; text-align: center; }
+        .cta-btn { 
+            display: inline-block; padding: 14px 28px; border: 1px solid var(--orange);
+            color: var(--orange); font-family: inherit; font-size: 0.9rem; font-weight: bold; 
+            text-transform: uppercase; text-decoration: none; border-radius: 3px; 
+            letter-spacing: 0.1em;
+        }
+
+        /* FONT NUDGE */
+        .font-nudge {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+        }
+        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; }
+
+        .footer-toggle { text-align: center; padding: 60px 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html" class="active">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <a href="about.html">info</a>
+</div>
+
+<div class="page">
+    <section class="hero reveal">
+        <div class="hero-label">// Music Archive</div>
+        <h1>The Renaissance<br><span>"Trilogy Feed"</span></h1>
+        <p>An interactive archive built from three 70-minute master recordings — engineered in Logic Pro and optimized for zero-delay web listening.</p>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 01 — The Release</div>
+        <h2>Sasha & Digweed — Renaissance</h2>
+        
+        <div class="album-visual">
+            <div class="album-cover" onclick="window.location.href='https://aherndavid.github.io/dpaulstudio/launchers/renaissance-launcher.html'">
+                <img src="../assets/renaissance-cover.jpg" alt="Renaissance Album Art">
+                <div class="click-hint">// Tap cover to load archive</div>
+            </div>
+        </div>
+
+        <a href="https://aherndavid.github.io/dpaulstudio/launchers/renaissance-launcher.html" class="launch-btn">
+            Launch CRT Player →
+        </a>
+
+        <div class="split-text">
+            <p>In 1994, <strong>Renaissance: The Mix Collection</strong> changed electronic music forever as the first official nightclub "sampler."</p>
+            <p>It wasn't just a hit — it was a cultural milestone. From the iconic Sistine Chapel artwork to the triple-CD package, it defined the progressive house sound for a generation.</p>
+        </div>
+
+        <div class="tags">
+            <div class="tag">Progressive House</div>
+            <div class="tag">Early 90s Trance</div>
+            <div class="tag">1994 Original</div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 02 — The Build Process</div>
+        <h2>Engineering the Archive</h2>
+        <p class="section-intro">This project demonstrated how DAW expertise (Logic Pro) and web infrastructure can deliver a professional-grade interactive product.</p>
+
+        <div class="process-grid">
+            <div class="process-card">
+                <div class="card-label">// Audio</div>
+                <h3>Logic Pro Masters</h3>
+                <p>Three separate 70-minute recordings mixed specifically to balance high-fidelity audio against mobile streaming constraints.</p>
+            </div>
+            <div class="process-card">
+                <div class="card-label">// Stability</div>
+                <h3>Latency Control</h3>
+                <p>Masters converted to optimized formats with reliable hosting to ensure zero drop-outs during 210 minutes of playback.</p>
+            </div>
+            <div class="process-card">
+                <div class="card-label">// UX</div>
+                <h3>CRT Aesthetic</h3>
+                <p>Original 1994 art processed to fit the retro CRT player aesthetic — keeping it sharp without slowing down mobile load times.</p>
+            </div>
+        </div>
+
+        <div class="outcome-strip">
+            <div class="label">// The Outcome</div>
+            <p>A zero-delay, interactive archive taking a creative concept into a finished digital reality.</p>
+        </div>
+    </section>
+
+    <div class="cta-block reveal">
+        <h2>Want something built?</h2>
+        <p>Custom audio players or interactive archives for your music project.</p>
+        <a href="about.html" class="cta-btn">Get in touch</a>
+    </div>
+
+    <div class="footer-toggle">
+        <a href="../music.html">→ View Desktop Version</a>
+    </div>
+</div>
+
+<div class="font-nudge" id="fontNudge">
+    <button class="font-btn" onclick="adjustFont(1)">A+</button>
+    <button class="font-btn" onclick="adjustFont(-1)">A-</button>
+</div>
+
+<script>
+    // MENU LOGIC
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
+
+    // FONT SCALE
+    let fontScale = 1;
+    function adjustFont(dir) {
+        fontScale = Math.max(0.8, Math.min(1.5, fontScale + (dir * 0.1)));
+        document.documentElement.style.setProperty('--font-scale', fontScale);
+    }
+
+    // REVEAL ANIMATION
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // TTS ENGINE
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let currentIdx = 0;
+
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        if(!sel) return;
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        enVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
+        });
+        selectedVoice = enVoices[0];
+    }
+
+    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
+    
+    function buildChunks() {
+        chunks = [];
+        document.querySelectorAll('h1, h2, .hero p, .section-intro, .split-text p, .process-card p').forEach(el => {
+            chunks.push({ el, text: el.innerText });
+        });
+    }
+
+    window.ttsPlay = () => {
+        if (!chunks.length) buildChunks();
+        synth.cancel();
+        currentIdx = 0;
+        speak();
+        document.getElementById('ttsPlay').disabled = true;
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        document.getElementById('ttsPlay').disabled = false;
+    };
+
+    function speak() {
+        if (currentIdx >= chunks.length) { ttsStop(); return; }
+        const chunk = chunks[currentIdx];
+        chunk.el.classList.add('tts-highlight');
+        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => {
+            chunk.el.classList.remove('tts-highlight');
+            currentIdx++;
+            speak();
+        };
+        synth.speak(utter);
+    }
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
+</script>
+
+</body>
+</html>

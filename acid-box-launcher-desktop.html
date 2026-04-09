@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACID-BOX — High Fidelity Desktop</title>
+    <style>
+        :root {
+            --orange: #FF6600;
+            --bg: #131413;
+            --panel: #1a1c1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            overflow: auto; 
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        .frame-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            min-width: 100vw;
+            /* Extra padding allows you to "oversize" without hitting screen edges */
+            padding: 200px; 
+        }
+
+        iframe {
+            width: 1280px;
+            height: 800px;
+            border: 2px solid #222;
+            background: #000;
+            display: block;
+            transform-origin: center center;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.8);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .zoom-controls {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 10000;
+            background: rgba(20, 20, 20, 0.8);
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: var(--orange);
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .zoom-btn:hover { background: var(--orange); color: #000; border-color: var(--orange); }
+        .zoom-btn:active { transform: scale(0.9); }
+        .zoom-label { color: #777; font-size: 9px; text-align: center; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #131413; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+    </style>
+</head>
+<body>
+
+    <div class="frame-wrap">
+        <iframe
+            src="https://dpaul.studio/music/synths/acid-box/acid-box-desktop.html"
+            id="appFrame"
+            allow="midi; midi-sysex; autoplay"
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="adjustZoom(0.1)">+</button>
+        <button class="zoom-btn" onclick="adjustZoom(-0.1)">−</button>
+        <div class="zoom-label" id="zoomLabel">100%</div>
+    </div>
+
+    <script>
+        const frame = document.getElementById('appFrame');
+        const label = document.getElementById('zoomLabel');
+
+        /* ── ADJUSTMENT ZONE: BASE DIMENSIONS ── */
+        const IFRAME_W = 1280;
+        const IFRAME_H = 800;
+        const MIN = 0.4;
+        const MAX = 4.0; // Increased ceiling to allow massive zoom
+
+        let zoom = 1.0;
+
+        function initializeZoom() {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            
+            const scaleW = vw / IFRAME_W;
+            const scaleH = vh / IFRAME_H;
+            const fitZoom = Math.min(scaleW, scaleH);
+            
+            /* ── ADJUSTMENT ZONE: INITIAL MULTIPLIER ── */
+            // Change 1.5 to 1.8 or 2.0 to make it larger on load.
+            // 1.0 = exact fit, 1.5 = 50% larger than fit, 2.0 = double fit.
+            const initialScaleFactor = 1.8; 
+            
+            zoom = Math.round((fitZoom * initialScaleFactor) * 100) / 100;
+            
+            zoom = Math.max(MIN, Math.min(MAX, zoom));
+            applyZoom();
+        }
+
+        function applyZoom() {
+            frame.style.transform = `scale(${zoom})`;
+            label.textContent = Math.round(zoom * 100) + '%';
+        }
+
+        function adjustZoom(delta) {
+            zoom = Math.round((zoom + delta) * 100) / 100;
+            zoom = Math.max(MIN, Math.min(MAX, zoom));
+            applyZoom();
+        }
+
+        window.addEventListener('load', initializeZoom);
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                initializeZoom();
+            }, 250);
+        });
+    </script>
+</body>
+</html>

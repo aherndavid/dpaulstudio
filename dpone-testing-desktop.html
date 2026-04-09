@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DP-ONE — Studio Interface</title>
+    <style>
+        :root {
+            --bg: #131413;
+            --orange: #FF6600;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            /* This centers the container on both axes */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Subtle CRT-style grain overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        .synth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        iframe {
+            /* Set the native resolution of your synth here */
+            width: 1280px; 
+            height: 800px;
+            border: 1px solid #222;
+            background: #000;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            transform-origin: center center;
+            display: block;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ── OPTIONAL HUD ── */
+        .system-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: #333;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="system-status">DP-ONE // UNIT-01 // SIGNAL STABLE</div>
+
+    <div class="synth-container">
+        <iframe
+            src="https://dpaul.studio/music/synths/dpone/dpone-testing-desktop.html"
+            id="synthFrame"
+            scrolling="no"
+            allow="midi; midi-sysex; autoplay"
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <script>
+        const frame = document.getElementById('synthFrame');
+        
+        // Native size of the DP-ONE UI
+        const NATIVE_W = 1280;
+        const NATIVE_H = 800;
+
+        function resizeSynth() {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            // Calculate how much we need to scale to fit the screen
+            // We multiply by 0.9 to leave a 10% "breathing room" margin
+            const scaleW = (vw * 0.9) / NATIVE_W;
+            const scaleH = (vh * 0.9) / NATIVE_H;
+            
+            // Choose the smaller scale to ensure it fits entirely
+            let zoom = Math.min(scaleW, scaleH);
+
+            // Don't let it get ridiculously small or overly huge
+            zoom = Math.max(0.4, Math.min(1.5, zoom));
+
+            frame.style.transform = `scale(${zoom})`;
+        }
+
+        // Run on load and on every window resize
+        window.addEventListener('load', resizeSynth);
+        window.addEventListener('resize', resizeSynth);
+    </script>
+</body>
+</html>

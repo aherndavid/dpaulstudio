@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Tools — dPaul Technologies</title>
+    
+    <style>
+        :root {
+            --bg:     #131413;
+            --bg2:    #1a1c1a;
+            --orange: #FF6600;
+            --cream:  #D4C4A8;
+            --text:   #c8c8c0;
+            --dim:    #7a7a70;
+            --border: rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 130%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* FONT NUDGE */
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 12px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
+
+        /* NAV */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            padding: 0 24px; display: flex; align-items: center; gap: 4px;
+            height: 72px; flex-wrap: wrap;
+        }
+        nav a {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.4rem; color: var(--cream);
+            text-decoration: none; padding: 10px 20px;
+            border: 1px solid transparent; border-radius: 3px;
+            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
+        }
+        nav a:hover { border-color: var(--orange); color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav .spacer { flex: 1; }
+
+        /* PAGE */
+        .page { max-width: 1400px; margin: 0 auto; padding: 0 56px 80px; }
+
+        /* HERO */
+        .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(2.86rem, 5.5vw, 5.2rem);
+            font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 20px;
+        }
+        .hero h1 span { color: var(--orange); }
+        .hero p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; max-width: 600px; color: var(--text); }
+
+        /* TTS PLAYER */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
+        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
+        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-speed {
+            -webkit-appearance: none; appearance: none;
+            width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer;
+        }
+        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
+        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
+        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-section-sel, .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+        }
+        .tts-section-sel { max-width: 200px; }
+        .tts-voice-sel  { max-width: 240px; }
+        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
+        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+
+        /* TOOL BLOCKS */
+        .tool-block {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 56px; align-items: start;
+            padding: 72px 0; border-bottom: 1px solid var(--border);
+        }
+        .tool-block.flip { direction: rtl; }
+        .tool-block.flip > * { direction: ltr; }
+        .tool-visual { display: flex; justify-content: center; align-items: start; }
+        .tool-frame {
+        width: 100%; max-width: 840px;
+        border: 1px solid var(--border); border-radius: 6px;
+        overflow: hidden; background: #0e0f0e; transition: border-color 0.2s;
+          }
+        .tool-frame:hover { border-color: var(--orange); }
+
+        /* HTML-LIVE expanded layout */
+        .html-live-block { padding: 72px 0; border-bottom: 1px solid var(--border); }
+        .html-live-eyebrow { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+        .html-live-name { font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; letter-spacing: -0.02em; margin-bottom: 40px; }
+.html-live-body { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }       .tool-story { font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95; color: var(--text); margin-bottom: 16px; }
+        .tool-story em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
+
+        /* spec lists */
+        .spec-list-bullets { list-style: none; margin: 20px 0 0; }
+        .spec-list-bullets li {
+            font-size: calc(1.04rem * var(--font-scale)); color: var(--text);
+            padding: 7px 0 7px 16px; border-bottom: 1px solid var(--border-dim);
+            position: relative; line-height: 1.6;
+        }
+        .spec-list-bullets li:first-child { border-top: 1px solid var(--border-dim); }
+        .spec-list-bullets li::before { content: '›'; position: absolute; left: 0; color: var(--orange); }
+
+        .spec-list-grid { list-style: none; margin: 20px 0 0; }
+        .spec-list-grid li { display: grid; grid-template-columns: 150px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-dim); font-size: calc(1.17rem * var(--font-scale)); }
+        .spec-list-grid li:first-child { border-top: 1px solid var(--border-dim); }
+        .spec-key { color: var(--dim); }
+        .spec-val { color: var(--cream); }
+
+        /* tags */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+        .tag {
+            font-size: calc(0.936rem * var(--font-scale)); letter-spacing: 0.1em;
+            padding: 5px 12px; border: 1px solid var(--border-dim); border-radius: 2px;
+            color: var(--cream); text-transform: uppercase; transition: border-color 0.2s, color 0.2s;
+        }
+        .tag:hover { border-color: var(--orange); color: var(--orange); }
+
+        /* launch btn */
+        .launch-btn {
+            display: inline-block; margin-top: 24px; padding: 10px 24px;
+            border: 1px solid var(--orange); color: var(--orange);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.066rem;
+            letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none;
+            border-radius: 3px; transition: background 0.2s, color 0.2s, transform 0.15s;
+        }
+        .launch-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
+
+        /* BMC block */
+        .bmc-block {
+            margin-top: 28px; padding: 20px 22px;
+            border: 1px solid var(--border-dim); border-radius: 4px;
+            background: var(--bg2); display: flex; align-items: center; gap: 20px;
+            max-width: 560px;
+        }
+        .bmc-coffee-img {
+            width: 72px; height: auto; flex-shrink: 0; object-fit: contain;
+        }
+        .bmc-text { flex: 1; }
+        .bmc-label { font-size: 0.91rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+        .bmc-desc { font-size: 1rem; line-height: 1.7; color: var(--dim); }
+        .bmc-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; background: #FFDD00; color: #000;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.04rem;
+            font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            text-decoration: none; border-radius: 4px; white-space: nowrap;
+            transition: background 0.2s, transform 0.15s; flex-shrink: 0;
+        }
+        .bmc-btn:hover { background: #ffe633; transform: translateY(-2px); }
+
+        /* status badge */
+        .status-badge {
+            display: inline-block; font-size: 0.884rem; letter-spacing: 0.15em;
+            text-transform: uppercase; padding: 3px 10px; border-radius: 2px;
+            margin-left: 10px; vertical-align: middle;
+        }
+        .status-badge.live { background: rgba(80,200,100,0.12); color: #50c864; border: 1px solid rgba(80,200,100,0.25); }
+        .status-badge.wip  { background: rgba(255,102,0,0.1); color: var(--orange); border: 1px solid var(--border); }
+
+        /* screenshot gallery */
+        .screenshot-gallery { display: flex; flex-direction: column; gap: 24px; position: sticky; top: 100px; }
+        .screenshot-label { font-size: 0.936rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+        .screenshot-img { width: 100%; height: auto; display: block; border-radius: 3px; border: 1px solid var(--border-dim); transition: border-color 0.2s; }
+        .screenshot-img:hover { border-color: var(--orange); }
+        .screenshot-caption { font-size: calc(1.014rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.08em; margin-top: 6px; }
+
+        /* tool info */
+        .tool-info h3 { font-size: 1.82rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+        .tool-sub { font-size: 1.066rem; letter-spacing: 0.18em; color: var(--orange); text-transform: uppercase; margin-bottom: 20px; }
+        .spec-list { list-style: none; margin: 20px 0 0; }
+        .spec-list li {
+            font-size: calc(1.04rem * var(--font-scale)); color: var(--text);
+            padding: 7px 0 7px 16px; border-bottom: 1px solid var(--border-dim);
+            position: relative; line-height: 1.6;
+        }
+        .spec-list li:first-child { border-top: 1px solid var(--border-dim); }
+        .spec-list li::before { content: '›'; position: absolute; left: 0; color: var(--orange); }
+
+        /* CTA */
+        .cta-block { padding: 72px 0 0; text-align: center; }
+        .cta-block h2 { font-size: clamp(1.82rem, 3.2vw, 2.6rem); color: #fff; margin-bottom: 14px; }
+        .cta-block p { font-size: calc(1.144rem * var(--font-scale)); color: var(--text); margin-bottom: 32px; }
+        .cta-btn {
+            display: inline-block; padding: 14px 36px;
+            background: var(--orange); color: #000;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.235rem;
+            letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none;
+            border-radius: 3px; transition: background 0.2s, transform 0.15s;
+        }
+        .cta-btn:hover { background: #ff8533; transform: translateY(-2px); }
+
+        /* REVEAL */
+        .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        @media (max-width: 760px) {
+            .tool-block { grid-template-columns: 1fr; gap: 32px; }
+            .tool-block.flip { direction: ltr; }
+            .html-live-body { grid-template-columns: 1fr; }
+            .screenshot-gallery { position: relative; top: 0; }
+            nav { height: auto; padding: 8px 16px; gap: 4px; }
+            nav a { padding: 5px 8px; font-size: 1rem; }
+            .bmc-block { flex-direction: column; align-items: flex-start; }
+            .font-nudge { bottom: 16px; right: 16px; }
+            .tts-player { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A&#8722;</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
+</div>
+
+<nav>
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <a href="dev-tools.html" class="active">dev tools</a>
+    <div class="spacer"></div>
+    <a href="about.html">info</a>
+</nav>
+
+<div class="page">
+
+    <!-- HERO -->
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies &#8212; Dev Tools</div>
+        <h1>Free tools.<br><span>Built because I needed them.</span></h1>
+        <p>Every tool here started as something I needed myself and couldn't find a clean version of. No sign-ups, no paywalls &#8212; open and use.</p>
+
+        <!-- TTS PLAYER -->
+        <div class="tts-player" id="ttsPlayer">
+            <span class="tts-label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <div class="tts-sep"></div>
+                <div class="tts-speed-wrap">
+                    <span class="tts-speed-label">Speed</span>
+                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label">Voice</span>
+                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                        <option value="">Loading voices...</option>
+                    </select>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label">Jump to</span>
+                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
+                        <option value="-1">-- section --</option>
+                    </select>
+                </div>
+            </div>
+            <span class="tts-progress" id="ttsProgress"></span>
+        </div>
+    </section>
+
+    <!-- TOOL 01: HTML-LIVE -->
+    <div class="html-live-block reveal">
+        <div class="html-live-eyebrow">// 01 &#8212; Live HTML Editor</div>
+        <div class="html-live-name">HTML-Live <span class="status-badge live">v1.6</span></div>
+
+        <div class="html-live-body">
+            <div>
+                <p class="tool-story">HTML-Live exists because I needed it to exist. Working through large HTML files by hand &#8212; trying to find specific sections, understand what the code was actually doing, and see the result instantly without switching between applications &#8212; was slowing everything down. So I built a tool that solved all of that in one place.</p>
+                <p class="tool-story">The core idea is simple: write or paste your HTML on one side, see a live preview on the other, with no delay and no button to press. Any change you make appears in the preview immediately. But the features around that core are what make it genuinely useful for day-to-day development work.</p>
+                <p class="tool-story">The device preview modes were a priority from the start &#8212; being able to switch between a mobile, tablet, and desktop view without leaving the editor is something that should be standard in any HTML tool. A border toggle makes the preview boundary visible at a glance, so you always know exactly what area you're working within.</p>
+                <p class="tool-story">Find and replace with regex support means you can locate any string in the code instantly, which becomes essential once files grow beyond a few hundred lines. The line numbers make it easy to pinpoint exactly where something is, and the inspect mode lets you click any element in the preview to jump straight to the corresponding code. Import and export keep your work portable &#8212; one file in, one file out.</p>
+                <p class="tool-story">Version rollback is the one that saves the most frustration. If an edit breaks something and you're not sure where it went wrong, you can step back through previous states without losing anything. HTMLHint integration catches common errors before they become problems.</p>
+                <p class="tool-story">HTML-Live is free to use. If it saves you time, buying me a coffee is a simple way to show that it's been worthwhile &#8212; and it helps keep the other free tools coming.</p>
+
+                <ul class="spec-list-bullets">
+                    <li>Live preview &#8212; renders as you type, no button press</li>
+                    <li>Line numbers with active line tracking</li>
+                    <li>HTMLHint debug panel &#8212; flags errors and warnings in real time</li>
+                    <li>Inspect mode &#8212; click any preview element to jump to its source</li>
+                    <li>Find &amp; Replace with full regex support</li>
+                    <li>Version rollback &#8212; up to 20 snapshots</li>
+                    <li>Export as raw, formatted, or minified HTML</li>
+                    <li>Desktop / tablet / mobile preview modes with border toggle</li>
+                    <li>Import HTML files directly from disk</li>
+                    <li>Single-file &#8212; no install, works anywhere</li>
+                </ul>
+
+                <div class="tags">
+                    <div class="tag">HTML</div>
+                    <div class="tag">Live Preview</div>
+                    <div class="tag">Mobile / Tablet / Desktop</div>
+                    <div class="tag">Regex</div>
+                    <div class="tag">Inspect</div>
+                    <div class="tag">Debug</div>
+                    <div class="tag">Rollback</div>
+                    <div class="tag">Free</div>
+                    <div class="tag">No Install</div>
+                </div>
+
+                <a href="../tools/html-live/html-live.html" target="_blank" class="launch-btn">Launch HTML-Live &#8594;</a>
+
+              <div class="bmc-block" style="margin-top: 40px; padding: 0; border: none; background: none; max-width: 620px; gap: 32px; align-items: center;">
+                    <img src="../assets/dpaul-coffee.png" alt="dPaul coffee" style="width: 160px; height: auto; flex-shrink: 0; object-fit: contain;">
+                    <div class="bmc-text">
+                        <div class="bmc-label" style="font-size: 1.17rem; margin-bottom: 12px;">// Support this tool</div>
+                        <p class="bmc-desc" style="font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95; color: var(--text);">HTML-Live is free and always will be. If it saves you time, a coffee keeps the tools coming.</p>
+                        <a href="https://buymeacoffee.com/YOUR_USERNAME" target="_blank" rel="noopener noreferrer" class="bmc-btn" style="margin-top: 20px; display: inline-flex;">
+                            <span>&#9749;</span> Buy me a coffee
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREENSHOT GALLERY -->
+            <div class="screenshot-gallery">
+                <div>
+                    <div class="screenshot-label">// On open</div>
+                    <img src="../assets/live-1.png" alt="HTML-Live — tool as it appears when first opened" class="screenshot-img">
+                    <p class="screenshot-caption">Ready to use &#8212; no setup required</p>
+                </div>
+                <div>
+                    <div class="screenshot-label">// In action</div>
+                    <img src="../assets/live-2.png" alt="HTML-Live — editor and live preview running side by side" class="screenshot-img">
+                    <p class="screenshot-caption">Code left, instant preview right</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOOL 02: SKRIBLA -->
+    <div class="tool-block flip reveal" style="grid-template-columns: 2fr 1fr;">
+        <div class="tool-visual">
+            <div class="tool-frame">
+<iframe src="../tools/skribla/index.html" style="width:100%;aspect-ratio:16/9;border:none;display:block;"></iframe>            </div>
+        </div>
+        <div class="tool-info">
+            <div class="tool-sub">// 02 &#8212; Scribble Pad</div>
+            <h3>Skribla</h3>
+            <p class="tool-story">A touch-friendly scribble pad that works on any device. Draw, sketch, doodle &#8212; lightweight and built for mobile.</p>
+            <ul class="spec-list">
+                <li>Touch-optimised for mobile</li>
+                <li>Works on any device &#8212; no install</li>
+                <li>Lightweight and fast</li>
+            </ul>
+            <a href="../tools/skribla/index.html" target="_blank" class="launch-btn">Launch Skribla &#8594;</a>
+            <div class="tags">
+                <div class="tag">Drawing</div>
+                <div class="tag">Mobile</div>
+                <div class="tag">Touch</div>
+                <div class="tag">Free</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOOL 03: Neon Pheonix -->
+    <div class="tool-block reveal">
+        <div class="tool-visual">
+            <div class="tool-frame">
+                <iframe src="../tools/neon-pheonix/neon-pheonix.html" style="width:100%;aspect-ratio:9/16;border:none;display:block;"></iframe>
+            </div>
+        </div>
+        <div class="tool-info" style="position: sticky; top: 100px;">
+            <div class="tool-sub">// 03 &#8212; Retro Game</div>
+            <h3>Neon Pheonix</h3>
+            <p class="tool-story">A retro arcade space game built entirely in the browser. Classic gameplay, no plugins, no install &#8212; just open and play.</p>
+            <ul class="spec-list">
+                <li>Retro arcade gameplay</li>
+                <li>Runs entirely in browser</li>
+                <li>Keyboard controls</li>
+            </ul>
+            <a href="../tools/neon-pheonix/neon-pheonix.html" target="_blank" class="launch-btn">Neon-Pheonix &#8594;</a>
+            <div class="tags">
+                <div class="tag">Retro</div>
+                <div class="tag">Browser Game</div>
+                <div class="tag">Arcade</div>
+                <div class="tag">Free</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-block reveal">
+        <h2>Got a tool idea?</h2>
+        <p>Something you'd find useful in the browser &#8212; let me know and I'll build it.</p>
+        <a href="about.html" class="cta-btn">Get in touch</a>
+    </div>
+
+</div>
+
+<script>
+    // FONT NUDGE
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    function dismissNudge() {
+        document.getElementById('fontNudge').style.opacity = '0';
+        document.getElementById('fontNudge').style.pointerEvents = 'none';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
+
+    // REVEAL
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.08 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // ─── TTS ENGINE ────────────────────────────────────────────────────
+    (function() {
+        const synth = window.speechSynthesis;
+        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
+        let selectedVoice = null;
+
+        const READ_SELECTORS = [
+            '.hero h1', '.hero p',
+            '.tool-story', '.bmc-desc',
+            '.cta-block h2', '.cta-block p'
+        ];
+        const SECTION_SELECTORS = [
+            '.hero-label', '.html-live-eyebrow', '.html-live-name',
+            '.tool-sub', 'h3'
+        ];
+
+        const AUTO_PRIORITY = [
+            'Google UK English Male', 'Google UK English Female', 'Google US English',
+            'Daniel', 'Arthur', 'Google US English Male', 'Google US English Female',
+            'Microsoft Ryan Online (Natural) - English (United Kingdom)',
+            'Microsoft Sonia Online (Natural) - English (United Kingdom)',
+            'Samantha', 'Fred', 'Alex',
+        ];
+
+        function genderGlyph(name) {
+            if (/female|woman|girl|sonia|samantha|karen|moira|fiona|veena|zira|hazel|susan/i.test(name)) return ' ♀';
+            if (/male|man|guy|daniel|arthur|david|james|mark|fred|alex|richard|ryan/i.test(name)) return ' ♂';
+            return '';
+        }
+
+        function populateVoiceList() {
+            const voices = synth.getVoices();
+            if (!voices.length) return;
+            const sel = document.getElementById('ttsVoiceSel');
+            sel.innerHTML = '';
+            const english = voices.filter(v => /^en/i.test(v.lang));
+            const google  = english.filter(v => v.name.startsWith('Google'));
+            const others  = english.filter(v => !v.name.startsWith('Google'));
+            function addGroup(label, list) {
+                if (!list.length) return;
+                const grp = document.createElement('optgroup');
+                grp.label = label;
+                list.forEach(v => {
+                    const o = document.createElement('option');
+                    o.value = v.name;
+                    o.textContent = v.name + genderGlyph(v.name);
+                    grp.appendChild(o);
+                });
+                sel.appendChild(grp);
+            }
+            addGroup('── Google ──', google);
+            addGroup('── Other ──', others);
+            if (!selectedVoice) {
+                for (const name of AUTO_PRIORITY) {
+                    const found = voices.find(v => v.name === name);
+                    if (found) { selectedVoice = found; break; }
+                }
+                if (!selectedVoice) selectedVoice = google[0] || english[0] || voices[0];
+            }
+            if (selectedVoice) sel.value = selectedVoice.name;
+        }
+
+        window.ttsSetVoice = function(name) {
+            const voices = synth.getVoices();
+            selectedVoice = voices.find(v => v.name === name) || null;
+            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
+        };
+
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
+                const txt = el.innerText.trim();
+                if (txt.length > 2) chunks.push({ el, text: txt });
+            });
+        }
+
+        function buildSectionMenu() {
+            const sel = document.getElementById('ttsSectionSel');
+            while (sel.options.length > 1) sel.remove(1);
+            let map = [];
+            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
+                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
+                if (!label || label.length < 2) return;
+                let matchIdx = -1;
+                for (let i = 0; i < chunks.length; i++) {
+                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
+                }
+                if (matchIdx >= 0) map.push({ label, idx: matchIdx });
+            });
+            const seen = new Set();
+            map = map.filter(s => { if (seen.has(s.idx)) return false; seen.add(s.idx); return true; });
+            map.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.idx;
+                opt.textContent = s.label.length > 38 ? s.label.slice(0, 36) + '...' : s.label;
+                sel.appendChild(opt);
+            });
+        }
+
+        function highlight(el) {
+            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
+            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            lastHighlighted = el;
+        }
+        function setProgress() {
+            document.getElementById('ttsProgress').textContent = chunks.length ? (idx + 1) + ' / ' + chunks.length : '';
+        }
+        function setButtons(state) {
+            const play = document.getElementById('ttsPlay');
+            const pause = document.getElementById('ttsPause');
+            const stop  = document.getElementById('ttsStop');
+            if (state === 'idle') {
+                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
+                pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
+            } else if (state === 'playing') {
+                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
+                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active');
+                stop.disabled = false;
+            } else if (state === 'paused') {
+                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
+                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
+            }
+        }
+        function speakCurrent() {
+            if (idx >= chunks.length) { ttsStop(); return; }
+            const chunk = chunks[idx];
+            highlight(chunk.el); setProgress();
+            const rate = parseFloat(document.getElementById('ttsSpeed').value);
+            const u = new SpeechSynthesisUtterance(chunk.text);
+            u.rate = rate; u.lang = 'en-GB';
+            if (selectedVoice) u.voice = selectedVoice;
+            u.onend  = () => { if (!paused) { idx++; speakCurrent(); } };
+            u.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') { idx++; speakCurrent(); } };
+            currentUtterance = u;
+            synth.speak(u);
+        }
+        function speakAt(startIdx) {
+            synth.cancel();
+            if (startIdx >= chunks.length) { ttsStop(); return; }
+            idx = startIdx; paused = false; setButtons('playing'); speakCurrent();
+        }
+
+        window.ttsPlay = function() {
+            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
+            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
+            else { speakAt(idx); }
+        };
+        window.ttsPause = function() {
+            if (synth.speaking && !synth.paused) { paused = true; synth.pause(); setButtons('paused'); }
+        };
+        window.ttsStop = function() {
+            paused = false; synth.cancel(); idx = 0;
+            if (lastHighlighted) { lastHighlighted.classList.remove('tts-highlight'); lastHighlighted = null; }
+            document.getElementById('ttsProgress').textContent = '';
+            document.getElementById('ttsSectionSel').value = '-1';
+            setButtons('idle');
+        };
+        window.ttsUpdateSpeed = function() {
+            const val = parseFloat(document.getElementById('ttsSpeed').value).toFixed(2);
+            document.getElementById('ttsSpeedVal').textContent = val + 'x';
+            if (currentUtterance) currentUtterance.rate = parseFloat(val);
+        };
+        window.ttsJumpTo = function(val) {
+            const i = parseInt(val);
+            if (isNaN(i) || i < 0) return;
+            speakAt(i);
+            document.getElementById('ttsSectionSel').value = '-1';
+        };
+
+        window.addEventListener('load', () => {
+            buildChunks(); buildSectionMenu();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = () => { selectedVoice = null; populateVoiceList(); };
+            }
+            populateVoiceList();
+        });
+        window.addEventListener('beforeunload', () => synth.cancel());
+    })();
+    // ─── END TTS ────────────────────────────────────────────────────────
+</script>
+
+</body>
+</html>

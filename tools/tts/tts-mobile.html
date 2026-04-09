@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>dPaul TTS — Mobile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #131413;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 14px 24px;
+        }
+
+        .outer-wrap { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 10px; }
+
+        /* ── HEADER ── */
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 14px;
+            background: linear-gradient(145deg, #4a0a0a, #6a1010);
+            border-radius: 8px;
+            border: 1px solid rgba(58,5,5,0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: 22px; color: #000;
+            letter-spacing: 0.5px; font-weight: 900;
+        }
+
+        .header h1 span {
+            font-size: 10px; letter-spacing: 2px;
+            opacity: 0.5; font-family: Impact, 'Arial Black', sans-serif;
+        }
+
+        .pwr-led {
+            width: 10px; height: 10px; border-radius: 2px;
+            background: #1a0000; border: 1px solid #2a0000;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+            transition: background 0.08s, box-shadow 0.08s;
+            flex-shrink: 0;
+        }
+        .pwr-led.on { background: #dd0000; border-color: #aa0000; box-shadow: 0 0 6px rgba(220,0,0,0.95), 0 0 12px rgba(220,0,0,0.4); }
+
+        /* ── CARD ── */
+        .card {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 7px;
+            padding: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .card-label {
+            font-size: 8px; letter-spacing: 1.2px;
+            text-transform: uppercase; color: #444;
+            margin-bottom: 8px; font-weight: 700;
+        }
+
+        /* ── VOICE SELECT ── */
+        select {
+            width: 100%; padding: 10px 8px;
+            background: #0f0f0f; border: 1px solid #222;
+            border-radius: 5px; color: #ccc;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px; cursor: pointer;
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        select:focus { outline: none; border-color: #444; }
+        select option { background: #1a1a1a; }
+
+        /* ── SLIDERS ── */
+        .slider-row {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 10px;
+        }
+        .slider-row:last-child { margin-bottom: 0; }
+
+        .slider-lbl {
+            font-size: 9px; letter-spacing: 0.8px; text-transform: uppercase;
+            color: #555; width: 44px; flex-shrink: 0;
+        }
+
+        input[type=range] {
+            flex: 1; -webkit-appearance: none; appearance: none;
+            height: 4px; background: #1a1a1a; border-radius: 2px;
+            border: 1px solid #111; cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px;
+            border-radius: 4px; background: linear-gradient(145deg, #555, #333);
+            border: 1px solid #111; box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+
+        .slider-val {
+            font-size: 11px; color: #00cc00;
+            font-family: 'Courier New', Courier, monospace;
+            width: 32px; text-align: right; flex-shrink: 0;
+        }
+
+        /* ── TEXTAREA ── */
+        textarea {
+            width: 100%; min-height: 160px;
+            padding: 12px;
+            background: #001a00; border: 1px solid #002200;
+            border-radius: 5px;
+            color: #00dd00; font-family: 'Courier New', Courier, monospace;
+            font-size: 14px; line-height: 1.55;
+            resize: none;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.7), inset 0 0 20px rgba(0,60,0,0.1);
+        }
+        textarea::placeholder { color: #004400; }
+        textarea:focus { outline: none; border-color: #003300; }
+
+        .char-count {
+            font-size: 9px; color: #333; text-align: right;
+            margin-top: 5px; font-family: 'Courier New', Courier, monospace;
+        }
+        .char-count.warn { color: #886600; }
+
+        /* ── BUTTONS ── */
+        .btn-row { display: flex; gap: 8px; }
+
+        .btn {
+            flex: 1; padding: 14px 8px;
+            border: 1px solid #222; border-radius: 6px;
+            background: linear-gradient(145deg, #2a2a2a, #141414);
+            color: #777; font-family: 'Courier New', Courier, monospace;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+            text-transform: uppercase; cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+            transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .btn:active { transform: scale(0.97); box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-speak {
+            background: linear-gradient(145deg, #555, #333);
+            color: #fff; border-color: #444; flex: 2;
+            font-size: 13px;
+        }
+        .btn-speak:active { background: linear-gradient(145deg, #666, #444); }
+
+        .btn-stop { color: #cc4444; border-color: #3a1010; }
+        .btn-stop:active { background: linear-gradient(145deg, #2a0000, #180000); }
+
+        .btn-clear { color: #666; }
+
+        /* ── STATUS ── */
+        .status {
+            padding: 10px; text-align: center;
+            background: #001a00; border: 1px solid #002200;
+            border-radius: 5px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+            text-transform: uppercase; color: #006600;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+            transition: color 0.2s;
+        }
+        .status.active { color: #00cc00; }
+        .status.error  { color: #cc4444; }
+
+        /* ── WORD COUNT / PROGRESS ── */
+        .progress-bar {
+            height: 3px; background: #111; border-radius: 2px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; width: 0%; background: #00aa00;
+            border-radius: 2px; transition: width 0.3s;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center; font-size: 8px;
+            color: #222; letter-spacing: 0.8px;
+            padding-top: 4px;
+        }
+        .footer a { color: #333; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="outer-wrap">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>dPaul TTS <span>mobile</span></h1>
+        <div class="pwr-led" id="pwrLed"></div>
+    </div>
+
+    <!-- Voice -->
+    <div class="card">
+        <div class="card-label">Voice</div>
+        <select id="voiceSelect"><option>Loading voices...</option></select>
+    </div>
+
+    <!-- Controls -->
+    <div class="card">
+        <div class="card-label">Settings</div>
+        <div class="slider-row">
+            <span class="slider-lbl">Speed</span>
+            <input type="range" id="rateSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+            <span class="slider-val" id="rateVal">1.0×</span>
+        </div>
+        <div class="slider-row">
+            <span class="slider-lbl">Pitch</span>
+            <input type="range" id="pitchSlider" min="0.5" max="2.0" step="0.1" value="1.0">
+            <span class="slider-val" id="pitchVal">1.0</span>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <div class="card">
+        <div class="card-label">Script</div>
+        <textarea id="textInput" placeholder="Type or paste your text here..." oninput="updateCount()"></textarea>
+        <div class="char-count" id="charCount">0 chars</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+        <button class="btn btn-speak" id="speakBtn" onclick="speak()">&#9654; Speak</button>
+        <button class="btn btn-stop"  id="stopBtn"  onclick="stop()" disabled>&#9632; Stop</button>
+        <button class="btn btn-clear" id="clearBtn" onclick="clearAll()">&#10005;</button>
+    </div>
+
+    <!-- Status -->
+    <div class="status" id="status">Ready</div>
+
+    <!-- Footer -->
+    <div class="footer">
+        dPaul Technologies &nbsp;·&nbsp;
+        <a href="https://www.dpaul.studio" target="_blank">dpaul.studio</a>
+        &nbsp;·&nbsp; Browser TTS · No API required
+    </div>
+
+</div>
+
+<script>
+'use strict';
+
+const pwrLed     = document.getElementById('pwrLed');
+const voiceSel   = document.getElementById('voiceSelect');
+const rateSlider = document.getElementById('rateSlider');
+const pitchSlider= document.getElementById('pitchSlider');
+const rateVal    = document.getElementById('rateVal');
+const pitchVal   = document.getElementById('pitchVal');
+const textInput  = document.getElementById('textInput');
+const charCount  = document.getElementById('charCount');
+const speakBtn   = document.getElementById('speakBtn');
+const stopBtn    = document.getElementById('stopBtn');
+const statusEl   = document.getElementById('status');
+const progressFill = document.getElementById('progressFill');
+
+const synth = window.speechSynthesis;
+let voices  = [];
+let blinkInterval = null;
+let speaking = false;
+
+// ── LED ──
+function ledOn()      { pwrLed.classList.add('on'); }
+function ledOff()     { pwrLed.classList.remove('on'); }
+function startBlink() { ledOn(); blinkInterval = setInterval(() => pwrLed.classList.toggle('on'), 500); }
+function stopBlink()  { clearInterval(blinkInterval); blinkInterval = null; ledOff(); }
+ledOn();
+
+// ── VOICES ──
+function loadVoices() {
+    let all = synth.getVoices();
+    // Prefer Google voices, fall back to all
+    let preferred = all.filter(v => v.name.toLowerCase().includes('google'));
+    voices = preferred.length ? preferred : all;
+
+    voiceSel.innerHTML = '';
+    if (!voices.length) {
+        voiceSel.innerHTML = '<option>No voices available</option>';
+        return;
+    }
+
+    let defaultIdx = 0;
+    voices.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = v.name + ' (' + v.lang + ')';
+        voiceSel.appendChild(opt);
+        // Default to British English if available
+        if ((v.lang === 'en-GB' || v.name.toLowerCase().includes('uk')) && defaultIdx === 0) defaultIdx = i;
+    });
+    voiceSel.value = defaultIdx;
+}
+
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+// iOS needs a slight delay
+setTimeout(loadVoices, 100);
+
+// ── SLIDERS ──
+rateSlider.addEventListener('input', () => {
+    rateVal.textContent = parseFloat(rateSlider.value).toFixed(1) + '×';
+});
+pitchSlider.addEventListener('input', () => {
+    pitchVal.textContent = parseFloat(pitchSlider.value).toFixed(1);
+});
+
+// ── CHAR COUNT ──
+function updateCount() {
+    const len = textInput.value.length;
+    charCount.textContent = len.toLocaleString() + ' chars';
+    charCount.className = 'char-count' + (len > 4000 ? ' warn' : '');
+}
+
+// ── SPEAK ──
+function speak() {
+    const text = textInput.value.trim();
+    if (!text) { setStatus('Enter some text first', false, true); return; }
+
+    synth.cancel();
+
+    const utt   = new SpeechSynthesisUtterance(text);
+    const idx   = parseInt(voiceSel.value);
+    utt.voice   = voices[idx] || null;
+    utt.rate    = parseFloat(rateSlider.value);
+    utt.pitch   = parseFloat(pitchSlider.value);
+    utt.lang    = voices[idx] ? voices[idx].lang : 'en-GB';
+
+    utt.onstart = () => {
+        speaking = true;
+        speakBtn.disabled = true;
+        stopBtn.disabled  = false;
+        startBlink();
+        setStatus('Speaking...', true);
+        animateProgress();
+    };
+
+    utt.onend = () => {
+        speaking = false;
+        speakBtn.disabled = false;
+        stopBtn.disabled  = true;
+        stopBlink(); ledOn();
+        setStatus('Done');
+        progressFill.style.width = '100%';
+        setTimeout(() => { progressFill.style.width = '0%'; }, 800);
+    };
+
+    utt.onerror = (e) => {
+        speaking = false;
+        speakBtn.disabled = false;
+        stopBtn.disabled  = true;
+        stopBlink(); ledOn();
+        setStatus('Error: ' + e.error, false, true);
+        progressFill.style.width = '0%';
+    };
+
+    synth.speak(utt);
+}
+
+// ── STOP ──
+function stop() {
+    synth.cancel();
+    speaking = false;
+    speakBtn.disabled = false;
+    stopBtn.disabled  = true;
+    stopBlink(); ledOn();
+    setStatus('Stopped');
+    progressFill.style.width = '0%';
+}
+
+// ── CLEAR ──
+function clearAll() {
+    synth.cancel();
+    textInput.value = '';
+    updateCount();
+    speaking = false;
+    speakBtn.disabled = false;
+    stopBtn.disabled  = true;
+    stopBlink(); ledOn();
+    setStatus('Ready');
+    progressFill.style.width = '0%';
+}
+
+// ── STATUS ──
+function setStatus(msg, active = false, isError = false) {
+    statusEl.textContent = msg;
+    statusEl.className = 'status' + (isError ? ' error' : active ? ' active' : '');
+}
+
+// ── PROGRESS ANIMATION ──
+// Browser TTS doesn't expose real progress so we animate based on text length / rate
+let progressTimer = null;
+function animateProgress() {
+    clearInterval(progressTimer);
+    const text     = textInput.value.trim();
+    const duration = (text.length / (parseFloat(rateSlider.value) * 15)) * 1000;
+    const start    = Date.now();
+    progressFill.style.width = '0%';
+    progressTimer = setInterval(() => {
+        const elapsed = Date.now() - start;
+        const pct = Math.min(95, (elapsed / duration) * 100);
+        progressFill.style.width = pct + '%';
+        if (!speaking) clearInterval(progressTimer);
+    }, 100);
+}
+
+// ── KEEP SYNTH ALIVE ON IOS ──
+// iOS pauses speech synthesis after ~15s — this workaround resumes it
+setInterval(() => {
+    if (speaking && synth.paused) synth.resume();
+}, 5000);
+</script>
+</body>
+</html>

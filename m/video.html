@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video — dPaul Technologies (Mobile)</title>
+    
+    <style>
+        /* ── THEME VARIABLES ── */
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Courier New', Courier, monospace;
+            font-size: calc(110% * var(--font-scale)); 
+            margin: 0;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px; 
+            background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        /* ── PAGE CONTENT ── */
+        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
+
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 1.8rem; line-height: 1.2; margin-bottom: 24px; color: #fff; font-weight: 900; }
+        .hero h1 span { color: var(--orange); }
+        .hero-intro { font-size: 1.1rem; border-left: 2px solid var(--orange); padding-left: 16px; margin-bottom: 32px; color: var(--text); }
+
+        /* TTS PLAYER (Mobile Optimized) */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+        }
+        .tts-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: inherit; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-btn.active { background: var(--orange); color: #000; }
+        .tts-voice-sel { 
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
+            padding: 8px; font-family: inherit; font-size: 0.85rem; width: 100%;
+        }
+        .tts-highlight { background: rgba(255,102,0,0.2); border-radius: 2px; }
+
+        /* SECTIONS */
+        .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 12px; }
+        .section h2 { font-size: 1.6rem; color: #fff; margin-bottom: 24px; line-height: 1.2; }
+
+        .split-text p { margin-bottom: 20px; font-size: 1rem; }
+        .split-text p strong { color: var(--orange); }
+
+        /* VIDEO */
+        .video-frame {
+            width: 100%; border: 1px solid var(--border); border-radius: 6px;
+            overflow: hidden; background: #000; margin: 24px 0;
+        }
+        .video-frame iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
+
+        /* PORTRAIT PHONE */
+        .phone-wrap { display: flex; justify-content: center; margin: 32px 0; }
+        .phone-frame {
+            width: 240px; border: 1px solid var(--border); border-radius: 36px;
+            overflow: hidden; background: #0e0f0e; box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+        .phone-frame video { width: 100%; display: block; }
+
+        /* STATS */
+        .stat-row { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+        .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 20px; text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: 900; color: var(--orange); margin-bottom: 4px; }
+        .stat-label { font-size: 0.85rem; color: var(--text); letter-spacing: 0.05em; }
+
+        /* SERVICES */
+        .service-list { list-style: none; margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
+        .service-list li { font-size: 0.95rem; padding-left: 20px; position: relative; }
+        .service-list li::before { content: '›'; position: absolute; left: 0; color: var(--orange); font-weight: bold; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+        .tag { font-size: 0.75rem; border: 1px solid var(--border-dim); padding: 4px 10px; color: var(--cream); text-transform: uppercase; }
+
+        .cta-block { padding: 64px 0 0; text-align: center; }
+        .cta-btn { 
+            display: inline-block; padding: 14px 28px; background: var(--orange); 
+            color: #000; font-family: inherit; font-size: 0.9rem; font-weight: bold; 
+            text-transform: uppercase; text-decoration: none; border-radius: 3px; 
+        }
+
+        /* FONT NUDGE */
+        .font-nudge {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+        }
+        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; }
+
+        .footer-toggle { text-align: center; padding: 60px 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html" class="active">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <a href="about.html">info</a>
+</div>
+
+<div class="page">
+    <section class="hero reveal">
+        <div class="hero-label">// Video Production</div>
+        <h1>Professional video<br>for your <span>marque.</span></h1>
+        <p class="hero-intro">Cut for wherever your audience watches. Widescreen 16:9 4K for cinema, or 9:16 portrait for the platforms that matter most to your brand.</p>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 01 — Showreel</div>
+        <h2>Cinematic. 4K. Platform-ready.</h2>
+
+        <div class="split-text">
+            <p>Video content receives <strong>significantly higher engagement</strong> than static images across all platforms.</p>
+            <p>A professional presentation elevates your product above standard listings and captures attention in crowded marketplaces.</p>
+        </div>
+
+        <div class="video-frame">
+            <iframe src="https://player.vimeo.com/video/1158945348?badge=0&autopause=0" allow="autoplay; fullscreen" allowfullscreen title="Showreel"></iframe>
+        </div>
+
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-num">4K</div>
+                <div class="stat-label">UHD Resolution</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">16:9</div>
+                <div class="stat-label">Widescreen Format</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">9:16</div>
+                <div class="stat-label">Portrait Social</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 02 — Social & Portrait</div>
+        <h2>Built for TikTok, Reels & Shorts.</h2>
+
+        <div class="split-text">
+            <p>This technique works for <strong>any premium product</strong> requiring sophisticated presentation — luxury vehicles, property, or brand storytelling.</p>
+            
+            <ul class="service-list">
+                <li>Script development</li>
+                <li>Voiceover production</li>
+                <li>Professional editing</li>
+                <li>Motion graphics</li>
+                <li>Music selection</li>
+            </ul>
+        </div>
+
+        <div class="phone-wrap">
+            <div class="phone-frame">
+                <video autoplay muted loop playsinline>
+                    <source src="../assets/video/vid1.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+        <div class="tags">
+            <div class="tag">TikTok</div>
+            <div class="tag">Instagram Reels</div>
+            <div class="tag">YouTube Shorts</div>
+        </div>
+    </section>
+
+    <div class="cta-block reveal">
+        <h2>Want a video for your marque?</h2>
+        <p>Automotive, property, or brand — let's talk about what you need.</p>
+        <a href="about.html" class="cta-btn">Get in touch</a>
+    </div>
+
+    <div class="footer-toggle">
+        <a href="../video.html">→ View Desktop Version</a>
+    </div>
+</div>
+
+<div class="font-nudge" id="fontNudge">
+    <button class="font-btn" onclick="adjustFont(1)">A+</button>
+    <button class="font-btn" onclick="adjustFont(-1)">A-</button>
+</div>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+    // ── MENU LOGIC ──
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
+
+    // ── FONT SCALE ──
+    let fontScale = 1;
+    function adjustFont(dir) {
+        fontScale = Math.max(0.8, Math.min(1.5, fontScale + (dir * 0.1)));
+        document.documentElement.style.setProperty('--font-scale', fontScale);
+    }
+
+    // ── REVEAL ANIMATION ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── TTS ENGINE ──
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let currentIdx = 0;
+
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        if(!sel) return;
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        enVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
+        });
+        selectedVoice = enVoices[0];
+    }
+
+    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
+    
+    function buildChunks() {
+        chunks = [];
+        document.querySelectorAll('h1, h2, .hero-intro, .split-text p, .service-list li').forEach(el => {
+            chunks.push({ el, text: el.innerText });
+        });
+    }
+
+    window.ttsPlay = () => {
+        if (!chunks.length) buildChunks();
+        synth.cancel();
+        currentIdx = 0;
+        speak();
+        document.getElementById('ttsPlay').disabled = true;
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        document.getElementById('ttsPlay').disabled = false;
+    };
+
+    function speak() {
+        if (currentIdx >= chunks.length) { ttsStop(); return; }
+        const chunk = chunks[currentIdx];
+        chunk.el.classList.add('tts-highlight');
+        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => {
+            chunk.el.classList.remove('tts-highlight');
+            currentIdx++;
+            speak();
+        };
+        synth.speak(utter);
+    }
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
+</script>
+
+</body>
+</html>

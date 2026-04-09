@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video — dPaul Technologies</title>
+    
+    <style>
+        :root {
+            --bg:     #131413;
+            --bg2:    #1a1c1a;
+            --orange: #FF6600;
+            --cream:  #D4C4A8;
+            --text:   #c8c8c0;
+            --dim:    #7a7a70;
+            --border: rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 130%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 12px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
+
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 0 56px;
+            display: flex; align-items: center; gap: 4px;
+            height: 72px;
+        }
+        nav a {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.4rem; color: var(--cream);
+            text-decoration: none; padding: 10px 20px;
+            border: 1px solid transparent; border-radius: 3px;
+            letter-spacing: 0.05em; transition: all 0.15s;
+            text-transform: lowercase;
+        }
+        nav a:hover { border-color: var(--orange); color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav .spacer { flex: 1; }
+
+        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 80px; }
+
+        .hero {
+            padding: 80px 0 72px;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero-label {
+            font-size: 1.04rem; color: var(--orange);
+            letter-spacing: 0.25em; text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(3.12rem, 5.5vw, 5.46rem);
+            font-weight: 900; color: #fff;
+            line-height: 1.08; margin-bottom: 28px;
+            letter-spacing: -0.02em;
+        }
+        .hero h1 span { color: var(--orange); }
+        .hero p {
+            font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95;
+            max-width: 660px; color: var(--text);
+        }
+
+        .section {
+            padding: 72px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-label {
+            font-size: 1.17rem; letter-spacing: 0.22em;
+            color: var(--orange); text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .section h2 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(2.6rem, 4vw, 3.9rem);
+            font-weight: 900; color: #fff; margin-bottom: 32px;
+            letter-spacing: -0.02em;
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 56px;
+            align-items: center;
+        }
+        .split.flip { direction: rtl; }
+        .split.flip > * { direction: ltr; }
+
+        .split-text p {
+            font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95;
+            color: var(--text); margin-bottom: 16px;
+        }
+        .split-text p strong { color: var(--orange); font-weight: normal; }
+
+        .split-visual {
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .video-frame {
+            width: 100%;
+            max-width: 560px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #000;
+            transition: border-color 0.2s;
+        }
+        .video-frame:hover { border-color: var(--orange); }
+        .video-frame iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            display: block;
+        }
+
+        .phone-wrap {
+            display: flex; justify-content: center; align-items: center;
+            width: 100%;
+        }
+        .phone-frame {
+            width: 340px;
+            border: 1px solid var(--border);
+            border-radius: 48px;
+            overflow: hidden;
+            background: #0e0f0e;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            transition: border-color 0.2s;
+        }
+        .phone-frame:hover { border-color: var(--orange); }
+        .phone-placeholder {
+            aspect-ratio: 430 / 932;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 12px;
+        }
+        .play-icon {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,102,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .play-icon::after {
+            content: '';
+            display: block;
+            width: 0; height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 18px solid rgba(255,102,0,0.4);
+            margin-left: 4px;
+        }
+        .phone-placeholder span {
+            font-size: calc(1.04rem * var(--font-scale)); color: rgba(255,102,0,0.4);
+            letter-spacing: 0.1em; text-transform: uppercase;
+            text-align: center; padding: 0 16px; line-height: 1.6;
+        }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 40px;
+        }
+        .stat-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 22px 18px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+        .stat-card:hover { border-color: var(--orange); }
+        .stat-card .stat-num {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.4rem; font-weight: 900;
+            color: var(--orange); line-height: 1;
+            margin-bottom: 10px;
+        }
+        .stat-card .stat-label {
+            font-size: calc(1.04rem * var(--font-scale)); color: var(--text);
+            line-height: 1.6; letter-spacing: 0.05em;
+        }
+
+        .service-list {
+            list-style: none; margin: 20px 0 16px;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .service-list li {
+            font-size: calc(1.04rem * var(--font-scale)); color: var(--text);
+            padding-left: 16px; position: relative; line-height: 1.7;
+        }
+        .service-list li::before { content: '›'; position: absolute; left: 0; color: var(--orange); }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+        .tag {
+            font-size: calc(1.066rem * var(--font-scale)); letter-spacing: 0.1em;
+            padding: 6px 14px;
+            border: 1px solid rgba(255,255,255,0.07); border-radius: 2px;
+            color: var(--cream); text-transform: uppercase;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .tag:hover { border-color: var(--orange); color: var(--orange); }
+
+        .cta-block { padding: 72px 0 0; text-align: center; }
+        .cta-block h2 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(2.6rem, 4vw, 3.9rem);
+            color: #fff; margin-bottom: 16px; letter-spacing: -0.02em;
+        }
+        .cta-block p { font-size: calc(1.17rem * var(--font-scale)); color: var(--text); margin-bottom: 32px; }
+        .cta-btn {
+            display: inline-block; padding: 14px 36px;
+            background: var(--orange); color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: calc(1.235rem * var(--font-scale)); letter-spacing: 0.15em;
+            text-transform: uppercase; text-decoration: none;
+            border-radius: 3px; transition: background 0.2s, transform 0.15s;
+        }
+        .cta-btn:hover { background: #ff8533; transform: translateY(-2px); }
+
+        @media (max-width: 900px) {
+            .split { grid-template-columns: 1fr; gap: 32px; }
+            .split.flip { direction: ltr; }
+            .stat-row { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            nav { padding: 0 16px; gap: 2px; }
+            nav a { padding: 5px 8px; font-size: 1rem; }
+            .page { padding: 0 20px 80px; }
+            .stat-row { grid-template-columns: 1fr; }
+            .phone-frame { width: 220px; border-radius: 36px; }
+            .font-nudge { bottom: 16px; right: 16px; }
+        }
+
+        /* TTS PLAYER */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
+        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
+        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-speed {
+            -webkit-appearance: none; appearance: none;
+            width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer;
+        }
+        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
+        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
+        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-section-sel, .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+        }
+        .tts-section-sel { max-width: 200px; }
+        .tts-voice-sel  { max-width: 240px; }
+        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
+        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+
+        .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A&#8722;</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
+</div>
+
+<!-- ── NAV ── -->
+<nav>
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html" class="active">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <div class="spacer"></div>
+    <a href="about.html">info</a>
+</nav>
+
+<div class="page">
+
+    <!-- ── HERO ── -->
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Video Production</div>
+        <h1>Professional video<br>for your <span>marque.</span></h1>
+        <p>Cut for wherever your audience watches. Widescreen 16:9 4K delivers a cinematic finish perfect for YouTube, while portrait 9:16 is built for TikTok, Instagram Reels, and the social platforms that matter most to your brand.</p>
+
+        <!-- TTS PLAYER -->
+        <div class="tts-player" id="ttsPlayer">
+            <span class="tts-label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <div class="tts-sep"></div>
+                <div class="tts-speed-wrap">
+                    <span class="tts-speed-label">Speed</span>
+                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label">Voice</span>
+                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                        <option value="">Loading voices...</option>
+                    </select>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label">Jump to</span>
+                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
+                        <option value="-1">-- section --</option>
+                    </select>
+                </div>
+            </div>
+            <span class="tts-progress" id="ttsProgress"></span>
+        </div>
+    </section>
+
+    <!-- ── SECTION 1: SHOWREEL ── -->
+    <section class="section reveal">
+        <div class="section-label">// 01 — Showreel</div>
+        <h2>Cinematic. 4K. Platform-ready.</h2>
+
+        <div class="split">
+            <div class="split-text">
+                <p>Video content receives <strong>significantly higher engagement</strong> than static images across all platforms — social media, websites, and digital advertising.</p>
+                <p>A professional video presentation elevates your product above standard listings, <strong>captures attention in crowded marketplaces</strong>, and communicates information more effectively than text alone.</p>
+                <div class="tags">
+                    <div class="tag">4K Widescreen</div>
+                    <div class="tag">YouTube Ready</div>
+                    <div class="tag">Sony Camera</div>
+                    <div class="tag">Cinematic Grade</div>
+                </div>
+            </div>
+
+            <div class="split-visual">
+                <div class="video-frame">
+                    <iframe
+                        src="https://player.vimeo.com/video/1158945348?badge=0&autopause=0&player_id=0&app_id=58479"
+                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                        title="Cinematic 4K showreel">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-row">
+            <div class="stat-card">
+                <div class="stat-num">4K</div>
+                <div class="stat-label">UHD resolution — cinematic finish</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">16:9</div>
+                <div class="stat-label">Widescreen — YouTube &amp; web</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">9:16</div>
+                <div class="stat-label">Portrait — TikTok &amp; Reels</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── SECTION 2: SOCIAL / PORTRAIT ── -->
+    <section class="section reveal">
+        <div class="section-label">// 02 — Social &amp; Portrait Format</div>
+        <h2>Built for TikTok, Reels &amp; Shorts.</h2>
+
+        <div class="split flip">
+            <div class="split-text">
+                <p>This production technique works for <strong>any premium product or service</strong> requiring sophisticated presentation — luxury vehicles, property showcases, high-end products, corporate capabilities, or brand storytelling.</p>
+                <p>Each video is tailored to your specific requirements, <strong>target audience, and platform</strong>. Services include:</p>
+                <ul class="service-list">
+                    <li>Script development</li>
+                    <li>Voiceover production</li>
+                    <li>Professional editing</li>
+                    <li>Text overlays &amp; motion graphics</li>
+                    <li>Music selection &amp; licensing</li>
+                    <li>Delivery in your required format</li>
+                </ul>
+                <div class="tags">
+                    <div class="tag">TikTok</div>
+                    <div class="tag">Instagram Reels</div>
+                    <div class="tag">YouTube Shorts</div>
+                    <div class="tag">9:16 Portrait</div>
+                </div>
+            </div>
+
+            <div class="split-visual">
+                <div class="phone-wrap">
+                    <div class="phone-frame">
+                        <video autoplay muted loop playsinline
+                               style="width:100%; display:block;">
+                            <source src="../assets/video/vid1.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CTA ── -->
+    <div class="cta-block reveal">
+        <h2>Fancy a video for your marque?</h2>
+        <p>Automotive, property, product, or brand — let's talk about what you need.</p>
+        <a href="about.html" class="cta-btn">Get in touch</a>
+    </div>
+
+</div>
+
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+    // FONT NUDGE
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    function dismissNudge() {
+        document.getElementById('fontNudge').style.opacity = '0';
+        document.getElementById('fontNudge').style.pointerEvents = 'none';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
+
+    // REVEAL
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // ─── TTS ENGINE ────────────────────────────────────────────────────
+    (function() {
+        const synth = window.speechSynthesis;
+        let chunks = [];
+        let idx = 0;
+        let paused = false;
+        let currentUtterance = null;
+        let lastHighlighted = null;
+        let selectedVoice = null;
+
+        const READ_SELECTORS = [
+            '.hero h1', '.hero p', '.split-text p',
+            '.stat-label', '.service-list li', '.cta-block p'
+        ];
+        const SECTION_SELECTORS = [
+            '.hero-label', '.section-label', '.section h2', '.cta-block h2'
+        ];
+
+        const AUTO_PRIORITY = [
+            'Google UK English Male', 'Google UK English Female', 'Google US English',
+            'Daniel', 'Arthur', 'Google US English Male', 'Google US English Female',
+            'Microsoft Ryan Online (Natural) - English (United Kingdom)',
+            'Microsoft Sonia Online (Natural) - English (United Kingdom)',
+            'Samantha', 'Fred', 'Alex',
+        ];
+
+        function genderGlyph(name) {
+            if (/female|woman|girl|sonia|samantha|karen|moira|fiona|veena|zira|hazel|susan/i.test(name)) return ' ♀';
+            if (/male|man|guy|daniel|arthur|david|james|mark|fred|alex|richard|ryan/i.test(name)) return ' ♂';
+            return '';
+        }
+
+        function populateVoiceList() {
+            const voices = synth.getVoices();
+            if (!voices.length) return;
+            const sel = document.getElementById('ttsVoiceSel');
+            sel.innerHTML = '';
+            const english = voices.filter(v => /^en/i.test(v.lang));
+            const google  = english.filter(v => v.name.startsWith('Google'));
+            const others  = english.filter(v => !v.name.startsWith('Google'));
+            function addGroup(label, list) {
+                if (!list.length) return;
+                const grp = document.createElement('optgroup');
+                grp.label = label;
+                list.forEach(v => {
+                    const o = document.createElement('option');
+                    o.value = v.name;
+                    o.textContent = v.name + genderGlyph(v.name);
+                    grp.appendChild(o);
+                });
+                sel.appendChild(grp);
+            }
+            addGroup('── Google ──', google);
+            addGroup('── Other ──', others);
+            if (!selectedVoice) {
+                for (const name of AUTO_PRIORITY) {
+                    const found = voices.find(v => v.name === name);
+                    if (found) { selectedVoice = found; break; }
+                }
+                if (!selectedVoice) selectedVoice = google[0] || english[0] || voices[0];
+            }
+            if (selectedVoice) sel.value = selectedVoice.name;
+        }
+
+        window.ttsSetVoice = function(name) {
+            const voices = synth.getVoices();
+            selectedVoice = voices.find(v => v.name === name) || null;
+            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
+        };
+
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
+                const txt = el.innerText.trim();
+                if (txt.length > 2) chunks.push({ el, text: txt });
+            });
+        }
+        function buildSectionMenu() {
+            const sel = document.getElementById('ttsSectionSel');
+            while (sel.options.length > 1) sel.remove(1);
+            let map = [];
+            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
+                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
+                if (!label || label.length < 2) return;
+                let matchIdx = -1;
+                for (let i = 0; i < chunks.length; i++) {
+                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
+                }
+                if (matchIdx >= 0) map.push({ label, idx: matchIdx });
+            });
+            const seen = new Set();
+            map = map.filter(s => { if (seen.has(s.idx)) return false; seen.add(s.idx); return true; });
+            map.forEach(s => {
+                const o = document.createElement('option');
+                o.value = s.idx;
+                o.textContent = s.label.length > 38 ? s.label.slice(0, 36) + '...' : s.label;
+                sel.appendChild(o);
+            });
+        }
+
+        function highlight(el) {
+            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
+            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            lastHighlighted = el;
+        }
+        function setProgress() {
+            document.getElementById('ttsProgress').textContent = chunks.length ? (idx + 1) + ' / ' + chunks.length : '';
+        }
+        function setButtons(state) {
+            const play = document.getElementById('ttsPlay');
+            const pause = document.getElementById('ttsPause');
+            const stop  = document.getElementById('ttsStop');
+            if (state === 'idle') {
+                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
+                pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
+            } else if (state === 'playing') {
+                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
+                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active');
+                stop.disabled = false;
+            } else if (state === 'paused') {
+                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
+                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
+            }
+        }
+        function speakAt(startIdx) {
+            synth.cancel();
+            if (startIdx >= chunks.length) { ttsStop(); return; }
+            idx = startIdx; paused = false; setButtons('playing'); speakCurrent();
+        }
+        function speakCurrent() {
+            if (idx >= chunks.length) { ttsStop(); return; }
+            const chunk = chunks[idx];
+            highlight(chunk.el); setProgress();
+            const rate = parseFloat(document.getElementById('ttsSpeed').value);
+            const u = new SpeechSynthesisUtterance(chunk.text);
+            u.rate = rate; u.lang = 'en-GB';
+            if (selectedVoice) u.voice = selectedVoice;
+            u.onend  = () => { if (!paused) { idx++; speakCurrent(); } };
+            u.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') { idx++; speakCurrent(); } };
+            currentUtterance = u;
+            synth.speak(u);
+        }
+
+        window.ttsPlay = function() {
+            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
+            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
+            else { speakAt(idx); }
+        };
+        window.ttsPause = function() {
+            if (synth.speaking && !synth.paused) { paused = true; synth.pause(); setButtons('paused'); }
+        };
+        window.ttsStop = function() {
+            paused = false; synth.cancel(); idx = 0;
+            if (lastHighlighted) { lastHighlighted.classList.remove('tts-highlight'); lastHighlighted = null; }
+            document.getElementById('ttsProgress').textContent = '';
+            document.getElementById('ttsSectionSel').value = '-1';
+            setButtons('idle');
+        };
+        window.ttsUpdateSpeed = function() {
+            const val = parseFloat(document.getElementById('ttsSpeed').value).toFixed(2);
+            document.getElementById('ttsSpeedVal').textContent = val + 'x';
+            if (currentUtterance) currentUtterance.rate = parseFloat(val);
+        };
+        window.ttsJumpTo = function(val) {
+            const i = parseInt(val);
+            if (isNaN(i) || i < 0) return;
+            speakAt(i);
+            document.getElementById('ttsSectionSel').value = '-1';
+        };
+
+        window.addEventListener('load', () => {
+            buildChunks(); buildSectionMenu();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = () => { selectedVoice = null; populateVoiceList(); };
+            }
+            populateVoiceList();
+        });
+        window.addEventListener('beforeunload', () => synth.cancel());
+    })();
+    // ─── END TTS ────────────────────────────────────────────────────────
+</script>
+</body>
+</html>

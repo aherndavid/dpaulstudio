@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info — dPaul Technologies (Mobile)</title>
+    
+    <style>
+        /* ── THEME VARIABLES ── */
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Courier New', Courier, monospace;
+            font-size: calc(110% * var(--font-scale)); 
+            margin: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scanline Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px; 
+            background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        /* ── PAGE CONTENT ── */
+        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
+
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
+        .hero h1 span { color: var(--orange); }
+
+        /* TTS PLAYER (Mobile Optimized) */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+        }
+        .tts-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: inherit; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-btn:disabled { opacity: 0.3; }
+        .tts-btn.active { background: var(--orange); color: #000; }
+        .tts-voice-sel { 
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
+            padding: 8px; font-family: inherit; font-size: 0.85rem; width: 100%;
+        }
+        .tts-highlight { background: rgba(255,102,0,0.2); border-radius: 2px; }
+
+        /* SECTIONS */
+        .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 12px; }
+        .section h2 { font-size: 1.6rem; color: #fff; margin-bottom: 24px; line-height: 1.2; }
+
+        .bio-text p { margin-bottom: 20px; font-size: 1.1rem; line-height: 1.7; }
+        .bio-text strong { color: var(--orange); font-weight: normal; }
+
+        .photo-frame { width: 100%; aspect-ratio: 3/4; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag { font-size: 0.75rem; border: 1px solid var(--border); padding: 4px 10px; color: var(--cream); text-transform: uppercase; }
+
+        /* SKILLS */
+        .skills-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+        .skill-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 24px; }
+        .card-label { font-size: 0.7rem; color: var(--orange); margin-bottom: 8px; letter-spacing: 0.1em; }
+        .skill-card h3 { color: #fff; margin-bottom: 12px; font-size: 1.2rem; }
+
+        /* CONTACT */
+        .contact-header { text-align: center; padding: 32px 0; }
+        .contact-header img { width: 180px; margin-bottom: 16px; opacity: 0.8; }
+        
+        .cv-strip { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 20px; text-align: center; margin: 24px 0; }
+        .cv-link { display: inline-block; margin-top: 12px; padding: 10px 20px; border: 1px solid var(--orange); color: var(--orange); text-decoration: none; text-transform: uppercase; font-size: 0.9rem; }
+
+        .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+        .form-field label { font-size: 0.8rem; color: var(--orange); text-transform: uppercase; letter-spacing: 0.1em; }
+        .form-field input, .form-field textarea { 
+            background: transparent; border: 1px solid var(--border); border-radius: 3px; 
+            padding: 14px; color: #fff; font-family: inherit; font-size: 1rem; outline: none; width: 100%;
+        }
+        .send-btn { width: 100%; padding: 18px; background: transparent; border: 1px solid var(--orange); color: var(--orange); font-family: inherit; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; }
+
+        /* FONT NUDGE */
+        .font-nudge {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
+        }
+        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; }
+
+        .footer-toggle { text-align: center; padding: 60px 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+
+        /* REVEAL */
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <a href="about.html" class="active">info</a>
+</div>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="tts-label" style="font-size: 0.5rem">Size</div>
+    <button class="font-btn" onclick="adjustFont(1)">A+</button>
+    <button class="font-btn" onclick="adjustFont(-1)">A-</button>
+</div>
+
+<div class="page">
+    <section class="hero reveal">
+        <div class="hero-label">// Info</div>
+        <h1>30 years in IT.<br>Still <span>building things.</span></h1>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" id="ttsStop" onclick="ttsStop()" disabled>■ Stop</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 01 — Background</div>
+        <h2>David. Creative technologist.</h2>
+        
+        <div class="photo-frame">
+            <img src="../assets/me.png" alt="David">
+        </div>
+
+        <div class="bio-text">
+            <p>My name is David. For over <strong>30 years</strong> I've worked in IT — a journey that began in the 1990s, operating mainframe computers like the IBM System 38 and As400 for banks in central London.</p>
+            <p>I believe we're at a remarkable moment. AI is a shift that ultimately opens doors. <strong>It's a tool, not a replacement for human creativity.</strong></p>
+            <p>Today I'm moving deliberately towards <strong>web development</strong> — combining technical precision with creative instinct.</p>
+        </div>
+
+        <div class="tags">
+            <div class="tag">30 Years IT</div>
+            <div class="tag">Full-Stack Dev</div>
+            <div class="tag">AI Tools</div>
+            <div class="tag">VIP Support</div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 02 — Disciplines</div>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <div class="card-label">// Infrastructure</div>
+                <h3>IT & Systems</h3>
+                <p>30 years spanning mainframes, hardware builds, and VIP support. Built for reliability.</p>
+            </div>
+            <div class="skill-card">
+                <div class="card-label">// Development</div>
+                <h3>Front-End & APIs</h3>
+                <p>HTML, CSS, JavaScript — building functional tools and interactive web experiences from scratch.</p>
+            </div>
+            <div class="skill-card">
+                <div class="card-label">// Creative</div>
+                <h3>Design & Motion</h3>
+                <p>Adobe Suite, Blender, and brand identity work. Static through to cinematic motion graphics.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 03 — Contact</div>
+        <div class="contact-header">
+            <img src="../assets/old-mobile.png" alt="Contact">
+            <h2>Let's talk.</h2>
+        </div>
+        
+        <div class="bio-text">
+            <p>For a <strong>free 30-minute consultation</strong> to find out how I can help you with your next project — reach out below.</p>
+        </div>
+
+        <div class="cv-strip">
+            <p>Agencies can view my current CV.</p>
+            <a href="../assets/cv/cv-mar.html" class="cv-link">View CV</a>
+        </div>
+
+        <form class="contact-form">
+            <div class="form-field">
+                <label>Name</label>
+                <input type="text" required placeholder="Your name">
+            </div>
+            <div class="form-field">
+                <label>Email</label>
+                <input type="email" required placeholder="your@email.com">
+            </div>
+            <div class="form-field">
+                <label>Message</label>
+                <textarea required placeholder="How can I help?"></textarea>
+            </div>
+            <button type="submit" class="send-btn">Send Message</button>
+        </form>
+    </section>
+
+    <div class="footer-toggle">
+        <a href="../about.html">→ View Desktop Version</a>
+    </div>
+</div>
+
+<script>
+    // ── MENU LOGIC ──
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
+
+    // ── FONT SCALE ──
+    let fontScale = 1;
+    function adjustFont(dir) {
+        fontScale = Math.max(0.8, Math.min(1.5, fontScale + (dir * 0.1)));
+        document.documentElement.style.setProperty('--font-scale', fontScale);
+    }
+
+    // ── REVEAL ANIMATION ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── TTS ENGINE (Lite Version) ──
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let currentIdx = 0;
+
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        enVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
+        });
+        selectedVoice = enVoices[0];
+    }
+
+    window.ttsSetVoice = (name) => {
+        selectedVoice = synth.getVoices().find(v => v.name === name);
+    };
+
+    function buildChunks() {
+        chunks = [];
+        document.querySelectorAll('h1, h2, .bio-text p, .skill-card p').forEach(el => {
+            chunks.push({ el, text: el.innerText });
+        });
+    }
+
+    window.ttsPlay = () => {
+        if (!chunks.length) buildChunks();
+        synth.cancel();
+        currentIdx = 0;
+        speak();
+        document.getElementById('ttsPlay').disabled = true;
+        document.getElementById('ttsStop').disabled = false;
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        document.getElementById('ttsPlay').disabled = false;
+        document.getElementById('ttsStop').disabled = true;
+    };
+
+    function speak() {
+        if (currentIdx >= chunks.length) { ttsStop(); return; }
+        const chunk = chunks[currentIdx];
+        chunk.el.classList.add('tts-highlight');
+        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => {
+            chunk.el.classList.remove('tts-highlight');
+            currentIdx++;
+            speak();
+        };
+        synth.speak(utter);
+    }
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
+</script>
+
+</body>
+</html>
