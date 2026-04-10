@@ -6,7 +6,6 @@
     <title>Info — dPaul Technologies (Mobile)</title>
     
     <style>
-        /* ── THEME VARIABLES ── */
         :root {
             --bg:      #131413;
             --bg2:     #1a1c1a;
@@ -31,7 +30,6 @@
             overflow-x: hidden;
         }
 
-        /* Scanline Overlay */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -88,7 +86,7 @@
         .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
         .hero h1 span { color: var(--orange); }
 
-        /* TTS PLAYER (Mobile Optimized) */
+        /* TTS PLAYER */
         .tts-player {
             background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
             padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
@@ -134,13 +132,37 @@
         .cv-strip { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 20px; text-align: center; margin: 24px 0; }
         .cv-link { display: inline-block; margin-top: 12px; padding: 10px 20px; border: 1px solid var(--orange); color: var(--orange); text-decoration: none; text-transform: uppercase; font-size: 0.9rem; }
 
+        /* CONTACT FORM */
+        .contact-form { display: flex; flex-direction: column; gap: 0; }
         .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
         .form-field label { font-size: 0.8rem; color: var(--orange); text-transform: uppercase; letter-spacing: 0.1em; }
         .form-field input, .form-field textarea { 
             background: transparent; border: 1px solid var(--border); border-radius: 3px; 
             padding: 14px; color: #fff; font-family: inherit; font-size: 1rem; outline: none; width: 100%;
+            transition: border-color 0.2s;
         }
-        .send-btn { width: 100%; padding: 18px; background: transparent; border: 1px solid var(--orange); color: var(--orange); font-family: inherit; font-size: 1.1rem; text-transform: uppercase; cursor: pointer; }
+        .form-field input:focus, .form-field textarea:focus { border-color: var(--orange); }
+        .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(200,200,192,0.3); }
+        .form-field textarea { resize: vertical; min-height: 120px; }
+
+        .send-btn {
+            width: 100%; padding: 18px; background: transparent;
+            border: 1px solid var(--orange); color: var(--orange);
+            font-family: inherit; font-size: 1.1rem; text-transform: uppercase;
+            cursor: pointer; border-radius: 3px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .send-btn:hover { background: var(--orange); color: #000; }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .form-success {
+            display: none; padding: 24px; border: 1px solid var(--orange); border-radius: 4px;
+            text-align: center; font-size: 1rem; color: var(--orange); letter-spacing: 0.08em; line-height: 1.7;
+        }
+        .form-error {
+            display: none; padding: 12px 16px; border: 1px solid #cc3300; border-radius: 4px;
+            font-size: 0.9rem; color: #cc3300; margin-top: 12px;
+        }
 
         /* FONT NUDGE */
         .font-nudge {
@@ -148,12 +170,11 @@
             background: var(--bg2); border: 1px solid var(--border);
             border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
         }
-        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; }
+        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; font-family: inherit; }
 
         .footer-toggle { text-align: center; padding: 60px 0; }
         .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
 
-        /* REVEAL */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
@@ -262,21 +283,25 @@
             <a href="../assets/cv/cv-mar.html" class="cv-link">View CV</a>
         </div>
 
-        <form class="contact-form">
+        <form class="contact-form" id="contactForm">
             <div class="form-field">
                 <label>Name</label>
-                <input type="text" required placeholder="Your name">
+                <input type="text" id="name" name="name" required placeholder="Your name">
             </div>
             <div class="form-field">
                 <label>Email</label>
-                <input type="email" required placeholder="your@email.com">
+                <input type="email" id="email" name="email" required placeholder="your@email.com">
             </div>
             <div class="form-field">
                 <label>Message</label>
-                <textarea required placeholder="How can I help?"></textarea>
+                <textarea id="message" name="message" required placeholder="How can I help?"></textarea>
             </div>
-            <button type="submit" class="send-btn">Send Message</button>
+            <button type="submit" class="send-btn" id="sendBtn">Send Message</button>
+            <div class="form-error" id="formError">// Something went wrong. Please try again.</div>
         </form>
+        <div class="form-success" id="formSuccess">
+            // Message received.<br>I'll be in touch shortly.
+        </div>
     </section>
 
     <div class="footer-toggle">
@@ -285,7 +310,7 @@
 </div>
 
 <script>
-    // ── MENU LOGIC ──
+    // ── MENU ──
     function toggleMenu() {
         const menu = document.getElementById('mobileMenu');
         const btn = document.getElementById('burgerBtn');
@@ -301,13 +326,48 @@
         document.documentElement.style.setProperty('--font-scale', fontScale);
     }
 
-    // ── REVEAL ANIMATION ──
+    // ── REVEAL ──
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // ── TTS ENGINE (Lite Version) ──
+    // ── FORMSPREE CONTACT FORM ──
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('sendBtn');
+        const errorEl = document.getElementById('formError');
+        errorEl.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value
+        };
+
+        try {
+            const res = await fetch('https://formspree.io/f/xeerqwvk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                document.getElementById('contactForm').style.display = 'none';
+                document.getElementById('formSuccess').style.display = 'block';
+            } else {
+                throw new Error('Server error');
+            }
+        } catch(err) {
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Send Message';
+        }
+    });
+
+    // ── TTS ENGINE ──
     const synth = window.speechSynthesis;
     let selectedVoice = null;
     let chunks = [];
@@ -349,7 +409,7 @@
 
     window.ttsStop = () => {
         synth.cancel();
-        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        if (chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
         document.getElementById('ttsPlay').disabled = false;
         document.getElementById('ttsStop').disabled = true;
     };
@@ -359,7 +419,6 @@
         const chunk = chunks[currentIdx];
         chunk.el.classList.add('tts-highlight');
         chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
         const utter = new SpeechSynthesisUtterance(chunk.text);
         if (selectedVoice) utter.voice = selectedVoice;
         utter.onend = () => {
