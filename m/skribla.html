@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Skribble Pad</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: #111;
+    font-family: 'Courier New', Courier, monospace;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ── LAYOUT ── */
+  #app { display: flex; flex-direction: column; width: 100%; height: 100%; }
+
+  /* ── CANVAS ── */
+  #canvas-wrap { flex: 1; position: relative; overflow: hidden; }
+  #canvas { position: absolute; top: 0; left: 0; cursor: crosshair; touch-action: none; display: block; }
+
+  /* ── BOTTOM TOOLBAR ── */
+  #toolbar {
+    flex-shrink: 0;
+    background: #161616;
+    border-top: 1px solid #2a2a2a;
+    padding: 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Row 1: colours + bg + eraser */
+  .toolbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* Colour swatches */
+  .colour {
+    flex: 1;
+    max-width: 52px;
+    height: 44px;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s, border-color 0.12s;
+    position: relative;
+  }
+  .colour.active {
+    border-color: #fff;
+    transform: scale(1.12);
+  }
+  .colour.active::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 11px;
+    border: 2px solid rgba(255,255,255,0.25);
+    pointer-events: none;
+  }
+
+  /* BG toggle */
+  .icon-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    border-radius: 8px;
+    border: 2px solid #333;
+    background: #222;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.12s, transform 0.12s;
+    font-size: 20px;
+    color: #ccc;
+  }
+  .icon-btn:active { transform: scale(0.93); }
+  .icon-btn.eraser-active { border-color: #fff; background: #2e2e2e; color: #fff; }
+
+  #bgToggle {
+    background: linear-gradient(135deg, #fff 50%, #000 50%);
+    border: 2px solid #333;
+  }
+
+  /* Divider */
+  .vdiv { width: 1px; height: 36px; background: #2e2e2e; flex-shrink: 0; }
+
+  /* Size pills */
+  .size-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  /* Size slider track */
+  .size-track {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .size-label { font-size: 11px; color: #555; letter-spacing: 0.1em; text-transform: uppercase; }
+  #sizeSlider {
+    flex: 1;
+    -webkit-appearance: none; appearance: none;
+    height: 4px; background: #2e2e2e; border-radius: 2px; outline: none; cursor: pointer;
+  }
+  #sizeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px;
+    background: #fff; border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    cursor: pointer;
+  }
+  #sizeSlider::-moz-range-thumb {
+    width: 22px; height: 22px;
+    background: #fff; border: none; border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    cursor: pointer;
+  }
+  #sizePreview {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; flex-shrink: 0;
+  }
+  #sizePreviewDot {
+    background: #fff; border-radius: 50%;
+    transition: width 0.1s, height 0.1s;
+  }
+
+  /* Row 3: action buttons */
+  .action-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .action-btn {
+    flex: 1;
+    padding: 11px 4px;
+    border-radius: 8px;
+    border: 1.5px solid #2a2a2a;
+    background: #1e1e1e;
+    color: #888;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all 0.12s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+  }
+  .action-btn .btn-icon { font-size: 18px; line-height: 1; }
+  .action-btn:active { transform: scale(0.95); }
+  .action-btn:hover, .action-btn:active { background: #262626; }
+  .action-btn.undo:active, .action-btn.undo:hover { border-color: #888; color: #ccc; }
+  .action-btn.danger:active, .action-btn.danger:hover { border-color: #ff5555; color: #ff5555; }
+  .action-btn.save:active, .action-btn.save:hover { border-color: #55cc88; color: #55cc88; }
+  .action-btn.about:active, .action-btn.about:hover { border-color: #aaaaff; color: #aaaaff; }
+  .action-btn.home { color: #7777cc; border-color: #333355; }
+  .action-btn.home:active, .action-btn.home:hover { border-color: #aaaaff; color: #ccccff; background: #1a1a2e; }
+
+  /* ── ABOUT OVERLAY ── */
+  #about-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8); z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #about-overlay.visible { display: flex; }
+  #about-box {
+    background: #1a1a1a; border: 1px solid #333; border-radius: 14px;
+    padding: 32px 28px; max-width: 360px; width: 100%; text-align: center;
+  }
+  #about-box h2 {
+    font-family: 'Courier New', monospace; font-size: 22px;
+    letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-bottom: 4px;
+  }
+  #about-box .version { font-size: 12px; color: #555; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+  #about-box p { font-size: 14px; color: #999; line-height: 1.75; margin-bottom: 24px; }
+  #about-box .studio { font-size: 15px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+  #about-close {
+    font-size: 13px; padding: 10px 28px; border: 1px solid #444;
+    background: transparent; color: #777; border-radius: 8px; cursor: pointer;
+    font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase;
+  }
+  #about-close:hover { background: #2a2a2a; color: #ccc; border-color: #777; }
+
+  /* ── CURSOR DOT (desktop only) ── */
+  @media (pointer: fine) {
+    #canvas { cursor: none; }
+    #cursor-dot {
+      position: fixed; pointer-events: none; z-index: 50;
+      border-radius: 50%; border: 2px solid rgba(255,255,255,0.6);
+      transform: translate(-50%, -50%);
+      transition: width 0.1s, height 0.1s;
+      mix-blend-mode: difference;
+    }
+  }
+  @media (pointer: coarse) {
+    #cursor-dot { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="canvas-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div id="toolbar">
+
+    <!-- Row 1: colours + bg + eraser -->
+    <div class="toolbar-row">
+      <div class="colour active" data-color="#FF3B5C" style="background:#FF3B5C;"></div>
+      <div class="colour" data-color="#FFD600" style="background:#FFD600;"></div>
+      <div class="colour" data-color="#00E5A0" style="background:#00E5A0;"></div>
+      <div class="colour" data-color="#3B9FFF" style="background:#3B9FFF;"></div>
+      <div class="colour" data-color="#CC55FF" style="background:#CC55FF;"></div>
+      <div class="colour" data-color="#ffffff" style="background:#fff;"></div>
+      <div class="vdiv"></div>
+      <div class="icon-btn" id="bgToggle" title="Toggle Background"></div>
+      <div class="icon-btn" id="eraserBtn" title="Eraser">⌫</div>
+    </div>
+
+    <!-- Row 2: size slider -->
+    <div class="size-row">
+      <span class="size-label">Size</span>
+      <div class="size-track">
+        <input type="range" id="sizeSlider" min="2" max="60" value="8" step="1">
+      </div>
+      <div id="sizePreview"><div id="sizePreviewDot" style="width:8px;height:8px;"></div></div>
+    </div>
+
+    <!-- Row 3: actions -->
+    <div class="action-row">
+      <button class="action-btn undo" id="undoBtn">
+        <span class="btn-icon">↩</span>Undo
+      </button>
+      <button class="action-btn danger" id="clearBtn">
+        <span class="btn-icon">✕</span>Clear
+      </button>
+      <button class="action-btn save" id="saveBtn">
+        <span class="btn-icon">⬇</span>Save
+      </button>
+      <button class="action-btn about" id="aboutBtn">
+        <span class="btn-icon">?</span>About
+      </button>
+      <button class="action-btn home" onclick="window.open('https://www.dpaul.studio','_blank')">
+        <span class="btn-icon">←</span>Home
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Custom cursor (desktop) -->
+<div id="cursor-dot" style="width:16px;height:16px;"></div>
+
+<!-- About overlay -->
+<div id="about-overlay">
+  <div id="about-box">
+    <h2>Skribble Pad</h2>
+    <div class="version">Version 1.2</div>
+    <p>A free browser-based drawing tool. Draw, undo, toggle backgrounds, and save your work as a PNG. No data is collected — everything runs locally in your browser.</p>
+    <div class="studio">dPaul Studio 2026</div>
+    <button id="about-close">Close</button>
+  </div>
+</div>
+
+<script>
+  const canvas  = document.getElementById('canvas');
+  const ctx     = canvas.getContext('2d');
+  const wrap    = document.getElementById('canvas-wrap');
+  const cursorDot = document.getElementById('cursor-dot');
+
+  let currentColor = '#FF3B5C';
+  let currentSize  = 8;
+  let bgColor      = '#000000';
+  let isDrawing    = false;
+  let lastX = 0, lastY = 0;
+  let snapshots    = [];
+  let eraserMode   = false;
+
+  /* ── CANVAS SIZING ── */
+  function resize() {
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    const snap = (canvas.width > 0 && canvas.height > 0) ? canvas.toDataURL() : null;
+    canvas.width = w; canvas.height = h;
+    fillBackground();
+    if (snap) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = snap; }
+  }
+  function fillBackground() { ctx.fillStyle = bgColor; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+  window.addEventListener('load', resize);
+  window.addEventListener('resize', resize);
+
+  /* ── BG TOGGLE ── */
+  document.getElementById('bgToggle').addEventListener('click', () => {
+    const snap = canvas.toDataURL(); snapshots = [];
+    bgColor = bgColor === '#000000' ? '#ffffff' : '#000000';
+    fillBackground();
+    const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = snap;
+  });
+
+  /* ── COLOURS ── */
+  document.querySelectorAll('.colour').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.colour').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      currentColor = el.dataset.color;
+      eraserMode = false;
+      document.getElementById('eraserBtn').classList.remove('eraser-active');
+    });
+  });
+
+  /* ── ERASER ── */
+  document.getElementById('eraserBtn').addEventListener('click', () => {
+    eraserMode = !eraserMode;
+    document.getElementById('eraserBtn').classList.toggle('eraser-active', eraserMode);
+    document.querySelectorAll('.colour').forEach(c => { if (eraserMode) c.classList.remove('active'); });
+  });
+
+  /* ── SIZE SLIDER ── */
+  const sizeSlider     = document.getElementById('sizeSlider');
+  const sizePreviewDot = document.getElementById('sizePreviewDot');
+  function updateSize() {
+    currentSize = parseInt(sizeSlider.value);
+    const dotSize = Math.min(currentSize, 36);
+    sizePreviewDot.style.width  = dotSize + 'px';
+    sizePreviewDot.style.height = dotSize + 'px';
+    if (cursorDot) { cursorDot.style.width = currentSize + 'px'; cursorDot.style.height = currentSize + 'px'; }
+  }
+  sizeSlider.addEventListener('input', updateSize);
+  updateSize();
+
+  /* ── UNDO / CLEAR / SAVE ── */
+  function saveSnapshot() { snapshots.push(canvas.toDataURL()); if (snapshots.length > 40) snapshots.shift(); }
+
+  document.getElementById('undoBtn').addEventListener('click', () => {
+    if (!snapshots.length) return;
+    const prev = snapshots.pop();
+    const img = new Image();
+    img.onload = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+    img.src = prev;
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => { saveSnapshot(); fillBackground(); });
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'skribble-' + Date.now() + '.png';
+    link.href = canvas.toDataURL('image/png'); link.click();
+  });
+
+  /* ── ABOUT ── */
+  const aboutOverlay = document.getElementById('about-overlay');
+  document.getElementById('aboutBtn').addEventListener('click', () => aboutOverlay.classList.add('visible'));
+  document.getElementById('about-close').addEventListener('click', () => aboutOverlay.classList.remove('visible'));
+  aboutOverlay.addEventListener('click', (e) => { if (e.target === aboutOverlay) aboutOverlay.classList.remove('visible'); });
+
+  /* ── DRAWING ── */
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    if (e.touches && e.touches.length) return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function getDrawColor() {
+    return eraserMode ? bgColor : currentColor;
+  }
+
+  function startDraw(e) {
+    e.preventDefault();
+    saveSnapshot();
+    isDrawing = true;
+    const { x, y } = getPos(e); lastX = x; lastY = y;
+    ctx.beginPath(); ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
+    ctx.fillStyle = getDrawColor(); ctx.fill();
+  }
+
+  function draw(e) {
+    e.preventDefault(); if (!isDrawing) return;
+    const { x, y } = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y);
+    ctx.strokeStyle = getDrawColor(); ctx.lineWidth = currentSize;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke();
+    lastX = x; lastY = y;
+  }
+
+  function endDraw() { isDrawing = false; }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
+
+  /* ── CUSTOM CURSOR (desktop) ── */
+  if (window.matchMedia('(pointer: fine)').matches && cursorDot) {
+    document.addEventListener('mousemove', (e) => {
+      cursorDot.style.left = e.clientX + 'px';
+      cursorDot.style.top  = e.clientY + 'px';
+    });
+  }
+</script>
+</body>
+</html>
