@@ -156,6 +156,30 @@
             display: block;
         }
 
+        .video-frame-full {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #000;
+            margin-top: 36px;
+            transition: border-color 0.2s;
+        }
+        .video-frame-full:hover { border-color: var(--orange); }
+        .video-frame-full iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            display: block;
+        }
+
+        .showreel-text { margin-bottom: 0; }
+        .showreel-text p {
+            font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95;
+            color: var(--text); margin-bottom: 16px; max-width: 820px;
+        }
+        .showreel-text p strong { color: var(--orange); font-weight: normal; }
+
         .stat-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -337,8 +361,7 @@
         <div class="section-label">// 01 — Showreel</div>
         <h2>Cinematic. 4K. Platform-ready.</h2>
 
-        <div class="split">
-            <div class="split-text">
+        <div class="showreel-text">
                 <p>Video content receives <strong>significantly higher engagement</strong> than static images across all platforms — social media, websites, and digital advertising.</p>
                 <p>A professional video presentation elevates your product above standard listings, <strong>captures attention in crowded marketplaces</strong>, and communicates information more effectively than text alone.</p>
                 <div class="tags">
@@ -347,19 +370,16 @@
                     <div class="tag">Sony Camera</div>
                     <div class="tag">Cinematic Grade</div>
                 </div>
-            </div>
+        </div>
 
-            <div class="split-visual">
-                <div class="video-frame">
-                    <iframe
-                        src="https://player.vimeo.com/video/1158945348?badge=0&autopause=0&player_id=0&app_id=58479"
-                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen
-                        title="Cinematic 4K showreel">
-                    </iframe>
-                </div>
-            </div>
+        <div class="video-frame-full">
+            <iframe
+                src="https://player.vimeo.com/video/1158945348?badge=0&autopause=0&player_id=0&app_id=58479"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                title="Cinematic 4K showreel">
+            </iframe>
         </div>
 
         <div class="stat-row">
