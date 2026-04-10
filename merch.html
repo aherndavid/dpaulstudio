@@ -122,21 +122,67 @@
         .section h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #fff; margin-bottom: 20px; }
         .section-intro { font-size: 1.25rem; line-height: 1.85; max-width: 700px; margin-bottom: 48px; color: var(--text); }
 
-        /* Updated grid to handle 4 items better */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
         .product-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; cursor: default; }
         .product-card:hover { border-color: var(--orange); transform: translateY(-4px); }
         .product-card-img { width: 100%; aspect-ratio: 1; background: #0e0f0e; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
         .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* Updated overlay: visible on hover, but slightly opaque initially if you want it always there */
+
         .product-card-img .overlay { position: absolute; inset: 0; background: rgba(19,20,19,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; z-index: 2; }
         .product-card:hover .overlay { opacity: 1; }
         .overlay-text { font-size: 0.9rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; border: 1px solid var(--orange); padding: 12px 24px; border-radius: 2px; }
-        
+
         .product-card-label { padding: 20px; border-top: 1px solid var(--border); }
         .product-card-label .name { font-size: 1.1rem; color: #fff; letter-spacing: 0.06em; margin-bottom: 6px; }
         .product-card-label .detail { font-size: 0.85rem; color: var(--orange); letter-spacing: 0.12em; text-transform: uppercase; }
+
+        /* ── MUG FLIP CARD ── */
+        .mug-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s; cursor: default; }
+        .mug-card:hover { border-color: var(--orange); transform: translateY(-4px); }
+
+        .mug-img-wrap {
+            width: 100%; aspect-ratio: 1; background: #0e0f0e;
+            position: relative; overflow: hidden;
+        }
+
+        /* Two images stacked — JS toggles active */
+        .mug-img-wrap img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%; object-fit: cover;
+            transition: opacity 0.4s ease;
+        }
+        .mug-img-wrap img.mug-front { opacity: 1; }
+        .mug-img-wrap img.mug-rear  { opacity: 0; }
+        .mug-img-wrap.show-rear img.mug-front { opacity: 0; }
+        .mug-img-wrap.show-rear img.mug-rear  { opacity: 1; }
+
+        /* Toggle bar at bottom of image area */
+        .mug-toggle-bar {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            display: flex; z-index: 5;
+            background: rgba(13,14,13,0.85);
+            border-top: 1px solid var(--border);
+        }
+        .mug-toggle-btn {
+            flex: 1; padding: 8px 0;
+            background: none; border: none;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--dim); cursor: pointer; transition: all 0.15s;
+        }
+        .mug-toggle-btn:first-child { border-right: 1px solid var(--border); }
+        .mug-toggle-btn.active { color: var(--orange); background: rgba(255,102,0,0.08); }
+        .mug-toggle-btn:hover { color: var(--orange); }
+
+        /* Coming Soon overlay for mug */
+        .mug-overlay {
+            position: absolute; inset: 0;
+            background: rgba(19,20,19,0.7);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; z-index: 3;
+            pointer-events: none;
+        }
+        .mug-card:hover .mug-overlay { opacity: 1; }
 
         .split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: start; }
         .split-text p { font-size: 1.2rem; line-height: 1.9; color: var(--text); margin-bottom: 24px; }
@@ -207,14 +253,14 @@
     <section class="section reveal">
         <div class="section-label">// 01 — Debut Collection</div>
         <h2>Hoodie, Tee &amp; Mug</h2>
-        <p class="section-intro">The first drop features four pieces — each carrying the signature dPaul character artwork.</p>
+        <p class="section-intro">The first drop features five pieces — each carrying the signature dPaul character artwork.</p>
 
         <div class="product-grid">
             
             <!-- MERCEDES TEE -->
             <div class="product-card">
                 <div class="product-card-img">
-                    <img src="../assets/assets/mercedes-man-cartoon.png" alt="Mercedes Man Cartoon T-Shirt">
+                    <img src="assets/mercedes-man-cartoon.png" alt="Mercedes Man Cartoon T-Shirt">
                     <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
                 </div>
                 <div class="product-card-label">
@@ -226,7 +272,7 @@
             <!-- ELECTRICITY TEE -->
             <div class="product-card">
                 <div class="product-card-img">
-                    <img src="../assets/ai-is-the-new.png" alt="AI is the new electricity T-Shirt">
+                    <img src="assets/ai-is-the-new.png" alt="AI is the new electricity T-Shirt">
                     <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
                 </div>
                 <div class="product-card-label">
@@ -238,7 +284,7 @@
             <!-- STUDIO TEE -->
             <div class="product-card">
                 <div class="product-card-img">
-                    <img src="../assets/tshirt-design-001.png" alt="dPaul T-Shirt">
+                    <img src="assets/tshirt-design-001.png" alt="dPaul T-Shirt">
                     <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
                 </div>
                 <div class="product-card-label">
@@ -250,7 +296,7 @@
             <!-- STUDIO MUG -->
             <div class="product-card">
                 <div class="product-card-img">
-                    <img src="../assets/tshirt-design-001b.png" alt="dPaul Mug">
+                    <img src="assets/tshirt-design-001b.png" alt="dPaul Mug">
                     <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
                 </div>
                 <div class="product-card-label">
@@ -258,7 +304,24 @@
                     <div class="detail">White — Limited Run</div>
                 </div>
             </div>
-            
+
+            <!-- LOVE TO CODE MUG — front/rear toggle -->
+            <div class="mug-card">
+                <div class="mug-img-wrap" id="mugWrap">
+                    <img class="mug-front" src="assets/code-mug-front.png" alt="Love to Code Mug — Front">
+                    <img class="mug-rear"  src="assets/code-mug-rear.png"  alt="Love to Code Mug — Rear">
+                    <div class="mug-overlay"><div class="overlay-text">Coming Soon</div></div>
+                    <div class="mug-toggle-bar">
+                        <button class="mug-toggle-btn active" id="btnFront" onclick="showMugSide('front')">&#9654; Front</button>
+                        <button class="mug-toggle-btn"        id="btnRear"  onclick="showMugSide('rear')">&#9654; Rear</button>
+                    </div>
+                </div>
+                <div class="product-card-label">
+                    <div class="name">Love to Code Mug</div>
+                    <div class="detail">White — Limited Run</div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -277,7 +340,7 @@
             </div>
             <div class="split-visual">
                 <div class="mockup-frame">
-                    <img src="../assets/the-journey-is-the-fun-part.png" alt="Merch collection mockup">
+                    <img src="assets/the-journey-is-the-fun-part.png" alt="Merch collection mockup">
                 </div>
             </div>
         </div>
@@ -286,11 +349,10 @@
 </div>
 
 <script>
-    // FONT NUDGE, SCROLL REVEAL, and TTS scripts remain the same as your original functional versions.
+    // ── Font nudge ──
     const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
     let fontScaleIndex = 0;
     const indicators = ['100%', '115%', '130%', '150%', '170%'];
-    
     function applyFontScale() {
         document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
         document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
@@ -305,6 +367,23 @@
         nudge.style.pointerEvents = 'none';
     }
 
+    // ── Mug front/rear toggle ──
+    function showMugSide(side) {
+        const wrap = document.getElementById('mugWrap');
+        const btnF = document.getElementById('btnFront');
+        const btnR = document.getElementById('btnRear');
+        if (side === 'rear') {
+            wrap.classList.add('show-rear');
+            btnR.classList.add('active');
+            btnF.classList.remove('active');
+        } else {
+            wrap.classList.remove('show-rear');
+            btnF.classList.add('active');
+            btnR.classList.remove('active');
+        }
+    }
+
+    // ── Scroll reveal ──
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
             if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
