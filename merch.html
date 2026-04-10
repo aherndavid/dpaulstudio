@@ -105,11 +105,10 @@
 
         /* ── FULL WIDTH IMAGE ── */
         .merch-image {
-            margin-left: -56px;
-            width: calc(100% + 112px);
-            line-height: 0;
-            margin-top: 72px;
+            width: 100vw;
             position: relative;
+            line-height: 0;
+            margin-top: 0;
         }
         .merch-image img {
             width: 100%;
@@ -117,7 +116,6 @@
             display: block;
             transition: opacity 1.2s ease-in-out;
         }
-        /* second image overlays the first, matching its size */
         .merch-image img + img {
             position: absolute;
             top: 0; left: 0;
@@ -169,7 +167,6 @@
         @media (max-width: 900px) {
             nav { padding: 0 24px; }
             .page { padding: 0 24px 80px; }
-            .merch-image { margin-left: -24px !important; width: calc(100% + 48px) !important; }
         }
     </style>
 </head>
@@ -207,10 +204,16 @@
         </p>
     </section>
 
-    <div class="merch-image reveal" id="merchImgWrap">
-        <img id="imgA" src="assets/merch-en-route.png"       alt="Merch En Route — dPaul Technologies" class="fade-in">
-        <img id="imgB" src="assets/merch-en-route-zebra.png" alt="Merch En Route Zebra — dPaul Technologies" class="fade-out">
-    </div>
+</div>
+
+<div class="merch-image reveal" id="merchImgWrap">
+    <img id="img0" src="assets/merch-en-route.png"              alt="Merch En Route — dPaul Technologies" class="fade-in">
+    <img id="img1" src="assets/merch-en-route-zebra.png"        alt="Merch En Route Zebra — dPaul Technologies" class="fade-out">
+    <img id="img2" src="assets/merch-en-route-zebra-no-car.png" alt="Merch En Route Zebra No Car — dPaul Technologies" class="fade-out">
+    <img id="img3" src="assets/merch-en-route-zebra-no-bird.png" alt="Merch En Route Zebra No Bird — dPaul Technologies" class="fade-out">
+</div>
+
+<div class="page" style="padding-top:0;">
 
     <div class="below reveal">
         <div class="below-label">// Debut collection</div>
@@ -251,18 +254,19 @@
 
     // ── IMAGE CROSSFADE ──
     (function() {
-        const imgA = document.getElementById('imgA');
-        const imgB = document.getElementById('imgB');
-        let showingA = true;
+        const imgs = [
+            document.getElementById('img0'),
+            document.getElementById('img1'),
+            document.getElementById('img2'),
+            document.getElementById('img3')
+        ];
+        let current = 0;
         setInterval(() => {
-            if (showingA) {
-                imgA.classList.remove('fade-in'); imgA.classList.add('fade-out');
-                imgB.classList.remove('fade-out'); imgB.classList.add('fade-in');
-            } else {
-                imgB.classList.remove('fade-in'); imgB.classList.add('fade-out');
-                imgA.classList.remove('fade-out'); imgA.classList.add('fade-in');
-            }
-            showingA = !showingA;
+            imgs[current].classList.remove('fade-in');
+            imgs[current].classList.add('fade-out');
+            current = (current + 1) % imgs.length;
+            imgs[current].classList.remove('fade-out');
+            imgs[current].classList.add('fade-in');
         }, 30000);
     })();
 
