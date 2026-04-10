@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>dpaul.studio — Migration in Progress</title>
+    <style>
+        :root {
+            --orange: #FF6600;
+            --bg:     #131413;
+            --bg2:    #1a1c1a;
+            --cream:  #c8c8c0;
+            --border: rgba(255,102,0,0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html, body {
+            width: 100%; height: 100%;
+            background: var(--bg);
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* Grain */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.4;
+        }
+
+        /* Scanlines */
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background: linear-gradient(to bottom, rgba(18,16,16,0) 50%, rgba(0,0,0,0.12) 50%);
+            background-size: 100% 4px;
+            z-index: 9998;
+            pointer-events: none;
+        }
+
+        /* ── LAYOUT ── */
+        #app {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100dvh;
+            padding: 0;
+        }
+
+        .bar-col { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .seg { width: 100%; height: 5px; border-radius: 1px; background: #1e201e; }
+        .seg.on     { background: var(--orange); }
+        .seg.on.mid { background: #aacc00; }
+        .seg.on.top { background: #cc2200; }
+
+        /* ── MAIN PANEL ── */
+        #panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 24px;
+            border: 2px solid var(--orange);
+            border-top: none;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        /* Inner glow */
+        #panel::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 40%, rgba(255,102,0,0.05) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        /* ── WORDMARK ── */
+        .wordmark {
+            font-size: clamp(2.2rem, 12vw, 3.8rem);
+            font-weight: 900;
+            color: #fff;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            text-align: center;
+            margin-bottom: 6px;
+            animation: flicker 4s infinite;
+            position: relative; z-index: 2;
+        }
+
+        @keyframes flicker {
+            0%,19.999%,22%,62.999%,64%,64.999%,70%,100% { opacity: 1; }
+            20%,21.999%,63%,63.999%,65%,69.999%          { opacity: 0.4; }
+        }
+
+        /* ── STATUS TAG ── */
+        .status-tag {
+            display: inline-block;
+            background: var(--orange);
+            color: #131413;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            margin-bottom: 28px;
+            animation: pulse 2s ease-in-out infinite;
+            position: relative; z-index: 2;
+        }
+
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.65; }
+        }
+
+        /* ── COUNTDOWN ── */
+        .countdown-label {
+            font-size: 0.65rem;
+            color: rgba(255,102,0,0.55);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 14px;
+            position: relative; z-index: 2;
+        }
+
+        .countdown {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            justify-content: center;
+            margin-bottom: 28px;
+            position: relative; z-index: 2;
+        }
+
+        .cd-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .cd-num {
+            font-size: clamp(2rem, 12vw, 3.4rem);
+            font-weight: 900;
+            color: var(--orange);
+            line-height: 1;
+            min-width: 2ch;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+        }
+
+        .cd-label {
+            font-size: 0.58rem;
+            color: rgba(255,102,0,0.5);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .cd-sep {
+            font-size: clamp(1.8rem, 10vw, 3rem);
+            font-weight: 900;
+            color: rgba(255,102,0,0.3);
+            line-height: 1;
+            padding-bottom: 18px;
+        }
+
+        /* ── LIVE indicator — shown when countdown hits 0 ── */
+        #live-msg {
+            display: none;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--orange);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 28px;
+            animation: pulse 1s ease-in-out infinite;
+            position: relative; z-index: 2;
+        }
+
+        /* ── DESCRIPTION ── */
+        .desc {
+            text-align: center;
+            max-width: 300px;
+            position: relative; z-index: 2;
+        }
+
+        .desc p {
+            font-size: 0.88rem;
+            color: var(--cream);
+            line-height: 1.75;
+        }
+
+        .desc .sub {
+            margin-top: 10px;
+            font-size: 0.68rem;
+            color: rgba(200,200,192,0.4);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div id="app">
+
+    <div id="panel">
+        <div class="wordmark">dpaul.studio</div>
+        <div class="status-tag">System Migration in Progress</div>
+
+        <div class="countdown-label">// going live in</div>
+
+        <div class="countdown" id="countdown">
+            <div class="cd-unit">
+                <div class="cd-num" id="cd-h">00</div>
+                <div class="cd-label">hrs</div>
+            </div>
+            <div class="cd-sep">:</div>
+            <div class="cd-unit">
+                <div class="cd-num" id="cd-m">00</div>
+                <div class="cd-label">min</div>
+            </div>
+            <div class="cd-sep">:</div>
+            <div class="cd-unit">
+                <div class="cd-num" id="cd-s">00</div>
+                <div class="cd-label">sec</div>
+            </div>
+        </div>
+
+        <div id="live-msg">// we're live !</div>
+
+        <div class="desc">
+            <p>Moving from Readymag to a custom single-file HTML infrastructure.</p>
+            <p class="sub">Estimated downtime — minimal</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* ── COUNTDOWN ── */
+    function getTarget() {
+        const now = new Date();
+        const target = new Date(now);
+        target.setDate(now.getDate() + 1);
+        target.setHours(12, 0, 0, 0);
+        return target;
+    }
+
+    const target = getTarget();
+    const cdH = document.getElementById('cd-h');
+    const cdM = document.getElementById('cd-m');
+    const cdS = document.getElementById('cd-s');
+    const cdEl = document.getElementById('countdown');
+    const liveEl = document.getElementById('live-msg');
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function updateCountdown() {
+        const diff = target - Date.now();
+        if (diff <= 0) {
+            cdEl.style.display = 'none';
+            liveEl.style.display = 'block';
+            document.querySelector('.countdown-label').style.display = 'none';
+            return;
+        }
+        const totalSecs = Math.floor(diff / 1000);
+        const h = Math.floor(totalSecs / 3600);
+        const m = Math.floor((totalSecs % 3600) / 60);
+        const s = totalSecs % 60;
+        cdH.textContent = pad(h);
+        cdM.textContent = pad(m);
+        cdS.textContent = pad(s);
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+
+</script>
+</body>
+</html>
