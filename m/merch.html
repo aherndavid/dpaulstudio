@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Merch — dPaul Technologies (Mobile)</title>
-    
+
     <style>
-        /* ── THEME VARIABLES ── */
         :root {
             --bg:      #131413;
             --bg2:     #1a1c1a;
@@ -21,17 +20,15 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
+        body {
+            background: var(--bg);
+            color: var(--text);
             font-family: 'Courier New', Courier, monospace;
-            font-size: calc(110% * var(--font-scale)); 
-            margin: 0;
+            font-size: calc(110% * var(--font-scale));
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Scanline Overlay */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -50,17 +47,16 @@
             padding: 0 20px; height: 100%;
         }
         .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
-        
+
         .burger {
             background: none; border: none; cursor: pointer;
-            width: 30px; height: 20px; position: relative; 
+            width: 30px; height: 20px; position: relative;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 0; z-index: 1001;
         }
         .burger span {
-            display: block; width: 100%; height: 2px; 
-            background: var(--cream);
-            transition: all 0.3s ease;
+            display: block; width: 100%; height: 2px;
+            background: var(--cream); transition: all 0.3s ease;
         }
         .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
         .burger.active span:nth-child(2) { opacity: 0; }
@@ -80,100 +76,84 @@
         }
         .mobile-menu a.active { color: var(--orange); font-weight: bold; }
 
-        /* ── PAGE CONTENT ── */
+        /* ── CROSSFADE IMAGE ── */
+        .merch-image {
+            width: 100%;
+            position: relative;
+            line-height: 0;
+        }
+        .merch-image img {
+            width: 100%; height: auto; display: block;
+            transition: opacity 1.2s ease-in-out;
+        }
+        .merch-image img + img {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .merch-image img.fade-out { opacity: 0; }
+        .merch-image img.fade-in  { opacity: 1; }
+
+        /* ── PAGE ── */
         .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
 
+        /* ── HERO ── */
         .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
         .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
         .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
-        .hero h1 span { color: var(--orange); }
-        .hero p { font-size: 1.1rem; border-left: 2px solid var(--orange); padding-left: 16px; margin-bottom: 24px; }
-
-        .badge { display: inline-block; padding: 8px 16px; border: 1px solid var(--orange); color: var(--orange); font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; animation: pulse 2.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        /* TTS PLAYER (Mobile Optimized) */
-        .tts-player {
-            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
-            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+        .hero h1 em { color: var(--orange); font-style: normal; }
+        .hero-intro {
+            font-size: 1.1rem; line-height: 1.75; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 16px;
         }
-        .tts-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
-        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .tts-btn {
-            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            padding: 8px 12px; font-family: inherit; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
-        }
-        .tts-btn.active { background: var(--orange); color: #000; }
-        .tts-voice-sel { 
-            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
-            padding: 8px; font-family: inherit; font-size: 0.85rem; width: 100%;
-        }
-        .tts-highlight { background: rgba(255,102,0,0.2); border-radius: 2px; }
 
-        /* SECTIONS */
+        /* ── SECTION ── */
         .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
-        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 12px; }
-        .section h2 { font-size: 1.6rem; color: #fff; margin-bottom: 16px; line-height: 1.2; }
-        .section-intro { font-size: 1.05rem; line-height: 1.7; color: var(--text); margin-bottom: 32px; }
+        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
 
-        /* PRODUCT GRID (Stacked for Mobile) */
-        .product-grid { display: flex; flex-direction: column; gap: 24px; }
-        .product-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-        .product-card-img { width: 100%; aspect-ratio: 1; background: #0e0f0e; overflow: hidden; position: relative; }
-        .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
-        .coming-soon-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; }
-        .overlay-text { font-size: 0.75rem; letter-spacing: 0.15em; color: var(--orange); border: 1px solid var(--orange); padding: 8px 16px; text-transform: uppercase; }
-        
-        .product-card-label { padding: 16px; border-top: 1px solid var(--border); }
-        .product-card-label .name { font-size: 1.1rem; color: #fff; margin-bottom: 4px; }
-        .product-card-label .detail { font-size: 0.75rem; color: var(--orange); text-transform: uppercase; letter-spacing: 0.1em; }
-
-        /* SPLIT CONTENT (Stacked for Mobile) */
-        .split { display: flex; flex-direction: column; gap: 32px; }
-        .split-text p { margin-bottom: 20px; font-size: 1.05rem; }
-        .split-text strong { color: var(--orange); }
-        .mockup-frame { width: 100%; background: #0e0f0e; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-        .mockup-frame img { width: 100%; display: block; }
-
-        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-        .tag { font-size: 0.75rem; border: 1px solid var(--border); padding: 4px 10px; color: var(--cream); text-transform: uppercase; }
-
-        /* STRIPS & CTA */
-        .notify-strip { 
-            margin-top: 48px; padding: 24px; border: 1px solid var(--border); 
-            border-radius: 4px; background: var(--bg2); text-align: center; 
-        }
-        .notify-strip p { font-size: 1rem; margin-bottom: 20px; }
-        
-        .cta-btn { 
-            display: inline-block; padding: 14px 28px; background: var(--orange); 
-            color: #000; font-family: inherit; font-size: 0.9rem; font-weight: bold; 
-            text-transform: uppercase; text-decoration: none; border-radius: 3px; 
-            letter-spacing: 0.1em;
+        .below-copy {
+            font-size: 1.1rem; line-height: 1.75; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 16px;
+            margin-bottom: 24px;
         }
 
-        .cta-block { padding: 64px 0 0; text-align: center; }
-        .cta-block h2 { margin-bottom: 16px; font-size: 1.6rem; color: #fff; }
-        .cta-block p { margin-bottom: 32px; font-size: 1.1rem; }
+        .badge {
+            display: inline-block;
+            padding: 8px 16px; border: 1px solid var(--orange);
+            color: var(--orange); font-size: 0.85rem;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            animation: pulse 2.5s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
-        /* FONT NUDGE */
+        /* ── FOOTER LINE ── */
+        .footer-line {
+            margin-top: 60px; padding-top: 24px;
+            border-top: 1px solid var(--border-dim);
+            font-size: 0.75rem; letter-spacing: 0.15em;
+            color: var(--dim); text-transform: uppercase;
+        }
+
+        /* ── FONT NUDGE ── */
         .font-nudge {
             position: fixed; bottom: 20px; right: 20px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
             border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
         }
-        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; }
+        .font-nudge-size-label { font-size: 0.5rem; color: var(--orange); text-transform: uppercase; letter-spacing: 0.1em; text-align: center; }
+        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; font-family: inherit; }
 
-        .footer-toggle { text-align: center; padding: 60px 0; }
-        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+        .footer-toggle { text-align: center; padding: 48px 0 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; }
+        .footer-toggle a:hover { color: var(--orange); }
 
-        /* REVEAL */
+        /* ── REVEAL ── */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
+<!-- NAV -->
 <div id="mobile-nav-container">
     <div class="nav-wrapper">
         <div class="nav-brand">dPaul Technologies</div>
@@ -194,114 +174,55 @@
     <a href="about.html">info</a>
 </div>
 
-<div class="page">
-    <section class="hero reveal">
-        <div class="hero-label">// Merch</div>
-        <h1>Limited-run pieces.<br>Built on the <span>studio aesthetic.</span></h1>
-        <p>Exclusive limited-run pieces designed with the signature dPaul aesthetic. Once they're gone, they're gone.</p>
-
-        <div class="tts-player">
-            <span class="tts-label">// Speak page</span>
-            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
-                <option value="">Loading voices...</option>
-            </select>
-            <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
-                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
-            </div>
-        </div>
-
-        <div class="badge" style="margin-top: 32px;">// Debut collection — available shortly</div>
-    </section>
-
-    <section class="section reveal">
-        <div class="section-label">// 01 — Debut Collection</div>
-        <h2>Hoodie, Tee & Mug</h2>
-        <p class="section-intro">Three limited pieces carrying signature studio character artwork. For the builders and the fast-movers.</p>
-
-        <div class="product-grid">
-            <div class="product-card">
-                <div class="product-card-img">
-                    <img src="https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/ai-is-the-new-electricity-white-tshirt.png" alt="Electricity Tee">
-                    <div class="coming-soon-overlay"><div class="overlay-text">Coming Soon</div></div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Electricity Tee</div>
-                    <div class="detail">White — Limited Run</div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-card-img">
-                    <img src="../assets/tshirt-design-001.png" alt="Studio Tee">
-                    <div class="coming-soon-overlay"><div class="overlay-text">Coming Soon</div></div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Studio Tee</div>
-                    <div class="detail">Black — Limited Run</div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-card-img">
-                    <img src="../assets/tshirt-design-001b.png" alt="Studio Mug">
-                    <div class="coming-soon-overlay"><div class="overlay-text">Coming Soon</div></div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Studio Mug</div>
-                    <div class="detail">White — Limited Run</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section reveal">
-        <div class="section-label">// 02 — The Design</div>
-        <h2>Signature character. Studio voice.</h2>
-        
-        <div class="split">
-            <div class="split-text">
-                <p>Each piece carries the <strong>dPaul character</strong> — rendered in a retro comic style with speech bubble slogans reflecting studio philosophy.</p>
-                <p><strong>"The journey is the fun part..."</strong> — a reminder that the process matters as much as the output.</p>
-                
-                <div class="tags">
-                    <div class="tag">Retro Comic Style</div>
-                    <div class="tag">Screen Printed</div>
-                    <div class="tag">Unisex Sizing</div>
-                </div>
-            </div>
-            <div class="mockup-frame">
-                <img src="../assets/the-journey-is-the-fun-part.png" alt="Design Mockup">
-            </div>
-        </div>
-    </section>
-
-    <div class="notify-strip reveal">
-        <p><strong>Want to know when it drops?</strong><br>I'll let you know when the collection goes live.</p>
-        <a href="about.html" class="cta-btn">Notify Me</a>
-    </div>
-
-    <div class="cta-block reveal">
-        <h2>Custom designs?</h2>
-        <p>Custom merch designs for your brand or project — let's talk.</p>
-        <a href="about.html" class="cta-btn">Get in touch</a>
-    </div>
-
-    <div class="footer-toggle">
-        <a href="../merch.html">→ View Desktop Version</a>
-    </div>
-</div>
-
-<div class="font-nudge" id="fontNudge">
+<!-- FONT NUDGE -->
+<div class="font-nudge">
+    <div class="font-nudge-size-label">Size</div>
     <button class="font-btn" onclick="adjustFont(1)">A+</button>
     <button class="font-btn" onclick="adjustFont(-1)">A-</button>
 </div>
 
+<!-- CROSSFADE IMAGE — full width, sits above page padding -->
+<div class="merch-image reveal" id="merchImgWrap">
+    <img id="img0" src="../assets/merch-en-route.png"               alt="Merch En Route" class="fade-in">
+    <img id="img1" src="../assets/merch-en-route-zebra.png"         alt="Merch En Route Zebra" class="fade-out">
+    <img id="img2" src="../assets/merch-en-route-zebra-no-car.png"  alt="Merch En Route Zebra No Car" class="fade-out">
+    <img id="img3" src="../assets/merch-en-route-zebra-no-bird.png" alt="Merch En Route Zebra No Bird" class="fade-out">
+</div>
+
+<div class="page">
+
+    <!-- HERO -->
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Merch</div>
+        <h1>Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
+        <p class="hero-intro">
+            The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.
+        </p>
+    </section>
+
+    <!-- DEBUT COLLECTION -->
+    <section class="section reveal">
+        <div class="section-label">// Debut collection</div>
+        <p class="below-copy">
+            <!-- Your text goes here -->
+        </p>
+        <div class="badge">// En Route — available very soon</div>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="footer-line reveal">// dPaul Technologies — Limited run — once gone, gone</div>
+
+    <div class="footer-toggle reveal">
+        <a href="../merch.html">→ View Desktop Version</a>
+    </div>
+
+</div>
+
 <script>
-    // ── MENU LOGIC ──
+    // ── MENU ──
     function toggleMenu() {
         const menu = document.getElementById('mobileMenu');
-        const btn = document.getElementById('burgerBtn');
+        const btn  = document.getElementById('burgerBtn');
         menu.classList.toggle('open');
         btn.classList.toggle('active');
         document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
@@ -314,74 +235,31 @@
         document.documentElement.style.setProperty('--font-scale', fontScale);
     }
 
-    // ── REVEAL ANIMATION ──
+    // ── IMAGE CROSSFADE ──
+    (function() {
+        const imgs = [
+            document.getElementById('img0'),
+            document.getElementById('img1'),
+            document.getElementById('img2'),
+            document.getElementById('img3')
+        ];
+        let current = 0;
+        setInterval(() => {
+            imgs[current].classList.remove('fade-in');
+            imgs[current].classList.add('fade-out');
+            current = (current + 1) % imgs.length;
+            imgs[current].classList.remove('fade-out');
+            imgs[current].classList.add('fade-in');
+        }, 30000);
+    })();
+
+    // ── REVEAL ──
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // ── TTS ENGINE ──
-    const synth = window.speechSynthesis;
-    let selectedVoice = null;
-    let chunks = [];
-    let currentIdx = 0;
-
-    function populateVoices() {
-        const voices = synth.getVoices();
-        const sel = document.getElementById('ttsVoiceSel');
-        if(!sel) return;
-        sel.innerHTML = '';
-        const enVoices = voices.filter(v => v.lang.startsWith('en'));
-        enVoices.forEach(v => {
-            const opt = document.createElement('option');
-            opt.value = v.name;
-            opt.textContent = v.name.replace('Google ', '');
-            sel.appendChild(opt);
-        });
-        selectedVoice = enVoices[0];
-    }
-
-    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
-    
-    function buildChunks() {
-        chunks = [];
-        document.querySelectorAll('h1, h2, .hero p, .section-intro, .split-text p').forEach(el => {
-            chunks.push({ el, text: el.innerText });
-        });
-    }
-
-    window.ttsPlay = () => {
-        if (!chunks.length) buildChunks();
-        synth.cancel();
-        currentIdx = 0;
-        speak();
-        document.getElementById('ttsPlay').disabled = true;
-    };
-
-    window.ttsStop = () => {
-        synth.cancel();
-        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
-        document.getElementById('ttsPlay').disabled = false;
-    };
-
-    function speak() {
-        if (currentIdx >= chunks.length) { ttsStop(); return; }
-        const chunk = chunks[currentIdx];
-        chunk.el.classList.add('tts-highlight');
-        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        const utter = new SpeechSynthesisUtterance(chunk.text);
-        if (selectedVoice) utter.voice = selectedVoice;
-        utter.onend = () => {
-            chunk.el.classList.remove('tts-highlight');
-            currentIdx++;
-            speak();
-        };
-        synth.speak(utter);
-    }
-
-    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
-    window.onload = populateVoices;
 </script>
 
 </body>
