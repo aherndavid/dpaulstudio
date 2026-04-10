@@ -6,14 +6,12 @@
     <title>Merch — dPaul Technologies</title>
     <style>
         :root {
-            --bg:     #111211;
-            --bg2:    #181918;
+            --bg:     #000;
             --orange: #FF6600;
             --cream:  #D4C4A8;
             --text:   #a8a89e;
-            --dim:    #555550;
+            --dim:    #444440;
             --border: rgba(255,102,0,0.18);
-            --border2: rgba(255,255,255,0.06);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,17 +24,19 @@
             overflow-x: hidden;
         }
 
+        /* grain */
         body::before {
             content: '';
             position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 9999; opacity: 0.4;
+            pointer-events: none; z-index: 9999; opacity: 0.5;
         }
 
         /* ── NAV ── */
         nav {
             position: sticky; top: 0; z-index: 200;
-            background: var(--bg); border-bottom: 1px solid var(--border);
+            background: #000;
+            border-bottom: 1px solid var(--border);
             padding: 0 48px; display: flex; align-items: center; gap: 4px; height: 68px;
         }
         nav a {
@@ -48,220 +48,109 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer  { flex: 1; }
 
-        /* ── PAGE ── */
-        .page { max-width: 1400px; margin: 0 auto; padding: 0 48px 120px; }
-
-        /* ── HERO ── */
-        .hero {
-            padding: 72px 0 64px;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: flex-end; justify-content: space-between; gap: 48px;
-        }
-        .hero-left { max-width: 560px; }
-        .hero-label { font-size: 0.7rem; color: var(--orange); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; }
-        .hero h1 { font-size: clamp(2.6rem, 4.5vw, 4.4rem); font-weight: 900; color: #fff; line-height: 1.05; margin-bottom: 22px; letter-spacing: -0.02em; }
-        .hero h1 span { color: var(--orange); }
-        .hero p { font-size: 0.95rem; line-height: 1.9; color: var(--text); border-left: 2px solid var(--orange); padding-left: 16px; }
-        .hero-right { text-align: right; flex-shrink: 0; }
-        .badge { display: inline-block; padding: 7px 16px; border: 1px solid var(--orange); color: var(--orange); font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; animation: pulse 2.5s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
-        .item-count { font-size: 3.5rem; font-weight: 900; color: rgba(255,102,0,0.12); line-height: 1; letter-spacing: -0.04em; margin-bottom: 12px; }
-
-        /* ── SECTION LABEL ── */
-        .section-row {
-            display: flex; align-items: center; gap: 20px;
-            padding: 48px 0 32px;
-        }
-        .section-row .s-label { font-size: 0.68rem; letter-spacing: 0.3em; color: var(--orange); text-transform: uppercase; white-space: nowrap; }
-        .section-row .s-line  { flex: 1; height: 1px; background: var(--border); }
-
-        /* ════════════════════════════════════
-           TEES — 2-col, image left text right
-           ════════════════════════════════════ */
-        .tee-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
-            margin-bottom: 2px;
-        }
-
-        .tee-item {
-            position: relative;
-            background: var(--bg2);
-            overflow: hidden;
+        /* ── TOP BLACK SPACE ── */
+        .top-bar {
+            background: #000;
+            padding: 60px 48px 48px;
             display: flex;
-            aspect-ratio: 3/2;
-            border: 1px solid var(--border2);
-            transition: border-color 0.2s;
+            align-items: flex-end;
+            justify-content: space-between;
         }
-        .tee-item:hover { border-color: var(--border); }
-
-        .tee-img {
-            width: 52%;
-            flex-shrink: 0;
-            overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-            padding: 24px;
+        .top-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.3em;
+            color: var(--orange);
+            text-transform: uppercase;
         }
-        .tee-img img {
-            width: 100%; height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
-            transition: transform 0.5s ease;
-        }
-        .tee-item:hover .tee-img img { transform: scale(1.05) translateY(-3px); }
-
-        .tee-info {
-            flex: 1;
-            padding: 28px 24px 28px 12px;
-            display: flex; flex-direction: column; justify-content: center;
-            border-left: 1px solid var(--border2);
-        }
-        .t-num    { font-size: 0.62rem; letter-spacing: 0.25em; color: var(--dim); text-transform: uppercase; margin-bottom: 10px; }
-        .t-name   { font-size: 1.15rem; font-weight: 900; color: #fff; line-height: 1.15; margin-bottom: 8px; letter-spacing: -0.01em; }
-        .t-detail { font-size: 0.65rem; letter-spacing: 0.18em; color: var(--orange); text-transform: uppercase; margin-bottom: 14px; }
-        .t-desc   { font-size: 0.82rem; line-height: 1.75; color: var(--text); margin-bottom: 20px; }
-        .t-soon   { font-size: 0.62rem; letter-spacing: 0.22em; color: var(--orange); text-transform: uppercase; border: 1px solid rgba(255,102,0,0.4); padding: 5px 12px; display: inline-block; animation: pulse 2.5s infinite; }
-
-        /* ════════════════════════════════════
-           MUGS ROW — 3 mugs side by side, compact
-           ════════════════════════════════════ */
-        .mugs-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 2px;
-            margin-bottom: 2px;
+        .top-right {
+            font-size: 0.68rem;
+            letter-spacing: 0.25em;
+            color: var(--dim);
+            text-transform: uppercase;
+            text-align: right;
         }
 
-        .mug-item {
-            background: var(--bg2);
-            border: 1px solid var(--border2);
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            transition: border-color 0.2s;
-        }
-        .mug-item:hover { border-color: var(--border); }
-
-        .mug-img-zone {
+        /* ── FULL WIDTH IMAGE ── */
+        .merch-image {
             width: 100%;
-            aspect-ratio: 1;
-            display: flex; align-items: center; justify-content: center;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
+            display: block;
+            line-height: 0;
+            background: #000;
         }
-        .mug-img-zone img {
-            max-width: 72%; max-height: 72%;
-            object-fit: contain;
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.65));
-            transition: transform 0.45s ease;
-        }
-        .mug-item:hover .mug-img-zone img { transform: scale(1.07) translateY(-4px); }
-
-        /* code mug — two images overlapping */
-        .mug-img-zone.dual { padding: 16px; }
-        .mug-img-zone.dual img {
-            position: absolute;
-            max-width: 55%; max-height: 68%;
-            transition: transform 0.45s ease, filter 0.35s ease;
-        }
-        .mug-img-zone.dual .dm-rear  {
-            transform: rotate(-8deg) translate(-28%, 8%);
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.7));
-            opacity: 0.88; z-index: 1;
-        }
-        .mug-img-zone.dual .dm-front {
-            transform: rotate(6deg) translate(24%, -6%);
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6));
-            z-index: 2;
-        }
-        .mug-item:hover .mug-img-zone.dual .dm-rear  { transform: rotate(-11deg) translate(-34%, 10%); }
-        .mug-item:hover .mug-img-zone.dual .dm-front { transform: rotate(9deg)  translate(28%, -9%); }
-
-        .mug-info {
-            padding: 16px 18px 20px;
-            border-top: 1px solid var(--border2);
-        }
-        .mug-info .t-num   { margin-bottom: 6px; }
-        .mug-info .t-name  { font-size: 0.95rem; margin-bottom: 6px; }
-        .mug-info .t-detail{ margin-bottom: 10px; }
-        .mug-info .t-soon  { font-size: 0.58rem; padding: 4px 10px; }
-
-        /* ════════════════════════════════════
-           HOODIES — big feature row
-           ════════════════════════════════════ */
-        .hoodies-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 2px;
+        .merch-image img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
-        .hoodie-item {
-            background: var(--bg2);
-            border: 1px solid var(--border2);
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            transition: border-color 0.2s;
-        }
-        .hoodie-item:hover { border-color: var(--border); }
-
-        /* the synth hoodie is hero — spans 2 cols */
-        .hoodie-item.hero-hoodie {
-            grid-column: span 2;
-            flex-direction: row;
+        /* ── BOTTOM BLACK SPACE ── */
+        .bottom-bar {
+            background: #000;
+            padding: 56px 48px 80px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 48px;
         }
 
-        .hoodie-img {
-            width: 100%; overflow: hidden;
-            display: flex; align-items: flex-end; justify-content: center;
-            background: var(--bg);
-            aspect-ratio: 3/4;
-        }
-        .hoodie-item.hero-hoodie .hoodie-img {
-            width: 55%; aspect-ratio: auto; flex-shrink: 0;
-        }
-        .hoodie-img img {
-            width: 100%; height: 100%;
-            object-fit: contain; object-position: center bottom;
-            filter: drop-shadow(0 12px 32px rgba(0,0,0,0.65));
-            transition: transform 0.5s ease;
-        }
-        .hoodie-item:hover .hoodie-img img { transform: scale(1.04) translateY(-4px); }
-
-        .hoodie-info {
-            padding: 24px 22px 28px;
-            border-top: 1px solid var(--border2);
-            display: flex; flex-direction: column; justify-content: flex-end;
-        }
-        .hoodie-item.hero-hoodie .hoodie-info {
-            border-top: none; border-left: 1px solid var(--border2);
-            padding: 36px 32px; justify-content: center;
-        }
-        .hoodie-item.hero-hoodie .t-name { font-size: 1.55rem; margin-bottom: 12px; }
-        .hoodie-item.hero-hoodie .t-desc { font-size: 0.9rem; margin-bottom: 24px; }
-
-        /* section heading inside retro cars */
-        .retro-header-cell {
-            grid-column: span 3;
-            padding: 40px 0 20px;
-            display: flex; align-items: center; gap: 20px;
+        .bottom-left {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        /* ── FOOTER ── */
-        .footer-line { padding: 48px 0; font-size: 0.65rem; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; border-top: 1px solid var(--border2); margin-top: 2px; }
+        .pulse-badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border: 1px solid var(--orange);
+            color: var(--orange);
+            font-size: 0.68rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            animation: pulse 2.8s ease-in-out infinite;
+            width: fit-content;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-        @media (max-width: 1000px) {
-            nav { padding: 0 24px; }
-            .page { padding: 0 24px 80px; }
-            .hero { flex-direction: column; gap: 24px; }
-            .tee-row, .mugs-row, .hoodies-row { grid-template-columns: 1fr; }
-            .hoodie-item.hero-hoodie { grid-column: span 1; flex-direction: column; }
-            .hoodie-item.hero-hoodie .hoodie-img { width: 100%; aspect-ratio: 4/3; }
-            .hoodie-item.hero-hoodie .hoodie-info { border-left: none; border-top: 1px solid var(--border2); }
-            .retro-header-cell { grid-column: span 1; }
-            .tee-item { aspect-ratio: auto; flex-direction: column; }
-            .tee-img { width: 100%; height: 200px; }
-            .tee-info { border-left: none; border-top: 1px solid var(--border2); padding: 20px; }
+        .bottom-copy {
+            font-size: 0.82rem;
+            line-height: 1.85;
+            color: var(--dim);
+            max-width: 420px;
+            letter-spacing: 0.03em;
+        }
+
+        .bottom-right {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .bottom-sig {
+            font-size: 0.65rem;
+            letter-spacing: 0.22em;
+            color: var(--dim);
+            text-transform: uppercase;
+            line-height: 2;
+        }
+        .bottom-sig span { color: var(--orange); }
+
+        /* ── FOOTER LINE ── */
+        .footer-line {
+            background: #000;
+            padding: 24px 48px;
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: #2a2a28;
+            text-transform: uppercase;
+            border-top: 1px solid rgba(255,102,0,0.08);
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 20px; }
+            nav a { padding: 8px 10px; font-size: 0.85rem; }
+            .top-bar  { padding: 40px 20px 32px; flex-direction: column; gap: 8px; }
+            .bottom-bar { padding: 40px 20px 60px; flex-direction: column; gap: 32px; }
+            .bottom-right { text-align: left; }
+            .footer-line { padding: 20px; }
         }
     </style>
 </head>
@@ -279,153 +168,32 @@
     <a href="about.html">info</a>
 </nav>
 
-<div class="page">
-
-    <!-- HERO -->
-    <div class="hero">
-        <div class="hero-left">
-            <div class="hero-label">// dPaul Technologies — Merch</div>
-            <h1>Limited-run.<br>Built on the<br><span>studio aesthetic.</span></h1>
-            <p>Exclusive pieces designed with the studio's signature look — once they're gone, they're gone.</p>
-        </div>
-        <div class="hero-right">
-            <div class="item-count">07</div>
-            <div class="badge">// Debut collection — very soon</div>
-        </div>
-    </div>
-
-    <!-- TEES -->
-    <div class="section-row">
-        <div class="s-label">// Tees</div>
-        <div class="s-line"></div>
-    </div>
-
-    <div class="tee-row">
-        <div class="tee-item">
-            <div class="tee-img"><img src="assets/mercedes-man-cartoon.png" alt="Mercedes Cartoon Tee"></div>
-            <div class="tee-info">
-                <div class="t-num">01 — Tee</div>
-                <div class="t-name">Mercedes Cartoon Tee</div>
-                <div class="t-detail">White — Limited Run</div>
-                <div class="t-desc">The signature dPaul character beside a classic Mercedes. Retro comic art on premium white cotton.</div>
-                <div class="t-soon">Coming Soon</div>
-            </div>
-        </div>
-        <div class="tee-item">
-            <div class="tee-img"><img src="assets/ai-is-the-new.png" alt="Electricity Tee"></div>
-            <div class="tee-info">
-                <div class="t-num">02 — Tee</div>
-                <div class="t-name">AI Is The New Electricity</div>
-                <div class="t-detail">White — Limited Run</div>
-                <div class="t-desc">AI isn't the future — it's already the infrastructure. Wear the thesis.</div>
-                <div class="t-soon">Coming Soon</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="tee-row">
-        <div class="tee-item">
-            <div class="tee-img"><img src="assets/tshirt-design-001.png" alt="Studio Tee"></div>
-            <div class="tee-info">
-                <div class="t-num">03 — Tee</div>
-                <div class="t-name">Studio Tee</div>
-                <div class="t-detail">Black — Limited Run</div>
-                <div class="t-desc">The core dPaul studio tee. Dark cotton, the studio mark, built for sessions and streets.</div>
-                <div class="t-soon">Coming Soon</div>
-            </div>
-        </div>
-        <!-- spacer slot — leave empty or fill later -->
-        <div class="tee-item" style="background:transparent;border-color:transparent;"></div>
-    </div>
-
-    <!-- MUGS -->
-    <div class="section-row">
-        <div class="s-label">// Mugs</div>
-        <div class="s-line"></div>
-    </div>
-
-    <div class="mugs-row">
-        <div class="mug-item">
-            <div class="mug-img-zone">
-                <img src="assets/tshirt-design-001b.png" alt="Studio Mug">
-            </div>
-            <div class="mug-info">
-                <div class="t-num">04 — Mug</div>
-                <div class="t-name">Studio Mug</div>
-                <div class="t-detail">White — Limited Run</div>
-                <div class="t-soon">Coming Soon</div>
-            </div>
-        </div>
-        <div class="mug-item">
-            <div class="mug-img-zone dual">
-                <img class="dm-rear"  src="assets/code-mug-rear.png"  alt="Love to Code Mug Rear">
-                <img class="dm-front" src="assets/code-mug-front.png" alt="Love to Code Mug Front">
-            </div>
-            <div class="mug-info">
-                <div class="t-num">05 — Mug</div>
-                <div class="t-name">Love To Code Mug</div>
-                <div class="t-detail">White — Full Wrap Print</div>
-                <div class="t-soon">Coming Soon</div>
-            </div>
-        </div>
-        <!-- third cell — future item placeholder -->
-        <div class="mug-item" style="background:transparent;border-color:transparent;display:flex;align-items:center;justify-content:center;">
-            <div style="font-size:0.65rem;letter-spacing:0.2em;color:var(--dim);text-transform:uppercase;">// More coming</div>
-        </div>
-    </div>
-
-    <!-- HOODIES -->
-    <div class="section-row">
-        <div class="s-label">// Hoodies</div>
-        <div class="s-line"></div>
-    </div>
-
-    <div class="hoodies-row">
-
-        <!-- SYNTH HOODIE — hero spanning 2 cols -->
-        <div class="hoodie-item hero-hoodie">
-            <div class="hoodie-img">
-                <img src="assets/man-holding-synth-back-hoodie.png" alt="Man Holding Synth Back Hoodie">
-            </div>
-            <div class="hoodie-info">
-                <div class="t-num">06 — Hoodie</div>
-                <div class="t-name">Synth Hoodie</div>
-                <div class="t-detail">Back Print — Limited Run</div>
-                <div class="t-desc">The studio in wearable form. A man, a synth, a statement. Back-printed on premium unisex hoodie stock.</div>
-                <div class="t-soon">Coming Soon</div>
-            </div>
-        </div>
-
-        <!-- RETRO CARS — stacked in 3rd col -->
-        <div style="display:flex;flex-direction:column;gap:2px;">
-            <div class="hoodie-item" style="flex:1;">
-                <div class="hoodie-img" style="aspect-ratio:4/3;">
-                    <img src="assets/ford-capri-retro-cars-white-hoodie-side.png" alt="Ford Capri Hoodie">
-                </div>
-                <div class="hoodie-info">
-                    <div class="t-num">07a — Hoodie</div>
-                    <div class="t-name">Ford Capri</div>
-                    <div class="t-detail">White — Retro Cars Series</div>
-                    <div class="t-soon">Coming Soon</div>
-                </div>
-            </div>
-            <div class="hoodie-item" style="flex:1;">
-                <div class="hoodie-img" style="aspect-ratio:4/3;">
-                    <img src="assets/supra-hoodie-retro-cars-back-hoodie-side.png" alt="Toyota Supra Hoodie">
-                </div>
-                <div class="hoodie-info">
-                    <div class="t-num">07b — Hoodie</div>
-                    <div class="t-name">Toyota Supra</div>
-                    <div class="t-detail">White — Retro Cars Series</div>
-                    <div class="t-soon">Coming Soon</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="footer-line">// dPaul Technologies — All pieces limited run — once gone, gone</div>
-
+<div class="top-bar">
+    <div class="top-label">// dPaul Technologies — Merch</div>
+    <div class="top-right">Limited run<br>Debut collection</div>
 </div>
+
+<div class="merch-image">
+    <img src="assets/merch-en-route.png" alt="Merch En Route — dPaul Technologies">
+</div>
+
+<div class="bottom-bar">
+    <div class="bottom-left">
+        <div class="pulse-badge">// En Route</div>
+        <div class="bottom-copy">
+            The debut collection is on its way.<br>
+            Once it drops — it drops.
+        </div>
+    </div>
+    <div class="bottom-right">
+        <div class="bottom-sig">
+            dPaul Technologies<br>
+            <span>dpaul.studio</span>
+        </div>
+    </div>
+</div>
+
+<div class="footer-line">// dPaul Technologies — Limited run — once gone, gone</div>
+
 </body>
 </html>
