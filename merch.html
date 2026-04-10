@@ -107,7 +107,6 @@
         .merch-image {
             margin-left: -56px;
             width: calc(100% + 112px);
-            display: block;
             line-height: 0;
             margin-top: 72px;
             position: relative;
@@ -116,11 +115,15 @@
             width: 100%;
             height: auto;
             display: block;
-            position: absolute;
-            top: 0; left: 0;
             transition: opacity 1.2s ease-in-out;
         }
-        .merch-image img:first-child  { position: relative; }
+        /* second image overlays the first, matching its size */
+        .merch-image img + img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
         .merch-image img.fade-out { opacity: 0; }
         .merch-image img.fade-in  { opacity: 1; }
 
@@ -166,7 +169,7 @@
         @media (max-width: 900px) {
             nav { padding: 0 24px; }
             .page { padding: 0 24px 80px; }
-            .merch-image { margin-left: -24px; width: calc(100% + 48px); }
+            .merch-image { margin-left: -24px !important; width: calc(100% + 48px) !important; }
         }
     </style>
 </head>
@@ -245,6 +248,23 @@
         if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
         if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
     } catch(e) {}
+
+    // ── IMAGE CROSSFADE ──
+    (function() {
+        const imgA = document.getElementById('imgA');
+        const imgB = document.getElementById('imgB');
+        let showingA = true;
+        setInterval(() => {
+            if (showingA) {
+                imgA.classList.remove('fade-in'); imgA.classList.add('fade-out');
+                imgB.classList.remove('fade-out'); imgB.classList.add('fade-in');
+            } else {
+                imgB.classList.remove('fade-in'); imgB.classList.add('fade-out');
+                imgA.classList.remove('fade-out'); imgA.classList.add('fade-in');
+            }
+            showingA = !showingA;
+        }, 30000);
+    })();
 
     // ── REVEAL ──
     const observer = new IntersectionObserver((entries) => {
