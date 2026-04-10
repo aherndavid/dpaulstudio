@@ -117,6 +117,38 @@
         .tool-story { font-size: 1.05rem; margin-bottom: 20px; }
         .tool-story em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
 
+        /* Desktop notice */
+        .desktop-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: rgba(255,102,0,0.05);
+            border: 1px solid rgba(255,102,0,0.3);
+            border-left: 3px solid var(--orange);
+            border-radius: 3px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        .desktop-notice-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+        .desktop-notice-text {
+            font-size: 0.85rem;
+            color: var(--cream);
+            line-height: 1.7;
+        }
+        .desktop-notice-text strong {
+            color: var(--orange);
+            font-weight: normal;
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
         /* Lists */
         .spec-list { list-style: none; margin: 24px 0; background: var(--bg2); padding: 12px; border-radius: 4px; border: 1px solid var(--border-dim); }
         .spec-list li { font-size: 0.9rem; padding: 8px 0; border-bottom: 1px solid var(--border-dim); padding-left: 20px; position: relative; }
@@ -237,7 +269,13 @@
             <span class="tag">HTML</span><span class="tag">Regex</span><span class="tag">Inspect</span><span class="tag">Rollback</span><span class="tag">Free</span>
         </div>
 
-        <a href="../tools/html-live/html-live.html" class="launch-btn">Launch HTML-Live</a>
+        <div class="desktop-notice">
+            <div class="desktop-notice-icon">🖥️</div>
+            <div class="desktop-notice-text">
+                <strong>Desktop &amp; Laptop only</strong>
+                HTML-Live is a code editor — it's built for a keyboard and a large screen. Head to a desktop or laptop to get the full experience.
+            </div>
+        </div>
 
         <div class="bmc-block">
             <img src="../assets/dpaul-coffee.png" alt="Coffee" class="bmc-coffee-img">
@@ -279,10 +317,10 @@
         <a href="../m/skribla.html" class="launch-btn">Launch Skribla</a>
     </section>
 
-    <!-- NEON PHEONIX -->
+    <!-- NEON PHOENIX -->
     <section class="tool-section reveal">
         <div class="tool-eyebrow">// 03 — Retro Game</div>
-        <div class="tool-name">Neon Pheonix</div>
+        <div class="tool-name">Neon Phoenix</div>
         <p class="tool-story">A retro arcade space game built entirely in the browser. Classic gameplay, no plugins, no install — just open and play.</p>
         
         <div class="tool-frame">
@@ -292,10 +330,10 @@
         <ul class="spec-list">
             <li>Retro arcade gameplay</li>
             <li>Runs entirely in browser</li>
-            <li>Keyboard controls (Desktop fallback)</li>
+            <li>Touch controls on mobile</li>
         </ul>
 
-        <a href="../m/neon.html" class="launch-btn">Launch Neon Pheonix</a>
+        <a href="../m/neon.html" class="launch-btn">Launch Neon Phoenix</a>
     </section>
 
     <div class="cta-block reveal">
