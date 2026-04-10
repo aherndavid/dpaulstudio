@@ -4,19 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Merch — dPaul Technologies</title>
-    
     <style>
         :root {
-            --bg:      #131413;
-            --bg2:     #1a1c1a;
-            --orange:  #FF6600;
-            --orange-dim:#cc5200;
-            --cream:   #D4C4A8;
-            --text:    #c8c8c0;
-            --dim:     #7a7a70;
-            --border:  rgba(255,102,0,0.25);
-            --border-dim: rgba(255,255,255,0.07);
-            --font-scale: 1;
+            --bg:     #131413;
+            --orange: #FF6600;
+            --cream:  #D4C4A8;
+            --text:   #c8c8c0;
+            --dim:    #7a7a70;
+            --border: rgba(255,102,0,0.25);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,7 +20,6 @@
             background: var(--bg);
             color: var(--text);
             font-family: 'Courier New', Courier, monospace;
-            font-size: 130%; 
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -37,39 +31,14 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* ── FONT NUDGE ── */
-        .font-nudge {
-            position: fixed; bottom: 24px; right: 24px; z-index: 500;
-            background: var(--bg2); border: 1px solid var(--border);
-            border-radius: 4px; padding: 12px 16px;
-            display: flex; flex-direction: column; gap: 8px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
-        }
-        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
-        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
-        .font-btn {
-            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius: 3px; font-size: 1rem;
-            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-        }
-        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
-        .font-nudge-dismiss {
-            background: none; border: none; color: var(--dim);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
-            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
-        }
-        .font-nudge-dismiss:hover { color: var(--orange); }
-
         /* ── NAV ── */
         nav {
-            position: sticky; top: 0; z-index: 100;
+            position: sticky; top: 0; z-index: 200;
             background: var(--bg); border-bottom: 1px solid var(--border);
             padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
         }
         nav a {
-            font-family: 'Courier New', Courier, monospace; font-size: 1.4rem;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem;
             color: var(--cream); text-decoration: none; padding: 10px 20px;
             border: 1px solid transparent; border-radius: 3px;
             letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
@@ -78,141 +47,145 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer  { flex: 1; }
 
-        /* ── PAGE WRAPPER ── */
-        .page { max-width: 1440px; margin: 0 auto; padding: 56px 56px 120px; }
-
         /* ── HERO ── */
-        .hero { padding: 64px 0 56px; border-bottom: 1px solid var(--border); max-width: 1000px; }
-        .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; }
-        .hero h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; letter-spacing: -0.02em; }
+        .hero { padding: 80px 56px 60px; border-bottom: 1px solid var(--border); max-width: 900px; }
+        .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 20px; }
+        .hero h1 { font-size: clamp(2.8rem, 5vw, 5rem); font-weight: 900; color: #fff; line-height: 1.06; margin-bottom: 24px; letter-spacing: -0.02em; }
         .hero h1 span { color: var(--orange); }
-        .hero p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); max-width: 660px; border-left: 2px solid var(--orange); padding-left: 20px; }
+        .hero p { font-size: 1.1rem; line-height: 1.9; color: var(--text); max-width: 580px; border-left: 2px solid var(--orange); padding-left: 20px; }
+        .badge { display: inline-block; margin-top: 28px; padding: 7px 16px; border: 1px solid var(--orange); color: var(--orange); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; animation: pulse 2.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-        /* ── TTS PLAYER ── */
-        .tts-player {
-            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
-            padding: 16px 20px; margin: 32px 0 0;
-            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        /* ── PRODUCT SECTIONS ── */
+        .product-section {
+            padding: 100px 56px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            min-height: 540px;
+            display: flex;
+            align-items: center;
         }
-        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
-        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .tts-btn {
-            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
-            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
-            transition: all 0.15s; white-space: nowrap;
+
+        .product-section.img-right .section-content { max-width: 460px; padding-right: 0; }
+        .product-section.img-left  .section-content { max-width: 460px; margin-left: auto; }
+
+        .section-content { position: relative; z-index: 10; }
+
+        .prod-num { font-size: 0.7rem; letter-spacing: 0.3em; color: var(--orange); text-transform: uppercase; margin-bottom: 14px; }
+        .prod-name { font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 14px; letter-spacing: -0.01em; }
+        .prod-detail { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 20px; }
+        .prod-desc { font-size: 1rem; line-height: 1.85; color: var(--text); border-left: 2px solid rgba(255,102,0,0.4); padding-left: 16px; margin-bottom: 28px; }
+        .coming-soon { display: inline-block; padding: 8px 20px; border: 1px solid var(--orange); color: var(--orange); font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; animation: pulse 2.5s infinite; }
+
+        /* floating image right */
+        .product-img-wrap {
+            position: absolute;
+            top: 0; bottom: 0;
+            display: flex; align-items: center;
+            z-index: 5;
         }
-        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
-        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
-        .tts-voice-sel {
-            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
-            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none; max-width: 240px;
+        .product-section.img-right .product-img-wrap { right: -30px; width: 54%; }
+        .product-section.img-left  .product-img-wrap { left: -30px;  width: 54%; }
+
+        .product-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 60px rgba(0,0,0,0.75));
+            transition: transform 0.55s ease, filter 0.4s ease;
         }
-        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+        .product-section:hover .product-img-wrap img {
+            transform: scale(1.04) translateY(-4px);
+            filter: drop-shadow(0 30px 80px rgba(255,102,0,0.13)) drop-shadow(0 20px 60px rgba(0,0,0,0.75));
+        }
 
-        /* ── SECTIONS ── */
-        .badge { display: inline-block; margin-top: 32px; padding: 8px 18px; border: 1px solid var(--orange); color: var(--orange); font-size: 0.91rem; letter-spacing: 0.25em; text-transform: uppercase; animation: pulse 2.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+        /* ambient glow */
+        .product-section::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 55% 60% at var(--gx,75%) 50%, rgba(255,102,0,0.05) 0%, transparent 70%);
+            pointer-events: none; z-index: 1;
+        }
 
-        .section { padding: 80px 0; border-bottom: 1px solid var(--border); }
-        .section-label { font-size: 1.04rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
-        .section h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: #fff; margin-bottom: 20px; }
-        .section-intro { font-size: 1.25rem; line-height: 1.85; max-width: 700px; margin-bottom: 48px; color: var(--text); }
+        /* ── LOVE TO CODE MUG — overlapping angled images ── */
+        .mug-float {
+            position: absolute;
+            top: 0; bottom: 0; right: -30px;
+            width: 58%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5;
+        }
+        .mug-float img {
+            position: absolute;
+            width: 52%;
+            object-fit: contain;
+            transition: transform 0.5s ease, filter 0.4s ease;
+        }
+        .mug-float .mug-rear {
+            transform: rotate(-9deg) translateX(-42%) translateY(5%);
+            filter: drop-shadow(0 18px 45px rgba(0,0,0,0.8));
+            opacity: 0.9;
+            z-index: 1;
+        }
+        .mug-float .mug-front {
+            transform: rotate(6deg) translateX(28%) translateY(-3%);
+            filter: drop-shadow(0 18px 45px rgba(0,0,0,0.7));
+            z-index: 2;
+        }
+        .product-section:hover .mug-float .mug-rear  { transform: rotate(-13deg) translateX(-48%) translateY(8%);  filter: drop-shadow(0 24px 60px rgba(0,0,0,0.85)); }
+        .product-section:hover .mug-float .mug-front { transform: rotate(9deg)  translateX(32%) translateY(-6%); filter: drop-shadow(0 24px 60px rgba(255,102,0,0.1)) drop-shadow(0 18px 50px rgba(0,0,0,0.8)); }
 
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-        .product-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; cursor: default; }
-        .product-card:hover { border-color: var(--orange); transform: translateY(-4px); }
-        .product-card-img { width: 100%; aspect-ratio: 1; background: #0e0f0e; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
-
-        .product-card-img .overlay { position: absolute; inset: 0; background: rgba(19,20,19,0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; z-index: 2; }
-        .product-card:hover .overlay { opacity: 1; }
-        .overlay-text { font-size: 0.9rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; border: 1px solid var(--orange); padding: 12px 24px; border-radius: 2px; }
-
-        .product-card-label { padding: 20px; border-top: 1px solid var(--border); }
-        .product-card-label .name { font-size: 1.1rem; color: #fff; letter-spacing: 0.06em; margin-bottom: 6px; }
-        .product-card-label .detail { font-size: 0.85rem; color: var(--orange); letter-spacing: 0.12em; text-transform: uppercase; }
-
-        /* ── MUG FLIP CARD ── */
-        .mug-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s; cursor: default; }
-        .mug-card:hover { border-color: var(--orange); transform: translateY(-4px); }
-
-        .mug-img-wrap {
-            width: 100%; aspect-ratio: 1; background: #0e0f0e;
+        /* ── RETRO CARS ── */
+        .retro-section {
+            padding: 100px 56px;
+            border-bottom: 1px solid var(--border);
             position: relative; overflow: hidden;
         }
-
-        /* Two images stacked — JS toggles active */
-        .mug-img-wrap img {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%; object-fit: cover;
-            transition: opacity 0.4s ease;
+        .retro-header { max-width: 640px; margin-bottom: 72px; }
+        .retro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
         }
-        .mug-img-wrap img.mug-front { opacity: 1; }
-        .mug-img-wrap img.mug-rear  { opacity: 0; }
-        .mug-img-wrap.show-rear img.mug-front { opacity: 0; }
-        .mug-img-wrap.show-rear img.mug-rear  { opacity: 1; }
-
-        /* Toggle bar at bottom of image area */
-        .mug-toggle-bar {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            display: flex; z-index: 5;
-            background: rgba(13,14,13,0.85);
-            border-top: 1px solid var(--border);
+        .car-item {
+            padding: 40px 0;
+            display: flex; flex-direction: column;
         }
-        .mug-toggle-btn {
-            flex: 1; padding: 8px 0;
-            background: none; border: none;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
-            color: var(--dim); cursor: pointer; transition: all 0.15s;
+        .car-item:first-child { padding-right: 64px; border-right: 1px solid var(--border); }
+        .car-item:last-child  { padding-left: 64px; }
+        .car-img {
+            width: 100%; max-height: 360px;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.7));
+            transition: transform 0.5s ease, filter 0.4s ease;
+            margin-bottom: 32px;
         }
-        .mug-toggle-btn:first-child { border-right: 1px solid var(--border); }
-        .mug-toggle-btn.active { color: var(--orange); background: rgba(255,102,0,0.08); }
-        .mug-toggle-btn:hover { color: var(--orange); }
-
-        /* Coming Soon overlay for mug */
-        .mug-overlay {
-            position: absolute; inset: 0;
-            background: rgba(19,20,19,0.7);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.2s; z-index: 3;
-            pointer-events: none;
+        .car-item:hover .car-img {
+            transform: scale(1.04) translateY(-6px);
+            filter: drop-shadow(0 28px 70px rgba(255,102,0,0.12)) drop-shadow(0 20px 50px rgba(0,0,0,0.75));
         }
-        .mug-card:hover .mug-overlay { opacity: 1; }
+        .car-name  { font-size: 1.5rem; font-weight: 900; color: #fff; margin-bottom: 8px; letter-spacing: -0.01em; }
+        .car-detail { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
 
-        .split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: start; }
-        .split-text p { font-size: 1.2rem; line-height: 1.9; color: var(--text); margin-bottom: 24px; }
-        .split-text p strong { color: var(--orange); font-weight: bold; }
-        .mockup-frame { width: 100%; background: #0e0f0e; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .mockup-frame img { width: 100%; display: block; }
-
-        .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
-        .tag { font-size: 0.85rem; letter-spacing: 0.1em; padding: 6px 14px; border: 1px solid var(--border); border-radius: 3px; color: var(--cream); text-transform: uppercase; transition: all 0.2s; }
-        .tag:hover { border-color: var(--orange); color: var(--orange); }
+        /* ── FOOTER ── */
+        .footer-line { padding: 48px 56px; font-size: 0.7rem; letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase; }
 
         @media (max-width: 900px) {
             nav { padding: 0 24px; }
-            .page { padding: 32px 24px 80px; }
-            .product-grid { grid-template-columns: 1fr 1fr; }
-            .split { grid-template-columns: 1fr; }
+            .hero { padding: 56px 24px 48px; }
+            .product-section { padding: 60px 24px; min-height: auto; display: block; }
+            .product-img-wrap, .mug-float { position: relative; width: 100%; top: auto; bottom: auto; left: auto; right: auto; height: 260px; margin-top: 32px; }
+            .product-section.img-right .section-content,
+            .product-section.img-left  .section-content { max-width: 100%; margin: 0; }
+            .retro-section { padding: 60px 24px; }
+            .retro-grid { grid-template-columns: 1fr; }
+            .car-item:first-child { padding-right: 0; border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 48px; }
+            .car-item:last-child { padding-left: 0; padding-top: 48px; }
+            .footer-line { padding: 40px 24px; }
         }
     </style>
 </head>
 <body>
-
-<div class="font-nudge" id="fontNudge">
-    <div class="font-nudge-label">Text too small?</div>
-    <div class="font-nudge-controls">
-        <button class="font-btn" onclick="adjustFont(-1)">A&#8722;</button>
-        <span class="font-size-indicator" id="fontIndicator">100%</span>
-        <button class="font-btn" onclick="adjustFont(1)">A+</button>
-    </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
-</div>
 
 <nav>
     <a href="design.html">design</a>
@@ -226,171 +199,108 @@
     <a href="about.html">info</a>
 </nav>
 
-<div class="page">
-
-    <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies — Merch</div>
-        <h1>Limited-run pieces.<br>Built on the <span>studio aesthetic.</span></h1>
-        <p>The dpaul.studio exclusive merch collection is on its way. These are limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.</p>
-
-        <div class="tts-player" id="ttsPlayer">
-            <span class="tts-label">// Speak this page</span>
-            <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
-                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
-                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
-                <div class="tts-sep"></div>
-                <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95">
-                <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
-                    <option value="">Loading voices...</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="badge">// Debut collection — available very soon</div>
-    </section>
-
-    <section class="section reveal">
-        <div class="section-label">// 01 — Debut Collection</div>
-        <h2>Hoodie, Tee &amp; Mug</h2>
-        <p class="section-intro">The first drop features five pieces — each carrying the signature dPaul character artwork.</p>
-
-        <div class="product-grid">
-            
-            <!-- MERCEDES TEE -->
-            <div class="product-card">
-                <div class="product-card-img">
-                    <img src="assets/mercedes-man-cartoon.png" alt="Mercedes Man Cartoon T-Shirt">
-                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Mercedes Cartoon Tee</div>
-                    <div class="detail">White — Limited Run</div>
-                </div>
-            </div>
-
-            <!-- ELECTRICITY TEE -->
-            <div class="product-card">
-                <div class="product-card-img">
-                    <img src="assets/ai-is-the-new.png" alt="AI is the new electricity T-Shirt">
-                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Electricity Tee</div>
-                    <div class="detail">White — Limited Run</div>
-                </div>
-            </div>
-
-            <!-- STUDIO TEE -->
-            <div class="product-card">
-                <div class="product-card-img">
-                    <img src="assets/tshirt-design-001.png" alt="dPaul T-Shirt">
-                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Studio Tee</div>
-                    <div class="detail">Black — Limited Run</div>
-                </div>
-            </div>
-
-            <!-- STUDIO MUG -->
-            <div class="product-card">
-                <div class="product-card-img">
-                    <img src="assets/tshirt-design-001b.png" alt="dPaul Mug">
-                    <div class="overlay"><div class="overlay-text">Coming Soon</div></div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Studio Mug</div>
-                    <div class="detail">White — Limited Run</div>
-                </div>
-            </div>
-
-            <!-- LOVE TO CODE MUG — front/rear toggle -->
-            <div class="mug-card">
-                <div class="mug-img-wrap" id="mugWrap">
-                    <img class="mug-front" src="assets/code-mug-front.png" alt="Love to Code Mug — Front">
-                    <img class="mug-rear"  src="assets/code-mug-rear.png"  alt="Love to Code Mug — Rear">
-                    <div class="mug-overlay"><div class="overlay-text">Coming Soon</div></div>
-                    <div class="mug-toggle-bar">
-                        <button class="mug-toggle-btn active" id="btnFront" onclick="showMugSide('front')">&#9654; Front</button>
-                        <button class="mug-toggle-btn"        id="btnRear"  onclick="showMugSide('rear')">&#9654; Rear</button>
-                    </div>
-                </div>
-                <div class="product-card-label">
-                    <div class="name">Love to Code Mug</div>
-                    <div class="detail">White — Limited Run</div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="section reveal">
-        <div class="section-label">// 02 — The Design</div>
-        <h2>Signature character. Studio voice.</h2>
-        <div class="split">
-            <div class="split-text">
-                <p>Each piece carries the <strong>dPaul character</strong> — rendered in a retro comic style with speech bubble slogans that reflect the studio's philosophy.</p>
-                <p><strong>"The journey is the fun part..."</strong> — a reminder that the process matters as much as the output.</p>
-                <div class="tags">
-                    <div class="tag">Retro Comic Style</div>
-                    <div class="tag">Screen Printed</div>
-                    <div class="tag">Unisex Sizing</div>
-                </div>
-            </div>
-            <div class="split-visual">
-                <div class="mockup-frame">
-                    <img src="assets/the-journey-is-the-fun-part.png" alt="Merch collection mockup">
-                </div>
-            </div>
-        </div>
-    </section>
-
+<div class="hero">
+    <div class="hero-label">// dPaul Technologies — Merch</div>
+    <h1>Limited-run pieces.<br>Built on the <span>studio aesthetic.</span></h1>
+    <p>The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.</p>
+    <div class="badge">// Debut collection — available very soon</div>
 </div>
 
-<script>
-    // ── Font nudge ──
-    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
-    let fontScaleIndex = 0;
-    const indicators = ['100%', '115%', '130%', '150%', '170%'];
-    function applyFontScale() {
-        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
-        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
-    }
-    function adjustFont(dir) {
-        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
-        applyFontScale();
-    }
-    function dismissNudge() {
-        const nudge = document.getElementById('fontNudge');
-        nudge.style.opacity = '0';
-        nudge.style.pointerEvents = 'none';
-    }
+<!-- 01 — MERCEDES TEE -->
+<div class="product-section img-right" style="--gx:75%">
+    <div class="section-content">
+        <div class="prod-num">// 01</div>
+        <div class="prod-name">Mercedes<br>Cartoon Tee</div>
+        <div class="prod-detail">White — Limited Run</div>
+        <div class="prod-desc">The signature dPaul character beside a classic Mercedes. Retro comic art on premium white cotton. A nod to the machines and the journeys that shaped the studio.</div>
+        <div class="coming-soon">Coming Soon</div>
+    </div>
+    <div class="product-img-wrap">
+        <img src="assets/mercedes-man-cartoon.png" alt="Mercedes Cartoon Tee">
+    </div>
+</div>
 
-    // ── Mug front/rear toggle ──
-    function showMugSide(side) {
-        const wrap = document.getElementById('mugWrap');
-        const btnF = document.getElementById('btnFront');
-        const btnR = document.getElementById('btnRear');
-        if (side === 'rear') {
-            wrap.classList.add('show-rear');
-            btnR.classList.add('active');
-            btnF.classList.remove('active');
-        } else {
-            wrap.classList.remove('show-rear');
-            btnF.classList.add('active');
-            btnR.classList.remove('active');
-        }
-    }
+<!-- 02 — ELECTRICITY TEE -->
+<div class="product-section img-left" style="--gx:25%">
+    <div class="section-content">
+        <div class="prod-num">// 02</div>
+        <div class="prod-name">AI Is The New<br>Electricity Tee</div>
+        <div class="prod-detail">White — Limited Run</div>
+        <div class="prod-desc">A statement piece for the studio era. AI isn't the future — it's already the infrastructure. Wear the thesis.</div>
+        <div class="coming-soon">Coming Soon</div>
+    </div>
+    <div class="product-img-wrap">
+        <img src="assets/ai-is-the-new.png" alt="AI is the new electricity Tee">
+    </div>
+</div>
 
-    // ── Scroll reveal ──
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
-        });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
+<!-- 03 — STUDIO TEE -->
+<div class="product-section img-right" style="--gx:75%">
+    <div class="section-content">
+        <div class="prod-num">// 03</div>
+        <div class="prod-name">Studio Tee</div>
+        <div class="prod-detail">Black — Limited Run</div>
+        <div class="prod-desc">The core dPaul studio tee. Dark cotton, the studio mark, and the kind of design that works in a session or on the street.</div>
+        <div class="coming-soon">Coming Soon</div>
+    </div>
+    <div class="product-img-wrap">
+        <img src="assets/tshirt-design-001.png" alt="Studio Tee">
+    </div>
+</div>
+
+<!-- 04 — STUDIO MUG -->
+<div class="product-section img-left" style="--gx:25%">
+    <div class="section-content">
+        <div class="prod-num">// 04</div>
+        <div class="prod-name">Studio Mug</div>
+        <div class="prod-detail">White — Limited Run</div>
+        <div class="prod-desc">Start the session right. The studio mug carries the dPaul mark — because every great idea begins with a decent brew.</div>
+        <div class="coming-soon">Coming Soon</div>
+    </div>
+    <div class="product-img-wrap">
+        <img src="assets/tshirt-design-001b.png" alt="Studio Mug">
+    </div>
+</div>
+
+<!-- 05 — LOVE TO CODE MUG -->
+<div class="product-section img-right" style="--gx:72%">
+    <div class="section-content">
+        <div class="prod-num">// 05</div>
+        <div class="prod-name">Love To Code<br>Mug</div>
+        <div class="prod-detail">White — Limited Run — Full Wrap Print</div>
+        <div class="prod-desc">For the ones who build at 2am. Full wrap design — something worth seeing on both sides of the cup.</div>
+        <div class="coming-soon">Coming Soon</div>
+    </div>
+    <div class="mug-float">
+        <img class="mug-rear"  src="assets/code-mug-rear.png"  alt="Love to Code Mug — Rear">
+        <img class="mug-front" src="assets/code-mug-front.png" alt="Love to Code Mug — Front">
+    </div>
+</div>
+
+<!-- 06 — RETRO CARS -->
+<div class="retro-section">
+    <div class="retro-header">
+        <div class="prod-num">// 06 — Retro Cars Collection</div>
+        <div class="prod-name">Ford Capri &amp;<br>Toyota Supra</div>
+        <div class="prod-detail">White Hoodie — Limited Run</div>
+        <div class="prod-desc">Two icons. Two eras. The Retro Cars collection pays tribute to the machines that defined a generation — screen printed on premium white hoodies.</div>
+        <div class="coming-soon">Coming Soon</div>
+    </div>
+    <div class="retro-grid">
+        <div class="car-item">
+            <img class="car-img" src="assets/ford-capri-retro-cars-white-hoodie-side.png" alt="Ford Capri Retro Hoodie">
+            <div class="car-name">Ford Capri</div>
+            <div class="car-detail">White Hoodie — Side Print</div>
+        </div>
+        <div class="car-item">
+            <img class="car-img" src="assets/supra-hoodie-retro-cars-back-hoodie-side.png" alt="Toyota Supra Retro Hoodie">
+            <div class="car-name">Toyota Supra</div>
+            <div class="car-detail">White Hoodie — Back Print</div>
+        </div>
+    </div>
+</div>
+
+<div class="footer-line">// dPaul Technologies — All pieces limited run — once gone, gone</div>
 
 </body>
 </html>
