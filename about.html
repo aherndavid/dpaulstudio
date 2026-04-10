@@ -9,7 +9,6 @@
     <script>
         (function() {
             if (window.innerWidth <= 760 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                // Redirects to the mobile version of this specific page
                 window.location.href = './m/about.html';
             }
         })();
@@ -169,7 +168,6 @@
         }
         .bio-text a:hover { border-color: var(--orange); }
 
-        /* Photo frame */
         .photo-frame {
             width: 100%; aspect-ratio: 3/4; border: 1px solid var(--border); border-radius: 4px;
             overflow: hidden; background: #0e0f0e; position: sticky; top: 72px; transition: border-color 0.2s;
@@ -227,10 +225,15 @@
         }
         .send-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
         .send-btn:active { transform: translateY(0); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .form-success {
             display: none; padding: 20px; border: 1px solid var(--orange); border-radius: 4px;
             text-align: center; font-size: 1.014rem; color: var(--orange); letter-spacing: 0.1em;
+        }
+        .form-error {
+            display: none; padding: 12px 16px; border: 1px solid #cc3300; border-radius: 4px;
+            font-size: 0.95rem; color: #cc3300; letter-spacing: 0.05em; margin-top: 8px;
         }
 
         /* ── CV STRIP ── */
@@ -248,7 +251,7 @@
         }
         .cv-link:hover { background: var(--orange); color: #000; transform: translateY(-1px); }
 
-        /* ── MOBILE VIEW TOGGLE (Easter Egg) ── */
+        /* ── MOBILE VIEW TOGGLE ── */
         .mobile-view-footer {
             margin-top: 80px; text-align: center; padding: 40px 0; border-top: 1px solid var(--border-dim);
         }
@@ -270,7 +273,6 @@
         }
         @media (max-width: 440px) { .skills-grid { grid-template-columns: 1fr; } }
 
-        /* ── Scroll reveal ── */
         .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
         .reveal.visible { opacity: 1; transform: none; }
     </style>
@@ -405,7 +407,7 @@
             </div>
 
             <div>
-                <form class="contact-form" id="contactForm" onsubmit="handleSubmit(event)">
+                <form class="contact-form" id="contactForm">
                     <div class="form-field">
                         <label for="name">Name</label>
                         <input type="text" id="name" name="name" placeholder="Your name" required>
@@ -418,7 +420,8 @@
                         <label for="message">Message</label>
                         <textarea id="message" name="message" placeholder="Share your message here..." required></textarea>
                     </div>
-                    <button type="submit" class="send-btn">SEND</button>
+                    <button type="submit" class="send-btn" id="sendBtn">SEND</button>
+                    <div class="form-error" id="formError">// Something went wrong. Please try again.</div>
                 </form>
                 <div class="form-success" id="formSuccess">
                     // Message received. I'll be in touch shortly.
@@ -427,7 +430,6 @@
         </div>
     </section>
 
-    <!-- MOBILE VIEW TOGGLE -->
     <div class="mobile-view-footer">
         <a href="./m/about.html" class="mobile-toggle">→ View Mobile Version</a>
     </div>
@@ -453,6 +455,11 @@
         document.getElementById('fontNudge').style.pointerEvents = 'none';
         try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
     }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
 
     // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
@@ -462,14 +469,42 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // ── FORM ──
-    function handleSubmit(e) {
+    // ── FORMSPREE CONTACT FORM ──
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        document.getElementById('contactForm').style.display = 'none';
-        document.getElementById('formSuccess').style.display = 'block';
-    }
+        const btn = document.getElementById('sendBtn');
+        const errorEl = document.getElementById('formError');
+        errorEl.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'SENDING...';
 
-    // ── TTS ENGINE (REDUCED TO GOOGLE MALE/FEMALE) ──
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value
+        };
+
+        try {
+            const res = await fetch('https://formspree.io/f/xeerqwvk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                document.getElementById('contactForm').style.display = 'none';
+                document.getElementById('formSuccess').style.display = 'block';
+            } else {
+                throw new Error('Server error');
+            }
+        } catch(err) {
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'SEND';
+        }
+    });
+
+    // ── TTS ENGINE ──
     (function() {
         const synth = window.speechSynthesis;
         let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
@@ -481,24 +516,19 @@
         function populateVoiceList() {
             const voices = synth.getVoices();
             if (!voices.length) return;
-            
             const sel = document.getElementById('ttsVoiceSel');
             sel.innerHTML = '';
-            
-            const filteredVoices = voices.filter(v => 
-                v.name.includes('Google') && 
+            const filteredVoices = voices.filter(v =>
+                v.name.includes('Google') &&
                 (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('female'))
             );
-
             const finalSelection = filteredVoices.length ? filteredVoices : voices.filter(v => v.name.includes('Google') && v.lang.startsWith('en'));
-
             finalSelection.forEach(v => {
                 const o = document.createElement('option');
                 o.value = v.name;
-                o.textContent = v.name.replace('Google ', '') + (v.name.toLowerCase().includes('female') ? ' ♀' : ' ♂'); 
+                o.textContent = v.name.replace('Google ', '') + (v.name.toLowerCase().includes('female') ? ' ♀' : ' ♂');
                 sel.appendChild(o);
             });
-
             if (!selectedVoice && finalSelection.length > 0) selectedVoice = finalSelection[0];
             if (selectedVoice) sel.value = selectedVoice.name;
         }
