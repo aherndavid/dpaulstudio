@@ -260,6 +260,18 @@
         .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
         .reveal.visible { opacity: 1; transform: none; }
 
+        /* SLIDESHOW DOTS */
+        .slideshow-dots {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 6px; z-index: 10;
+        }
+        .slideshow-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #fff; opacity: 0.35; transition: opacity 0.3s, background 0.3s;
+            cursor: pointer;
+        }
+        .slideshow-dot.active { background: var(--orange); opacity: 1; }
+
         @media (max-width: 760px) {
             .tool-block { grid-template-columns: 1fr; gap: 32px; }
             .tool-block.flip { direction: ltr; }
@@ -434,12 +446,25 @@
     <!-- TOOL 03: Neon Pheonix -->
     <div class="tool-block reveal">
         <div class="tool-visual">
-            <div class="tool-frame">
-    <video src="../assets/neon.mp4"
-           style="width:100%;aspect-ratio:9/16;display:block;object-fit:cover;"
-           autoplay loop muted playsinline>
-    </video>
-</div>
+            <div class="tool-frame" style="position:relative;overflow:hidden;">
+                <!-- Slideshow wrapper — maintains the original 9/16 aspect ratio -->
+                <div id="neonSlideshow" style="width:100%;aspect-ratio:9/16;position:relative;">
+                    <video id="neonVideo"
+                           src="../assets/neon.mp4"
+                           style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;opacity:1;transition:opacity 0.8s ease;"
+                           autoplay loop muted playsinline>
+                    </video>
+                    <img id="neonImage"
+                         src="https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/neon-pheonix-artwork.png"
+                         alt="Neon Pheonix artwork"
+                         style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;opacity:0;transition:opacity 0.8s ease;">
+                </div>
+                <!-- Dot indicators -->
+                <div class="slideshow-dots">
+                    <div class="slideshow-dot active" id="neonDot0" onclick="neonGoTo(0)" title="Gameplay video"></div>
+                    <div class="slideshow-dot"        id="neonDot1" onclick="neonGoTo(1)" title="Artwork"></div>
+                </div>
+            </div>
         </div>
         <div class="tool-info" style="position: sticky; top: 100px;">
             <div class="tool-sub">// 03 &#8212; Retro Game</div>
@@ -503,6 +528,46 @@
         });
     }, { threshold: 0.08 });
     revealEls.forEach(el => observer.observe(el));
+
+    // ─── NEON PHEONIX SLIDESHOW ─────────────────────────────────────────
+    (function () {
+        const video   = document.getElementById('neonVideo');
+        const image   = document.getElementById('neonImage');
+        const dot0    = document.getElementById('neonDot0');
+        const dot1    = document.getElementById('neonDot1');
+        const DELAY   = 5000; // ms each slide shows
+        let current   = 0;
+        let timer     = null;
+
+        function goTo(idx) {
+            current = idx;
+            if (idx === 0) {
+                video.style.opacity = '1';
+                image.style.opacity = '0';
+                dot0.classList.add('active');
+                dot1.classList.remove('active');
+                video.play();
+            } else {
+                video.style.opacity = '0';
+                image.style.opacity = '1';
+                dot0.classList.remove('active');
+                dot1.classList.add('active');
+            }
+        }
+
+        function next() { goTo(current === 0 ? 1 : 0); }
+
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(next, DELAY);
+        }
+
+        // Expose for dot clicks
+        window.neonGoTo = function(idx) { goTo(idx); startTimer(); };
+
+        startTimer();
+    })();
+    // ─── END NEON SLIDESHOW ─────────────────────────────────────────────
 
     // ─── TTS ENGINE ────────────────────────────────────────────────────
     (function() {
