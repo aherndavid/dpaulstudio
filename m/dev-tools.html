@@ -119,34 +119,16 @@
 
         /* Desktop notice */
         .desktop-notice {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            background: rgba(255,102,0,0.05);
-            border: 1px solid rgba(255,102,0,0.3);
-            border-left: 3px solid var(--orange);
-            border-radius: 3px;
-            padding: 16px;
-            margin: 24px 0;
+            display: flex; align-items: flex-start; gap: 12px;
+            background: rgba(255,102,0,0.05); border: 1px solid rgba(255,102,0,0.3);
+            border-left: 3px solid var(--orange); border-radius: 3px;
+            padding: 16px; margin: 24px 0;
         }
-        .desktop-notice-icon {
-            font-size: 1.3rem;
-            flex-shrink: 0;
-            line-height: 1.4;
-        }
-        .desktop-notice-text {
-            font-size: 0.85rem;
-            color: var(--cream);
-            line-height: 1.7;
-        }
+        .desktop-notice-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1.4; }
+        .desktop-notice-text { font-size: 0.85rem; color: var(--cream); line-height: 1.7; }
         .desktop-notice-text strong {
-            color: var(--orange);
-            font-weight: normal;
-            display: block;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
+            color: var(--orange); font-weight: normal; display: block;
+            margin-bottom: 4px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;
         }
 
         /* Lists */
@@ -181,9 +163,36 @@
         .screenshot-img { width: 100%; border: 1px solid var(--border-dim); border-radius: 4px; }
         .screenshot-caption { font-size: 0.75rem; color: var(--dim); margin-top: 8px; text-align: center; }
 
-        /* iFrame Tools */
-        .tool-frame { width: 100%; border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; margin: 24px 0; background: #000; }
-        .tool-frame iframe { width: 100%; border: none; display: block; }
+        /* Desk image (Skribla) */
+        .desk-img-wrap {
+            width: 100%; border: 1px solid var(--border); border-radius: 6px;
+            overflow: hidden; margin: 24px 0; background: #0e0f0e;
+        }
+        .desk-img-wrap img { width: 100%; height: auto; display: block; }
+
+        /* Neon Slideshow */
+        .neon-slideshow-wrap {
+            position: relative; width: 100%; border: 1px solid var(--border);
+            border-radius: 6px; overflow: hidden; margin: 24px 0;
+            background: #000;
+        }
+        .neon-slideshow-inner { position: relative; width: 100%; aspect-ratio: 9/16; }
+        .neon-slideshow-inner video,
+        .neon-slideshow-inner img {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover;
+            transition: opacity 0.8s ease;
+        }
+        .slideshow-dots {
+            position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 6px; z-index: 10;
+        }
+        .slideshow-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #fff; opacity: 0.35; transition: opacity 0.3s, background 0.3s;
+            cursor: pointer;
+        }
+        .slideshow-dot.active { background: var(--orange); opacity: 1; }
 
         .cta-block { padding: 64px 0 0; text-align: center; }
         .cta-btn { 
@@ -277,24 +286,25 @@
             </div>
         </div>
 
+        <!-- Laptop desk image — no launch button -->
+        <div class="screenshot-gallery">
+            <div>
+                <div class="screenshot-label">// In action</div>
+                <img src="../assets/html-live-laptop.png" alt="HTML-Live open on a MacBook on a desk" class="screenshot-img">
+                <p class="screenshot-caption">Live editor running in the browser</p>
+            </div>
+            <div>
+                <div class="screenshot-label">// In action</div>
+                <img src="../assets/live-2.png" alt="HTML-Live editor and live preview side by side" class="screenshot-img">
+                <p class="screenshot-caption">Code left, instant preview right</p>
+            </div>
+        </div>
+
         <div class="bmc-block">
             <img src="../assets/dpaul-coffee.png" alt="Coffee" class="bmc-coffee-img">
             <div class="bmc-label">// Support tool</div>
             <p class="bmc-desc">HTML-Live is free and always will be. If it saves you time, a coffee keeps the tools coming.</p>
             <a href="https://buymeacoffee.com/YOUR_USERNAME" class="bmc-btn">☕ Buy me a coffee</a>
-        </div>
-
-        <div class="screenshot-gallery">
-            <div>
-                <div class="screenshot-label">// On open</div>
-                <img src="../assets/live-1.png" alt="UI" class="screenshot-img">
-                <p class="screenshot-caption">Ready to use — no setup required</p>
-            </div>
-            <div>
-                <div class="screenshot-label">// In action</div>
-                <img src="../assets/live-2.png" alt="Editor" class="screenshot-img">
-                <p class="screenshot-caption">Code left, instant preview right</p>
-            </div>
         </div>
     </section>
 
@@ -303,9 +313,10 @@
         <div class="tool-eyebrow">// 02 — Scribble Pad</div>
         <div class="tool-name">Skribla</div>
         <p class="tool-story">A touch-friendly scribble pad that works on any device. Draw, sketch, doodle — lightweight and built for mobile.</p>
-        
-        <div class="tool-frame">
-            <iframe src="../m/skribla.html" style="aspect-ratio: 16/9;"></iframe>
+
+        <!-- Desk image replacing iframe -->
+        <div class="desk-img-wrap">
+            <img src="../assets/skribla-on-desk.png" alt="Skribla open on an iPhone on a desk">
         </div>
 
         <ul class="spec-list">
@@ -314,7 +325,11 @@
             <li>Lightweight and fast</li>
         </ul>
 
-        <a href="../m/skribla.html" class="launch-btn">Launch Skribla</a>
+        <div class="tags">
+            <span class="tag">Drawing</span><span class="tag">Mobile</span><span class="tag">Touch</span><span class="tag">Free</span>
+        </div>
+
+        <a href="../m/skribla.html" class="launch-btn">Launch Skribla →</a>
     </section>
 
     <!-- NEON PHOENIX -->
@@ -322,9 +337,24 @@
         <div class="tool-eyebrow">// 03 — Retro Game</div>
         <div class="tool-name">Neon Phoenix</div>
         <p class="tool-story">A retro arcade space game built entirely in the browser. Classic gameplay, no plugins, no install — just open and play.</p>
-        
-        <div class="tool-frame">
-            <iframe src="../m/neon.html" style="aspect-ratio: 9/16;"></iframe>
+
+        <!-- Auto-slideshow: video + artwork -->
+        <div class="neon-slideshow-wrap">
+            <div class="neon-slideshow-inner">
+                <video id="neonVideo"
+                       src="../assets/neon.mp4"
+                       style="opacity:1;"
+                       autoplay loop muted playsinline>
+                </video>
+                <img id="neonImage"
+                     src="../assets/neon-art.png"
+                     alt="Neon Phoenix artwork"
+                     style="opacity:0;">
+            </div>
+            <div class="slideshow-dots">
+                <div class="slideshow-dot active" id="neonDot0" onclick="neonGoTo(0)" title="Gameplay"></div>
+                <div class="slideshow-dot"        id="neonDot1" onclick="neonGoTo(1)" title="Artwork"></div>
+            </div>
         </div>
 
         <ul class="spec-list">
@@ -333,7 +363,11 @@
             <li>Touch controls on mobile</li>
         </ul>
 
-        <a href="../m/neon.html" class="launch-btn">Launch Neon Phoenix</a>
+        <div class="tags">
+            <span class="tag">Retro</span><span class="tag">Browser Game</span><span class="tag">Arcade</span><span class="tag">Free</span>
+        </div>
+
+        <a href="../m/neon.html" class="launch-btn">Launch Neon Phoenix →</a>
     </section>
 
     <div class="cta-block reveal">
@@ -375,6 +409,34 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+    // ── NEON PHOENIX SLIDESHOW ──
+    (function () {
+        const video = document.getElementById('neonVideo');
+        const image = document.getElementById('neonImage');
+        const dot0  = document.getElementById('neonDot0');
+        const dot1  = document.getElementById('neonDot1');
+        const DELAY = 5000;
+        let current = 0;
+        let timer   = null;
+
+        function goTo(idx) {
+            current = idx;
+            if (idx === 0) {
+                video.style.opacity = '1'; image.style.opacity = '0';
+                dot0.classList.add('active'); dot1.classList.remove('active');
+                video.play();
+            } else {
+                video.style.opacity = '0'; image.style.opacity = '1';
+                dot0.classList.remove('active'); dot1.classList.add('active');
+            }
+        }
+
+        function next() { goTo(current === 0 ? 1 : 0); }
+        function startTimer() { clearInterval(timer); timer = setInterval(next, DELAY); }
+        window.neonGoTo = function(idx) { goTo(idx); startTimer(); };
+        startTimer();
+    })();
+
     // ── TTS ENGINE ──
     const synth = window.speechSynthesis;
     let selectedVoice = null;
@@ -384,7 +446,7 @@
     function populateVoices() {
         const voices = synth.getVoices();
         const sel = document.getElementById('ttsVoiceSel');
-        if(!sel) return;
+        if (!sel) return;
         sel.innerHTML = '';
         const enVoices = voices.filter(v => v.lang.startsWith('en'));
         enVoices.forEach(v => {
@@ -397,7 +459,7 @@
     }
 
     window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
-    
+
     function buildChunks() {
         chunks = [];
         document.querySelectorAll('h1, .hero p, .tool-story, .bmc-desc, li').forEach(el => {
@@ -415,7 +477,7 @@
 
     window.ttsStop = () => {
         synth.cancel();
-        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        if (chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
         document.getElementById('ttsPlay').disabled = false;
     };
 
@@ -424,7 +486,6 @@
         const chunk = chunks[currentIdx];
         chunk.el.classList.add('tts-highlight');
         chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
         const utter = new SpeechSynthesisUtterance(chunk.text);
         if (selectedVoice) utter.voice = selectedVoice;
         utter.onend = () => {
