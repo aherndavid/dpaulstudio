@@ -24,7 +24,7 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             color: var(--cream);
-            font-size: 18px; /* Slightly larger base for general text */
+            font-size: 18px;
         }
 
         body::after {
@@ -36,7 +36,7 @@
 
         #app {
             display: grid;
-            grid-template-rows: 80px 1fr; /* Height increased slightly to accommodate larger top bar */
+            grid-template-rows: 80px 1fr;
             grid-template-columns: 1fr; 
             width: 100%;
             height: 100vh;
@@ -60,22 +60,27 @@
             gap: 24px;
         }
 
+        /* Branding Link */
+        .topbar-brand-link {
+            text-decoration: none;
+        }
+
         #eq-corner {
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 24px; /* Increased height for bigger bar appearance */
+            height: 24px;
         }
 
         .eq-bar-mini {
-            width: 4px; /* Slightly wider */
+            width: 4px;
             border-radius: 1px;
             background: var(--orange);
             transition: height 0.06s linear;
         }
 
         .topbar-brand {
-            font-size: 1.25rem; /* Bumped from 1rem */
+            font-size: 1.25rem;
             color: rgba(212,196,168,0.6);
             letter-spacing: 0.15em;
             text-transform: uppercase;
@@ -88,7 +93,7 @@
         }
 
         .topbar-link {
-            font-size: 1.1rem; /* Bumped from 0.95rem */
+            font-size: 1.1rem;
             color: rgba(212,196,168,0.55);
             letter-spacing: 0.15em;
             text-transform: uppercase;
@@ -102,14 +107,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.1rem; /* Bumped from 0.9rem */
+            font-size: 1.1rem;
             color: rgba(255,102,0,0.8);
             letter-spacing: 0.15em;
             text-transform: uppercase;
         }
 
         .status-dot {
-            width: 8px; height: 8px; /* Larger dot */
+            width: 8px; height: 8px;
             border-radius: 50%;
             background: var(--orange);
             animation: blink 2.4s ease-in-out infinite;
@@ -144,7 +149,6 @@
             pointer-events: none;
         }
 
-        /* UNCHANGED: dpaul.studio wordmark */
         .wordmark {
             font-size: clamp(7rem, 14vw, 16rem);
             font-weight: 700;
@@ -152,20 +156,22 @@
             color: #FFFFFF;
             letter-spacing: -0.045em;
             z-index: 2; position: relative;
+            text-decoration: none;
+            display: block;
         }
 
         .wordmark .accent { color: var(--orange); }
 
         .wordmark-sub {
             margin-top: 32px;
-            font-size: clamp(1.4rem, 2.2vw, 2.2rem); /* Bumped from 1.1rem range */
+            font-size: clamp(1.4rem, 2.2vw, 2.2rem);
             color: rgba(255,255,255,0.45);
             letter-spacing: 0.12em;
             z-index: 2; position: relative;
         }
 
         .divider {
-            width: 100px; /* Wider divider for visual balance */
+            width: 100px;
             height: 1px;
             background: rgba(255,102,0,0.4);
             margin: 44px 0;
@@ -180,20 +186,23 @@
         }
 
         .tag {
-            font-size: 0.95rem; /* Bumped from 0.75rem */
+            font-size: 0.95rem;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: rgba(255,255,255,0.35);
             border: 1px solid rgba(255,102,0,0.18);
-            padding: 10px 20px; /* Increased padding */
+            padding: 10px 20px;
             border-radius: 2px;
-            transition: color 0.2s, border-color 0.2s;
-            cursor: default;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none; /* Added for link styling */
+            display: inline-block;
         }
 
         .tag:hover {
             color: var(--orange);
             border-color: rgba(255,102,0,0.5);
+            background: rgba(255,102,0,0.05);
         }
     </style>
 </head>
@@ -204,11 +213,13 @@
     <div id="topbar">
         <div id="topbar-left">
             <div id="eq-corner"></div>
-            <div class="topbar-brand">dPaul Technologies</div>
+            <a href="index.html" class="topbar-brand-link">
+                <div class="topbar-brand">dPaul Technologies</div>
+            </a>
         </div>
         <div id="topbar-right">
-            <a href="about.html" class="topbar-link">about</a>
-            <a href="mailto:hello@dpaul.studio" class="topbar-link">contact</a>
+            <a href="about.html" class="topbar-link"></a>
+            <a href="mailto:hello@dpaul.studio" class="topbar-link">ABOUT</a>
             <div class="topbar-status">
                 <span class="status-dot"></span>available for work
             </div>
@@ -216,18 +227,18 @@
     </div>
 
     <main id="stage">
-        <div class="wordmark">
+        <a href="index.html" class="wordmark">
             <span class="accent">d</span>paul<br>.studio
-        </div>
-        <div class="wordmark-sub">design · music · code · video</div>
+        </a>
+        <div class="wordmark-sub">design · music · code · i.t · video</div>
         <div class="divider"></div>
         <div class="tag-row">
-            <span class="tag">Branding</span>
-            <span class="tag">Merch</span>
-            <span class="tag">Audio</span>
-            <span class="tag">Synthesis</span>
-            <span class="tag">Motion</span>
-            <span class="tag">Dev Tools</span>
+            <a href="design.html" class="tag">Branding</a>
+            <a href="merch.html" class="tag">Merch</a>
+            <a href="music.html" class="tag">Audio</a>
+            <a href="synths.html" class="tag">Synthesis</a>
+            <a href="video.html" class="tag">Motion</a>
+            <a href="tools.html" class="tag">Dev Tools</a>
         </div>
     </main>
 
@@ -235,7 +246,7 @@
 
 <script>
     const NUM_BANDS = 16;
-    const MAX_H     = 24; // Matched to new container height
+    const MAX_H     = 24;
     const corner    = document.getElementById('eq-corner');
     const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 2);
     const targets   = [...levels];
