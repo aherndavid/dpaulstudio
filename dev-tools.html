@@ -144,17 +144,18 @@
         .tool-block.flip > * { direction: ltr; }
         .tool-visual { display: flex; justify-content: center; align-items: start; }
         .tool-frame {
-        width: 100%; max-width: 840px;
-        border: 1px solid var(--border); border-radius: 6px;
-        overflow: hidden; background: #0e0f0e; transition: border-color 0.2s;
-          }
+            width: 100%; max-width: 840px;
+            border: 1px solid var(--border); border-radius: 6px;
+            overflow: hidden; background: #0e0f0e; transition: border-color 0.2s;
+        }
         .tool-frame:hover { border-color: var(--orange); }
 
         /* HTML-LIVE expanded layout */
         .html-live-block { padding: 72px 0; border-bottom: 1px solid var(--border); }
         .html-live-eyebrow { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
         .html-live-name { font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; letter-spacing: -0.02em; margin-bottom: 40px; }
-.html-live-body { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }       .tool-story { font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95; color: var(--text); margin-bottom: 16px; }
+        .html-live-body { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+        .tool-story { font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95; color: var(--text); margin-bottom: 16px; }
         .tool-story em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
 
         /* spec lists */
@@ -199,9 +200,7 @@
             background: var(--bg2); display: flex; align-items: center; gap: 20px;
             max-width: 560px;
         }
-        .bmc-coffee-img {
-            width: 72px; height: auto; flex-shrink: 0; object-fit: contain;
-        }
+        .bmc-coffee-img { width: 72px; height: auto; flex-shrink: 0; object-fit: contain; }
         .bmc-text { flex: 1; }
         .bmc-label { font-size: 0.91rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
         .bmc-desc { font-size: 1rem; line-height: 1.7; color: var(--dim); }
@@ -390,7 +389,7 @@
 
                 <a href="../tools/html-live/html-live.html" target="_blank" class="launch-btn">Launch HTML-Live &#8594;</a>
 
-              <div class="bmc-block" style="margin-top: 40px; padding: 0; border: none; background: none; max-width: 620px; gap: 32px; align-items: center;">
+                <div class="bmc-block" style="margin-top: 40px; padding: 0; border: none; background: none; max-width: 620px; gap: 32px; align-items: center;">
                     <img src="../assets/dpaul-coffee.png" alt="dPaul coffee" style="width: 160px; height: auto; flex-shrink: 0; object-fit: contain;">
                     <div class="bmc-text">
                         <div class="bmc-label" style="font-size: 1.17rem; margin-bottom: 12px;">// Support this tool</div>
@@ -405,9 +404,9 @@
             <!-- SCREENSHOT GALLERY -->
             <div class="screenshot-gallery">
                 <div>
-                    <div class="screenshot-label">// On open</div>
-                    <img src="../assets/live-1.png" alt="HTML-Live — tool as it appears when first opened" class="screenshot-img">
-                    <p class="screenshot-caption">Ready to use &#8212; no setup required</p>
+                    <div class="screenshot-label">// In action</div>
+                    <img src="https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/html-live-laptop.png" alt="HTML-Live open on a MacBook on a desk" class="screenshot-img">
+                    <p class="screenshot-caption">Live editor running in the browser</p>
                 </div>
                 <div>
                     <div class="screenshot-label">// In action</div>
@@ -422,7 +421,8 @@
     <div class="tool-block flip reveal" style="grid-template-columns: 2fr 1fr;">
         <div class="tool-visual">
             <div class="tool-frame">
-<iframe src="../tools/skribla/index.html" style="width:100%;aspect-ratio:16/9;border:none;display:block;"></iframe>            </div>
+                <img src="https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/skribla-on-desk.png" alt="Skribla open on an iPhone on a desk" style="width:100%;height:auto;display:block;">
+            </div>
         </div>
         <div class="tool-info">
             <div class="tool-sub">// 02 &#8212; Scribble Pad</div>
@@ -447,7 +447,6 @@
     <div class="tool-block reveal">
         <div class="tool-visual">
             <div class="tool-frame" style="position:relative;overflow:hidden;">
-                <!-- Slideshow wrapper — maintains the original 9/16 aspect ratio -->
                 <div id="neonSlideshow" style="width:100%;aspect-ratio:9/16;position:relative;">
                     <video id="neonVideo"
                            src="../assets/neon.mp4"
@@ -459,7 +458,6 @@
                          alt="Neon Pheonix artwork"
                          style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;opacity:0;transition:opacity 0.8s ease;">
                 </div>
-                <!-- Dot indicators -->
                 <div class="slideshow-dots">
                     <div class="slideshow-dot active" id="neonDot0" onclick="neonGoTo(0)" title="Gameplay video"></div>
                     <div class="slideshow-dot"        id="neonDot1" onclick="neonGoTo(1)" title="Artwork"></div>
@@ -529,47 +527,35 @@
     }, { threshold: 0.08 });
     revealEls.forEach(el => observer.observe(el));
 
-    // ─── NEON PHEONIX SLIDESHOW ─────────────────────────────────────────
+    // NEON PHEONIX SLIDESHOW
     (function () {
         const video   = document.getElementById('neonVideo');
         const image   = document.getElementById('neonImage');
         const dot0    = document.getElementById('neonDot0');
         const dot1    = document.getElementById('neonDot1');
-        const DELAY   = 5000; // ms each slide shows
+        const DELAY   = 5000;
         let current   = 0;
         let timer     = null;
 
         function goTo(idx) {
             current = idx;
             if (idx === 0) {
-                video.style.opacity = '1';
-                image.style.opacity = '0';
-                dot0.classList.add('active');
-                dot1.classList.remove('active');
+                video.style.opacity = '1'; image.style.opacity = '0';
+                dot0.classList.add('active'); dot1.classList.remove('active');
                 video.play();
             } else {
-                video.style.opacity = '0';
-                image.style.opacity = '1';
-                dot0.classList.remove('active');
-                dot1.classList.add('active');
+                video.style.opacity = '0'; image.style.opacity = '1';
+                dot0.classList.remove('active'); dot1.classList.add('active');
             }
         }
 
         function next() { goTo(current === 0 ? 1 : 0); }
-
-        function startTimer() {
-            clearInterval(timer);
-            timer = setInterval(next, DELAY);
-        }
-
-        // Expose for dot clicks
+        function startTimer() { clearInterval(timer); timer = setInterval(next, DELAY); }
         window.neonGoTo = function(idx) { goTo(idx); startTimer(); };
-
         startTimer();
     })();
-    // ─── END NEON SLIDESHOW ─────────────────────────────────────────────
 
-    // ─── TTS ENGINE ────────────────────────────────────────────────────
+    // TTS ENGINE
     (function() {
         const synth = window.speechSynthesis;
         let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
@@ -747,7 +733,6 @@
         });
         window.addEventListener('beforeunload', () => synth.cancel());
     })();
-    // ─── END TTS ────────────────────────────────────────────────────────
 </script>
 
 </body>
