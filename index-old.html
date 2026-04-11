@@ -32,7 +32,7 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* ── TOP LEFT GROUP (EQ + WORDMARK) ── */
+        /* ── BRAND GROUP ── */
         #brand-group {
             position: absolute;
             top: 60px;
@@ -44,8 +44,8 @@
             display: flex;
             align-items: flex-end;
             gap: 3px;
-            height: 30px;
-            margin-bottom: 15px;
+            height: 36px;
+            margin-bottom: 18px;
         }
 
         .eq-bar {
@@ -55,7 +55,7 @@
         }
 
         .wordmark {
-            font-size: clamp(4rem, 12vw, 10rem); 
+            font-size: clamp(5.5rem, 16vw, 14rem);
             font-weight: 700;
             line-height: 0.85;
             color: #FFFFFF;
@@ -65,39 +65,28 @@
 
         .wordmark .accent { color: var(--orange); }
 
-        /* ── LOWER RIGHT NAVIGATION ── */
-        #nav-sidebar {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            text-align: right;
-            z-index: 10;
-        }
-
-        .nav-list {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 4px;
+        /* ── HORIZONTAL NAV ── */
+        #nav-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+            margin-top: 28px;
         }
 
         .nav-link {
             text-decoration: none;
-            color: rgba(212, 196, 168, 0.3);
-            font-size: 2.2rem;
+            color: rgba(255, 255, 255, 0.45);
+            font-size: clamp(0.75rem, 1.4vw, 1.1rem);
             font-weight: 700;
             text-transform: lowercase;
-            letter-spacing: 0.02em;
-            transition: all 0.3s ease;
-            display: block;
-            padding: 5px 10px;
+            letter-spacing: 0.08em;
             white-space: nowrap;
+            transition: color 0.2s ease;
+            padding-right: 28px;
         }
 
-        .nav-link:hover, .nav-link:active {
+        .nav-link:hover {
             color: var(--orange);
-            transform: translateX(-15px);
         }
 
         @media (max-width: 768px) {
@@ -106,14 +95,15 @@
                 left: 30px;
             }
             .wordmark {
-                font-size: clamp(4.5rem, 15vw, 6rem);
+                font-size: clamp(4.5rem, 18vw, 7rem);
             }
-            #nav-sidebar {
-                bottom: 30px;
-                right: 30px;
+            #nav-bar {
+                margin-top: 20px;
+                gap: 0;
             }
             .nav-link {
-                font-size: 2.5rem;
+                font-size: clamp(0.7rem, 3.5vw, 0.9rem);
+                padding-right: 18px;
             }
         }
     </style>
@@ -125,24 +115,21 @@
         <div class="wordmark">
             <span class="accent">d</span>paul<br>.studio
         </div>
+        <nav id="nav-bar">
+            <a href="design.html"    class="nav-link">design</a>
+            <a href="merch.html"     class="nav-link">merch</a>
+            <a href="music.html"     class="nav-link">music</a>
+            <a href="synths.html"    class="nav-link">synths</a>
+            <a href="tools.html"     class="nav-link">tools</a>
+            <a href="video.html"     class="nav-link">video</a>
+            <a href="dev-tools.html" class="nav-link">dev tools</a>
+            <a href="about.html"     class="nav-link">about</a>
+        </nav>
     </div>
-
-    <nav id="nav-sidebar">
-        <ul class="nav-list">
-            <li class="nav-item"><a href="design.html"    class="nav-link">design</a></li>
-            <li class="nav-item"><a href="merch.html"     class="nav-link">merch</a></li>
-            <li class="nav-item"><a href="music.html"     class="nav-link">music</a></li>
-            <li class="nav-item"><a href="synths.html"    class="nav-link">synths</a></li>
-            <li class="nav-item"><a href="tools.html"     class="nav-link">tools</a></li>
-            <li class="nav-item"><a href="video.html"     class="nav-link">video</a></li>
-            <li class="nav-item"><a href="dev-tools.html" class="nav-link">dev tools</a></li>
-            <li class="nav-item"><a href="about.html"     class="nav-link">about</a></li>
-        </ul>
-    </nav>
 
     <script>
         const NUM_BANDS = 10;
-        const MAX_H     = 30; 
+        const MAX_H     = 36;
         const container = document.getElementById('eq-container');
         const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 5);
         const targets   = [...levels];
