@@ -158,7 +158,6 @@
         .char-count.warn { color: #aa6600; }
         .char-count.over { color: #dd4444; }
 
-        /* ── SETUP GUIDE ── */
         .setup-toggle {
             width: 100%; background: none; border: 1px dashed #2a2a2a;
             border-radius: 3px; color: #555; font-size: 8px; font-family: 'Courier New', monospace;
@@ -236,7 +235,6 @@
             line-height: 1.7;
         }
 
-        /* ── DISCLAIMER MODAL ── */
         #disclaimer-overlay {
             display: flex; position: fixed; inset: 0; z-index: 9999;
             background: rgba(0,0,0,0.92);
@@ -308,6 +306,20 @@
             background: linear-gradient(145deg, #3a0000, #220000);
             color: #ff8866; transform: translateY(-1px);
         }
+
+        /* ── Back link ── */
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            color: #444;
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #dd0000; }
     </style>
 </head>
 <body>
@@ -433,6 +445,8 @@
             </div>
         </div>
     </div>
+
+    <a href="https://www.dpaul.studio" class="back-link">← back to dpaul.studio</a>
 </div>
 
 <script>
