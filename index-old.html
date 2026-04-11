@@ -10,7 +10,6 @@
             --bg:      #0F1010;
             --orange:  #FF6600;
             --cream:   #D4C4A8;
-            --border:  rgba(255,102,0,0.12);
         }
 
         *, *::before, *::after {
@@ -24,7 +23,6 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             color: var(--cream);
-            font-size: 18px;
         }
 
         body::after {
@@ -34,244 +32,138 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        #app {
-            display: grid;
-            grid-template-rows: 80px 1fr;
-            grid-template-columns: 1fr; 
-            width: 100%;
-            height: 100vh;
+        /* ── TOP LEFT GROUP (EQ + WORDMARK) ── */
+        #brand-group {
+            position: absolute;
+            top: 60px;
+            left: 60px;
+            z-index: 10;
         }
 
-        /* ── TOP BAR ── */
-        #topbar {
-            grid-column: 1 / -1;
-            grid-row: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
-        }
-
-        #topbar-left {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        /* Branding Link */
-        .topbar-brand-link {
-            text-decoration: none;
-        }
-
-        #eq-corner {
+        #eq-container {
             display: flex;
             align-items: flex-end;
-            gap: 2px;
-            height: 24px;
+            gap: 3px;
+            height: 30px;
+            margin-bottom: 15px;
         }
 
-        .eq-bar-mini {
+        .eq-bar {
             width: 4px;
-            border-radius: 1px;
             background: var(--orange);
-            transition: height 0.06s linear;
-        }
-
-        .topbar-brand {
-            font-size: 1.25rem;
-            color: rgba(212,196,168,0.6);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        #topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-
-        .topbar-link {
-            font-size: 1.1rem;
-            color: rgba(212,196,168,0.55);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            text-decoration: none;
-            transition: color 0.15s;
-        }
-
-        .topbar-link:hover { color: var(--orange); }
-
-        .topbar-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
-            color: rgba(255,102,0,0.8);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        .status-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--orange);
-            animation: blink 2.4s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.2; }
-        }
-
-        /* ── STAGE ── */
-        #stage {
-            grid-column: 1;
-            grid-row: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 60px 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #stage::before {
-            content: '';
-            position: absolute;
-            left: -100px; top: 50%;
-            transform: translateY(-50%);
-            width: 900px; height: 900px;
-            background: radial-gradient(ellipse, rgba(255,102,0,0.06) 0%, transparent 60%);
-            pointer-events: none;
+            transition: height 0.1s ease;
         }
 
         .wordmark {
-            font-size: clamp(7rem, 14vw, 16rem);
+            font-size: clamp(4rem, 12vw, 10rem); 
             font-weight: 700;
-            line-height: 0.86;
+            line-height: 0.85;
             color: #FFFFFF;
-            letter-spacing: -0.045em;
-            z-index: 2; position: relative;
-            text-decoration: none;
-            display: block;
+            letter-spacing: -0.05em;
+            text-transform: lowercase;
         }
 
         .wordmark .accent { color: var(--orange); }
 
-        .wordmark-sub {
-            margin-top: 32px;
-            font-size: clamp(1.4rem, 2.2vw, 2.2rem);
-            color: rgba(255,255,255,0.45);
-            letter-spacing: 0.12em;
-            z-index: 2; position: relative;
+        /* ── LOWER RIGHT NAVIGATION ── */
+        #nav-sidebar {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            text-align: right;
+            z-index: 10;
         }
 
-        .divider {
-            width: 100px;
-            height: 1px;
-            background: rgba(255,102,0,0.4);
-            margin: 44px 0;
-            z-index: 2; position: relative;
+        .nav-list {
+            list-style: none;
         }
 
-        .tag-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            z-index: 2; position: relative;
+        .nav-item {
+            margin-bottom: 4px;
         }
 
-        .tag {
-            font-size: 0.95rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.35);
-            border: 1px solid rgba(255,102,0,0.18);
-            padding: 10px 20px;
-            border-radius: 2px;
-            transition: all 0.2s;
-            cursor: pointer;
-            text-decoration: none; /* Added for link styling */
-            display: inline-block;
+        .nav-link {
+            text-decoration: none;
+            color: rgba(212, 196, 168, 0.3);
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 5px 10px;
+            white-space: nowrap;
         }
 
-        .tag:hover {
+        .nav-link:hover, .nav-link:active {
             color: var(--orange);
-            border-color: rgba(255,102,0,0.5);
-            background: rgba(255,102,0,0.05);
+            transform: translateX(-15px);
+        }
+
+        @media (max-width: 768px) {
+            #brand-group {
+                top: 40px;
+                left: 30px;
+            }
+            .wordmark {
+                font-size: clamp(4.5rem, 15vw, 6rem);
+            }
+            #nav-sidebar {
+                bottom: 30px;
+                right: 30px;
+            }
+            .nav-link {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<div id="app">
-
-    <div id="topbar">
-        <div id="topbar-left">
-            <div id="eq-corner"></div>
-            <a href="index.html" class="topbar-brand-link">
-                <div class="topbar-brand">dPaul Technologies</div>
-            </a>
-        </div>
-        <div id="topbar-right">
-            <a href="about.html" class="topbar-link"></a>
-            <a href="mailto:hello@dpaul.studio" class="topbar-link">ABOUT</a>
-            <div class="topbar-status">
-                <span class="status-dot"></span>available for work
-            </div>
+    <div id="brand-group">
+        <div id="eq-container"></div>
+        <div class="wordmark">
+            <span class="accent">d</span>paul<br>.studio
         </div>
     </div>
 
-    <main id="stage">
-        <a href="index.html" class="wordmark">
-            <span class="accent">d</span>paul<br>.studio
-        </a>
-        <div class="wordmark-sub">design · music · code · i.t · video</div>
-        <div class="divider"></div>
-        <div class="tag-row">
-            <a href="design.html" class="tag">Branding</a>
-            <a href="merch.html" class="tag">Merch</a>
-            <a href="music.html" class="tag">Audio</a>
-            <a href="synths.html" class="tag">Synthesis</a>
-            <a href="video.html" class="tag">Motion</a>
-            <a href="tools.html" class="tag">Dev Tools</a>
-        </div>
-    </main>
+    <nav id="nav-sidebar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="design.html"    class="nav-link">design</a></li>
+            <li class="nav-item"><a href="merch.html"     class="nav-link">merch</a></li>
+            <li class="nav-item"><a href="music.html"     class="nav-link">music</a></li>
+            <li class="nav-item"><a href="synths.html"    class="nav-link">synths</a></li>
+            <li class="nav-item"><a href="tools.html"     class="nav-link">tools</a></li>
+            <li class="nav-item"><a href="video.html"     class="nav-link">video</a></li>
+            <li class="nav-item"><a href="dev-tools.html" class="nav-link">dev tools</a></li>
+            <li class="nav-item"><a href="about.html"     class="nav-link">about</a></li>
+        </ul>
+    </nav>
 
-</div>
+    <script>
+        const NUM_BANDS = 10;
+        const MAX_H     = 30; 
+        const container = document.getElementById('eq-container');
+        const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 5);
+        const targets   = [...levels];
+        const bars      = [];
 
-<script>
-    const NUM_BANDS = 16;
-    const MAX_H     = 24;
-    const corner    = document.getElementById('eq-corner');
-    const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 2);
-    const targets   = [...levels];
-    const bars      = [];
-
-    for (let i = 0; i < NUM_BANDS; i++) {
-        const b = document.createElement('div');
-        b.className = 'eq-bar-mini';
-        b.style.height = levels[i] + 'px';
-        const pos = i / (NUM_BANDS - 1);
-        b.style.background = pos > 0.75 ? '#cc3300' : pos > 0.55 ? '#aacc00' : '#FF6600';
-        corner.appendChild(b);
-        bars.push(b);
-    }
-
-    (function tick() {
         for (let i = 0; i < NUM_BANDS; i++) {
-            if (Math.random() < 0.06) targets[i] = Math.random() * MAX_H + 2;
-            levels[i] += (targets[i] - levels[i]) * 0.18;
-            levels[i]  = Math.max(2, Math.min(MAX_H, levels[i]));
-            bars[i].style.height = levels[i].toFixed(1) + 'px';
+            const b = document.createElement('div');
+            b.className = 'eq-bar';
+            b.style.height = levels[i] + 'px';
+            container.appendChild(b);
+            bars.push(b);
         }
-        requestAnimationFrame(tick);
-    })();
-</script>
 
+        (function animate() {
+            for (let i = 0; i < NUM_BANDS; i++) {
+                if (Math.random() < 0.08) targets[i] = Math.random() * MAX_H + 5;
+                levels[i] += (targets[i] - levels[i]) * 0.12;
+                bars[i].style.height = levels[i].toFixed(1) + 'px';
+            }
+            requestAnimationFrame(animate);
+        })();
+    </script>
 </body>
 </html>
