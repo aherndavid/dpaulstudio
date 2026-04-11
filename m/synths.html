@@ -264,7 +264,7 @@
         <p class="instrument-story">The first prototype. One oscillator, three waveforms, basic filter. It made sound, and that was enough to keep going.</p>
         <div class="mki-embed-wrap">
             <span class="mki-label">// Live Prototype</span>
-            <iframe class="mki-iframe" src="../music/synths/dpone/dpone-mki.html" scrolling="no"></iframe>
+            <iframe class="mki-iframe" src="../dpone/dpone-mki.html" scrolling="no"></iframe>
         </div>
         <img src="../assets/dpone-mki-3d.png" alt="MKI Render" class="synth-3d-img">
         <p class="visual-caption">MKI — 3D Render from UI</p>
@@ -290,7 +290,7 @@
         <div class="instrument-name">DP-ONE MkV</div>
         <p class="instrument-story">A complete ground-up rebuild. 37 keys, joystick pitch/filter, 6-row sequencer, and a full FX chain (Reverb/Tape Echo).</p>
         <img src="../assets/dpone-mkv.png" alt="MkV UI" class="synth-3d-img">
-        <a href="../launchers/dpone-desktop.html" class="launch-btn">Launch DP-ONE MkV</a>
+        <p class="step-desc">To see these synths in action, visit this website on a desktop/laptop.</p>
     </section>
 
     <!-- ACID-BOX -->
@@ -298,8 +298,8 @@
         <div class="instrument-eyebrow">// 05 - 303 Style</div>
         <div class="instrument-name">Acid-Box</div>
         <p class="instrument-story">Inspired by the legendary TB-303. Monophonic, squelchy, and focused on that iconic resonant filter scream.</p>
-        <img id="acid-box-render" src="../assets/acid-box-3d-01.png" alt="Acid-Box Render" class="synth-3d-img">
-        <a href="../music/synths/acid-box/acid-box-desktop.html" class="launch-btn">Launch Acid-Box</a>
+        <img src="../assets/acid-box-3d-01.png" alt="Acid-Box Render" class="synth-3d-img">
+
     </section>
 
     <!-- HARDWARE -->
@@ -420,17 +420,6 @@
         };
         synth.speak(utter);
     }
-
-    // ── ACID BOX RENDER SWAP ──
-    const acidBoxImg = document.getElementById('acid-box-render');
-    const acidImages = ["../assets/acid-box-3d-01.png", "../assets/acid-box-3d-02.png"];
-    let acidIdx = 0;
-    setInterval(() => {
-        if (acidBoxImg) {
-            acidIdx = (acidIdx + 1) % acidImages.length;
-            acidBoxImg.src = acidImages[acidIdx];
-        }
-    }, 5000);
 
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
     window.onload = populateVoices;
