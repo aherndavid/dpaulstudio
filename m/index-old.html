@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>dpaul.studio</title>
-    <link rel="stylesheet" href="../assets/global.css">
 
     <style>
         :root {
-            --bg:     #131413;
-            --bg2:    #1a1c1a;
-            --orange: #FF6600;
-            --cream:  #D4C4A8;
-            --border: rgba(255,102,0,0.22);
-            --dim:    rgba(212,196,168,0.35);
+            --bg:      #0F1010;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --border:  rgba(255,102,0,0.12);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        *, *::before, *::after {
+            margin: 0; padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
         html, body {
             width: 100%; height: 100%;
@@ -26,12 +27,11 @@
             color: var(--cream);
         }
 
-        /* Grain */
-        body::before {
+        body::after {
             content: '';
             position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 9999; opacity: 0.4;
+            pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
         /* ── LAYOUT ── */
@@ -42,162 +42,181 @@
             height: 100dvh;
         }
 
-        /* ── TOP NAV BAR ── */
+        /* ── TOP BAR ── */
         #topbar {
             flex-shrink: 0;
-            height: 56px;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 24px;
             border-bottom: 1px solid var(--border);
             z-index: 100;
         }
 
+        #eq-corner {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 20px;
+        }
+
+        .eq-bar-mini {
+            width: 3px;
+            border-radius: 1px;
+            background: var(--orange);
+            transition: height 0.06s linear;
+        }
+
         .topbar-brand {
-            font-size: 0.78rem;
-            color: var(--orange);
-            letter-spacing: 0.14em;
+            font-size: 0.63rem;
+            color: rgba(212,196,168,0.3);
+            letter-spacing: 0.2em;
             text-transform: uppercase;
         }
 
-        /* ── CENTRE STAGE ── */
+        /* ── STAGE ── */
         #stage {
             flex: 1;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
+            flex-direction: row;
+            align-items: stretch;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Subtle radial glow behind wordmark */
         #stage::before {
             content: '';
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 280px; height: 280px;
-            background: radial-gradient(ellipse, rgba(255,102,0,0.07) 0%, transparent 70%);
+            left: -80px; top: 50%;
+            transform: translateY(-50%);
+            width: 480px; height: 480px;
+            background: radial-gradient(ellipse, rgba(255,102,0,0.04) 0%, transparent 65%);
             pointer-events: none;
         }
 
-        .wordmark {
-            font-size: clamp(2rem, 10vw, 3.2rem);
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.02em;
-            line-height: 1;
-            text-align: center;
-            z-index: 2;
-            position: relative;
-        }
-
-        .wordmark span { color: var(--orange); }
-
-        /* ── EQ ── */
-        #eq-wrap {
-            margin-top: 20px;
-            z-index: 2;
-            position: relative;
-        }
-
-        #eq {
-            display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 48px;
-        }
-
-        .bar-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+        /* ── LEFT: wordmark ── */
+        #stage-left {
             flex: 1;
-        }
-
-        .seg {
-            width: 100%;
-            height: 5px;
-            border-radius: 1px;
-            background: #1e201e;
-            transition: background 0.05s;
-        }
-
-        .seg.on      { background: var(--orange); }
-        .seg.on.mid  { background: #aacc00; }
-        .seg.on.top  { background: #cc3300; }
-
-        /* Tagline */
-        .tagline {
-            margin-top: 16px;
-            font-size: 0.68rem;
-            color: rgba(255,102,0,0.55);
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            text-align: center;
-            z-index: 2;
-            position: relative;
-        }
-
-        /* ── TAB BAR NAV ── */
-        #tabbar {
-            flex-shrink: 0;
-            padding: 12px 14px;
-            padding-bottom: calc(12px + env(safe-area-inset-bottom));
-            background: var(--bg);
-            border-top: 1px solid var(--border);
+            min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 36px 28px 36px 48px;
+            z-index: 2;
         }
 
-        #eq-nav-wrap {
-            width: 100%;
-            padding: 0 2px 4px;
-        }
-
-        #eq-nav {
-            display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 36px;
-            width: 100%;
-        }
-
-        .tab-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-
-        .tab-link {
+        .label-line {
+            font-size: 0.62rem;
+            color: rgba(255,102,0,0.55);
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            margin-bottom: 22px;
             display: flex;
             align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--orange);
+            animation: blink 2.4s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.2; }
+        }
+
+        .wordmark {
+            font-size: clamp(2.8rem, 10vw, 5.6rem);
+            font-weight: 700;
+            line-height: 0.88;
+            color: #EDE5D7;
+            letter-spacing: -0.04em;
+        }
+
+        .wordmark .accent { color: var(--orange); }
+
+        .wordmark-sub {
+            margin-top: 18px;
+            font-size: clamp(0.7rem, 2vw, 0.95rem);
+            color: rgba(212,196,168,0.28);
+            letter-spacing: 0.06em;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background: rgba(255,102,0,0.3);
+            margin: 28px 0 0;
+        }
+
+        /* ── RIGHT: nav list ── */
+        #stage-right {
+            flex-shrink: 0;
+            width: 46%;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            padding: 13px 4px;
+            border-left: 1px solid rgba(255,102,0,0.1);
+            padding: 0 24px 0 28px;
+            z-index: 2;
+        }
+
+        #nav-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
             text-decoration: none;
-            color: #000;
-            background: #F0EDE6;
-            border: 8px solid var(--orange);
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 900;
-            letter-spacing: 0.05em;
+            color: rgba(212,196,168,0.38);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.01rem;
+            letter-spacing: 0.1em;
             text-transform: lowercase;
-            transition: background 0.12s, color 0.12s;
+            border-bottom: 1px solid rgba(255,102,0,0.08);
+            transition: color 0.15s, padding-left 0.15s;
         }
 
-        .tab-link:active {
-            background: var(--orange);
-            color: #000;
+        .nav-link:first-child {
+            border-top: 1px solid rgba(255,102,0,0.08);
         }
 
-        .tab-link.active {
-            background: var(--orange);
-            color: #000;
+        .nav-arrow {
+            font-size: 0.85rem;
+            opacity: 0;
+            color: var(--orange);
+            transition: opacity 0.15s, transform 0.15s;
+            transform: translateX(-4px);
+            flex-shrink: 0;
+        }
+
+        .nav-link:hover {
+            color: var(--orange);
+            padding-left: 6px;
+        }
+
+        .nav-link:hover .nav-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nav-link.active {
+            color: var(--orange);
+        }
+
+        .nav-link.active .nav-arrow {
+            opacity: 1;
+            transform: translateX(0);
         }
     </style>
 </head>
@@ -207,113 +226,78 @@
 
     <!-- Top bar -->
     <div id="topbar">
+        <div id="eq-corner"></div>
         <div class="topbar-brand">dPaul Technologies</div>
     </div>
 
-    <!-- Centre stage -->
+    <!-- Stage -->
     <div id="stage">
-        <div class="wordmark"><span>d</span>paul.studio</div>
 
-        <div id="eq-wrap">
-            <div id="eq"></div>
+        <!-- Left: wordmark -->
+        <div id="stage-left">
+            <div class="label-line">
+                <span class="status-dot"></span>available for work
+            </div>
+            <div class="wordmark">
+                <span class="accent">d</span>paul<br>.studio
+            </div>
+            <div class="wordmark-sub">design · music · code · video</div>
+            <div class="divider"></div>
         </div>
 
-        <div class="tagline">// design · music · code · video</div>
+        <!-- Right: nav list -->
+        <div id="stage-right">
+            <nav id="nav-list">
+                <a href="design.html"    class="nav-link">design<span class="nav-arrow">→</span></a>
+                <a href="merch.html"     class="nav-link">merch<span class="nav-arrow">→</span></a>
+                <a href="music.html"     class="nav-link">music<span class="nav-arrow">→</span></a>
+                <a href="synths.html"    class="nav-link">synths<span class="nav-arrow">→</span></a>
+                <a href="tools.html"     class="nav-link">tools<span class="nav-arrow">→</span></a>
+                <a href="video.html"     class="nav-link">video<span class="nav-arrow">→</span></a>
+                <a href="dev-tools.html" class="nav-link">dev tools<span class="nav-arrow">→</span></a>
+                <a href="about.html"     class="nav-link">about<span class="nav-arrow">→</span></a>
+            </nav>
+        </div>
+
     </div>
-
-    <!-- Tab bar navigation -->
-    <nav id="tabbar">
-        <div id="eq-nav-wrap">
-            <div id="eq-nav"></div>
-        </div>
-        <div class="tab-row">
-            <a href="design.html"    class="tab-link">design</a>
-            <a href="merch.html"     class="tab-link">merch</a>
-            <a href="music.html"     class="tab-link">music</a>
-            <a href="synths.html"    class="tab-link">synths</a>
-        </div>
-        <div class="tab-row">
-            <a href="tools.html"     class="tab-link">tools</a>
-            <a href="video.html"     class="tab-link">video</a>
-            <a href="dev-tools.html" class="tab-link">dev tools</a>
-            <a href="about.html"     class="tab-link">about</a>
-        </div>
-    </nav>
 
 </div>
 
-<script src="nav-loader.js"></script>
 <script>
-    /* ── EQ ANIMATION ── */
-    const NUM_BANDS =15;
-    const NUM_SEGS  = 50;
-    const eq        = document.getElementById('eq');
-    const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * NUM_SEGS + 1);
+    /* ── MINI EQ ANIMATION ── */
+    const NUM_BANDS = 12;
+    const MAX_H     = 20;
+    const corner    = document.getElementById('eq-corner');
+    const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 2);
     const targets   = [...levels];
-    const cols      = [];
+    const bars      = [];
 
-    function buildEQ(el, numBands, numSegs, segsStore) {
-        for (let b = 0; b < numBands; b++) {
-            const col  = document.createElement('div');
-            col.className = 'bar-col';
-            const segs = [];
-            for (let s = numSegs - 1; s >= 0; s--) {
-                const seg = document.createElement('div');
-                seg.className = 'seg';
-                col.appendChild(seg);
-                segs.push(seg);
-            }
-            el.appendChild(col);
-            segsStore.push(segs);
-        }
+    for (let i = 0; i < NUM_BANDS; i++) {
+        const b = document.createElement('div');
+        b.className = 'eq-bar-mini';
+        b.style.height = levels[i] + 'px';
+        const pos = i / (NUM_BANDS - 1);
+        b.style.background = pos > 0.75 ? '#cc3300' : pos > 0.55 ? '#aacc00' : '#FF6600';
+        corner.appendChild(b);
+        bars.push(b);
     }
 
-    buildEQ(eq, NUM_BANDS, NUM_SEGS, cols);
-
-    /* Nav EQ — shares same band count, independent levels */
-    const eqNav      = document.getElementById('eq-nav');
-    const navCols    = [];
-    const navLevels  = Array.from({ length: NUM_BANDS }, () => Math.random() * NUM_SEGS + 1);
-    const navTargets = [...navLevels];
-    buildEQ(eqNav, NUM_BANDS, NUM_SEGS, navCols);
-
-    function renderEQ(lvls, colsArr, numSegs) {
-        for (let b = 0; b < lvls.length; b++) {
-            const lv = Math.round(lvls[b]);
-            colsArr[b].forEach((seg, i) => {
-                const segNum = numSegs - i;
-                if (segNum <= lv) {
-                    seg.classList.add('on');
-                    seg.classList.toggle('top', segNum >= numSegs);
-                    seg.classList.toggle('mid', segNum === numSegs - 1);
-                } else {
-                    seg.classList.remove('on', 'mid', 'top');
-                }
-            });
+    (function tick() {
+        for (let i = 0; i < NUM_BANDS; i++) {
+            if (Math.random() < 0.06) targets[i] = Math.random() * MAX_H + 2;
+            levels[i] += (targets[i] - levels[i]) * 0.18;
+            levels[i]  = Math.max(2, Math.min(MAX_H, levels[i]));
+            bars[i].style.height = levels[i].toFixed(1) + 'px';
         }
-    }
+        requestAnimationFrame(tick);
+    })();
 
-    function animate() {
-        for (let b = 0; b < NUM_BANDS; b++) {
-            if (Math.random() < 0.07) targets[b]    = Math.random() * NUM_SEGS + 1;
-            if (Math.random() < 0.07) navTargets[b] = Math.random() * NUM_SEGS + 1;
-            levels[b]    += (targets[b]    - levels[b])    * 0.15;
-            navLevels[b] += (navTargets[b] - navLevels[b]) * 0.15;
-            levels[b]    = Math.max(1, Math.min(NUM_SEGS, levels[b]));
-            navLevels[b] = Math.max(1, Math.min(NUM_SEGS, navLevels[b]));
-        }
-        renderEQ(levels,    cols,    NUM_SEGS);
-        renderEQ(navLevels, navCols, NUM_SEGS);
-        requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    /* ── TAB ACTIVE STATE ── */
-    const path = location.pathname.split('/').pop();
-    document.querySelectorAll('.tab-link').forEach(link => {
-        if (link.getAttribute('href') === path) link.classList.add('active');
+    /* ── ACTIVE LINK ── */
+    const current = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.getAttribute('href') === current) link.classList.add('active');
     });
 </script>
+
 </body>
 </html>
