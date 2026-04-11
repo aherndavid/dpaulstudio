@@ -26,7 +26,6 @@
             color: var(--cream);
         }
 
-        /* Grain */
         body::after {
             content: '';
             position: fixed; inset: 0;
@@ -34,16 +33,14 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* ── ROOT LAYOUT ── */
         #app {
             display: grid;
             grid-template-rows: 60px 1fr;
-            grid-template-columns: 260px 1fr 360px;
+            grid-template-columns: 1fr 360px;
             width: 100%;
             height: 100vh;
         }
 
-        /* ── TOP BAR (full width) ── */
         #topbar {
             grid-column: 1 / -1;
             grid-row: 1;
@@ -122,48 +119,14 @@
             50%       { opacity: 0.2; }
         }
 
-        /* ── LEFT SIDEBAR ── */
-        #sidebar {
-            grid-column: 1;
-            grid-row: 2;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 48px 32px;
-        }
-
-        .sidebar-section { display: flex; flex-direction: column; gap: 6px; }
-
-        .sidebar-label {
-            font-size: 0.55rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: rgba(212,196,168,0.2);
-            margin-bottom: 10px;
-        }
-
-        .sidebar-item {
-            font-size: 0.68rem;
-            color: rgba(212,196,168,0.3);
-            letter-spacing: 0.12em;
-            line-height: 1.9;
-        }
-
-        .sidebar-item span {
-            color: rgba(255,102,0,0.45);
-            margin-right: 8px;
-        }
-
-        /* ── CENTRE STAGE ── */
         #stage {
-            grid-column: 2;
+            grid-column: 1;
             grid-row: 2;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            padding: 60px 64px;
+            padding: 60px 80px;
             position: relative;
             overflow: hidden;
         }
@@ -173,13 +136,13 @@
             position: absolute;
             left: -100px; top: 50%;
             transform: translateY(-50%);
-            width: 700px; height: 700px;
+            width: 900px; height: 900px;
             background: radial-gradient(ellipse, rgba(255,102,0,0.05) 0%, transparent 60%);
             pointer-events: none;
         }
 
         .wordmark {
-            font-size: clamp(4rem, 7vw, 8rem);
+            font-size: clamp(6rem, 11vw, 13rem);
             font-weight: 700;
             line-height: 0.86;
             color: #EDE5D7;
@@ -190,35 +153,35 @@
         .wordmark .accent { color: var(--orange); }
 
         .wordmark-sub {
-            margin-top: 24px;
-            font-size: clamp(0.8rem, 1.1vw, 1.05rem);
+            margin-top: 32px;
+            font-size: clamp(1rem, 1.6vw, 1.5rem);
             color: rgba(212,196,168,0.22);
             letter-spacing: 0.1em;
             z-index: 2; position: relative;
         }
 
         .divider {
-            width: 48px;
+            width: 64px;
             height: 1px;
             background: rgba(255,102,0,0.3);
-            margin: 36px 0;
+            margin: 44px 0;
             z-index: 2; position: relative;
         }
 
         .tag-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             z-index: 2; position: relative;
         }
 
         .tag {
-            font-size: 0.6rem;
+            font-size: 0.72rem;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: rgba(212,196,168,0.22);
             border: 1px solid rgba(255,102,0,0.1);
-            padding: 5px 12px;
+            padding: 7px 16px;
             border-radius: 2px;
             transition: color 0.2s, border-color 0.2s;
             cursor: default;
@@ -229,9 +192,8 @@
             border-color: rgba(255,102,0,0.35);
         }
 
-        /* ── RIGHT NAV PANEL ── */
         #nav-panel {
-            grid-column: 3;
+            grid-column: 2;
             grid-row: 2;
             border-left: 1px solid var(--border);
             display: flex;
@@ -322,18 +284,12 @@
         .nav-link.active .nav-index {
             color: rgba(255,102,0,0.4);
         }
-
-        /* ── FOOTER ROW ── */
-        #footer {
-            display: none; /* hidden on desktop — info is in sidebar */
-        }
     </style>
 </head>
 <body>
 
 <div id="app">
 
-    <!-- Top bar -->
     <div id="topbar">
         <div id="topbar-left">
             <div id="eq-corner"></div>
@@ -348,28 +304,6 @@
         </div>
     </div>
 
-    <!-- Left sidebar -->
-    <aside id="sidebar">
-        <div class="sidebar-section">
-            <div class="sidebar-label">disciplines</div>
-            <div class="sidebar-item"><span>//</span>design</div>
-            <div class="sidebar-item"><span>//</span>music production</div>
-            <div class="sidebar-item"><span>//</span>development</div>
-            <div class="sidebar-item"><span>//</span>video</div>
-            <div class="sidebar-item"><span>//</span>synth design</div>
-        </div>
-        <div class="sidebar-section">
-            <div class="sidebar-label">location</div>
-            <div class="sidebar-item"><span>//</span>Scotland, UK</div>
-        </div>
-        <div class="sidebar-section">
-            <div class="sidebar-label">status</div>
-            <div class="sidebar-item"><span>//</span>open to projects</div>
-            <div class="sidebar-item"><span>//</span>freelance / contract</div>
-        </div>
-    </aside>
-
-    <!-- Centre stage -->
     <main id="stage">
         <div class="wordmark">
             <span class="accent">d</span>paul<br>.studio
@@ -386,7 +320,6 @@
         </div>
     </main>
 
-    <!-- Right nav panel -->
     <nav id="nav-panel">
         <div class="nav-panel-label">navigate</div>
         <div id="nav-list">
@@ -404,7 +337,6 @@
 </div>
 
 <script>
-    /* ── MINI EQ ANIMATION ── */
     const NUM_BANDS = 16;
     const MAX_H     = 20;
     const corner    = document.getElementById('eq-corner');
@@ -432,7 +364,6 @@
         requestAnimationFrame(tick);
     })();
 
-    /* ── ACTIVE LINK ── */
     const current = location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.nav-link').forEach(link => {
         if (link.getAttribute('href') === current) link.classList.add('active');
