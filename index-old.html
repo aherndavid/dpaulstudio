@@ -35,23 +35,21 @@
         /* ── BRAND GROUP ── */
         #brand-group {
             position: absolute;
-            top: 60px;
-            left: 60px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             z-index: 10;
-        }
-
-        #eq-container {
+            text-align: center;
             display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 36px;
-            margin-bottom: 18px;
+            flex-direction: column;
+            align-items: center;
         }
 
         .eq-bar {
             width: 4px;
             background: var(--orange);
             transition: height 0.1s ease;
+            flex-shrink: 0;
         }
 
         .wordmark {
@@ -63,26 +61,47 @@
             text-transform: lowercase;
         }
 
-        .wordmark .accent { color: var(--orange); }
+        /* The "d" is the anchor — EQ lives inside it */
+        .wordmark .accent {
+            color: var(--orange);
+            position: relative;
+            display: inline-block;
+        }
+
+        #eq-container {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            width: 100%;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 36px;
+            pointer-events: none;
+            overflow: hidden;
+        }
 
         /* ── HORIZONTAL NAV ── */
         #nav-bar {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
             gap: 0;
             margin-top: 28px;
+            align-self: center;
         }
 
         .nav-link {
             text-decoration: none;
             color: rgba(255, 255, 255, 0.45);
-            font-size: clamp(0.75rem, 1.4vw, 1.1rem);
+            font-size: clamp(1rem, 2vw, 1.6rem);
             font-weight: 700;
             text-transform: lowercase;
             letter-spacing: 0.08em;
             white-space: nowrap;
             transition: color 0.2s ease;
-            padding-right: 28px;
+            padding: 0 20px;
         }
 
         .nav-link:hover {
@@ -91,19 +110,17 @@
 
         @media (max-width: 768px) {
             #brand-group {
-                top: 40px;
-                left: 30px;
+                width: 90%;
             }
             .wordmark {
                 font-size: clamp(4.5rem, 18vw, 7rem);
             }
             #nav-bar {
                 margin-top: 20px;
-                gap: 0;
             }
             .nav-link {
-                font-size: clamp(0.7rem, 3.5vw, 0.9rem);
-                padding-right: 18px;
+                font-size: clamp(0.85rem, 4vw, 1.1rem);
+                padding: 4px 12px;
             }
         }
     </style>
@@ -111,9 +128,8 @@
 <body>
 
     <div id="brand-group">
-        <div id="eq-container"></div>
         <div class="wordmark">
-            <span class="accent">d</span>paul<br>.studio
+            <span class="accent"><div id="eq-container"></div>d</span>paul<br>.studio
         </div>
         <nav id="nav-bar">
             <a href="design.html"    class="nav-link">design</a>
