@@ -24,6 +24,7 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             color: var(--cream);
+            font-size: 18px; /* Slightly larger base for general text */
         }
 
         body::after {
@@ -35,8 +36,8 @@
 
         #app {
             display: grid;
-            grid-template-rows: 70px 1fr;
-            grid-template-columns: 1fr 360px;
+            grid-template-rows: 80px 1fr; /* Height increased slightly to accommodate larger top bar */
+            grid-template-columns: 1fr; 
             width: 100%;
             height: 100vh;
         }
@@ -63,18 +64,18 @@
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 20px;
+            height: 24px; /* Increased height for bigger bar appearance */
         }
 
         .eq-bar-mini {
-            width: 3px;
+            width: 4px; /* Slightly wider */
             border-radius: 1px;
             background: var(--orange);
             transition: height 0.06s linear;
         }
 
         .topbar-brand {
-            font-size: 1rem;
+            font-size: 1.25rem; /* Bumped from 1rem */
             color: rgba(212,196,168,0.6);
             letter-spacing: 0.15em;
             text-transform: uppercase;
@@ -83,11 +84,11 @@
         #topbar-right {
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: 40px;
         }
 
         .topbar-link {
-            font-size: 0.95rem;
+            font-size: 1.1rem; /* Bumped from 0.95rem */
             color: rgba(212,196,168,0.55);
             letter-spacing: 0.15em;
             text-transform: uppercase;
@@ -100,15 +101,15 @@
         .topbar-status {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            gap: 10px;
+            font-size: 1.1rem; /* Bumped from 0.9rem */
             color: rgba(255,102,0,0.8);
             letter-spacing: 0.15em;
             text-transform: uppercase;
         }
 
         .status-dot {
-            width: 6px; height: 6px;
+            width: 8px; height: 8px; /* Larger dot */
             border-radius: 50%;
             background: var(--orange);
             animation: blink 2.4s ease-in-out infinite;
@@ -143,6 +144,7 @@
             pointer-events: none;
         }
 
+        /* UNCHANGED: dpaul.studio wordmark */
         .wordmark {
             font-size: clamp(7rem, 14vw, 16rem);
             font-weight: 700;
@@ -156,14 +158,14 @@
 
         .wordmark-sub {
             margin-top: 32px;
-            font-size: clamp(1.1rem, 1.8vw, 1.7rem);
+            font-size: clamp(1.4rem, 2.2vw, 2.2rem); /* Bumped from 1.1rem range */
             color: rgba(255,255,255,0.45);
             letter-spacing: 0.12em;
             z-index: 2; position: relative;
         }
 
         .divider {
-            width: 64px;
+            width: 100px; /* Wider divider for visual balance */
             height: 1px;
             background: rgba(255,102,0,0.4);
             margin: 44px 0;
@@ -173,17 +175,17 @@
         .tag-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 16px;
             z-index: 2; position: relative;
         }
 
         .tag {
-            font-size: 0.75rem;
+            font-size: 0.95rem; /* Bumped from 0.75rem */
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: rgba(255,255,255,0.35);
             border: 1px solid rgba(255,102,0,0.18);
-            padding: 7px 16px;
+            padding: 10px 20px; /* Increased padding */
             border-radius: 2px;
             transition: color 0.2s, border-color 0.2s;
             cursor: default;
@@ -192,100 +194,6 @@
         .tag:hover {
             color: var(--orange);
             border-color: rgba(255,102,0,0.5);
-        }
-
-        /* ── NAV PANEL ── */
-        #nav-panel {
-            grid-column: 2;
-            grid-row: 2;
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 48px;
-        }
-
-        .nav-panel-label {
-            font-size: 0.85rem;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: rgba(212,196,168,0.4);
-            margin-bottom: 24px;
-        }
-
-        #nav-list {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 0;
-            text-decoration: none;
-            color: rgba(255,255,255,0.55);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.3rem;
-            letter-spacing: 0.08em;
-            text-transform: lowercase;
-            border-bottom: 1px solid rgba(255,102,0,0.07);
-            transition: color 0.15s, padding-left 0.2s;
-            cursor: pointer;
-        }
-
-        .nav-link:first-child {
-            border-top: 1px solid rgba(255,102,0,0.07);
-        }
-
-        .nav-link-inner {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .nav-index {
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.2);
-            letter-spacing: 0.1em;
-            width: 22px;
-            flex-shrink: 0;
-            transition: color 0.15s;
-        }
-
-        .nav-arrow {
-            font-size: 1.1rem;
-            opacity: 0;
-            color: var(--orange);
-            transition: opacity 0.18s, transform 0.18s;
-            transform: translateX(-6px);
-        }
-
-        .nav-link:hover {
-            color: var(--orange);
-            padding-left: 6px;
-        }
-
-        .nav-link:hover .nav-arrow {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .nav-link:hover .nav-index {
-            color: rgba(255,102,0,0.5);
-        }
-
-        .nav-link.active {
-            color: var(--orange);
-        }
-
-        .nav-link.active .nav-arrow {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .nav-link.active .nav-index {
-            color: rgba(255,102,0,0.5);
         }
     </style>
 </head>
@@ -323,25 +231,11 @@
         </div>
     </main>
 
-    <nav id="nav-panel">
-        <div class="nav-panel-label">navigate</div>
-        <div id="nav-list">
-            <a href="design.html"    class="nav-link"><span class="nav-link-inner"><span class="nav-index">01</span>design</span><span class="nav-arrow">→</span></a>
-            <a href="merch.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">02</span>merch</span><span class="nav-arrow">→</span></a>
-            <a href="music.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">03</span>music</span><span class="nav-arrow">→</span></a>
-            <a href="synths.html"    class="nav-link"><span class="nav-link-inner"><span class="nav-index">04</span>synths</span><span class="nav-arrow">→</span></a>
-            <a href="tools.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">05</span>tools</span><span class="nav-arrow">→</span></a>
-            <a href="video.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">06</span>video</span><span class="nav-arrow">→</span></a>
-            <a href="dev-tools.html" class="nav-link"><span class="nav-link-inner"><span class="nav-index">07</span>dev tools</span><span class="nav-arrow">→</span></a>
-            <a href="about.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">08</span>about</span><span class="nav-arrow">→</span></a>
-        </div>
-    </nav>
-
 </div>
 
 <script>
     const NUM_BANDS = 16;
-    const MAX_H     = 20;
+    const MAX_H     = 24; // Matched to new container height
     const corner    = document.getElementById('eq-corner');
     const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 2);
     const targets   = [...levels];
@@ -366,11 +260,6 @@
         }
         requestAnimationFrame(tick);
     })();
-
-    const current = location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.nav-link').forEach(link => {
-        if (link.getAttribute('href') === current) link.classList.add('active');
-    });
 </script>
 
 </body>
