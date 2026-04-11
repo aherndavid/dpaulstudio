@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dpaul.studio</title>
 
     <style>
@@ -10,13 +10,11 @@
             --bg:      #0F1010;
             --orange:  #FF6600;
             --cream:   #D4C4A8;
-            --border:  rgba(255,102,0,0.12);
         }
 
         *, *::before, *::after {
             margin: 0; padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -34,270 +32,137 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* ── LAYOUT ── */
-        #app {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100dvh;
+        /* ── TOP LEFT GROUP (EQ + WORDMARK) ── */
+        #brand-group {
+            position: absolute;
+            top: 60px;
+            left: 60px;
+            z-index: 10;
         }
 
-        /* ── TOP BAR ── */
-        #topbar {
-            flex-shrink: 0;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
-        }
-
-        #eq-corner {
+        #eq-container {
             display: flex;
             align-items: flex-end;
-            gap: 2px;
-            height: 20px;
+            gap: 3px;
+            height: 30px;
+            margin-bottom: 15px; /* Tightened spacing for the larger text */
         }
 
-        .eq-bar-mini {
-            width: 3px;
-            border-radius: 1px;
+        .eq-bar {
+            width: 4px;
             background: var(--orange);
-            transition: height 0.06s linear;
-        }
-
-        .topbar-brand {
-            font-size: 0.63rem;
-            color: rgba(212,196,168,0.3);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-        }
-
-        /* ── STAGE ── */
-        #stage {
-            flex: 1;
-            display: flex;
-            flex-direction: row;
-            align-items: stretch;
-            overflow: hidden;
-            position: relative;
-        }
-
-        #stage::before {
-            content: '';
-            position: absolute;
-            left: -80px; top: 50%;
-            transform: translateY(-50%);
-            width: 480px; height: 480px;
-            background: radial-gradient(ellipse, rgba(255,102,0,0.04) 0%, transparent 65%);
-            pointer-events: none;
-        }
-
-        /* ── LEFT: wordmark ── */
-        #stage-left {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 36px 28px 36px 48px;
-            z-index: 2;
-        }
-
-        .label-line {
-            font-size: 0.62rem;
-            color: rgba(255,102,0,0.55);
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            margin-bottom: 22px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            background: var(--orange);
-            animation: blink 2.4s ease-in-out infinite;
-            flex-shrink: 0;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.2; }
+            transition: height 0.1s ease;
         }
 
         .wordmark {
-            font-size: clamp(2.8rem, 10vw, 5.6rem);
+            /* INCREASED FONT SIZE HERE */
+            font-size: clamp(4rem, 12vw, 10rem); 
             font-weight: 700;
-            line-height: 0.88;
-            color: #EDE5D7;
-            letter-spacing: -0.04em;
+            line-height: 0.85;
+            color: #FFFFFF;
+            letter-spacing: -0.05em;
+            text-transform: lowercase;
         }
 
         .wordmark .accent { color: var(--orange); }
 
-        .wordmark-sub {
-            margin-top: 18px;
-            font-size: clamp(0.7rem, 2vw, 0.95rem);
-            color: rgba(212,196,168,0.28);
-            letter-spacing: 0.06em;
+        /* ── LOWER RIGHT NAVIGATION ── */
+        #nav-sidebar {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            text-align: right;
+            z-index: 10;
         }
 
-        .divider {
-            width: 40px;
-            height: 1px;
-            background: rgba(255,102,0,0.3);
-            margin: 28px 0 0;
+        .nav-list {
+            list-style: none;
         }
 
-        /* ── RIGHT: nav list ── */
-        #stage-right {
-            flex-shrink: 0;
-            width: 46%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-left: 1px solid rgba(255,102,0,0.1);
-            padding: 0 24px 0 28px;
-            z-index: 2;
-        }
-
-        #nav-list {
-            display: flex;
-            flex-direction: column;
+        .nav-item {
+            margin-bottom: 4px;
         }
 
         .nav-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 0;
             text-decoration: none;
-            color: rgba(212,196,168,0.38);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.01rem;
-            letter-spacing: 0.1em;
+            color: rgba(212, 196, 168, 0.3);
+            font-size: 2.2rem;
+            font-weight: 700;
             text-transform: lowercase;
-            border-bottom: 1px solid rgba(255,102,0,0.08);
-            transition: color 0.15s, padding-left 0.15s;
+            letter-spacing: 0.02em;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 5px 10px;
+            white-space: nowrap;
         }
 
-        .nav-link:first-child {
-            border-top: 1px solid rgba(255,102,0,0.08);
-        }
-
-        .nav-arrow {
-            font-size: 0.85rem;
-            opacity: 0;
+        .nav-link:hover, .nav-link:active {
             color: var(--orange);
-            transition: opacity 0.15s, transform 0.15s;
-            transform: translateX(-4px);
-            flex-shrink: 0;
+            transform: translateX(-15px);
         }
 
-        .nav-link:hover {
-            color: var(--orange);
-            padding-left: 6px;
-        }
-
-        .nav-link:hover .nav-arrow {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .nav-link.active {
-            color: var(--orange);
-        }
-
-        .nav-link.active .nav-arrow {
-            opacity: 1;
-            transform: translateX(0);
+        @media (max-width: 768px) {
+            #brand-group {
+                top: 40px;
+                left: 30px;
+            }
+            .wordmark {
+                font-size: clamp(4.5rem, 15vw, 6rem);
+            }
+            #nav-sidebar {
+                bottom: 30px;
+                right: 30px;
+            }
+            .nav-link {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<div id="app">
-
-    <!-- Top bar -->
-    <div id="topbar">
-        <div id="eq-corner"></div>
-        <div class="topbar-brand">dPaul Technologies</div>
+    <div id="brand-group">
+        <div id="eq-container"></div>
+        <div class="wordmark">
+            <span class="accent">d</span>paul<br>.studio
+        </div>
     </div>
 
-    <!-- Stage -->
-    <div id="stage">
+    <nav id="nav-sidebar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#design" class="nav-link">design</a></li>
+            <li class="nav-item"><a href="#music" class="nav-link">music</a></li>
+            <li class="nav-item"><a href="#code" class="nav-link">code</a></li>
+            <li class="nav-item"><a href="#video" class="nav-link">video</a></li>
+            <li class="nav-item"><a href="#about" class="nav-link">about</a></li>
+            <li class="nav-item"><a href="#contact" class="nav-link">contact</a></li>
+        </ul>
+    </nav>
 
-        <!-- Left: wordmark -->
-        <div id="stage-left">
-            <div class="label-line">
-                <span class="status-dot"></span>available for work
-            </div>
-            <div class="wordmark">
-                <span class="accent">d</span>paul<br>.studio
-            </div>
-            <div class="wordmark-sub">design · music · code · video</div>
-            <div class="divider"></div>
-        </div>
+    <script>
+        const NUM_BANDS = 10;
+        const MAX_H     = 30; 
+        const container = document.getElementById('eq-container');
+        const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 5);
+        const targets   = [...levels];
+        const bars      = [];
 
-        <!-- Right: nav list -->
-        <div id="stage-right">
-            <nav id="nav-list">
-                <a href="design.html"    class="nav-link">design<span class="nav-arrow">→</span></a>
-                <a href="merch.html"     class="nav-link">merch<span class="nav-arrow">→</span></a>
-                <a href="music.html"     class="nav-link">music<span class="nav-arrow">→</span></a>
-                <a href="synths.html"    class="nav-link">synths<span class="nav-arrow">→</span></a>
-                <a href="tools.html"     class="nav-link">tools<span class="nav-arrow">→</span></a>
-                <a href="video.html"     class="nav-link">video<span class="nav-arrow">→</span></a>
-                <a href="dev-tools.html" class="nav-link">dev tools<span class="nav-arrow">→</span></a>
-                <a href="about.html"     class="nav-link">about<span class="nav-arrow">→</span></a>
-            </nav>
-        </div>
-
-    </div>
-
-</div>
-
-<script>
-    /* ── MINI EQ ANIMATION ── */
-    const NUM_BANDS = 12;
-    const MAX_H     = 20;
-    const corner    = document.getElementById('eq-corner');
-    const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 2);
-    const targets   = [...levels];
-    const bars      = [];
-
-    for (let i = 0; i < NUM_BANDS; i++) {
-        const b = document.createElement('div');
-        b.className = 'eq-bar-mini';
-        b.style.height = levels[i] + 'px';
-        const pos = i / (NUM_BANDS - 1);
-        b.style.background = pos > 0.75 ? '#cc3300' : pos > 0.55 ? '#aacc00' : '#FF6600';
-        corner.appendChild(b);
-        bars.push(b);
-    }
-
-    (function tick() {
         for (let i = 0; i < NUM_BANDS; i++) {
-            if (Math.random() < 0.06) targets[i] = Math.random() * MAX_H + 2;
-            levels[i] += (targets[i] - levels[i]) * 0.18;
-            levels[i]  = Math.max(2, Math.min(MAX_H, levels[i]));
-            bars[i].style.height = levels[i].toFixed(1) + 'px';
+            const b = document.createElement('div');
+            b.className = 'eq-bar';
+            b.style.height = levels[i] + 'px';
+            container.appendChild(b);
+            bars.push(b);
         }
-        requestAnimationFrame(tick);
-    })();
 
-    /* ── ACTIVE LINK ── */
-    const current = location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.nav-link').forEach(link => {
-        if (link.getAttribute('href') === current) link.classList.add('active');
-    });
-</script>
-
+        (function animate() {
+            for (let i = 0; i < NUM_BANDS; i++) {
+                if (Math.random() < 0.08) targets[i] = Math.random() * MAX_H + 5;
+                levels[i] += (targets[i] - levels[i]) * 0.12;
+                bars[i].style.height = levels[i].toFixed(1) + 'px';
+            }
+            requestAnimationFrame(animate);
+        })();
+    </script>
 </body>
 </html>
