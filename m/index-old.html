@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dpaul.studio</title>
 
     <style>
@@ -16,7 +16,6 @@
         *, *::before, *::after {
             margin: 0; padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
@@ -27,6 +26,7 @@
             color: var(--cream);
         }
 
+        /* Grain */
         body::after {
             content: '';
             position: fixed; inset: 0;
@@ -34,24 +34,31 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* ── LAYOUT ── */
+        /* ── ROOT LAYOUT ── */
         #app {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            grid-template-columns: 260px 1fr 360px;
             width: 100%;
-            height: 100dvh;
+            height: 100vh;
         }
 
-        /* ── TOP BAR ── */
+        /* ── TOP BAR (full width) ── */
         #topbar {
-            flex-shrink: 0;
-            height: 52px;
+            grid-column: 1 / -1;
+            grid-row: 1;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 40px;
             border-bottom: 1px solid var(--border);
             z-index: 100;
+        }
+
+        #topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
         }
 
         #eq-corner {
@@ -75,47 +82,31 @@
             text-transform: uppercase;
         }
 
-        /* ── STAGE ── */
-        #stage {
-            flex: 1;
-            display: flex;
-            flex-direction: row;
-            align-items: stretch;
-            overflow: hidden;
-            position: relative;
-        }
-
-        #stage::before {
-            content: '';
-            position: absolute;
-            left: -80px; top: 50%;
-            transform: translateY(-50%);
-            width: 480px; height: 480px;
-            background: radial-gradient(ellipse, rgba(255,102,0,0.04) 0%, transparent 65%);
-            pointer-events: none;
-        }
-
-        /* ── LEFT: wordmark ── */
-        #stage-left {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 36px 28px 36px 48px;
-            z-index: 2;
-        }
-
-        .label-line {
-            font-size: 0.62rem;
-            color: rgba(255,102,0,0.55);
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            margin-bottom: 22px;
+        #topbar-right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 32px;
+        }
+
+        .topbar-link {
+            font-size: 0.62rem;
+            color: rgba(212,196,168,0.25);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .topbar-link:hover { color: var(--orange); }
+
+        .topbar-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.6rem;
+            color: rgba(255,102,0,0.5);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
         }
 
         .status-dot {
@@ -131,40 +122,130 @@
             50%       { opacity: 0.2; }
         }
 
+        /* ── LEFT SIDEBAR ── */
+        #sidebar {
+            grid-column: 1;
+            grid-row: 2;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 32px;
+        }
+
+        .sidebar-section { display: flex; flex-direction: column; gap: 6px; }
+
+        .sidebar-label {
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(212,196,168,0.2);
+            margin-bottom: 10px;
+        }
+
+        .sidebar-item {
+            font-size: 0.68rem;
+            color: rgba(212,196,168,0.3);
+            letter-spacing: 0.12em;
+            line-height: 1.9;
+        }
+
+        .sidebar-item span {
+            color: rgba(255,102,0,0.45);
+            margin-right: 8px;
+        }
+
+        /* ── CENTRE STAGE ── */
+        #stage {
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 60px 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #stage::before {
+            content: '';
+            position: absolute;
+            left: -100px; top: 50%;
+            transform: translateY(-50%);
+            width: 700px; height: 700px;
+            background: radial-gradient(ellipse, rgba(255,102,0,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
         .wordmark {
-            font-size: clamp(2.8rem, 10vw, 5.6rem);
+            font-size: clamp(4rem, 7vw, 8rem);
             font-weight: 700;
-            line-height: 0.88;
+            line-height: 0.86;
             color: #EDE5D7;
-            letter-spacing: -0.04em;
+            letter-spacing: -0.045em;
+            z-index: 2; position: relative;
         }
 
         .wordmark .accent { color: var(--orange); }
 
         .wordmark-sub {
-            margin-top: 18px;
-            font-size: clamp(0.7rem, 2vw, 0.95rem);
-            color: rgba(212,196,168,0.28);
-            letter-spacing: 0.06em;
+            margin-top: 24px;
+            font-size: clamp(0.8rem, 1.1vw, 1.05rem);
+            color: rgba(212,196,168,0.22);
+            letter-spacing: 0.1em;
+            z-index: 2; position: relative;
         }
 
         .divider {
-            width: 40px;
+            width: 48px;
             height: 1px;
             background: rgba(255,102,0,0.3);
-            margin: 28px 0 0;
+            margin: 36px 0;
+            z-index: 2; position: relative;
         }
 
-        /* ── RIGHT: nav list ── */
-        #stage-right {
-            flex-shrink: 0;
-            width: 46%;
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            z-index: 2; position: relative;
+        }
+
+        .tag {
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(212,196,168,0.22);
+            border: 1px solid rgba(255,102,0,0.1);
+            padding: 5px 12px;
+            border-radius: 2px;
+            transition: color 0.2s, border-color 0.2s;
+            cursor: default;
+        }
+
+        .tag:hover {
+            color: var(--orange);
+            border-color: rgba(255,102,0,0.35);
+        }
+
+        /* ── RIGHT NAV PANEL ── */
+        #nav-panel {
+            grid-column: 3;
+            grid-row: 2;
+            border-left: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            border-left: 1px solid rgba(255,102,0,0.1);
-            padding: 0 24px 0 28px;
-            z-index: 2;
+            padding: 0 48px;
+        }
+
+        .nav-panel-label {
+            font-size: 0.55rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(212,196,168,0.2);
+            margin-bottom: 24px;
         }
 
         #nav-list {
@@ -176,28 +257,43 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 0;
+            padding: 16px 0;
             text-decoration: none;
-            color: rgba(212,196,168,0.38);
+            color: rgba(212,196,168,0.32);
             font-family: 'Courier New', Courier, monospace;
-            font-size: 1.01rem;
-            letter-spacing: 0.1em;
+            font-size: 1.05rem;
+            letter-spacing: 0.08em;
             text-transform: lowercase;
-            border-bottom: 1px solid rgba(255,102,0,0.08);
-            transition: color 0.15s, padding-left 0.15s;
+            border-bottom: 1px solid rgba(255,102,0,0.07);
+            transition: color 0.15s, padding-left 0.2s;
+            cursor: pointer;
         }
 
         .nav-link:first-child {
-            border-top: 1px solid rgba(255,102,0,0.08);
+            border-top: 1px solid rgba(255,102,0,0.07);
+        }
+
+        .nav-link-inner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-index {
+            font-size: 0.52rem;
+            color: rgba(212,196,168,0.15);
+            letter-spacing: 0.1em;
+            width: 18px;
+            flex-shrink: 0;
+            transition: color 0.15s;
         }
 
         .nav-arrow {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             opacity: 0;
             color: var(--orange);
-            transition: opacity 0.15s, transform 0.15s;
-            transform: translateX(-4px);
-            flex-shrink: 0;
+            transition: opacity 0.18s, transform 0.18s;
+            transform: translateX(-6px);
         }
 
         .nav-link:hover {
@@ -210,6 +306,10 @@
             transform: translateX(0);
         }
 
+        .nav-link:hover .nav-index {
+            color: rgba(255,102,0,0.4);
+        }
+
         .nav-link.active {
             color: var(--orange);
         }
@@ -217,6 +317,15 @@
         .nav-link.active .nav-arrow {
             opacity: 1;
             transform: translateX(0);
+        }
+
+        .nav-link.active .nav-index {
+            color: rgba(255,102,0,0.4);
+        }
+
+        /* ── FOOTER ROW ── */
+        #footer {
+            display: none; /* hidden on desktop — info is in sidebar */
         }
     </style>
 </head>
@@ -226,46 +335,77 @@
 
     <!-- Top bar -->
     <div id="topbar">
-        <div id="eq-corner"></div>
-        <div class="topbar-brand">dPaul Technologies</div>
-    </div>
-
-    <!-- Stage -->
-    <div id="stage">
-
-        <!-- Left: wordmark -->
-        <div id="stage-left">
-            <div class="label-line">
+        <div id="topbar-left">
+            <div id="eq-corner"></div>
+            <div class="topbar-brand">dPaul Technologies</div>
+        </div>
+        <div id="topbar-right">
+            <a href="about.html" class="topbar-link">about</a>
+            <a href="mailto:hello@dpaul.studio" class="topbar-link">contact</a>
+            <div class="topbar-status">
                 <span class="status-dot"></span>available for work
             </div>
-            <div class="wordmark">
-                <span class="accent">d</span>paul<br>.studio
-            </div>
-            <div class="wordmark-sub">design · music · code · video</div>
-            <div class="divider"></div>
         </div>
-
-        <!-- Right: nav list -->
-        <div id="stage-right">
-            <nav id="nav-list">
-                <a href="design.html"    class="nav-link">design<span class="nav-arrow">→</span></a>
-                <a href="merch.html"     class="nav-link">merch<span class="nav-arrow">→</span></a>
-                <a href="music.html"     class="nav-link">music<span class="nav-arrow">→</span></a>
-                <a href="synths.html"    class="nav-link">synths<span class="nav-arrow">→</span></a>
-                <a href="tools.html"     class="nav-link">tools<span class="nav-arrow">→</span></a>
-                <a href="video.html"     class="nav-link">video<span class="nav-arrow">→</span></a>
-                <a href="dev-tools.html" class="nav-link">dev tools<span class="nav-arrow">→</span></a>
-                <a href="about.html"     class="nav-link">about<span class="nav-arrow">→</span></a>
-            </nav>
-        </div>
-
     </div>
+
+    <!-- Left sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-label">disciplines</div>
+            <div class="sidebar-item"><span>//</span>design</div>
+            <div class="sidebar-item"><span>//</span>music production</div>
+            <div class="sidebar-item"><span>//</span>development</div>
+            <div class="sidebar-item"><span>//</span>video</div>
+            <div class="sidebar-item"><span>//</span>synth design</div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-label">location</div>
+            <div class="sidebar-item"><span>//</span>Scotland, UK</div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-label">status</div>
+            <div class="sidebar-item"><span>//</span>open to projects</div>
+            <div class="sidebar-item"><span>//</span>freelance / contract</div>
+        </div>
+    </aside>
+
+    <!-- Centre stage -->
+    <main id="stage">
+        <div class="wordmark">
+            <span class="accent">d</span>paul<br>.studio
+        </div>
+        <div class="wordmark-sub">design · music · code · video</div>
+        <div class="divider"></div>
+        <div class="tag-row">
+            <span class="tag">Branding</span>
+            <span class="tag">Merch</span>
+            <span class="tag">Audio</span>
+            <span class="tag">Synthesis</span>
+            <span class="tag">Motion</span>
+            <span class="tag">Dev Tools</span>
+        </div>
+    </main>
+
+    <!-- Right nav panel -->
+    <nav id="nav-panel">
+        <div class="nav-panel-label">navigate</div>
+        <div id="nav-list">
+            <a href="design.html"    class="nav-link"><span class="nav-link-inner"><span class="nav-index">01</span>design</span><span class="nav-arrow">→</span></a>
+            <a href="merch.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">02</span>merch</span><span class="nav-arrow">→</span></a>
+            <a href="music.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">03</span>music</span><span class="nav-arrow">→</span></a>
+            <a href="synths.html"    class="nav-link"><span class="nav-link-inner"><span class="nav-index">04</span>synths</span><span class="nav-arrow">→</span></a>
+            <a href="tools.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">05</span>tools</span><span class="nav-arrow">→</span></a>
+            <a href="video.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">06</span>video</span><span class="nav-arrow">→</span></a>
+            <a href="dev-tools.html" class="nav-link"><span class="nav-link-inner"><span class="nav-index">07</span>dev tools</span><span class="nav-arrow">→</span></a>
+            <a href="about.html"     class="nav-link"><span class="nav-link-inner"><span class="nav-index">08</span>about</span><span class="nav-arrow">→</span></a>
+        </div>
+    </nav>
 
 </div>
 
 <script>
     /* ── MINI EQ ANIMATION ── */
-    const NUM_BANDS = 12;
+    const NUM_BANDS = 16;
     const MAX_H     = 20;
     const corner    = document.getElementById('eq-corner');
     const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 2);
