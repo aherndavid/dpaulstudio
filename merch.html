@@ -110,8 +110,16 @@
             line-height: 0;
         }
 
-        /* First image stays in flow to give the container its natural height */
-        .merch-image img {
+        /* Spacer image sits in flow to give the container its natural height */
+        .merch-image .img-spacer {
+            display: block;
+            width: 100%;
+            height: auto;
+            visibility: hidden; /* takes up space but is invisible */
+        }
+
+        /* All crossfade images are absolutely positioned over the spacer */
+        .merch-image img.cf {
             display: block;
             width: 100%;
             height: auto;
@@ -121,12 +129,7 @@
             transition: opacity 2s ease-in-out;
         }
 
-        /* First child sits in flow for container height */
-        .merch-image img:first-child {
-            position: relative;
-        }
-
-        .merch-image img.active {
+        .merch-image img.cf.active {
             opacity: 1;
         }
 
@@ -200,10 +203,12 @@
 </nav>
 
 <div class="merch-image reveal" id="merchImgWrap">
-    <img id="img0" src="assets/merch-en-route.png"               alt="Merch En Route — dPaul Technologies">
-    <img id="img1" src="assets/merch-en-route-one.png"    alt="Merch En Route No car no bird — dPaul Technologies">
-    <img id="img2" src="assets/merch-en-route-two.png"    alt="Merch En Route No Car — dPaul Technologies">
-    <img id="img3" src="assets/merch-en-route-three.png"  alt="Merch En Route No Bird — dPaul Technologies">
+    <!-- Invisible spacer: same src as first image, holds container height -->
+    <img class="img-spacer" src="assets/merch-en-route-one.png" alt="" aria-hidden="true">
+    <!-- Crossfade images — all three renamed files -->
+    <img id="img0" class="cf" src="assets/merch-en-route-one.png"   alt="Merch En Route — dPaul Technologies">
+    <img id="img1" class="cf" src="assets/merch-en-route-two.png"   alt="Merch En Route No Car — dPaul Technologies">
+    <img id="img2" class="cf" src="assets/merch-en-route-three.png" alt="Merch En Route No Bird — dPaul Technologies">
 </div>
 
 <div class="page" style="padding-top:0;">
@@ -258,8 +263,7 @@
         const imgs = [
             document.getElementById('img0'),
             document.getElementById('img1'),
-            document.getElementById('img2'),
-            document.getElementById('img3')
+            document.getElementById('img2')
         ];
         let current = 0;
 
