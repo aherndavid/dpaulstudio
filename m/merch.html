@@ -80,7 +80,6 @@
         .merch-image {
             width: 100%;
             position: relative;
-            /* aspect-ratio gives the container stable height while images load */
             aspect-ratio: 16 / 9;
             overflow: hidden;
             background: #0e0f0e;
@@ -152,7 +151,6 @@
         /* ── REVEAL ── */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
-        /* suppress Y shift on image strip so layout stays stable */
         .merch-image.reveal { transform: none; }
     </style>
 </head>
@@ -169,14 +167,14 @@
 </div>
 
 <div class="mobile-menu" id="mobileMenu">
-    <a href="design.html">design</a>
+    <a href="../design.html">design</a>
     <a href="merch.html" class="active">merch</a>
-    <a href="music.html">music</a>
-    <a href="synths.html">synths</a>
-    <a href="tools.html">tools</a>
-    <a href="video.html">video</a>
-    <a href="dev-tools.html">dev tools</a>
-    <a href="about.html">info</a>
+    <a href="../music.html">music</a>
+    <a href="../synths.html">synths</a>
+    <a href="../tools.html">tools</a>
+    <a href="../video.html">video</a>
+    <a href="../dev-tools.html">dev tools</a>
+    <a href="../about.html">info</a>
 </div>
 
 <!-- FONT NUDGE -->
@@ -186,11 +184,11 @@
     <button class="font-btn" onclick="adjustFont(-1)">A-</button>
 </div>
 
-<!-- CROSSFADE IMAGE — full width, sits above page padding -->
+<!-- CROSSFADE IMAGE — ../assets/ because this file lives in /m/ subfolder -->
 <div class="merch-image reveal" id="merchImgWrap">
-    <img id="img0" src="assets/merch-en-route-one.png"   alt="Merch En Route — dPaul Technologies">
-    <img id="img1" src="assets/merch-en-route-two.png"   alt="Merch En Route No Car — dPaul Technologies">
-    <img id="img2" src="assets/merch-en-route-three.png" alt="Merch En Route No Bird — dPaul Technologies">
+    <img id="img0" src="../assets/merch-en-route-one.png"   alt="Merch En Route — dPaul Technologies">
+    <img id="img1" src="../assets/merch-en-route-two.png"   alt="Merch En Route No Car — dPaul Technologies">
+    <img id="img2" src="../assets/merch-en-route-three.png" alt="Merch En Route No Bird — dPaul Technologies">
 </div>
 
 <div class="page">
@@ -217,7 +215,7 @@
     <div class="footer-line reveal">// dPaul Technologies — Limited run — once gone, gone</div>
 
     <div class="footer-toggle reveal">
-        <a href="merch.html">→ View Desktop Version</a>
+        <a href="../merch.html">→ View Desktop Version</a>
     </div>
 
 </div>
