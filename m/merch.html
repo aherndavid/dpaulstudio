@@ -80,18 +80,21 @@
         .merch-image {
             width: 100%;
             position: relative;
-            line-height: 0;
+            /* aspect-ratio gives the container stable height while images load */
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            background: #0e0f0e;
         }
         .merch-image img {
-            width: 100%; height: auto; display: block;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
             transition: opacity 1.2s ease-in-out;
         }
-        .merch-image img + img {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; object-fit: cover;
-        }
-        .merch-image img.fade-out { opacity: 0; }
-        .merch-image img.fade-in  { opacity: 1; }
+        .merch-image img.active { opacity: 1; }
 
         /* ── PAGE ── */
         .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
@@ -149,6 +152,8 @@
         /* ── REVEAL ── */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
+        /* suppress Y shift on image strip so layout stays stable */
+        .merch-image.reveal { transform: none; }
     </style>
 </head>
 <body>
@@ -183,10 +188,9 @@
 
 <!-- CROSSFADE IMAGE — full width, sits above page padding -->
 <div class="merch-image reveal" id="merchImgWrap">
-    <img id="img0" src="../assets/merch-en-route.png"               alt="Merch En Route" class="fade-in">
-    <img id="img1" src="../assets/merch-en-route-zebra.png"         alt="Merch En Route Zebra" class="fade-out">
-    <img id="img2" src="../assets/merch-en-route-zebra-no-car.png"  alt="Merch En Route Zebra No Car" class="fade-out">
-    <img id="img3" src="../assets/merch-en-route-zebra-no-bird.png" alt="Merch En Route Zebra No Bird" class="fade-out">
+    <img id="img0" src="assets/merch-en-route-one.png"   alt="Merch En Route — dPaul Technologies">
+    <img id="img1" src="assets/merch-en-route-two.png"   alt="Merch En Route No Car — dPaul Technologies">
+    <img id="img2" src="assets/merch-en-route-three.png" alt="Merch En Route No Bird — dPaul Technologies">
 </div>
 
 <div class="page">
@@ -213,7 +217,7 @@
     <div class="footer-line reveal">// dPaul Technologies — Limited run — once gone, gone</div>
 
     <div class="footer-toggle reveal">
-        <a href="../merch.html">→ View Desktop Version</a>
+        <a href="merch.html">→ View Desktop Version</a>
     </div>
 
 </div>
@@ -236,29 +240,33 @@
     }
 
     // ── IMAGE CROSSFADE ──
-    (function() {
+    (function () {
         const imgs = [
             document.getElementById('img0'),
             document.getElementById('img1'),
-            document.getElementById('img2'),
-            document.getElementById('img3')
+            document.getElementById('img2')
         ];
         let current = 0;
+
+        // Show first image immediately
+        imgs[0].classList.add('active');
+
         setInterval(() => {
-            imgs[current].classList.remove('fade-in');
-            imgs[current].classList.add('fade-out');
+            imgs[current].classList.remove('active');
             current = (current + 1) % imgs.length;
-            imgs[current].classList.remove('fade-out');
-            imgs[current].classList.add('fade-in');
-        }, 30000);
+            imgs[current].classList.add('active');
+        }, 15000);
     })();
 
     // ── REVEAL ──
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
-            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
         });
-    }, { threshold: 0.08 });
+    }, { threshold: 0.05 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
