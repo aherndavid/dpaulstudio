@@ -143,6 +143,26 @@
         /* ── PAGE ── */
         .page { max-width: 1440px; margin: 0 auto; padding: 56px 56px 60px; }
 
+        /* ── CONTENT BG (logo behind hero + billboard) ── */
+        .content-bg {
+            position: relative;
+        }
+        .content-bg-logo {
+            position: absolute;
+            inset: 0;
+            background-image: url('../assets/carbonography-logo.png');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .content-bg > *:not(.content-bg-logo) {
+            position: relative;
+            z-index: 1;
+        }
+
         /* ── HERO TEXT ── */
         .hero-text {
             padding: 64px 0 56px;
@@ -207,17 +227,13 @@
         .tts-voice-sel:focus { border-color: var(--orange); }
         .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
 
-        /* ── BILLBOARD ── */
-        .billboard-wrap {
-            width: 100%;
-            margin-top: 56px;
+        /* ── CONTENT BG WRAPPER — logo behind hero + billboard ── */
+        .content-bg {
             position: relative;
         }
-
-        /* Carbonography logo — anchored behind the billboard only */
-        .billboard-bg {
+        .content-bg-logo {
             position: absolute;
-            inset: -60px -56px;
+            inset: -56px -56px -60px;
             background-image: url('../assets/carbonography-logo.png');
             background-size: cover;
             background-position: center top;
@@ -226,10 +242,18 @@
             pointer-events: none;
             z-index: 0;
         }
-
-        .screen-chrome {
+        .content-bg > * {
             position: relative;
             z-index: 1;
+        }
+
+        /* ── BILLBOARD ── */
+        .billboard-wrap {
+            width: 100%;
+            margin-top: 56px;
+        }
+
+        .screen-chrome {
             background: #0e0f0e;
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -345,6 +369,8 @@
 </div>
 
 <div class="page">
+    <div class="content-bg">
+    <div class="content-bg-logo"></div>
     <div class="hero-text reveal">
         <div class="hero-label">// dPaul Technologies — Design Services</div>
         <h1>Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
@@ -380,9 +406,6 @@
     </div>
 
     <div class="billboard-wrap reveal">
-        <!-- Carbonography logo sits behind the billboard only -->
-        <div class="billboard-bg"></div>
-
         <div class="screen-chrome">
             <div class="chrome-bar">
                 <div class="dot dot-r"></div>
@@ -414,9 +437,10 @@
                 <span class="chrome-status-left">dPaul Studio Billboard</span>
                 <span class="chrome-status-right">Traffic Narrator</span>
             </div>
-        </div>
-    </div>
-</div>
+        </div><!-- /.screen-chrome -->
+    </div><!-- /.billboard-wrap -->
+    </div><!-- /.content-bg -->
+</div><!-- /.page -->
 
 <div class="ticker-wrap ticker-bottom">
     <div class="ticker-track">
