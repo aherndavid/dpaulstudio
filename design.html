@@ -146,19 +146,20 @@
         /* ── CONTENT BG (logo behind hero + billboard) ── */
         .content-bg {
             position: relative;
+            overflow: hidden;
         }
         .content-bg-logo {
             position: absolute;
             inset: 0;
-            background-image: url('../assets/carbonography-logo.png');
-            background-size: cover;
+            background-image: url('assets/carbonography-logo.png');
+            background-size: contain;
             background-position: center top;
             background-repeat: no-repeat;
             opacity: 0.08;
             pointer-events: none;
             z-index: 0;
         }
-        .content-bg > *:not(.content-bg-logo) {
+        .content-bg > * {
             position: relative;
             z-index: 1;
         }
@@ -226,26 +227,6 @@
         }
         .tts-voice-sel:focus { border-color: var(--orange); }
         .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
-
-        /* ── CONTENT BG WRAPPER — logo behind hero + billboard ── */
-        .content-bg {
-            position: relative;
-        }
-        .content-bg-logo {
-            position: absolute;
-            inset: -56px -56px -60px;
-            background-image: url('../assets/carbonography-logo.png');
-            background-size: cover;
-            background-position: center top;
-            background-repeat: no-repeat;
-            opacity: 0.08;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .content-bg > * {
-            position: relative;
-            z-index: 1;
-        }
 
         /* ── BILLBOARD ── */
         .billboard-wrap {
@@ -319,7 +300,6 @@
             .page { padding: 32px 24px 40px; }
             .font-nudge { bottom: 80px; right: 16px; }
             .ticker-track span { font-size: 1.8rem; }
-            .billboard-bg { inset: -32px -24px; }
         }
     </style>
 </head>
@@ -370,75 +350,75 @@
 
 <div class="page">
     <div class="content-bg">
-    <div class="content-bg-logo"></div>
-    <div class="hero-text reveal">
-        <div class="hero-label">// dPaul Technologies — Design Services</div>
-        <h1>Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
-        <p class="hero-intro">
-            Whether you need a static or animated logo for email signatures, labels, posters, or videos — I can help you brainstorm and create designs that make your brand stand out while staying clear and professional.
-        </p>
-        <p class="hero-intro">
-            Every design starts with a conversation. From concept through to final delivery — print-ready files, animated versions, brand guidelines — the process is straightforward and built around what you actually need, not what looks good in a pitch deck.
-        </p>
+        <div class="content-bg-logo"></div>
+        <div class="hero-text reveal">
+            <div class="hero-label">// dPaul Technologies — Design Services</div>
+            <h1>Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
+            <p class="hero-intro">
+                Whether you need a static or animated logo for email signatures, labels, posters, or videos — I can help you brainstorm and create designs that make your brand stand out while staying clear and professional.
+            </p>
+            <p class="hero-intro">
+                Every design starts with a conversation. From concept through to final delivery — print-ready files, animated versions, brand guidelines — the process is straightforward and built around what you actually need, not what looks good in a pitch deck.
+            </p>
 
-        <div class="tts-player" id="ttsPlayer">
-            <span class="tts-label">// Speak this page</span>
-            <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
-                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
-                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
-                <div class="tts-sep"></div>
-                <div class="tts-speed-wrap">
-                    <span class="tts-speed-label">Speed</span>
-                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
-                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+            <div class="tts-player" id="ttsPlayer">
+                <span class="tts-label">// Speak this page</span>
+                <div class="tts-controls">
+                    <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                    <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
+                    <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                    <div class="tts-sep"></div>
+                    <div class="tts-speed-wrap">
+                        <span class="tts-speed-label">Speed</span>
+                        <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                        <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                    </div>
+                    <div class="tts-sep"></div>
+                    <div class="tts-section-wrap">
+                        <span class="tts-section-label">Voice</span>
+                        <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                            <option value="">Loading voices...</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="tts-sep"></div>
-                <div class="tts-section-wrap">
-                    <span class="tts-section-label">Voice</span>
-                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
-                        <option value="">Loading voices...</option>
-                    </select>
-                </div>
+                <span class="tts-progress" id="ttsProgress"></span>
             </div>
-            <span class="tts-progress" id="ttsProgress"></span>
-        </div>
-    </div>
+        </div><!-- /.hero-text -->
 
-    <div class="billboard-wrap reveal">
-        <div class="screen-chrome">
-            <div class="chrome-bar">
-                <div class="dot dot-r"></div>
-                <div class="dot dot-y"></div>
-                <div class="dot dot-g"></div>
-                <div class="chrome-url">dpaul.studio — design showcase</div>
-            </div>
-            <div class="screen-video">
-                <video id="vid1" autoplay muted playsinline>
-                    <source src="../assets/video/traffic-narrator.mp4" type="video/mp4">
-                </video>
-                <video id="vid2" muted playsinline style="display:none;">
-                    <source src="../assets/video/orange-porsche.mp4" type="video/mp4">
-                </video>
-                <video id="vid3" muted playsinline style="display:none;">
-                    <source src="../assets/video/autofacts-white-gold-logo.mp4" type="video/mp4">
-                </video>
-                <video id="vid4" muted playsinline style="display:none;">
-                    <source src="../assets/video/motion-wheels-part-1.mp4" type="video/mp4">
-                </video>
-                <video id="vid5" muted playsinline style="display:none;">
-                    <source src="../assets/video/motion-wheels-part-2.mp4" type="video/mp4">
-                </video>
-                <video id="vid6" muted playsinline style="display:none;">
-                    <source src="../assets/video/computer-screen.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="chrome-status">
-                <span class="chrome-status-left">dPaul Studio Billboard</span>
-                <span class="chrome-status-right">Traffic Narrator</span>
-            </div>
-        </div><!-- /.screen-chrome -->
-    </div><!-- /.billboard-wrap -->
+        <div class="billboard-wrap reveal">
+            <div class="screen-chrome">
+                <div class="chrome-bar">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                    <div class="chrome-url">dpaul.studio — design showcase</div>
+                </div>
+                <div class="screen-video">
+                    <video id="vid1" autoplay muted playsinline>
+                        <source src="assets/video/traffic-narrator.mp4" type="video/mp4">
+                    </video>
+                    <video id="vid2" muted playsinline style="display:none;">
+                        <source src="assets/video/orange-porsche.mp4" type="video/mp4">
+                    </video>
+                    <video id="vid3" muted playsinline style="display:none;">
+                        <source src="assets/video/autofacts-white-gold-logo.mp4" type="video/mp4">
+                    </video>
+                    <video id="vid4" muted playsinline style="display:none;">
+                        <source src="assets/video/motion-wheels-part-1.mp4" type="video/mp4">
+                    </video>
+                    <video id="vid5" muted playsinline style="display:none;">
+                        <source src="assets/video/motion-wheels-part-2.mp4" type="video/mp4">
+                    </video>
+                    <video id="vid6" muted playsinline style="display:none;">
+                        <source src="assets/video/computer-screen.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="chrome-status">
+                    <span class="chrome-status-left">dPaul Studio Billboard</span>
+                    <span class="chrome-status-right">Traffic Narrator</span>
+                </div>
+            </div><!-- /.screen-chrome -->
+        </div><!-- /.billboard-wrap -->
     </div><!-- /.content-bg -->
 </div><!-- /.page -->
 
@@ -497,7 +477,6 @@
         videos[current].currentTime = 0;
         videos[current].play().catch(e => console.log('Play error:', e));
 
-        // Update status text based on video
         const statusRight = document.querySelector('.chrome-status-right');
         const titles = ["Traffic Narrator", "Orange Porsche", "Autofacts Logo", "Motion Wheels 1", "Motion Wheels 2", "Computer Screen"];
         statusRight.textContent = titles[current];
@@ -551,11 +530,9 @@
             if (idx >= chunks.length) { ttsStop(); return; }
             const chunk = chunks[idx];
             const u = new SpeechSynthesisUtterance(chunk.text);
-
             const voiceName = document.getElementById('ttsVoiceSel').value;
             const voices = synth.getVoices();
             u.voice = voices.find(v => v.name === voiceName);
-
             u.rate = parseFloat(document.getElementById('ttsSpeed').value);
             u.onend = () => { if (!paused) { idx++; speakCurrent(); } };
             synth.speak(u);
