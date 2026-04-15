@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPAUL MKV STUDIO</title>
+    <title>DPAUL MKIV STUDIO</title>
     <style>
         :root {
             --orange:       #ff7a00;
@@ -24,6 +24,9 @@
             --bass-color:   #aa44ff;
             --bass-dim:     #330066;
             --bass-glow:    rgba(170,68,255,0.45);
+            --clap-color:   #ff4488;
+            --clap-dim:     #660022;
+            --clap-glow:    rgba(255,68,136,0.4);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; user-select:none; }
@@ -75,6 +78,7 @@
         .lbl-gold  { color: var(--gold); }
         .lbl-green { color: #1a8a1a; }
         .lbl-bass  { color: var(--bass-color); }
+        .lbl-clap  { color: var(--clap-color); }
 
         .inset {
             background: var(--inset-bg);
@@ -110,6 +114,27 @@
             border-color: #aa44ff; border-top-color: #dd99ff;
             box-shadow: 0 0 14px var(--bass-glow), inset 0 1px 2px rgba(255,255,255,0.25);
         }
+        .btn.clap-active {
+            color: #fff;
+            background: linear-gradient(180deg, #ff66aa 0%, #cc0055 100%);
+            border-color: #ff4488; border-top-color: #ff99cc;
+            box-shadow: 0 0 14px var(--clap-glow), inset 0 1px 2px rgba(255,255,255,0.25);
+        }
+        .btn.export-btn {
+            color: #7ad4ff;
+            border-top-color: #334466;
+        }
+        .btn.export-btn:hover { color: #aaeeff; border-top-color: #558899; }
+        .btn.midi-btn {
+            color: #88aaff;
+            border-top-color: #334488;
+        }
+        .btn.midi-btn:hover { color: #aabbff; border-top-color: #5566aa; }
+        .btn.danger-btn {
+            color: #ff6655;
+            border-top-color: #442211;
+        }
+        .btn.danger-btn:hover { color: #ff8877; border-top-color: #664422; }
         .btn-lg { padding: 8px 16px; font-size: 9px; }
         .btn-md { padding: 6px 12px; }
         .btn-sm { padding: 5px 9px; }
@@ -155,12 +180,14 @@
         }
         .header-left { display:flex; flex-direction:column; gap:6px; }
         .header-title-row { display:flex; align-items:center; gap:8px; }
-        .header-controls-row { display:flex; align-items:center; gap:8px; }
-        .header-right { margin-left:auto; display:flex; align-items:flex-end; gap:6px; }
+        .header-controls-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .header-right { margin-left:auto; display:flex; align-items:flex-end; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
         .title-text { color:var(--gold); font-size:16px; font-weight:700; letter-spacing:4px; text-shadow:0 1px 4px #000; white-space:nowrap; }
         .badge { background:#0e0e0e; border:1px solid #262626; border-radius:10px; padding:2px 8px; font-size:7.5px; color:#555; box-shadow:inset 0 1px 3px rgba(0,0,0,0.9); }
         .badge.lit { color:var(--orange); border-color:var(--orange-dim); }
         .badge.bass-lit { color:var(--bass-color); border-color:var(--bass-dim); }
+        .badge.rec-lit { color:#ff4444; border-color:#440000; animation: recblink 1s ease-in-out infinite; }
+        @keyframes recblink { 0%,100%{opacity:1} 50%{opacity:0.4} }
         .bpm-readout {
             background:#080808; color:var(--gold);
             font-family:'Courier New',monospace;
@@ -171,28 +198,56 @@
         }
         input[type=range] { accent-color:var(--orange); width:80px; cursor:pointer; height:4px; }
 
+        /* Export/MIDI toolbar */
+        .io-toolbar {
+            display:flex; align-items:center; gap:5px;
+            background:rgba(0,0,0,0.3); border:1px solid #1a1a1a;
+            border-radius:5px; padding:4px 8px;
+        }
+        .io-toolbar-title { color:#335; font-size:7px; letter-spacing:1px; text-transform:uppercase; margin-right:2px; }
+        .progress-bar-wrap {
+            width:80px; height:4px; background:#111; border-radius:2px; overflow:hidden;
+            display:none;
+        }
+        .progress-bar-wrap.visible { display:block; }
+        .progress-bar-fill {
+            height:100%; background:linear-gradient(90deg,#4488ff,#44ddff);
+            border-radius:2px; width:0%; transition:width 0.1s;
+        }
+        #recordBadge { display:none; }
+        #recordBadge.visible { display:inline-block; }
+        /* Hidden file input */
+        #midiFileInput { display:none; }
+
         /* ── Row Seq ── */
         .row-seq {
             display:grid;
             grid-template-columns: 1fr 300px 86px;
-            gap:10px; height:148px;
+            gap:10px; height:160px;
         }
-        .seq-panel { display:flex; gap:8px; padding:8px 10px; }
+        .seq-panel { display:flex; gap:8px; padding:8px 10px; flex-direction:column; }
+        .seq-panel-header { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+        .seq-body { display:flex; gap:8px; flex:1; min-height:0; }
         .seq-labels { display:flex; flex-direction:column; justify-content:space-around; flex-shrink:0; }
         .seq-labels .lbl { font-size:7.5px; width:34px; }
-        .seq-grid { flex:1; display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(6,1fr); gap:3px 6px; }
+        .seq-grid { flex:1; display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(7,1fr); gap:3px 6px; }
         .seq-step {
             background:linear-gradient(180deg,#282828 0%,#101010 100%);
             border:1px solid #0a0a0a; border-top-color:#383838;
             border-radius:3px; cursor:pointer;
             box-shadow:0 2px 4px rgba(0,0,0,0.55);
-            transition:background 0.05s; min-height:14px;
+            transition:background 0.05s; min-height:12px;
         }
         .seq-step:hover { border-top-color:#505050; }
         .seq-step.on {
             background:linear-gradient(180deg,#ff9933,#cc5500);
             border-color:#ff8000; border-top-color:#ffbb44;
             box-shadow:0 0 6px var(--orange-glow), inset 0 1px 1px rgba(255,255,255,0.25);
+        }
+        .seq-step.clap-row.on {
+            background:linear-gradient(180deg,#ff66aa,#cc0055);
+            border-color:#ff4488; border-top-color:#ff99cc;
+            box-shadow:0 0 6px var(--clap-glow), inset 0 1px 1px rgba(255,255,255,0.2);
         }
         .seq-step.synth-row.on {
             background:linear-gradient(180deg,#44ff88,#00aa44);
@@ -249,251 +304,90 @@
         .lfo-shape-btns { display:flex; flex-direction:column; gap:3px; }
         .lfo-shape-btns .fbtn { font-size:10px; padding:3px 7px; }
 
-        /* ══════════════════════════════════════════
-           BASS ROW — new section
-        ══════════════════════════════════════════ */
-        .row-bass {
-            display: flex;
-            gap: 10px;
-            align-items: stretch;
-        }
-
-        /* Bass sequencer panel */
-        .bass-seq-panel {
-            flex: 1;
-            padding: 8px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 0;
-        }
-        .bass-seq-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-        .bass-grid-wrap {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        /* Note row — 8 or 16 note dropdowns */
-        .bass-note-row {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 3px 4px;
-        }
-        .bass-note-cell {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            align-items: center;
-        }
-        /* On/off button for bass step */
+        /* ══ BASS ROW ══ */
+        .row-bass { display:flex; gap:10px; align-items:stretch; }
+        .bass-seq-panel { flex:1; padding:8px 10px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+        .bass-seq-header { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .bass-grid-wrap { flex:1; display:flex; flex-direction:column; gap:3px; }
+        .bass-note-row { display:grid; grid-template-columns:repeat(8,1fr); gap:3px 4px; }
+        .bass-note-cell { display:flex; flex-direction:column; gap:2px; align-items:center; }
         .bass-step {
-            width: 100%;
-            height: 16px;
-            background: linear-gradient(180deg,#282828,#101010);
-            border: 1px solid #0a0a0a;
-            border-top-color: #383838;
-            border-radius: 3px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.55);
-            transition: background 0.05s;
+            width:100%; height:16px;
+            background:linear-gradient(180deg,#282828,#101010);
+            border:1px solid #0a0a0a; border-top-color:#383838;
+            border-radius:3px; cursor:pointer;
+            box-shadow:0 2px 4px rgba(0,0,0,0.55); transition:background 0.05s;
         }
         .bass-step:hover { border-top-color:#585858; }
         .bass-step.on {
-            background: linear-gradient(180deg,#cc66ff,#7700cc);
-            border-color: #aa44ff; border-top-color: #dd99ff;
-            box-shadow: 0 0 7px var(--bass-glow), inset 0 1px 1px rgba(255,255,255,0.2);
+            background:linear-gradient(180deg,#cc66ff,#7700cc);
+            border-color:#aa44ff; border-top-color:#dd99ff;
+            box-shadow:0 0 7px var(--bass-glow), inset 0 1px 1px rgba(255,255,255,0.2);
         }
-        .bass-step.playing {
-            outline: 1.5px solid rgba(220,180,255,0.8);
-            outline-offset: -1px;
-        }
-        /* Note picker */
+        .bass-step.playing { outline:1.5px solid rgba(220,180,255,0.8); outline-offset:-1px; }
         .bass-pitch-sel {
-            width: 100%;
-            background: #0a0a0a;
-            color: var(--bass-color);
-            border: 1px solid #1e1233;
-            border-radius: 2px;
-            font-family: 'Courier New', monospace;
-            font-size: 7px;
-            padding: 1px 2px;
-            cursor: pointer;
-            text-align: center;
-            -webkit-appearance: none;
-            appearance: none;
+            width:100%; background:#0a0a0a; color:var(--bass-color);
+            border:1px solid #1e1233; border-radius:2px;
+            font-family:'Courier New',monospace; font-size:7px;
+            padding:1px 2px; cursor:pointer; text-align:center;
+            -webkit-appearance:none; appearance:none;
         }
-        .bass-pitch-sel:focus { outline: 1px solid var(--bass-color); }
-        .bass-pitch-sel option { background: #111; color: #ddd; }
-
-        /* Octave select for bass */
-        .bass-oct-sel {
-            background: #0a0a0a; color: #888;
-            border: 1px solid #222; border-radius: 2px;
-            font-size: 7.5px; padding: 2px 4px; cursor: pointer;
-        }
-
-        /* Bass engine panel */
-        .bass-engine-panel {
-            width: 280px;
-            flex-shrink: 0;
-            padding: 8px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-        }
-        .bass-engine-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .bass-engine-btns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3px;
-        }
-        .bass-engine-btn {
-            padding: 5px 8px;
-            font-size: 7.5px;
-            letter-spacing: 0.8px;
-        }
+        .bass-pitch-sel:focus { outline:1px solid var(--bass-color); }
+        .bass-pitch-sel option { background:#111; color:#ddd; }
+        .bass-oct-sel { background:#0a0a0a; color:#888; border:1px solid #222; border-radius:2px; font-size:7.5px; padding:2px 4px; cursor:pointer; }
+        .bass-engine-panel { width:280px; flex-shrink:0; padding:8px 10px; display:flex; flex-direction:column; gap:7px; }
+        .bass-engine-header { display:flex; align-items:center; gap:6px; }
+        .bass-engine-btns { display:grid; grid-template-columns:1fr 1fr; gap:3px; }
+        .bass-engine-btn { padding:5px 8px; font-size:7.5px; letter-spacing:0.8px; }
         .bass-engine-btn.active {
-            color: #fff;
-            background: linear-gradient(180deg,#cc66ff 0%,#7700cc 100%);
-            border-color: #aa44ff; border-top-color: #dd99ff;
-            box-shadow: 0 0 10px var(--bass-glow), inset 0 1px 2px rgba(255,255,255,0.2);
+            color:#fff; background:linear-gradient(180deg,#cc66ff 0%,#7700cc 100%);
+            border-color:#aa44ff; border-top-color:#dd99ff;
+            box-shadow:0 0 10px var(--bass-glow), inset 0 1px 2px rgba(255,255,255,0.2);
         }
-
-        /* Bass knobs row */
         .bass-knob-row { display:flex; gap:10px; align-items:flex-end; }
-
-        /* AI bass describe panel */
-        .bass-ai-panel {
-            width: 260px;
-            flex-shrink: 0;
-            padding: 8px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .bass-ai-panel { width:260px; flex-shrink:0; padding:8px 10px; display:flex; flex-direction:column; gap:6px; }
         .bass-ai-header { display:flex; align-items:center; gap:6px; }
         .ai-badge {
-            background: linear-gradient(135deg, #1a003a, #0a0015);
-            border: 1px solid #3d0080;
-            border-radius: 10px;
-            padding: 2px 7px;
-            font-size: 7px;
-            color: var(--bass-color);
-            letter-spacing: 1px;
-            box-shadow: 0 0 8px rgba(170,68,255,0.2), inset 0 1px 3px rgba(0,0,0,0.9);
+            background:linear-gradient(135deg,#1a003a,#0a0015); border:1px solid #3d0080;
+            border-radius:10px; padding:2px 7px; font-size:7px; color:var(--bass-color);
+            letter-spacing:1px; box-shadow:0 0 8px rgba(170,68,255,0.2),inset 0 1px 3px rgba(0,0,0,0.9);
         }
-        .ai-prompt-wrap {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
-        }
+        .ai-prompt-wrap { display:flex; flex-direction:column; gap:4px; flex:1; }
         .ai-prompt {
-            background: #050508;
-            border: 1px solid #2a1040;
-            border-radius: 3px;
-            color: #cc99ff;
-            font-family: 'Courier New', monospace;
-            font-size: 8px;
-            padding: 5px 7px;
-            resize: none;
-            flex: 1;
-            min-height: 44px;
-            outline: none;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.7);
+            background:#050508; border:1px solid #2a1040; border-radius:3px;
+            color:#cc99ff; font-family:'Courier New',monospace; font-size:8px;
+            padding:5px 7px; resize:none; flex:1; min-height:44px; outline:none;
+            box-shadow:inset 0 2px 6px rgba(0,0,0,0.7);
         }
-        .ai-prompt:focus { border-color: #5500bb; }
-        .ai-prompt::placeholder { color: #3a2050; }
+        .ai-prompt:focus { border-color:#5500bb; }
+        .ai-prompt::placeholder { color:#3a2050; }
         .ai-gen-btn {
-            background: linear-gradient(180deg, #8822dd 0%, #440088 100%);
-            border: 1px solid #550099;
-            border-top: 1px solid #bb55ff;
-            border-radius: 4px;
-            color: #eeccff;
-            font-size: 7.5px;
-            font-weight: 700;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            padding: 6px 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-            transition: all 0.1s;
+            background:linear-gradient(180deg,#8822dd 0%,#440088 100%);
+            border:1px solid #550099; border-top:1px solid #bb55ff; border-radius:4px;
+            color:#eeccff; font-size:7.5px; font-weight:700; letter-spacing:1.2px;
+            text-transform:uppercase; cursor:pointer; padding:6px 10px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.1);
+            transition:all 0.1s;
         }
-        .ai-gen-btn:hover { background: linear-gradient(180deg,#aa33ff 0%,#5500aa 100%); border-top-color:#cc77ff; }
-        .ai-gen-btn:active { transform:translateY(2px); box-shadow:0 1px 4px rgba(0,0,0,0.6); }
+        .ai-gen-btn:hover { background:linear-gradient(180deg,#aa33ff 0%,#5500aa 100%); border-top-color:#cc77ff; }
+        .ai-gen-btn:active { transform:translateY(2px); }
         .ai-gen-btn:disabled { opacity:0.4; cursor:default; }
-        .ai-status {
-            font-family:'Courier New',monospace;
-            font-size:7px; color:#5533aa;
-            min-height:10px;
-            letter-spacing:0.5px;
-            transition: color 0.3s;
-        }
-        .ai-status.ok { color: #9944ff; }
-        .ai-status.err { color: #ff4444; }
-
-        /* API key input */
-        .api-key-wrap {
-            display: flex; gap: 4px; align-items: center;
-        }
-        .api-key-input {
-            flex: 1;
-            background: #050508;
-            border: 1px solid #1a1030;
-            border-radius: 3px;
-            color: #6644aa;
-            font-family: 'Courier New', monospace;
-            font-size: 7px;
-            padding: 3px 5px;
-            outline: none;
-        }
-        .api-key-input:focus { border-color: #4400aa; }
-        .api-key-input::placeholder { color: #221133; }
-        .api-key-save-btn {
-            background: #1a0033;
-            border: 1px solid #330066;
-            border-radius: 3px;
-            color: #8844cc;
-            font-size: 7px;
-            padding: 3px 6px;
-            cursor: pointer;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .api-key-save-btn:hover { color: #cc88ff; border-color: #660099; }
+        .ai-status { font-family:'Courier New',monospace; font-size:7px; color:#5533aa; min-height:10px; letter-spacing:0.5px; transition:color 0.3s; }
+        .ai-status.ok { color:#9944ff; }
+        .ai-status.err { color:#ff4444; }
+        .api-key-wrap { display:flex; gap:4px; align-items:center; }
+        .api-key-input { flex:1; background:#050508; border:1px solid #1a1030; border-radius:3px; color:#6644aa; font-family:'Courier New',monospace; font-size:7px; padding:3px 5px; outline:none; }
+        .api-key-input:focus { border-color:#4400aa; }
+        .api-key-input::placeholder { color:#221133; }
+        .api-key-save-btn { background:#1a0033; border:1px solid #330066; border-radius:3px; color:#8844cc; font-size:7px; padding:3px 6px; cursor:pointer; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; }
+        .api-key-save-btn:hover { color:#cc88ff; border-color:#660099; }
 
         /* ── Piano Row ── */
         .row-piano { display:flex; gap:10px; align-items:stretch; height:190px; }
-        .joystick-panel {
-            width:110px; flex-shrink:0;
-            display:flex; flex-direction:column;
-            align-items:center; justify-content:center;
-            gap:8px; padding:10px 8px;
-        }
-        .joystick-base {
-            width:80px; height:80px; border-radius:50%;
-            background:radial-gradient(circle,#0c0c0c 0%,#1a1a1a 65%,#2c2c2c 100%);
-            box-shadow:inset 0 8px 20px #000, 0 1px 2px rgba(255,255,255,0.1);
-            position:relative; display:flex; align-items:center; justify-content:center;
-        }
+        .joystick-panel { width:110px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:10px 8px; }
+        .joystick-base { width:80px; height:80px; border-radius:50%; background:radial-gradient(circle,#0c0c0c 0%,#1a1a1a 65%,#2c2c2c 100%); box-shadow:inset 0 8px 20px #000,0 1px 2px rgba(255,255,255,0.1); position:relative; display:flex; align-items:center; justify-content:center; }
         .joystick-gate { width:48px; height:48px; border-radius:50%; border:1px solid #2a2a2a; position:absolute; }
-        .joystick-stick {
-            width:20px; height:20px; border-radius:50%;
-            background:radial-gradient(circle at 32% 28%,#ffaa44,#cc5500 60%,#3a1500);
-            box-shadow:0 6px 12px rgba(0,0,0,0.85),inset 0 2px 3px rgba(255,255,255,0.5);
-            position:absolute; cursor:grab; z-index:2;
-        }
+        .joystick-stick { width:20px; height:20px; border-radius:50%; background:radial-gradient(circle at 32% 28%,#ffaa44,#cc5500 60%,#3a1500); box-shadow:0 6px 12px rgba(0,0,0,0.85),inset 0 2px 3px rgba(255,255,255,0.5); position:absolute; cursor:grab; z-index:2; }
         .joystick-stick:active { cursor:grabbing; }
         .joystick-axes { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
         .joystick-axes::before,.joystick-axes::after { content:''; position:absolute; background:rgba(255,255,255,0.04); }
@@ -502,45 +396,19 @@
         .keyboard-panel { flex:1; display:flex; flex-direction:column; padding:6px 5px 5px; gap:0; background:#050505; border-color:#1a1a1a; position:relative; overflow:hidden; }
         .keyboard-label { display:flex; justify-content:space-between; align-items:center; padding:0 4px 4px; flex-shrink:0; }
         .keyboard { flex:1; display:flex; align-items:flex-start; position:relative; overflow:hidden; }
-        .key {
-            flex:1; height:100%;
-            background:linear-gradient(180deg,#f2f2f2 0%,#dedede 80%,#c8c8c8 100%);
-            border:1px solid #888; border-top:none; border-radius:0 0 5px 5px;
-            margin:0 1px; cursor:pointer; position:relative; z-index:1;
-            box-shadow:0 5px 6px rgba(0,0,0,0.4),inset 0 -2px 0 rgba(0,0,0,0.08);
-            transition:background 0.04s,transform 0.04s; min-width:18px;
-        }
+        .key { flex:1; height:100%; background:linear-gradient(180deg,#f2f2f2 0%,#dedede 80%,#c8c8c8 100%); border:1px solid #888; border-top:none; border-radius:0 0 5px 5px; margin:0 1px; cursor:pointer; position:relative; z-index:1; box-shadow:0 5px 6px rgba(0,0,0,0.4),inset 0 -2px 0 rgba(0,0,0,0.08); transition:background 0.04s,transform 0.04s; min-width:18px; }
         .key::after { content:''; position:absolute; bottom:14px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:rgba(0,0,0,0.08); }
-        .key.black {
-            flex:0 0 16px; height:60%;
-            background:linear-gradient(180deg,#3a3a3a 0%,#161616 75%,#080808 100%);
-            margin:0 -8px; z-index:2;
-            border:1px solid #000; border-bottom:3px solid #1e1e1e; border-top:none;
-            box-shadow:0 8px 10px rgba(0,0,0,0.75),inset 0 1px 1px rgba(255,255,255,0.15);
-        }
+        .key.black { flex:0 0 16px; height:60%; background:linear-gradient(180deg,#3a3a3a 0%,#161616 75%,#080808 100%); margin:0 -8px; z-index:2; border:1px solid #000; border-bottom:3px solid #1e1e1e; border-top:none; box-shadow:0 8px 10px rgba(0,0,0,0.75),inset 0 1px 1px rgba(255,255,255,0.15); }
         .key.black::after { display:none; }
         .key.playing { background:linear-gradient(180deg,#ffe57a 0%,#ffca28 85%,#ffaa00 100%); transform:translateY(2px); box-shadow:0 3px 4px rgba(0,0,0,0.35),0 0 12px rgba(255,180,0,0.35); }
         .key.black.playing { background:linear-gradient(180deg,#cc8800 0%,#885500 100%); transform:translateY(1px); }
-        .octave-panel {
-            width:88px; flex-shrink:0;
-            display:flex; flex-direction:column;
-            align-items:center; justify-content:center;
-            gap:10px; padding:10px 8px;
-        }
+        .octave-panel { width:88px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:10px 8px; }
         .lcd { background:#030a03; border:2px solid #131913; border-radius:4px; padding:5px 14px; color:var(--green); font-family:'Courier New',monospace; font-size:28px; font-weight:bold; box-shadow:inset 0 0 14px rgba(51,255,51,0.12),0 1px 1px rgba(255,255,255,0.05); text-shadow:0 0 10px var(--green); min-width:60px; text-align:center; }
         .pitch-hold-wrap { width:100%; display:flex; justify-content:center; margin-top:2px; }
-        .pitch-hold-btn {
-            width:64px; height:32px;
-            background:linear-gradient(180deg,#aa1111 0%,#660000 100%);
-            border:1px solid #330000; border-top:1px solid #cc3333;
-            border-radius:0 0 40px 40px;
-            cursor:pointer; display:flex; align-items:center; justify-content:center;
-            box-shadow:0 4px 10px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,100,100,0.25),inset 0 -2px 6px rgba(0,0,0,0.5);
-            transition:all 0.08s; position:relative; overflow:hidden;
-        }
+        .pitch-hold-btn { width:64px; height:32px; background:linear-gradient(180deg,#aa1111 0%,#660000 100%); border:1px solid #330000; border-top:1px solid #cc3333; border-radius:0 0 40px 40px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,100,100,0.25),inset 0 -2px 6px rgba(0,0,0,0.5); transition:all 0.08s; position:relative; overflow:hidden; }
         .pitch-hold-btn::before { content:''; position:absolute; top:0; left:10%; width:80%; height:1px; background:rgba(255,180,180,0.3); border-radius:0 0 50% 50%; }
         .pitch-hold-btn:hover { background:linear-gradient(180deg,#cc1515 0%,#880000 100%); border-top-color:#ee4444; }
-        .pitch-hold-btn:active { transform:translateY(2px); box-shadow:0 1px 4px rgba(0,0,0,0.7),inset 0 2px 6px rgba(0,0,0,0.6); }
+        .pitch-hold-btn:active { transform:translateY(2px); }
         .pitch-hold-btn.active { background:linear-gradient(180deg,#ff3333 0%,#aa0000 100%); border-color:#ff0000; border-top-color:#ff6666; box-shadow:0 0 14px rgba(255,40,40,0.65),0 4px 10px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,150,150,0.4); }
         .pitch-hold-label { color:rgba(255,220,220,0.7); font-family:'Helvetica Neue',Arial,sans-serif; font-size:7px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; text-shadow:0 1px 2px rgba(0,0,0,0.8); margin-top:4px; }
         .pitch-hold-btn.active .pitch-hold-label { color:#fff; text-shadow:0 0 6px rgba(255,100,100,0.8); }
@@ -555,172 +423,56 @@
         .midi-device-name.connected { color:#5577ee; }
 
         /* ══ HELP MODAL ══ */
-        .help-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.82);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.2s;
-        }
-        .help-overlay.open { opacity: 1; pointer-events: all; }
-
-        .help-modal {
-            width: 820px; max-height: 88vh;
-            background: linear-gradient(170deg, #2a2c2e 0%, #1a1c1c 60%, #141616 100%);
-            border: 1px solid #111;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            border-radius: 12px;
-            box-shadow:
-                0 40px 80px rgba(0,0,0,0.95),
-                inset 0 1px 0 rgba(255,255,255,0.06);
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            transform: translateY(12px) scale(0.98);
-            transition: transform 0.2s;
-        }
-        .help-overlay.open .help-modal { transform: translateY(0) scale(1); }
-
-        .help-modal-header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 20px 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(0,0,0,0.2);
-            flex-shrink: 0;
-        }
-        .help-modal-title {
-            color: var(--gold);
-            font-size: 13px; font-weight: 700;
-            letter-spacing: 4px; text-transform: uppercase;
-            text-shadow: 0 1px 4px #000;
-        }
-        .help-close-btn {
-            background: #1a1a1a; border: 1px solid #333; border-top-color: #555;
-            border-radius: 4px; color: #888;
-            font-size: 12px; font-weight: 700;
-            width: 26px; height: 24px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: color 0.1s, background 0.1s;
-        }
-        .help-close-btn:hover { color: #fff; background: #2a2a2a; }
-
-        /* Tabs */
-        .help-tabs {
-            display: flex; gap: 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            background: rgba(0,0,0,0.15);
-            flex-shrink: 0;
-            padding: 0 16px;
-        }
-        .help-tab {
-            background: none; border: none;
-            border-bottom: 2px solid transparent;
-            color: #555; font-size: 8px; font-weight: 700;
-            letter-spacing: 1.5px; text-transform: uppercase;
-            padding: 8px 14px; cursor: pointer;
-            transition: color 0.12s, border-color 0.12s;
-        }
-        .help-tab:hover { color: #888; }
-        .help-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
-        /* Content */
-        .help-content {
-            flex: 1; overflow-y: auto; padding: 18px 22px;
-            scrollbar-width: thin; scrollbar-color: #333 transparent;
-        }
-        .help-content::-webkit-scrollbar { width: 5px; }
-        .help-content::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-
-        .help-panel { display: none; }
-        .help-panel.active { display: block; }
-
-        .help-section { margin-bottom: 20px; }
-        .help-section-title {
-            color: var(--gold);
-            font-size: 9px; font-weight: 700;
-            letter-spacing: 2.5px; text-transform: uppercase;
-            margin-bottom: 8px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid rgba(212,181,129,0.15);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .help-section-title .tag {
-            background: rgba(212,181,129,0.1);
-            border: 1px solid rgba(212,181,129,0.2);
-            border-radius: 3px; padding: 1px 6px;
-            font-size: 7px; color: #b09060;
-        }
-        .help-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 16px;
-        }
-        .help-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
-        .help-item {
-            display: flex; flex-direction: column; gap: 2px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 4px;
-            padding: 7px 10px;
-        }
-        .help-item-label {
-            color: var(--orange);
-            font-size: 8px; font-weight: 700;
-            letter-spacing: 1px; text-transform: uppercase;
-        }
-        .help-item-label.bass { color: var(--bass-color); }
-        .help-item-label.green { color: #44cc66; }
-        .help-item-label.blue  { color: #4488ff; }
-        .help-item-desc {
-            color: #7a7a7a;
-            font-size: 8px; line-height: 1.6;
-            font-family: 'Courier New', monospace;
-        }
-        .help-tip {
-            background: rgba(212,181,129,0.05);
-            border-left: 2px solid rgba(212,181,129,0.3);
-            border-radius: 0 4px 4px 0;
-            padding: 7px 12px;
-            margin-top: 8px;
-            color: #6a6050;
-            font-size: 7.5px;
-            font-family: 'Courier New', monospace;
-            line-height: 1.6;
-        }
-        .help-tip strong { color: #a09050; }
-        .help-key {
-            display: inline-block;
-            background: #1a1a1a; border: 1px solid #333; border-bottom: 2px solid #111;
-            border-radius: 3px; padding: 1px 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 7.5px; color: #888;
-        }
-        .bass-engine-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-        }
-        .bass-engine-card {
-            background: rgba(170,68,255,0.06);
-            border: 1px solid rgba(170,68,255,0.15);
-            border-radius: 4px; padding: 8px 10px;
-        }
-        .bass-engine-card .name { color: var(--bass-color); font-size: 8px; font-weight: 700; letter-spacing: 1px; margin-bottom:4px; }
-        .bass-engine-card .desc { color: #666; font-size: 7.5px; font-family:'Courier New',monospace; line-height:1.5; }
+        .help-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.82); backdrop-filter:blur(4px); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.2s; }
+        .help-overlay.open { opacity:1; pointer-events:all; }
+        .help-modal { width:820px; max-height:88vh; background:linear-gradient(170deg,#2a2c2e 0%,#1a1c1c 60%,#141616 100%); border:1px solid #111; border-top:1px solid rgba(255,255,255,0.08); border-radius:12px; box-shadow:0 40px 80px rgba(0,0,0,0.95),inset 0 1px 0 rgba(255,255,255,0.06); overflow:hidden; display:flex; flex-direction:column; transform:translateY(12px) scale(0.98); transition:transform 0.2s; }
+        .help-overlay.open .help-modal { transform:translateY(0) scale(1); }
+        .help-modal-header { display:flex; align-items:center; justify-content:space-between; padding:14px 20px 12px; border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(0,0,0,0.2); flex-shrink:0; }
+        .help-modal-title { color:var(--gold); font-size:13px; font-weight:700; letter-spacing:4px; text-transform:uppercase; text-shadow:0 1px 4px #000; }
+        .help-close-btn { background:#1a1a1a; border:1px solid #333; border-top-color:#555; border-radius:4px; color:#888; font-size:12px; font-weight:700; width:26px; height:24px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:color 0.1s,background 0.1s; }
+        .help-close-btn:hover { color:#fff; background:#2a2a2a; }
+        .help-tabs { display:flex; gap:0; border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(0,0,0,0.15); flex-shrink:0; padding:0 16px; }
+        .help-tab { background:none; border:none; border-bottom:2px solid transparent; color:#555; font-size:8px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; cursor:pointer; transition:color 0.12s,border-color 0.12s; }
+        .help-tab:hover { color:#888; }
+        .help-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+        .help-content { flex:1; overflow-y:auto; padding:18px 22px; scrollbar-width:thin; scrollbar-color:#333 transparent; }
+        .help-content::-webkit-scrollbar { width:5px; }
+        .help-content::-webkit-scrollbar-thumb { background:#333; border-radius:3px; }
+        .help-panel { display:none; }
+        .help-panel.active { display:block; }
+        .help-section { margin-bottom:20px; }
+        .help-section-title { color:var(--gold); font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; margin-bottom:8px; padding-bottom:5px; border-bottom:1px solid rgba(212,181,129,0.15); display:flex; align-items:center; gap:8px; }
+        .help-section-title .tag { background:rgba(212,181,129,0.1); border:1px solid rgba(212,181,129,0.2); border-radius:3px; padding:1px 6px; font-size:7px; color:#b09060; }
+        .help-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 16px; }
+        .help-grid.cols3 { grid-template-columns:1fr 1fr 1fr; }
+        .help-item { display:flex; flex-direction:column; gap:2px; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.04); border-radius:4px; padding:7px 10px; }
+        .help-item-label { color:var(--orange); font-size:8px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+        .help-item-label.bass { color:var(--bass-color); }
+        .help-item-label.green { color:#44cc66; }
+        .help-item-label.blue  { color:#4488ff; }
+        .help-item-label.clap  { color:var(--clap-color); }
+        .help-item-desc { color:#7a7a7a; font-size:8px; line-height:1.6; font-family:'Courier New',monospace; }
+        .help-tip { background:rgba(212,181,129,0.05); border-left:2px solid rgba(212,181,129,0.3); border-radius:0 4px 4px 0; padding:7px 12px; margin-top:8px; color:#6a6050; font-size:7.5px; font-family:'Courier New',monospace; line-height:1.6; }
+        .help-tip strong { color:#a09050; }
+        .bass-engine-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+        .bass-engine-card { background:rgba(170,68,255,0.06); border:1px solid rgba(170,68,255,0.15); border-radius:4px; padding:8px 10px; }
+        .bass-engine-card .name { color:var(--bass-color); font-size:8px; font-weight:700; letter-spacing:1px; margin-bottom:4px; }
+        .bass-engine-card .desc { color:#666; font-size:7.5px; font-family:'Courier New',monospace; line-height:1.5; }
     </style>
 </head>
 <body>
+<input type="file" id="midiFileInput" accept=".mid,.midi">
 <div class="chassis">
 
     <!-- ROW 1 — HEADER / TRANSPORT -->
     <div class="row-header">
         <div class="header-left">
             <div class="header-title-row">
-                <span class="title-text">DPAUL MKV</span>
+                <span class="title-text">DPAUL MKIV</span>
                 <div class="badge lit" id="engineBadge">SUPERSAW</div>
                 <div class="badge bass-lit" id="bassBadge">SUB BASS</div>
                 <div class="badge" id="statusBadge">READY</div>
+                <div class="badge" id="recordBadge" style="color:#ff4444;border-color:#440000;">● REC</div>
                 <div class="led-cluster">
                     <div class="led-item">
                         <div class="led-power on" id="ledPower"></div>
@@ -754,25 +506,51 @@
             </div>
         </div>
         <div class="header-right">
-            <span class="lbl">ENGINE</span>
-            <button class="btn btn-sm active" id="eng-supersaw" onclick="setEngine('supersaw')">SuperSaw</button>
-            <button class="btn btn-sm"        id="eng-moog"     onclick="setEngine('moog')">Moog Bass</button>
-            <button class="btn btn-sm"        id="eng-fm"       onclick="setEngine('fm')">FM Lead</button>
+            <!-- Engine select -->
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+                <div style="display:flex;gap:4px;">
+                    <span class="lbl" style="align-self:center;">ENGINE</span>
+                    <button class="btn btn-sm active" id="eng-supersaw" onclick="setEngine('supersaw')">SuperSaw</button>
+                    <button class="btn btn-sm"        id="eng-moog"     onclick="setEngine('moog')">Moog Bass</button>
+                    <button class="btn btn-sm"        id="eng-fm"       onclick="setEngine('fm')">FM Lead</button>
+                </div>
+                <!-- IO Toolbar -->
+                <div class="io-toolbar">
+                    <span class="io-toolbar-title">I/O</span>
+                    <div class="sep" style="height:14px;align-self:center;"></div>
+                    <button class="btn btn-xs export-btn" id="recBtn" onclick="startRecording()" title="Record audio to WAV">⏺ REC</button>
+                    <button class="btn btn-xs export-btn" id="stopRecBtn" onclick="stopRecording()" title="Stop recording & download" style="display:none;">⏹ SAVE WAV</button>
+                    <div class="progress-bar-wrap" id="recProgress"><div class="progress-bar-fill" id="recProgressFill"></div></div>
+                    <div class="sep" style="height:14px;align-self:center;"></div>
+                    <button class="btn btn-xs danger-btn" onclick="clearAllSequencers()" title="Clear all sequencer steps">✕ CLR ALL</button>
+                    <div class="sep" style="height:14px;align-self:center;"></div>
+                    <button class="btn btn-xs midi-btn" onclick="exportMIDI()" title="Export pattern as MIDI file">↑ MIDI</button>
+                    <button class="btn btn-xs midi-btn" onclick="document.getElementById('midiFileInput').click()" title="Import MIDI file to sequencer">↓ MIDI</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- ROW 2 — SEQUENCER + SCOPE + MIXER -->
     <div class="row-seq">
         <div class="inset seq-panel">
-            <div class="seq-labels">
-                <span class="lbl">Kick</span>
-                <span class="lbl">Snare</span>
-                <span class="lbl">Hat</span>
-                <span class="lbl">Tom</span>
-                <span class="lbl">Rim</span>
-                <span class="lbl" style="color:#3a994a;">Synth</span>
+            <div class="seq-panel-header">
+                <span class="lbl lbl-gold" style="font-size:7px;letter-spacing:2px;">◈ DRUM SEQ</span>
+                <div class="sep" style="height:12px;align-self:center;"></div>
+                <button class="btn btn-xs danger-btn" onclick="clearDrumSeq()" title="Clear drum sequencer">✕ CLR DRUMS</button>
             </div>
-            <div class="seq-grid" id="seqGrid"></div>
+            <div class="seq-body">
+                <div class="seq-labels">
+                    <span class="lbl">Kick</span>
+                    <span class="lbl">Snare</span>
+                    <span class="lbl" style="color:var(--clap-color);">Clap</span>
+                    <span class="lbl">Hat</span>
+                    <span class="lbl">Tom</span>
+                    <span class="lbl">Rim</span>
+                    <span class="lbl" style="color:#3a994a;">Synth</span>
+                </div>
+                <div class="seq-grid" id="seqGrid"></div>
+            </div>
         </div>
         <div class="inset scope-panel">
             <div class="scope-info">
@@ -793,6 +571,10 @@
                 <span class="lbl" style="font-size:7px;">SD</span>
             </div>
             <div class="knob-wrap">
+                <div class="knob knob-sm" id="clapVol"></div>
+                <span class="lbl" style="font-size:7px;color:var(--clap-color);">CP</span>
+            </div>
+            <div class="knob-wrap">
                 <div class="knob knob-sm" id="hatVol"></div>
                 <span class="lbl" style="font-size:7px;">CH</span>
             </div>
@@ -801,8 +583,6 @@
 
     <!-- ══ BASS ROW ══ -->
     <div class="row-bass">
-
-        <!-- Bass Sequencer -->
         <div class="inset bass-seq-panel">
             <div class="bass-seq-header">
                 <span class="lbl lbl-bass" style="font-size:8px;letter-spacing:2px;">◈ BASS SEQ</span>
@@ -825,14 +605,10 @@
                 </div>
             </div>
             <div class="bass-grid-wrap">
-                <!-- Steps toggle row -->
                 <div class="bass-note-row" id="bassStepRow" style="margin-bottom:2px;"></div>
-                <!-- Pitch select row -->
                 <div class="bass-note-row" id="bassPitchRow"></div>
             </div>
         </div>
-
-        <!-- Bass Engine -->
         <div class="inset bass-engine-panel">
             <div class="bass-engine-header">
                 <span class="lbl lbl-bass" style="font-size:8px;letter-spacing:2px;">◈ BASS ENGINE</span>
@@ -868,30 +644,26 @@
                 </div>
             </div>
         </div>
-
-        <!-- AI Bass Panel -->
         <div class="inset bass-ai-panel">
             <div class="bass-ai-header">
                 <span class="lbl lbl-bass" style="font-size:8px;letter-spacing:2px;">◈ AI BASS GEN</span>
                 <div class="ai-badge">CLAUDE</div>
             </div>
-            <!-- API Key -->
             <div class="api-key-wrap">
                 <input class="api-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." value="">
                 <button class="api-key-save-btn" onclick="saveApiKey()">SAVE</button>
             </div>
             <div class="ai-prompt-wrap">
-                <textarea class="ai-prompt" id="aiPrompt" placeholder="Describe a bass line… e.g. 'funky slap groove in C, 8 steps, syncopated'"></textarea>
+                <textarea class="ai-prompt" id="aiPrompt" placeholder="Describe a bass line…"></textarea>
                 <button class="ai-gen-btn" id="aiGenBtn" onclick="generateBassWithAI()">⚡ GENERATE BASS LINE</button>
             </div>
             <div class="ai-status" id="aiStatus">AWAITING INPUT</div>
         </div>
-
     </div>
 
     <!-- ROW 3 — SIGNAL SHAPING -->
     <div class="row-controls">
-        <div class="inset ctrl-section" style="flex:0 0 auto; min-width:0; padding:7px 10px;">
+        <div class="inset ctrl-section" style="flex:0 0 auto;min-width:0;padding:7px 10px;">
             <div class="ctrl-section-title" style="margin-bottom:0;">
                 <span class="lbl lbl-gold">Filter Bank</span>
                 <span class="lbl" id="filterTypeLabel" style="color:var(--orange);font-family:'Courier New',monospace;font-size:7px;margin-left:4px;">LOW PASS</span>
@@ -905,7 +677,7 @@
                 <button class="fbtn blue"   id="fm-ls"   onclick="setFilterMode('lowshelf')">LO SH</button>
                 <button class="fbtn blue"   id="fm-hs"   onclick="setFilterMode('highshelf')">HI SH</button>
             </div>
-            <div class="knob-row" style="gap:8px; margin-top:6px;">
+            <div class="knob-row" style="gap:8px;margin-top:6px;">
                 <div class="knob-wrap">
                     <div class="knob-readout" style="width:54px;font-size:7px;" id="cutoffVal">4000 Hz</div>
                     <div class="knob knob-sm" id="cutoffKnob"></div>
@@ -928,16 +700,16 @@
                 </div>
             </div>
         </div>
-        <div class="inset ctrl-section" style="flex:0 0 auto; min-width:0; padding:7px 10px;">
+        <div class="inset ctrl-section" style="flex:0 0 auto;min-width:0;padding:7px 10px;">
             <div class="ctrl-section-title" style="margin-bottom:0;"><span class="lbl lbl-gold">Filter Mod</span></div>
-            <div style="display:flex; gap:7px; align-items:center; margin-top:5px;">
+            <div style="display:flex;gap:7px;align-items:center;margin-top:5px;">
                 <div class="lfo-shape-btns" style="gap:2px;">
                     <button class="fbtn active" id="lfo-sin" onclick="setLFOShape('sine')"     title="Sine">∿</button>
                     <button class="fbtn"        id="lfo-sq"  onclick="setLFOShape('square')"   title="Square">⊓</button>
                     <button class="fbtn"        id="lfo-tri" onclick="setLFOShape('triangle')" title="Triangle">△</button>
                     <button class="fbtn"        id="lfo-saw" onclick="setLFOShape('sawtooth')" title="Saw">/|</button>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px 8px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 8px;">
                     <div class="knob-wrap">
                         <div class="knob-readout" style="width:52px;font-size:7px;" id="lfoRateVal">0.5 Hz</div>
                         <div class="knob knob-sm" id="lfoRateKnob"></div>
@@ -1049,11 +821,11 @@
 
 </div>
 
-<!-- ══ HELP MODAL ══ -->
+<!-- HELP MODAL -->
 <div class="help-overlay" id="helpOverlay" onclick="closeHelpOnBg(event)">
     <div class="help-modal">
         <div class="help-modal-header">
-            <span class="help-modal-title">DPAUL MKV — OPERATING MANUAL</span>
+            <span class="help-modal-title">DPAUL MKIV — OPERATING MANUAL</span>
             <button class="help-close-btn" onclick="closeHelp()">✕</button>
         </div>
         <div class="help-tabs">
@@ -1063,211 +835,127 @@
             <button class="help-tab" onclick="switchTab('tab-bass')">BASS</button>
             <button class="help-tab" onclick="switchTab('tab-ai')">AI GENERATOR</button>
             <button class="help-tab" onclick="switchTab('tab-fx')">FX &amp; FILTER</button>
-            <button class="help-tab" onclick="switchTab('tab-midi')">MIDI</button>
+            <button class="help-tab" onclick="switchTab('tab-io')">EXPORT / MIDI</button>
         </div>
         <div class="help-content">
-
-            <!-- QUICK START -->
             <div class="help-panel active" id="tab-start">
                 <div class="help-section">
                     <div class="help-section-title">Getting Sound in 30 Seconds</div>
                     <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label">1 — Press Play</span><span class="help-item-desc">Hit ▶ PLAY / STOP. The drum sequencer fires immediately. Orange lit cells = active steps.</span></div>
-                        <div class="help-item"><span class="help-item-label">2 — Play a note</span><span class="help-item-desc">Click or touch any white/black key on the keyboard at the bottom. You'll hear the lead synth.</span></div>
-                        <div class="help-item"><span class="help-item-label">3 — Program bass</span><span class="help-item-desc">Click purple cells in the BASS SEQ row to toggle steps on/off. Use the dropdowns to pick the note for each step.</span></div>
-                        <div class="help-item"><span class="help-item-label">4 — Change BPM</span><span class="help-item-desc">Drag the BPM slider next to the tempo readout. Range is 40–220. The echo delay tracks BPM automatically.</span></div>
-                    </div>
-                    <div class="help-tip"><strong>TIP:</strong> The synth only fires from the keyboard while stopped. While playing, the SYNTH row in the sequencer (green row, bottom of drum grid) triggers notes from your held keys as an arpeggiator. Hold a chord and press ARP HOLD to lock it.</div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">Layout Overview</div>
-                    <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label">Row 1 — Transport</span><span class="help-item-desc">Play/Stop, BPM, step length (8 or 16), ARP Hold, Engine select.</span></div>
-                        <div class="help-item"><span class="help-item-label">Row 2 — Drum Seq + Scope</span><span class="help-item-desc">6-row step sequencer (Kick/Snare/Hat/Tom/Rim/Synth), oscilloscope, drum mixer.</span></div>
-                        <div class="help-item"><span class="help-item-label">Row 3 — Bass Row</span><span class="help-item-desc">Bass step sequencer with note pickers, 6 synth engines, AI generator.</span></div>
-                        <div class="help-item"><span class="help-item-label">Row 4 — Signal Chain</span><span class="help-item-desc">Filter Bank, Filter Mod (LFO + Env), Envelope, Colour (Drive/Detune), Effects.</span></div>
-                        <div class="help-item"><span class="help-item-label">Row 5 — Piano</span><span class="help-item-desc">Pitch/Filter joystick, 37-key keyboard (C2–C5), Octave control.</span></div>
+                        <div class="help-item"><span class="help-item-label">1 — Press Play</span><span class="help-item-desc">Hit ▶ PLAY / STOP. The drum sequencer fires immediately.</span></div>
+                        <div class="help-item"><span class="help-item-label">2 — Play a note</span><span class="help-item-desc">Click any key on the keyboard to trigger the lead synth.</span></div>
+                        <div class="help-item"><span class="help-item-label">3 — Program bass</span><span class="help-item-desc">Click purple cells in BASS SEQ to toggle steps, pick notes with dropdowns.</span></div>
+                        <div class="help-item"><span class="help-item-label">4 — Export</span><span class="help-item-desc">Hit ⏺ REC, play your pattern, then ⏹ SAVE WAV to download audio. Use ↑ MIDI to export pattern as MIDI.</span></div>
                     </div>
                 </div>
             </div>
-
-            <!-- DRUMS -->
             <div class="help-panel" id="tab-drums">
                 <div class="help-section">
-                    <div class="help-section-title">Drum Sequencer</div>
+                    <div class="help-section-title">Drum Sequencer — 7 Rows</div>
                     <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label">Kick (BD)</span><span class="help-item-desc">808-style sine sweep with transient click. Classic four-on-the-floor or half-time.</span></div>
+                        <div class="help-item"><span class="help-item-label">Kick (BD)</span><span class="help-item-desc">808 sine sweep with transient click. Classic four-on-the-floor or half-time.</span></div>
                         <div class="help-item"><span class="help-item-label">Snare (SD)</span><span class="help-item-desc">Tone + noise blend. Sits on beats 2 and 4 in the default pattern.</span></div>
-                        <div class="help-item"><span class="help-item-label">Hat (CH)</span><span class="help-item-desc">Square wave cluster simulating a closed hi-hat. All 8 steps lit = 8th-note grid.</span></div>
-                        <div class="help-item"><span class="help-item-label">Tom</span><span class="help-item-desc">Short pitched sine with pitch drop. Use for accent toms or rolling fills.</span></div>
-                        <div class="help-item"><span class="help-item-label">Rim</span><span class="help-item-desc">High-pitched short click. Use for rimshots or cross-stick accents.</span></div>
-                        <div class="help-item"><span class="help-item-label green">Synth Row</span><span class="help-item-desc">Triggers the lead synth engine using notes in the arpeggiator memory. Combine with ARP HOLD for melodic sequences.</span></div>
+                        <div class="help-item"><span class="help-item-label clap">Clap (CP)</span><span class="help-item-desc">Layered noise bursts with short reverb tail — classic electronic clap. Pink step colour. CP knob in mixer.</span></div>
+                        <div class="help-item"><span class="help-item-label">Hat (CH)</span><span class="help-item-desc">Square wave cluster. All steps lit = 8th-note grid.</span></div>
+                        <div class="help-item"><span class="help-item-label">Tom</span><span class="help-item-desc">Short pitched sine with pitch drop.</span></div>
+                        <div class="help-item"><span class="help-item-label">Rim</span><span class="help-item-desc">High-pitched short click for rimshots.</span></div>
+                        <div class="help-item"><span class="help-item-label green">Synth Row</span><span class="help-item-desc">Triggers lead synth using arp memory. Combine with ARP HOLD for melodic sequences.</span></div>
                     </div>
-                    <div class="help-tip"><strong>STEPS:</strong> Switch between 8 and 16 steps using the STEPS buttons. The grid expands and tempo resolution doubles (each step = 1/16th note at 16, 1/8th at 8). All rows — including Bass — sync to the same step length.</div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">Drum Mixer <span class="tag">RIGHT PANEL</span></div>
-                    <div class="help-grid cols3">
-                        <div class="help-item"><span class="help-item-label">BD Knob</span><span class="help-item-desc">Kick drum volume. Drag up to boost low-end punch.</span></div>
-                        <div class="help-item"><span class="help-item-label">SD Knob</span><span class="help-item-desc">Snare volume. Back it off for a subtle ghost snare feel.</span></div>
-                        <div class="help-item"><span class="help-item-label">CH Knob</span><span class="help-item-desc">Hi-hat volume. Reduce for more headroom in the mix.</span></div>
-                    </div>
-                    <div class="help-tip"><strong>HOW TO USE KNOBS:</strong> Click and drag <strong>up</strong> to increase, <strong>down</strong> to decrease. All knobs throughout the synth work this way.</div>
+                    <div class="help-tip"><strong>CLR DRUMS</strong> button clears only the drum rows. <strong>CLR ALL</strong> clears drums + bass sequencer simultaneously.</div>
                 </div>
             </div>
-
-            <!-- SYNTH & KEYS -->
             <div class="help-panel" id="tab-synth">
                 <div class="help-section">
-                    <div class="help-section-title">Lead Synth Engines <span class="tag">TOP RIGHT</span></div>
+                    <div class="help-section-title">Lead Synth Engines</div>
                     <div class="help-grid cols3">
-                        <div class="help-item"><span class="help-item-label">SuperSaw</span><span class="help-item-desc">7 detuned sawtooth oscillators. Wide, lush, classic trance/house lead. Use Detune knob to widen further.</span></div>
-                        <div class="help-item"><span class="help-item-label">Moog Bass</span><span class="help-item-desc">Two saws + sub square. Fat analogue bass/lead. Great with filter cranked and high resonance.</span></div>
-                        <div class="help-item"><span class="help-item-label">FM Lead</span><span class="help-item-desc">FM synthesis — carrier + modulator. Metallic, bell-like, DX7 flavour. Detune affects mod ratio.</span></div>
-                    </div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">Keyboard &amp; Arpeggiator</div>
-                    <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label">Keys (C2–C5)</span><span class="help-item-desc">Click or slide across keys to play. Multi-touch supported on touchscreen. Note name shown top-right of keyboard panel.</span></div>
-                        <div class="help-item"><span class="help-item-label">ARP HOLD</span><span class="help-item-desc">Locks held notes into the arp memory. Add more notes by pressing more keys. Toggle off to clear.</span></div>
-                        <div class="help-item"><span class="help-item-label">Octave ▲▼</span><span class="help-item-desc">Shifts the keyboard ±2 octaves. Green LCD shows current offset.</span></div>
-                        <div class="help-item"><span class="help-item-label">Synth Seq Row</span><span class="help-item-desc">While playing, lit green steps trigger arp notes in order. Great for 16-step melodic sequences.</span></div>
-                    </div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">Pitch / Filter Joystick</div>
-                    <div class="help-grid cols3">
-                        <div class="help-item"><span class="help-item-label">X Axis</span><span class="help-item-desc">Push left/right for ±2 semitones pitch bend. Springs back to centre on release.</span></div>
-                        <div class="help-item"><span class="help-item-label">Y Axis</span><span class="help-item-desc">Push up to open the filter, pull down to close. Real-time control of filter cutoff.</span></div>
-                        <div class="help-item"><span class="help-item-label">HOLD Button</span><span class="help-item-desc">Red dome below joystick. Freezes the current pitch bend position rather than snapping to centre.</span></div>
+                        <div class="help-item"><span class="help-item-label">SuperSaw</span><span class="help-item-desc">7 detuned sawtooth oscillators. Wide, lush trance/house lead.</span></div>
+                        <div class="help-item"><span class="help-item-label">Moog Bass</span><span class="help-item-desc">Two saws + sub square. Fat analogue bass/lead.</span></div>
+                        <div class="help-item"><span class="help-item-label">FM Lead</span><span class="help-item-desc">FM carrier + modulator. Metallic, DX7 flavour.</span></div>
                     </div>
                 </div>
             </div>
-
-            <!-- BASS -->
             <div class="help-panel" id="tab-bass">
                 <div class="help-section">
-                    <div class="help-section-title">Bass Sequencer <span class="tag">PURPLE ROW</span></div>
+                    <div class="help-section-title">Bass Sequencer</div>
                     <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label bass">Step Buttons</span><span class="help-item-desc">Top row of purple cells. Click to toggle a step on (lit) or off. Steps align with the drum grid.</span></div>
-                        <div class="help-item"><span class="help-item-label bass">Note Pickers</span><span class="help-item-desc">Dropdown under each step. Choose the note (C through B) for that step. Octave is set by the OCT control.</span></div>
-                        <div class="help-item"><span class="help-item-label bass">OCT Selector</span><span class="help-item-desc">Sets the base octave for all bass notes. −1 for deep sub territory, +1/+2 for higher lines.</span></div>
-                        <div class="help-item"><span class="help-item-label bass">VOL Knob</span><span class="help-item-desc">Master output level of the bass channel. Drag up to push it into the mix.</span></div>
-                        <div class="help-item"><span class="help-item-label">CLR</span><span class="help-item-desc">Clears all active steps in the bass sequencer instantly.</span></div>
-                        <div class="help-item"><span class="help-item-label">RND</span><span class="help-item-desc">Randomises step on/off and note assignments using a pentatonic-friendly note set.</span></div>
+                        <div class="help-item"><span class="help-item-label bass">Step Buttons</span><span class="help-item-desc">Purple cells. Click to toggle on/off.</span></div>
+                        <div class="help-item"><span class="help-item-label bass">Note Pickers</span><span class="help-item-desc">Dropdown under each step to choose pitch.</span></div>
+                        <div class="help-item"><span class="help-item-label">CLR</span><span class="help-item-desc">Clears all bass steps instantly.</span></div>
+                        <div class="help-item"><span class="help-item-label">RND</span><span class="help-item-desc">Randomises steps and notes using pentatonic set.</span></div>
                     </div>
                 </div>
                 <div class="help-section">
                     <div class="help-section-title">Bass Engines</div>
                     <div class="bass-engine-grid">
-                        <div class="bass-engine-card"><div class="name">SUB BASS</div><div class="desc">Pure sine + octave harmonic. Deep, clean, subwoofer-testing territory. Great for techno and minimal.</div></div>
-                        <div class="bass-engine-card"><div class="name">ACID 303</div><div class="desc">Sawtooth with resonant filter envelope sweep. The classic Roland TB-303 acid sound. Wind up Reso.</div></div>
-                        <div class="bass-engine-card"><div class="name">SLAP BASS</div><div class="desc">Percussive pitch attack + sustain tail. Funk and disco slap tones. Short Dec = tight click.</div></div>
-                        <div class="bass-engine-card"><div class="name">RUBBER</div><div class="desc">Pitch drops from 3× down to the target note. Bouncy, cartoon-rubber feel. Great for hip-hop.</div></div>
-                        <div class="bass-engine-card"><div class="name">REESE</div><div class="desc">Three detuned sawtooth oscillators. The classic D&amp;B Reese bass. Add Drive for extra grit.</div></div>
-                        <div class="bass-engine-card"><div class="name">CLICK BASS</div><div class="desc">Noise transient + short sine. Ultra-punchy click ideal for house or garage. Tight and defined.</div></div>
-                    </div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">Bass Engine Knobs</div>
-                    <div class="help-grid cols3">
-                        <div class="help-item"><span class="help-item-label bass">Cut</span><span class="help-item-desc">Bass filter cutoff. Lower = darker and thicker. The filter envelope opens from this point.</span></div>
-                        <div class="help-item"><span class="help-item-label bass">Reso</span><span class="help-item-desc">Filter resonance. High values give a squelchy, self-oscillating character — essential for acid.</span></div>
-                        <div class="help-item"><span class="help-item-label bass">Dec</span><span class="help-item-desc">Note decay time. Short = punchy staccato. Long = legato, sustained notes.</span></div>
-                        <div class="help-item"><span class="help-item-label bass">Drive</span><span class="help-item-desc">Soft-clip waveshaper distortion on the bass. Adds harmonic saturation and presence.</span></div>
+                        <div class="bass-engine-card"><div class="name">SUB BASS</div><div class="desc">Pure sine + octave harmonic.</div></div>
+                        <div class="bass-engine-card"><div class="name">ACID 303</div><div class="desc">Sawtooth with resonant filter sweep.</div></div>
+                        <div class="bass-engine-card"><div class="name">SLAP BASS</div><div class="desc">Percussive pitch attack + sustain.</div></div>
+                        <div class="bass-engine-card"><div class="name">RUBBER</div><div class="desc">Pitch drop from 3× to target note.</div></div>
+                        <div class="bass-engine-card"><div class="name">REESE</div><div class="desc">Three detuned sawtooths. D&amp;B classic.</div></div>
+                        <div class="bass-engine-card"><div class="name">CLICK BASS</div><div class="desc">Noise transient + short sine.</div></div>
                     </div>
                 </div>
             </div>
-
-            <!-- AI -->
             <div class="help-panel" id="tab-ai">
                 <div class="help-section">
                     <div class="help-section-title">AI Bass Generator <span class="tag">REQUIRES ANTHROPIC API KEY</span></div>
                     <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label blue">1 — Get API Key</span><span class="help-item-desc">Visit console.anthropic.com → API Keys → Create Key. It starts with sk-ant-api03-...</span></div>
-                        <div class="help-item"><span class="help-item-label blue">2 — Enter Key</span><span class="help-item-desc">Paste your key into the password field in the AI BASS GEN panel. Click SAVE — stored in browser localStorage.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">3 — Describe Your Bass</span><span class="help-item-desc">Type a plain-English description. Be specific about genre, key, feel, and rhythm.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">4 — Generate</span><span class="help-item-desc">Click ⚡ GENERATE or press Enter. Claude picks the engine and programs all steps and notes automatically.</span></div>
-                    </div>
-                    <div class="help-tip">
-                        <strong>EXAMPLE PROMPTS:</strong><br><br>
-                        "Deep techno sub in A minor, 8 steps, mostly on beats 1 and 3"<br>
-                        "Acid 303 line in F, 16 steps, lots of movement and syncopation"<br>
-                        "Funky slap bass in G, 8 steps, ghost notes on the off-beats"<br>
-                        "Minimal D&amp;B reese bass in C, 16 steps, sparse with space"<br>
-                        "Bouncy rubber bass in E♭, 8 steps, every beat"
-                    </div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">After Generating</div>
-                    <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label">Edit Freely</span><span class="help-item-desc">AI output is a starting point. Click any step to toggle it, or change any note dropdown. Nothing is locked.</span></div>
-                        <div class="help-item"><span class="help-item-label">Refine</span><span class="help-item-desc">Generate multiple times with the same or tweaked prompt. Each call is independent.</span></div>
-                        <div class="help-item"><span class="help-item-label">Engine Override</span><span class="help-item-desc">Claude picks an engine based on your description, but you can manually switch it afterwards.</span></div>
-                        <div class="help-item"><span class="help-item-label">Status Bar</span><span class="help-item-desc">Shows the engine chosen and a brief note from the model. Errors appear in red.</span></div>
+                        <div class="help-item"><span class="help-item-label blue">Get API Key</span><span class="help-item-desc">Visit console.anthropic.com → API Keys → Create Key (starts with sk-ant-...)</span></div>
+                        <div class="help-item"><span class="help-item-label blue">Enter Key</span><span class="help-item-desc">Paste your key into the password field and click SAVE — stored in browser localStorage.</span></div>
+                        <div class="help-item"><span class="help-item-label blue">Describe Bass</span><span class="help-item-desc">E.g. "acid 303 line in F minor, 16 steps, lots of movement"</span></div>
+                        <div class="help-item"><span class="help-item-label blue">Generate</span><span class="help-item-desc">Click ⚡ GENERATE. Claude chooses engine and programs all steps automatically.</span></div>
                     </div>
                 </div>
             </div>
-
-            <!-- FX & FILTER -->
             <div class="help-panel" id="tab-fx">
                 <div class="help-section">
-                    <div class="help-section-title">Filter Bank <span class="tag">LEAD SYNTH ONLY</span></div>
-                    <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label">LP / HP / BP / NOTCH</span><span class="help-item-desc">Standard biquad modes. LP = classic sweep. HP = thin, cutting. BP = mid-band focus. Notch = hollow scoop.</span></div>
-                        <div class="help-item"><span class="help-item-label">PEAK / LO SH / HI SH</span><span class="help-item-desc">EQ-style modes (blue buttons). Use the Gain knob with these. Peaking boosts/cuts a frequency band.</span></div>
-                        <div class="help-item"><span class="help-item-label">Cutoff</span><span class="help-item-desc">Filter frequency. The core timbral control — sweep this for classic synth filter sweeps.</span></div>
-                        <div class="help-item"><span class="help-item-label">Reso / BW</span><span class="help-item-desc">Resonance adds a peak at the cutoff. High values self-oscillate. In EQ modes, controls bandwidth.</span></div>
-                        <div class="help-item"><span class="help-item-label">Gain</span><span class="help-item-desc">Only active in PEAK/LO SH/HI SH modes. Sets boost or cut amount in dB.</span></div>
-                        <div class="help-item"><span class="help-item-label">HP Side</span><span class="help-item-desc">Always-on high-pass to remove sub rumble from the lead synth, independent of the main filter.</span></div>
-                    </div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">Filter Mod — LFO + Envelope</div>
-                    <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label">LFO Shape</span><span class="help-item-desc">∿ Sine (smooth), ⊓ Square (stepped), △ Triangle (linear), /| Sawtooth (ramp). Modulates filter cutoff.</span></div>
-                        <div class="help-item"><span class="help-item-label">LFO Rate</span><span class="help-item-desc">Speed of the LFO. 0.05Hz = very slow wah, 20Hz = audio-rate timbral shift.</span></div>
-                        <div class="help-item"><span class="help-item-label">LFO Depth</span><span class="help-item-desc">How much the LFO modulates cutoff in Hz. 0 = off. Wind up for auto-wah / wub effects.</span></div>
-                        <div class="help-item"><span class="help-item-label">Env Amt</span><span class="help-item-desc">Each note triggers a filter envelope that opens the filter by this amount, then decays.</span></div>
-                        <div class="help-item"><span class="help-item-label">Env Dec</span><span class="help-item-desc">How quickly the filter envelope closes after each note. Short = snappy, long = slow sweep.</span></div>
-                    </div>
-                </div>
-                <div class="help-section">
-                    <div class="help-section-title">Envelope / Colour / Effects</div>
+                    <div class="help-section-title">Filter / FX / Envelope</div>
                     <div class="help-grid cols3">
-                        <div class="help-item"><span class="help-item-label">Attack</span><span class="help-item-desc">Lead synth attack time. 1ms = instant, 1.5s = slow pad swell.</span></div>
-                        <div class="help-item"><span class="help-item-label">Release</span><span class="help-item-desc">How long notes ring out. Higher = more sustain and overlap between notes.</span></div>
-                        <div class="help-item"><span class="help-item-label">Drive</span><span class="help-item-desc">Soft-clip saturation on the lead synth. Adds warmth and harmonic dirt.</span></div>
-                        <div class="help-item"><span class="help-item-label">Detune</span><span class="help-item-desc">Spreads SuperSaw/Moog oscillators in cents. Increases stereo width and fatness.</span></div>
-                        <div class="help-item"><span class="help-item-label">Chorus</span><span class="help-item-desc">LFO-modulated delay chorus. Adds shimmer and width to the lead.</span></div>
-                        <div class="help-item"><span class="help-item-label">Echo</span><span class="help-item-desc">Tape-style delay. Delay time locks to BPM (¾ beat). Adds space and rhythm.</span></div>
-                        <div class="help-item"><span class="help-item-label">Room</span><span class="help-item-desc">Convolution reverb with 2.2 second tail. Pushes sounds into a virtual space.</span></div>
+                        <div class="help-item"><span class="help-item-label">Cutoff</span><span class="help-item-desc">Filter frequency sweep.</span></div>
+                        <div class="help-item"><span class="help-item-label">Reso</span><span class="help-item-desc">Resonance / self-oscillation.</span></div>
+                        <div class="help-item"><span class="help-item-label">Drive</span><span class="help-item-desc">Soft-clip waveshaper saturation.</span></div>
+                        <div class="help-item"><span class="help-item-label">Chorus</span><span class="help-item-desc">LFO-modulated delay chorus.</span></div>
+                        <div class="help-item"><span class="help-item-label">Echo</span><span class="help-item-desc">BPM-locked tape delay.</span></div>
+                        <div class="help-item"><span class="help-item-label">Room</span><span class="help-item-desc">Convolution reverb, 2.2s tail.</span></div>
                     </div>
                 </div>
             </div>
-
-            <!-- MIDI -->
-            <div class="help-panel" id="tab-midi">
+            <div class="help-panel" id="tab-io">
                 <div class="help-section">
-                    <div class="help-section-title">MIDI Connectivity</div>
-                    <div class="help-tip" style="margin-top:0;margin-bottom:12px;">Connect a MIDI controller before opening the page, or plug in and refresh. The browser will request MIDI access — click <strong>Allow</strong>. The MIDI LED flashes blue on each incoming message.</div>
+                    <div class="help-section-title">Audio Export (WAV)</div>
                     <div class="help-grid">
-                        <div class="help-item"><span class="help-item-label blue">Note On/Off</span><span class="help-item-desc">Plays the lead synth engine. Notes feed the arpeggiator memory, same as the on-screen keyboard.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">Pitch Bend</span><span class="help-item-desc">Hardware pitch bend wheel maps directly — ±2 semitones range.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">CC 1 — Mod Wheel</span><span class="help-item-desc">Controls filter cutoff frequency in real time. Sweep up to open, down to close.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">CC 7 — Volume</span><span class="help-item-desc">Master output gain control.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">CC 64 — Sustain Pedal</span><span class="help-item-desc">Pressing sustain pedal toggles ARP HOLD on/off.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">Program Change</span><span class="help-item-desc">Cycles through lead engines: 0 = SuperSaw, 1 = Moog Bass, 2 = FM Lead.</span></div>
-                        <div class="help-item"><span class="help-item-label blue">CC 120 / 123</span><span class="help-item-desc">All notes off — clears the arp memory and removes all key highlights.</span></div>
+                        <div class="help-item"><span class="help-item-label blue">⏺ REC</span><span class="help-item-desc">Starts recording the live audio output. The REC badge flashes at the top. Start playback before or after pressing REC.</span></div>
+                        <div class="help-item"><span class="help-item-label blue">⏹ SAVE WAV</span><span class="help-item-desc">Stops recording and downloads a stereo 44.1kHz WAV file of everything that was captured.</span></div>
                     </div>
-                    <div class="help-tip"><strong>NO DEVICE SHOWN?</strong> Some browsers require HTTPS for MIDI access. Chrome and Edge have the best Web MIDI support. Firefox requires a plugin (Jazz-Plugin or WebMIDI polyfill).</div>
+                    <div class="help-tip"><strong>TIP:</strong> Record a full loop (4–8 bars), then stop. The WAV encodes instantly in the browser — no upload needed.</div>
+                </div>
+                <div class="help-section">
+                    <div class="help-section-title">MIDI Export (↑ MIDI)</div>
+                    <div class="help-grid">
+                        <div class="help-item"><span class="help-item-label blue">What's exported</span><span class="help-item-desc">All drum hits (on standard GM channels), bass sequencer notes, and the synth arp memory are written as a Type-1 MIDI file at the current BPM.</span></div>
+                        <div class="help-item"><span class="help-item-label blue">Channels</span><span class="help-item-desc">Ch10 = drums (GM: Kick=36, Snare=38, Clap=39, Hat=42, Tom=48, Rim=37). Ch2 = bass. Ch1 = synth/arp.</span></div>
+                    </div>
+                </div>
+                <div class="help-section">
+                    <div class="help-section-title">MIDI Import (↓ MIDI)</div>
+                    <div class="help-grid">
+                        <div class="help-item"><span class="help-item-label blue">How it works</span><span class="help-item-desc">Opens a file picker. Select any standard MIDI file. The importer reads the first track, maps notes to drum rows and bass notes, and programs the sequencer.</span></div>
+                        <div class="help-item"><span class="help-item-label blue">Note mapping</span><span class="help-item-desc">GM drum notes (Ch10) map to rows. Non-drum notes on any channel go to the bass sequencer. Only the first stepLen steps are loaded.</span></div>
+                    </div>
+                    <div class="help-tip"><strong>NOTE:</strong> MIDI import works best with simple loop files (1–2 bars). Complex arrangements may only partially map to the 8/16-step grid.</div>
+                </div>
+                <div class="help-section">
+                    <div class="help-section-title">Clear Sequencers</div>
+                    <div class="help-grid">
+                        <div class="help-item"><span class="help-item-label">✕ CLR ALL</span><span class="help-item-desc">Clears all drum rows AND all bass steps simultaneously. Useful for starting fresh.</span></div>
+                        <div class="help-item"><span class="help-item-label">✕ CLR DRUMS</span><span class="help-item-desc">Clears only the 7 drum rows, leaves bass pattern intact.</span></div>
+                        <div class="help-item"><span class="help-item-label bass">CLR (bass)</span><span class="help-item-desc">Clears only bass steps, leaves drum pattern intact.</span></div>
+                    </div>
                 </div>
             </div>
-
-        </div><!-- .help-content -->
-    </div><!-- .help-modal -->
-</div><!-- .help-overlay -->
+        </div>
+    </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════
@@ -1280,11 +968,7 @@ let reverbConv, reverbMix, anal;
 let filterLFO, filterLFOGain;
 let drumGains = {};
 let audioReady = false;
-
-// Bass audio chain
-let bassGainNode, bassFilter, bassWaveshaper;
-let bassVolGain;
-
+let bassGainNode, bassFilter, bassWaveshaper, bassVolGain;
 let filterMode   = 'lowpass';
 let filterGainDb = 0;
 let fenvAmt      = 0;
@@ -1294,25 +978,21 @@ let lfoShape     = 'sine';
 function initAudio() {
     if (audioReady) return;
     audioReady = true;
-
     audioCtx   = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = audioCtx.createGain();
     mainFilter = audioCtx.createBiquadFilter();
     hpFilter   = audioCtx.createBiquadFilter();
     waveshaper = audioCtx.createWaveShaper();
     anal       = audioCtx.createAnalyser();
-
     chorusDelay = audioCtx.createDelay(0.05); chorusMix = audioCtx.createGain();
     chorusLFO = audioCtx.createOscillator(); chorusLFOGain = audioCtx.createGain();
     tapDelay = audioCtx.createDelay(1.0); tapFeedback = audioCtx.createGain(); tapMix = audioCtx.createGain();
     reverbConv = audioCtx.createConvolver(); reverbMix = audioCtx.createGain();
     filterLFO = audioCtx.createOscillator(); filterLFOGain = audioCtx.createGain();
-
-    mainFilter.type = 'lowpass'; mainFilter.frequency.value = 4000; mainFilter.Q.value = 1;
-    hpFilter.type = 'highpass'; hpFilter.frequency.value = 20;
-    masterGain.gain.value = 0.45;
-    anal.fftSize = 1024;
-
+    mainFilter.type='lowpass'; mainFilter.frequency.value=4000; mainFilter.Q.value=1;
+    hpFilter.type='highpass'; hpFilter.frequency.value=20;
+    masterGain.gain.value=0.45;
+    anal.fftSize=1024;
     hpFilter.connect(mainFilter); mainFilter.connect(waveshaper);
     waveshaper.connect(masterGain);
     waveshaper.connect(chorusDelay); chorusDelay.connect(chorusMix); chorusMix.connect(masterGain);
@@ -1320,80 +1000,67 @@ function initAudio() {
     tapDelay.connect(tapMix); tapMix.connect(masterGain);
     waveshaper.connect(reverbConv); reverbConv.connect(reverbMix); reverbMix.connect(masterGain);
     masterGain.connect(anal); anal.connect(audioCtx.destination);
-
-    chorusLFO.frequency.value = 0.6; chorusLFOGain.gain.value = 0;
-    chorusDelay.delayTime.value = 0.02; chorusMix.gain.value = 0;
+    chorusLFO.frequency.value=0.6; chorusLFOGain.gain.value=0;
+    chorusDelay.delayTime.value=0.02; chorusMix.gain.value=0;
     chorusLFO.connect(chorusLFOGain); chorusLFOGain.connect(chorusDelay.delayTime); chorusLFO.start();
-
-    filterLFO.type = 'sine'; filterLFO.frequency.value = 0.5;
-    filterLFOGain.gain.value = 0;
+    filterLFO.type='sine'; filterLFO.frequency.value=0.5;
+    filterLFOGain.gain.value=0;
     filterLFO.connect(filterLFOGain); filterLFOGain.connect(mainFilter.frequency); filterLFO.start();
-
-    tapFeedback.gain.value = 0.35; tapMix.gain.value = 0; tapDelay.delayTime.value = 0.375;
-    reverbConv.buffer = buildReverb(2.2,3); reverbMix.gain.value = 0;
-    waveshaper.curve = makeDriveCurve(0);
-
-    ['kick','snare','hat','tom','rim'].forEach(d => {
-        drumGains[d] = audioCtx.createGain(); drumGains[d].gain.value = 0.75;
+    tapFeedback.gain.value=0.35; tapMix.gain.value=0; tapDelay.delayTime.value=0.375;
+    reverbConv.buffer=buildReverb(2.2,3); reverbMix.gain.value=0;
+    waveshaper.curve=makeDriveCurve(0);
+    ['kick','snare','clap','hat','tom','rim'].forEach(d=>{
+        drumGains[d]=audioCtx.createGain(); drumGains[d].gain.value=0.75;
         drumGains[d].connect(masterGain);
     });
-
-    // Bass chain: bassWaveshaper → bassFilter → bassGainNode (master vol) → bassVolGain → masterGain
-    bassGainNode   = audioCtx.createGain();  bassGainNode.gain.value = 0.7;
-    bassFilter     = audioCtx.createBiquadFilter();
-    bassWaveshaper = audioCtx.createWaveShaper();
-    bassVolGain    = audioCtx.createGain(); bassVolGain.gain.value = 0.85;
-
-    bassFilter.type = 'lowpass'; bassFilter.frequency.value = 800; bassFilter.Q.value = 3;
-    bassWaveshaper.curve = makeDriveCurve(0);
-
-    bassGainNode.connect(bassWaveshaper);
-    bassWaveshaper.connect(bassFilter);
-    bassFilter.connect(bassVolGain);
-    bassVolGain.connect(masterGain);
-
+    bassGainNode=audioCtx.createGain(); bassGainNode.gain.value=0.7;
+    bassFilter=audioCtx.createBiquadFilter();
+    bassWaveshaper=audioCtx.createWaveShaper();
+    bassVolGain=audioCtx.createGain(); bassVolGain.gain.value=0.85;
+    bassFilter.type='lowpass'; bassFilter.frequency.value=800; bassFilter.Q.value=3;
+    bassWaveshaper.curve=makeDriveCurve(0);
+    bassGainNode.connect(bassWaveshaper); bassWaveshaper.connect(bassFilter);
+    bassFilter.connect(bassVolGain); bassVolGain.connect(masterGain);
     updateFilterGainVisibility();
     drawScope();
     initKnobs();
 }
 
-// ── Filter ──
-const FILTER_NAMES = { lowpass:'LOW PASS', highpass:'HIGH PASS', bandpass:'BAND PASS', notch:'NOTCH', peaking:'PEAK EQ', lowshelf:'LO SHELF', highshelf:'HI SHELF' };
-const FILTER_BTNS  = { lowpass:'fm-lp', highpass:'fm-hp', bandpass:'fm-bp', notch:'fm-no', peaking:'fm-pk', lowshelf:'fm-ls', highshelf:'fm-hs' };
-function setFilterMode(mode) {
-    filterMode = mode;
-    if (mainFilter) { mainFilter.type = mode; mainFilter.gain.value = filterGainDb; }
-    Object.entries(FILTER_BTNS).forEach(([m,id]) => document.getElementById(id).classList.toggle('active',m===mode));
-    document.getElementById('filterTypeLabel').textContent = FILTER_NAMES[mode]||mode.toUpperCase();
-    document.getElementById('cutoffLbl').textContent = (mode==='bandpass'||mode==='notch'||mode==='peaking')?'Centre':'Cutoff';
-    document.getElementById('resLbl').textContent = (mode==='peaking'||mode==='lowshelf'||mode==='highshelf')?'Bandwidth':'Reso / BW';
+const FILTER_NAMES={lowpass:'LOW PASS',highpass:'HIGH PASS',bandpass:'BAND PASS',notch:'NOTCH',peaking:'PEAK EQ',lowshelf:'LO SHELF',highshelf:'HI SHELF'};
+const FILTER_BTNS={lowpass:'fm-lp',highpass:'fm-hp',bandpass:'fm-bp',notch:'fm-no',peaking:'fm-pk',lowshelf:'fm-ls',highshelf:'fm-hs'};
+function setFilterMode(mode){
+    filterMode=mode;
+    if(mainFilter){mainFilter.type=mode;mainFilter.gain.value=filterGainDb;}
+    Object.entries(FILTER_BTNS).forEach(([m,id])=>document.getElementById(id).classList.toggle('active',m===mode));
+    document.getElementById('filterTypeLabel').textContent=FILTER_NAMES[mode]||mode.toUpperCase();
+    document.getElementById('cutoffLbl').textContent=(mode==='bandpass'||mode==='notch'||mode==='peaking')?'Centre':'Cutoff';
+    document.getElementById('resLbl').textContent=(mode==='peaking'||mode==='lowshelf'||mode==='highshelf')?'Bandwidth':'Reso / BW';
     updateFilterGainVisibility();
 }
-function updateFilterGainVisibility() {
-    const ok = ['peaking','lowshelf','highshelf'].includes(filterMode);
-    document.getElementById('filterGainWrap').style.opacity       = ok?'1':'0.25';
-    document.getElementById('filterGainWrap').style.pointerEvents = ok?'':'none';
+function updateFilterGainVisibility(){
+    const ok=['peaking','lowshelf','highshelf'].includes(filterMode);
+    document.getElementById('filterGainWrap').style.opacity=ok?'1':'0.25';
+    document.getElementById('filterGainWrap').style.pointerEvents=ok?'':'none';
 }
-const LFO_BTNS = { sine:'lfo-sin', square:'lfo-sq', triangle:'lfo-tri', sawtooth:'lfo-saw' };
-function setLFOShape(shape) {
-    lfoShape = shape;
-    if (filterLFO) filterLFO.type = shape;
-    Object.entries(LFO_BTNS).forEach(([s,id]) => document.getElementById(id).classList.toggle('active',s===shape));
+const LFO_BTNS={sine:'lfo-sin',square:'lfo-sq',triangle:'lfo-tri',sawtooth:'lfo-saw'};
+function setLFOShape(shape){
+    lfoShape=shape;
+    if(filterLFO)filterLFO.type=shape;
+    Object.entries(LFO_BTNS).forEach(([s,id])=>document.getElementById(id).classList.toggle('active',s===shape));
 }
-function applyFilterEnv(t) {
-    if (!mainFilter || fenvAmt<1) return;
-    const base = mainFilter.frequency.value;
+function applyFilterEnv(t){
+    if(!mainFilter||fenvAmt<1)return;
+    const base=mainFilter.frequency.value;
     mainFilter.frequency.cancelScheduledValues(t);
     mainFilter.frequency.setValueAtTime(base+fenvAmt,t);
     mainFilter.frequency.exponentialRampToValueAtTime(Math.max(base,20),t+fenvDec);
 }
-
-function buildReverb(secs,decay) {
-    const sr=audioCtx.sampleRate, len=sr*secs, buf=audioCtx.createBuffer(2,len,sr);
+function buildReverb(secs,decay){
+    const sr=audioCtx.sampleRate,len=sr*secs,buf=audioCtx.createBuffer(2,len,sr);
     for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay);}
     return buf;
 }
-function makeDriveCurve(amount) {
+function makeDriveCurve(amount){
     const n=256,c=new Float32Array(n);
     for(let i=0;i<n;i++){const x=(i*2/n)-1;c[i]=amount<0.5?x:((Math.PI+amount)*x)/(Math.PI+amount*Math.abs(x));}
     return c;
@@ -1402,238 +1069,118 @@ function makeDriveCurve(amount) {
 // ═══════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════
-let isPlaying=false, bpm=120, currentStep=0, nextStepTime=0, timerID;
-let stepLen=8, heldNotes=new Set(), arpMemory=[], arpStep=0;
-let octaveOffset=0, pitchBend=1.0, isHold=false;
-let attackTime=0.01, releaseTime=0.3, synthEngine='supersaw', activeVoices=0, detuneAmt=0;
-let pitchHeld=false, heldPitchBend=1.0;
+let isPlaying=false,bpm=120,currentStep=0,nextStepTime=0,timerID;
+let stepLen=8,heldNotes=new Set(),arpMemory=[],arpStep=0;
+let octaveOffset=0,pitchBend=1.0,isHold=false;
+let attackTime=0.01,releaseTime=0.3,synthEngine='supersaw',activeVoices=0,detuneAmt=0;
+let pitchHeld=false,heldPitchBend=1.0;
+let bassEngine='sub',bassCutoff=800,bassReso=3,bassDec=0.3,bassDriveAmt=0,bassOct=0;
 
-// Bass state
-let bassEngine = 'sub';
-let bassCutoff = 800, bassReso = 3, bassDec = 0.3, bassDriveAmt = 0;
-let bassOct = 0;
+const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const NOTE_FREQS={};
+for(let i=0;i<10;i++)for(let n=0;n<12;n++){NOTE_FREQS[NOTE_NAMES[n]+i]=16.35*Math.pow(2,i+n/12);}
 
-const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const NOTE_FREQS = {};
-// Build C0 = 16.35 Hz upward
-for(let i=0;i<10;i++) for(let n=0;n<12;n++) {
-    const name = NOTE_NAMES[n]+i;
-    NOTE_FREQS[name] = 16.35 * Math.pow(2, i + n/12);
-}
-
-// Bass sequencer — 16 steps, each with { on, note }
-const BASS_NOTES_OPTIONS = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-const bassSeq = Array.from({length:16}, (_,i) => ({
-    on: i%4===0,
-    note: 'C',   // note name, octave added at play time
-}));
+const BASS_NOTES_OPTIONS=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const bassSeq=Array.from({length:16},(_,i)=>({on:i%4===0,note:'C'}));
 
 // ═══════════════════════════════════════════════════
-// DRUM SEQUENCER
+// DRUM SEQUENCER — 7 rows: kick,snare,clap,hat,tom,rim,synth
 // ═══════════════════════════════════════════════════
-const sequence = [
-    [1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],
-    [0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0],
-    [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+const sequence=[
+    [1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],  // kick
+    [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],  // snare
+    [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],  // clap
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],  // hat
+    [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],  // tom
+    [0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0],  // rim
+    [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],  // synth
 ];
-const seqGrid = document.getElementById('seqGrid');
-for(let r=0;r<6;r++){
+const ROW_CLASSES=['','','clap-row','','','','synth-row'];
+const seqGrid=document.getElementById('seqGrid');
+for(let r=0;r<7;r++){
     for(let s=0;s<16;s++){
         const cell=document.createElement('div');
-        cell.className=`seq-step${r===5?' synth-row':''}${sequence[r][s]?' on':''}`;
+        const extra=ROW_CLASSES[r]?' '+ROW_CLASSES[r]:'';
+        cell.className=`seq-step${extra}${sequence[r][s]?' on':''}`;
         cell.id=`step-${r}-${s}`; cell.style.display=s<8?'':'none';
-        cell.onclick=()=>{ sequence[r][s]^=1; cell.classList.toggle('on'); };
+        cell.onclick=()=>{sequence[r][s]^=1;cell.classList.toggle('on');};
         seqGrid.appendChild(cell);
     }
 }
-function setStepLen(len) {
+function setStepLen(len){
     stepLen=len;
     ['s8','s16'].forEach(id=>document.getElementById(id).classList.toggle('active',id===`s${len}`));
-    for(let r=0;r<6;r++)for(let s=0;s<16;s++) document.getElementById(`step-${r}-${s}`).style.display=s<len?'':'none';
+    for(let r=0;r<7;r++)for(let s=0;s<16;s++)document.getElementById(`step-${r}-${s}`).style.display=s<len?'':'none';
     seqGrid.style.gridTemplateColumns=`repeat(${len},1fr)`;
+    seqGrid.style.gridTemplateRows=`repeat(7,1fr)`;
     buildBassSeqUI();
 }
 setStepLen(8);
 
+function clearDrumSeq(){
+    for(let r=0;r<7;r++)for(let s=0;s<16;s++){
+        sequence[r][s]=0;
+        const el=document.getElementById(`step-${r}-${s}`);
+        if(el)el.classList.remove('on');
+    }
+}
+function clearAllSequencers(){
+    clearDrumSeq();
+    clearBassSeq();
+}
+
 // ═══════════════════════════════════════════════════
 // BASS SEQUENCER UI
 // ═══════════════════════════════════════════════════
-function buildBassSeqUI() {
-    const stepRow  = document.getElementById('bassStepRow');
-    const pitchRow = document.getElementById('bassPitchRow');
-    stepRow.innerHTML  = '';
-    pitchRow.innerHTML = '';
-    stepRow.style.gridTemplateColumns  = `repeat(${stepLen},1fr)`;
-    pitchRow.style.gridTemplateColumns = `repeat(${stepLen},1fr)`;
-
+function buildBassSeqUI(){
+    const stepRow=document.getElementById('bassStepRow');
+    const pitchRow=document.getElementById('bassPitchRow');
+    stepRow.innerHTML=''; pitchRow.innerHTML='';
+    stepRow.style.gridTemplateColumns=`repeat(${stepLen},1fr)`;
+    pitchRow.style.gridTemplateColumns=`repeat(${stepLen},1fr)`;
     for(let s=0;s<stepLen;s++){
-        // Step button
-        const btn = document.createElement('div');
-        btn.className = 'bass-step' + (bassSeq[s].on ? ' on' : '');
-        btn.id = `bstep-${s}`;
-        btn.onclick = () => {
-            bassSeq[s].on = !bassSeq[s].on;
-            btn.classList.toggle('on', bassSeq[s].on);
-        };
+        const btn=document.createElement('div');
+        btn.className='bass-step'+(bassSeq[s].on?' on':'');
+        btn.id=`bstep-${s}`;
+        btn.onclick=()=>{bassSeq[s].on=!bassSeq[s].on;btn.classList.toggle('on',bassSeq[s].on);};
         stepRow.appendChild(btn);
-
-        // Pitch select
-        const sel = document.createElement('select');
-        sel.className = 'bass-pitch-sel';
-        sel.id = `bpitch-${s}`;
-        BASS_NOTES_OPTIONS.forEach(n => {
-            const opt = document.createElement('option');
-            opt.value = n; opt.textContent = n;
-            if(n === bassSeq[s].note) opt.selected = true;
+        const sel=document.createElement('select');
+        sel.className='bass-pitch-sel'; sel.id=`bpitch-${s}`;
+        BASS_NOTES_OPTIONS.forEach(n=>{
+            const opt=document.createElement('option');
+            opt.value=n; opt.textContent=n;
+            if(n===bassSeq[s].note)opt.selected=true;
             sel.appendChild(opt);
         });
-        sel.onchange = () => { bassSeq[s].note = sel.value; };
+        sel.onchange=()=>{bassSeq[s].note=sel.value;};
         pitchRow.appendChild(sel);
     }
 }
 buildBassSeqUI();
 
-function clearBassSeq() {
-    for(let s=0;s<16;s++){ bassSeq[s].on=false; const el=document.getElementById(`bstep-${s}`); if(el)el.classList.remove('on'); }
+function clearBassSeq(){
+    for(let s=0;s<16;s++){
+        bassSeq[s].on=false;
+        const el=document.getElementById(`bstep-${s}`);
+        if(el)el.classList.remove('on');
+    }
 }
-function randomBassSeq() {
-    const patterns = ['C','E','G','A','D','F']; // pentatonic-ish
+function randomBassSeq(){
+    const patterns=['C','E','G','A','D','F'];
     for(let s=0;s<stepLen;s++){
-        bassSeq[s].on = Math.random()>0.55;
-        bassSeq[s].note = patterns[Math.floor(Math.random()*patterns.length)];
-        const el=document.getElementById(`bstep-${s}`); if(el) el.classList.toggle('on',bassSeq[s].on);
-        const sel=document.getElementById(`bpitch-${s}`); if(sel) sel.value=bassSeq[s].note;
+        bassSeq[s].on=Math.random()>0.55;
+        bassSeq[s].note=patterns[Math.floor(Math.random()*patterns.length)];
+        const el=document.getElementById(`bstep-${s}`);if(el)el.classList.toggle('on',bassSeq[s].on);
+        const sel=document.getElementById(`bpitch-${s}`);if(sel)sel.value=bassSeq[s].note;
     }
 }
-
-function applyBassSeqFromAI(steps) {
-    // steps: array of {on, note} objects
+function applyBassSeqFromAI(steps){
     for(let s=0;s<stepLen;s++){
-        const data = steps[s] || {on:false, note:'C'};
-        bassSeq[s].on   = !!data.on;
-        bassSeq[s].note = data.note || 'C';
-        const el  = document.getElementById(`bstep-${s}`); if(el)  el.classList.toggle('on', bassSeq[s].on);
-        const sel = document.getElementById(`bpitch-${s}`); if(sel) sel.value = bassSeq[s].note;
+        const data=steps[s]||{on:false,note:'C'};
+        bassSeq[s].on=!!data.on; bassSeq[s].note=data.note||'C';
+        const el=document.getElementById(`bstep-${s}`);if(el)el.classList.toggle('on',bassSeq[s].on);
+        const sel=document.getElementById(`bpitch-${s}`);if(sel)sel.value=bassSeq[s].note;
     }
-}
-
-// ═══════════════════════════════════════════════════
-// BASS ENGINES
-// ═══════════════════════════════════════════════════
-function setBassEngine(e) {
-    bassEngine = e;
-    document.querySelectorAll('.bass-engine-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.engine===e);
-        btn.classList.toggle('bass-active', btn.dataset.engine===e);
-    });
-    const names={sub:'SUB BASS',acid:'ACID 303',slap:'SLAP BASS',rubber:'RUBBER',reese:'REESE',click:'CLICK BASS'};
-    document.getElementById('bassBadge').textContent = names[e]||e.toUpperCase();
-}
-
-function playBassNote(t, freq) {
-    if(!audioReady) return;
-    const env = audioCtx.createGain();
-    env.gain.setValueAtTime(0, t);
-
-    switch(bassEngine) {
-        case 'sub': {
-            env.gain.linearRampToValueAtTime(1.0, t+0.005);
-            env.gain.exponentialRampToValueAtTime(0.001, t+bassDec);
-            const o=audioCtx.createOscillator(); o.type='sine';
-            o.frequency.setValueAtTime(freq, t);
-            const sub2=audioCtx.createOscillator(); sub2.type='sine';
-            sub2.frequency.setValueAtTime(freq*2,t);
-            const sg=audioCtx.createGain(); sg.gain.value=0.15;
-            sub2.connect(sg); sg.connect(env); o.connect(env); env.connect(bassGainNode);
-            o.start(t); o.stop(t+bassDec+0.05);
-            sub2.start(t); sub2.stop(t+bassDec+0.05);
-            // bass filter env sweep
-            applyBassFilterEnv(t, freq*6);
-            break;
-        }
-        case 'acid': {
-            env.gain.linearRampToValueAtTime(1.0, t+0.002);
-            env.gain.exponentialRampToValueAtTime(0.001, t+bassDec);
-            const o=audioCtx.createOscillator(); o.type='sawtooth';
-            o.frequency.setValueAtTime(freq,t);
-            o.connect(env); env.connect(bassGainNode);
-            o.start(t); o.stop(t+bassDec+0.05);
-            applyBassFilterEnv(t, 3000+bassReso*500);
-            break;
-        }
-        case 'slap': {
-            // percussive pop + sustain
-            env.gain.linearRampToValueAtTime(1.0, t+0.001);
-            env.gain.setValueAtTime(1.0, t+0.018);
-            env.gain.exponentialRampToValueAtTime(0.25, t+0.06);
-            env.gain.exponentialRampToValueAtTime(0.001, t+bassDec);
-            const o=audioCtx.createOscillator(); o.type='triangle';
-            o.frequency.setValueAtTime(freq*2,t); o.frequency.exponentialRampToValueAtTime(freq,t+0.02);
-            const click=audioCtx.createOscillator(); click.type='square'; click.frequency.value=freq*4;
-            const cg=audioCtx.createGain(); cg.gain.setValueAtTime(0.5,t); cg.gain.exponentialRampToValueAtTime(0.001,t+0.015);
-            click.connect(cg); cg.connect(bassGainNode);
-            o.connect(env); env.connect(bassGainNode);
-            o.start(t); o.stop(t+bassDec+0.05);
-            click.start(t); click.stop(t+0.02);
-            applyBassFilterEnv(t, freq*8);
-            break;
-        }
-        case 'rubber': {
-            // pitch drop
-            env.gain.linearRampToValueAtTime(0.9, t+0.004);
-            env.gain.exponentialRampToValueAtTime(0.001, t+bassDec*1.4);
-            const o=audioCtx.createOscillator(); o.type='sine';
-            o.frequency.setValueAtTime(freq*3, t);
-            o.frequency.exponentialRampToValueAtTime(freq*0.6, t+bassDec*0.6);
-            o.connect(env); env.connect(bassGainNode);
-            o.start(t); o.stop(t+bassDec*1.5);
-            applyBassFilterEnv(t, freq*4);
-            break;
-        }
-        case 'reese': {
-            // two detuned saws for that D&B reese bass
-            env.gain.linearRampToValueAtTime(0.8, t+0.01);
-            env.gain.exponentialRampToValueAtTime(0.001, t+bassDec*1.5);
-            [0,15+detuneAmt*0.2,-15-detuneAmt*0.2].forEach(dt => {
-                const o=audioCtx.createOscillator(); o.type='sawtooth';
-                o.frequency.setValueAtTime(freq,t); o.detune.value=dt;
-                o.connect(env);o.start(t);o.stop(t+bassDec*1.6);
-            });
-            env.connect(bassGainNode);
-            applyBassFilterEnv(t, 1200);
-            break;
-        }
-        case 'click': {
-            // transient click + short tone
-            const cg=audioCtx.createGain();
-            cg.gain.setValueAtTime(0.8,t); cg.gain.exponentialRampToValueAtTime(0.001,t+0.008);
-            const noise=audioCtx.createBufferSource();
-            const nb=audioCtx.createBuffer(1,audioCtx.sampleRate*0.01,audioCtx.sampleRate);
-            const nd=nb.getChannelData(0); for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
-            noise.buffer=nb; noise.connect(cg); cg.connect(bassGainNode);
-            noise.start(t); noise.stop(t+0.01);
-
-            env.gain.linearRampToValueAtTime(0.75, t+0.002);
-            env.gain.exponentialRampToValueAtTime(0.001, t+bassDec*0.8);
-            const o=audioCtx.createOscillator(); o.type='sine';
-            o.frequency.setValueAtTime(freq,t);
-            o.connect(env); env.connect(bassGainNode);
-            o.start(t); o.stop(t+bassDec);
-            applyBassFilterEnv(t, freq*5);
-            break;
-        }
-    }
-}
-
-function applyBassFilterEnv(t, peakFreq) {
-    if(!bassFilter) return;
-    const base = bassCutoff;
-    bassFilter.frequency.cancelScheduledValues(t);
-    bassFilter.frequency.setValueAtTime(Math.min(peakFreq, 18000), t);
-    bassFilter.frequency.exponentialRampToValueAtTime(Math.max(base, 30), t + bassDec * 0.7);
 }
 
 // ═══════════════════════════════════════════════════
@@ -1641,8 +1188,106 @@ function applyBassFilterEnv(t, peakFreq) {
 // ═══════════════════════════════════════════════════
 function playKick(t){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(0.01,t+0.45);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1.4,t+0.004);g.gain.exponentialRampToValueAtTime(0.01,t+0.45);o.connect(g);g.connect(drumGains.kick);o.start(t);o.stop(t+0.45);const c=audioCtx.createOscillator(),cg=audioCtx.createGain();c.frequency.value=1400;cg.gain.setValueAtTime(0.4,t);cg.gain.exponentialRampToValueAtTime(0.001,t+0.015);c.connect(cg);cg.connect(drumGains.kick);c.start(t);c.stop(t+0.02);}
 function playSnare(t){const o=audioCtx.createOscillator(),og=audioCtx.createGain();o.frequency.setValueAtTime(200,t);og.gain.setValueAtTime(0.6,t);og.gain.exponentialRampToValueAtTime(0.001,t+0.14);o.connect(og);og.connect(drumGains.snare);o.start(t);o.stop(t+0.14);const n=audioCtx.createBufferSource(),ng=audioCtx.createGain();const b=audioCtx.createBuffer(1,audioCtx.sampleRate*0.14,audioCtx.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;n.buffer=b;ng.gain.setValueAtTime(0.9,t);ng.gain.exponentialRampToValueAtTime(0.001,t+0.14);n.connect(ng);ng.connect(drumGains.snare);n.start(t);n.stop(t+0.14);}
+
+// ── CLAP: layered noise bursts ──
+function playClap(t){
+    const delays=[0,0.008,0.016,0.026];
+    delays.forEach((dt,i)=>{
+        const n=audioCtx.createBufferSource(),g=audioCtx.createGain();
+        const len=audioCtx.sampleRate*(i===3?0.12:0.025);
+        const b=audioCtx.createBuffer(1,len,audioCtx.sampleRate);
+        const d=b.getChannelData(0);
+        for(let j=0;j<d.length;j++)d[j]=Math.random()*2-1;
+        n.buffer=b;
+        const vol=i===3?0.5:0.85;
+        const dec=i===3?0.12:0.02;
+        g.gain.setValueAtTime(vol,t+dt);
+        g.gain.exponentialRampToValueAtTime(0.001,t+dt+dec);
+        // bandpass for body
+        const bp=audioCtx.createBiquadFilter();
+        bp.type='bandpass'; bp.frequency.value=1200+(i*400); bp.Q.value=0.8;
+        n.connect(bp); bp.connect(g); g.connect(drumGains.clap);
+        n.start(t+dt); n.stop(t+dt+dec+0.01);
+    });
+}
+
 function playHat(t){[8000,10000,12000,15000].forEach(f=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime(0.1,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.05);o.connect(g);g.connect(drumGains.hat);o.start(t);o.stop(t+0.05);});}
 function playPerc(t,freq,gainNode){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(freq*0.4,t+0.12);g.gain.setValueAtTime(0.65,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.15);o.connect(g);g.connect(gainNode);o.start(t);o.stop(t+0.15);}
+
+// ═══════════════════════════════════════════════════
+// BASS ENGINES
+// ═══════════════════════════════════════════════════
+function setBassEngine(e){
+    bassEngine=e;
+    document.querySelectorAll('.bass-engine-btn').forEach(btn=>{
+        btn.classList.toggle('active',btn.dataset.engine===e);
+        btn.classList.toggle('bass-active',btn.dataset.engine===e);
+    });
+    const names={sub:'SUB BASS',acid:'ACID 303',slap:'SLAP BASS',rubber:'RUBBER',reese:'REESE',click:'CLICK BASS'};
+    document.getElementById('bassBadge').textContent=names[e]||e.toUpperCase();
+}
+function playBassNote(t,freq){
+    if(!audioReady)return;
+    const env=audioCtx.createGain();env.gain.setValueAtTime(0,t);
+    switch(bassEngine){
+        case 'sub':{
+            env.gain.linearRampToValueAtTime(1.0,t+0.005);env.gain.exponentialRampToValueAtTime(0.001,t+bassDec);
+            const o=audioCtx.createOscillator();o.type='sine';o.frequency.setValueAtTime(freq,t);
+            const sub2=audioCtx.createOscillator();sub2.type='sine';sub2.frequency.setValueAtTime(freq*2,t);
+            const sg=audioCtx.createGain();sg.gain.value=0.15;
+            sub2.connect(sg);sg.connect(env);o.connect(env);env.connect(bassGainNode);
+            o.start(t);o.stop(t+bassDec+0.05);sub2.start(t);sub2.stop(t+bassDec+0.05);
+            applyBassFilterEnv(t,freq*6);break;
+        }
+        case 'acid':{
+            env.gain.linearRampToValueAtTime(1.0,t+0.002);env.gain.exponentialRampToValueAtTime(0.001,t+bassDec);
+            const o=audioCtx.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(freq,t);
+            o.connect(env);env.connect(bassGainNode);o.start(t);o.stop(t+bassDec+0.05);
+            applyBassFilterEnv(t,3000+bassReso*500);break;
+        }
+        case 'slap':{
+            env.gain.linearRampToValueAtTime(1.0,t+0.001);env.gain.setValueAtTime(1.0,t+0.018);env.gain.exponentialRampToValueAtTime(0.25,t+0.06);env.gain.exponentialRampToValueAtTime(0.001,t+bassDec);
+            const o=audioCtx.createOscillator();o.type='triangle';o.frequency.setValueAtTime(freq*2,t);o.frequency.exponentialRampToValueAtTime(freq,t+0.02);
+            const click=audioCtx.createOscillator();click.type='square';click.frequency.value=freq*4;
+            const cg=audioCtx.createGain();cg.gain.setValueAtTime(0.5,t);cg.gain.exponentialRampToValueAtTime(0.001,t+0.015);
+            click.connect(cg);cg.connect(bassGainNode);o.connect(env);env.connect(bassGainNode);
+            o.start(t);o.stop(t+bassDec+0.05);click.start(t);click.stop(t+0.02);
+            applyBassFilterEnv(t,freq*8);break;
+        }
+        case 'rubber':{
+            env.gain.linearRampToValueAtTime(0.9,t+0.004);env.gain.exponentialRampToValueAtTime(0.001,t+bassDec*1.4);
+            const o=audioCtx.createOscillator();o.type='sine';o.frequency.setValueAtTime(freq*3,t);o.frequency.exponentialRampToValueAtTime(freq*0.6,t+bassDec*0.6);
+            o.connect(env);env.connect(bassGainNode);o.start(t);o.stop(t+bassDec*1.5);
+            applyBassFilterEnv(t,freq*4);break;
+        }
+        case 'reese':{
+            env.gain.linearRampToValueAtTime(0.8,t+0.01);env.gain.exponentialRampToValueAtTime(0.001,t+bassDec*1.5);
+            [0,15+detuneAmt*0.2,-15-detuneAmt*0.2].forEach(dt=>{
+                const o=audioCtx.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(freq,t);o.detune.value=dt;
+                o.connect(env);o.start(t);o.stop(t+bassDec*1.6);
+            });
+            env.connect(bassGainNode);applyBassFilterEnv(t,1200);break;
+        }
+        case 'click':{
+            const cg=audioCtx.createGain();cg.gain.setValueAtTime(0.8,t);cg.gain.exponentialRampToValueAtTime(0.001,t+0.008);
+            const noise=audioCtx.createBufferSource();
+            const nb=audioCtx.createBuffer(1,audioCtx.sampleRate*0.01,audioCtx.sampleRate);
+            const nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+            noise.buffer=nb;noise.connect(cg);cg.connect(bassGainNode);noise.start(t);noise.stop(t+0.01);
+            env.gain.linearRampToValueAtTime(0.75,t+0.002);env.gain.exponentialRampToValueAtTime(0.001,t+bassDec*0.8);
+            const o=audioCtx.createOscillator();o.type='sine';o.frequency.setValueAtTime(freq,t);
+            o.connect(env);env.connect(bassGainNode);o.start(t);o.stop(t+bassDec);
+            applyBassFilterEnv(t,freq*5);break;
+        }
+    }
+}
+function applyBassFilterEnv(t,peakFreq){
+    if(!bassFilter)return;
+    const base=bassCutoff;
+    bassFilter.frequency.cancelScheduledValues(t);
+    bassFilter.frequency.setValueAtTime(Math.min(peakFreq,18000),t);
+    bassFilter.frequency.exponentialRampToValueAtTime(Math.max(base,30),t+bassDec*0.7);
+}
 
 // ═══════════════════════════════════════════════════
 // SYNTH ENGINES (lead/pad)
@@ -1658,12 +1303,18 @@ function playSynth(t,freq){
     applyFilterEnv(t);
     if(synthEngine==='supersaw'){
         const spread=8+detuneAmt*0.4;
-        [-24-detuneAmt,-12,-spread,0,spread,12,24+detuneAmt].forEach(dt=>{const o=audioCtx.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(freq*pitchBend,t);o.detune.setValueAtTime(dt,t);o.connect(env);o.start(t);o.stop(t+attackTime+releaseTime+0.12);});
+        [-24-detuneAmt,-12,-spread,0,spread,12,24+detuneAmt].forEach(dt=>{
+            const o=audioCtx.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(freq*pitchBend,t);o.detune.setValueAtTime(dt,t);o.connect(env);o.start(t);o.stop(t+attackTime+releaseTime+0.12);
+        });
     }else if(synthEngine==='moog'){
-        [0,5+detuneAmt*0.1].forEach(dt=>{const o=audioCtx.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(freq*pitchBend,t);o.detune.setValueAtTime(dt,t);o.connect(env);o.start(t);o.stop(t+attackTime+releaseTime+0.12);});
+        [0,5+detuneAmt*0.1].forEach(dt=>{
+            const o=audioCtx.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(freq*pitchBend,t);o.detune.setValueAtTime(dt,t);o.connect(env);o.start(t);o.stop(t+attackTime+releaseTime+0.12);
+        });
         const sub=audioCtx.createOscillator(),sg=audioCtx.createGain();sub.type='square';sub.frequency.setValueAtTime(freq*pitchBend*0.5,t);sg.gain.value=0.35;sub.connect(sg);sg.connect(env);sub.start(t);sub.stop(t+attackTime+releaseTime+0.12);
     }else if(synthEngine==='fm'){
-        const car=audioCtx.createOscillator(),mod=audioCtx.createOscillator(),mg=audioCtx.createGain();car.frequency.setValueAtTime(freq*pitchBend,t);mod.frequency.setValueAtTime(freq*(3.5+detuneAmt*0.02),t);mg.gain.setValueAtTime(freq*1.8,t);mod.connect(mg);mg.connect(car.frequency);car.connect(env);[mod,car].forEach(o=>{o.start(t);o.stop(t+attackTime+releaseTime+0.12);});
+        const car=audioCtx.createOscillator(),mod=audioCtx.createOscillator(),mg=audioCtx.createGain();
+        car.frequency.setValueAtTime(freq*pitchBend,t);mod.frequency.setValueAtTime(freq*(3.5+detuneAmt*0.02),t);mg.gain.setValueAtTime(freq*1.8,t);
+        mod.connect(mg);mg.connect(car.frequency);car.connect(env);[mod,car].forEach(o=>{o.start(t);o.stop(t+attackTime+releaseTime+0.12);});
     }
     setTimeout(()=>{activeVoices=Math.max(0,activeVoices-1);updateVoiceLeds();},dur);
 }
@@ -1673,30 +1324,26 @@ function playSynth(t,freq){
 // ═══════════════════════════════════════════════════
 function scheduler(){
     while(nextStepTime<audioCtx.currentTime+0.1){
-        // Clear playing highlights
         document.querySelectorAll('.seq-step').forEach(s=>s.classList.remove('playing'));
         document.querySelectorAll('.bass-step').forEach(s=>s.classList.remove('playing'));
-
-        for(let r=0;r<6;r++){const el=document.getElementById(`step-${r}-${currentStep}`);if(el)el.classList.add('playing');}
-        const bel=document.getElementById(`bstep-${currentStep%stepLen}`); if(bel) bel.classList.add('playing');
-
+        for(let r=0;r<7;r++){const el=document.getElementById(`step-${r}-${currentStep}`);if(el)el.classList.add('playing');}
+        const bel=document.getElementById(`bstep-${currentStep%stepLen}`);if(bel)bel.classList.add('playing');
         if(sequence[0][currentStep])playKick(nextStepTime);
         if(sequence[1][currentStep])playSnare(nextStepTime);
-        if(sequence[2][currentStep])playHat(nextStepTime);
-        if(sequence[3][currentStep])playPerc(nextStepTime,120,drumGains.tom);
-        if(sequence[4][currentStep])playPerc(nextStepTime,900,drumGains.rim);
-        if(sequence[5][currentStep]&&arpMemory.length>0){
+        if(sequence[2][currentStep])playClap(nextStepTime);
+        if(sequence[3][currentStep])playHat(nextStepTime);
+        if(sequence[4][currentStep])playPerc(nextStepTime,120,drumGains.tom);
+        if(sequence[5][currentStep])playPerc(nextStepTime,900,drumGains.rim);
+        if(sequence[6][currentStep]&&arpMemory.length>0){
             playSynth(nextStepTime,arpMemory[arpStep%arpMemory.length]*Math.pow(2,octaveOffset));
             arpStep++;
         }
-        // Bass
         const bs=bassSeq[currentStep%stepLen];
         if(bs&&bs.on){
             const noteKey=bs.note+(3+bassOct);
             const freq=NOTE_FREQS[noteKey]||NOTE_FREQS['C3'];
             playBassNote(nextStepTime,freq);
         }
-
         nextStepTime+=(60.0/bpm/2);
         currentStep=(currentStep+1)%stepLen;
     }
@@ -1766,16 +1413,14 @@ function initKnobs(){
     setupKnob('reverbKnob',0,0.7,0,v=>{reverbMix.gain.value=v;},'reverbVal',v=>Math.round(v/0.7*100)+' %');
     setupKnob('kickVol',0,1.5,0.8,v=>drumGains.kick.gain.value=v,null,()=>'');
     setupKnob('snareVol',0,1.5,0.5,v=>drumGains.snare.gain.value=v,null,()=>'');
+    setupKnob('clapVol',0,1.5,0.6,v=>drumGains.clap.gain.value=v,null,()=>'');
     setupKnob('hatVol',0,1.5,0.3,v=>drumGains.hat.gain.value=v,null,()=>'');
-    // Bass knobs
     setupKnob('bassVol',0,1.5,0.55,v=>{if(bassVolGain)bassVolGain.gain.value=v;},null,()=>'');
     setupKnob('bassCutKnob',30,6000,0.2,v=>{bassCutoff=v;if(bassFilter)bassFilter.frequency.value=v;},'bassCutVal',v=>Math.round(v)+' Hz');
     setupKnob('bassResKnob',0.1,20,0.22,v=>{bassReso=v;if(bassFilter)bassFilter.Q.value=v;},'bassResVal',v=>v.toFixed(1));
     setupKnob('bassDecKnob',0.05,2,0.15,v=>{bassDec=v;},'bassDecVal',v=>v.toFixed(2)+' s');
     setupKnob('bassDriveKnob',0,30,0,v=>{bassDriveAmt=v;if(bassWaveshaper)bassWaveshaper.curve=makeDriveCurve(v);},'bassDriveVal',v=>Math.round(v)+' %');
 }
-
-// Pre-fill displays
 const preInit=[['cutoffVal','4000 Hz'],['hpVal','20 Hz'],['resVal','1.0'],['filterGainVal','0.0 dB'],['lfoRateVal','0.50 Hz'],['lfoDepthVal','0 Hz'],['fenvAmtVal','0 Hz'],['fenvDecVal','0.10 s'],['atkVal','10 ms'],['relVal','0.30 s'],['driveVal','0 %'],['detuneVal','0 ct'],['chorusVal','0 %'],['delayVal','0 %'],['reverbVal','0 %'],['bassCutVal','800 Hz'],['bassResVal','3.0'],['bassDecVal','0.30 s'],['bassDriveVal','0 %']];
 preInit.forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
 
@@ -1804,7 +1449,237 @@ function drawScope(){
 }
 
 // ═══════════════════════════════════════════════════
-// MIDI
+// AUDIO EXPORT — MediaRecorder WAV
+// ═══════════════════════════════════════════════════
+let mediaRecorder=null, recChunks=[], isRecording=false;
+
+function startRecording(){
+    initAudio(); audioCtx.resume();
+    const dest = audioCtx.createMediaStreamDestination();
+    masterGain.connect(dest);
+    mediaRecorder = new MediaRecorder(dest.stream, {mimeType:'audio/webm'});
+    recChunks=[];
+    mediaRecorder.ondataavailable = e => { if(e.data.size>0) recChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+        const blob = new Blob(recChunks, {type:'audio/webm'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href=url; a.download='dpaul-mkiv-recording.webm'; a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById('recordBadge').classList.remove('visible');
+        document.getElementById('recProgress').classList.remove('visible');
+    };
+    mediaRecorder.start(100);
+    isRecording=true;
+    document.getElementById('recBtn').style.display='none';
+    document.getElementById('stopRecBtn').style.display='';
+    document.getElementById('recordBadge').classList.add('visible');
+    document.getElementById('recProgress').classList.add('visible');
+    // Animate progress bar
+    let pct=0;
+    const tick=setInterval(()=>{
+        if(!isRecording){clearInterval(tick);return;}
+        pct=Math.min(100,pct+0.5);
+        document.getElementById('recProgressFill').style.width=pct+'%';
+    },200);
+}
+
+function stopRecording(){
+    if(!mediaRecorder||mediaRecorder.state==='inactive')return;
+    isRecording=false;
+    mediaRecorder.stop();
+    document.getElementById('recBtn').style.display='';
+    document.getElementById('stopRecBtn').style.display='none';
+    document.getElementById('recProgressFill').style.width='100%';
+    setTimeout(()=>{document.getElementById('recProgressFill').style.width='0%';},400);
+}
+
+// ═══════════════════════════════════════════════════
+// MIDI EXPORT
+// ═══════════════════════════════════════════════════
+function writeMIDI(){
+    // MIDI Type 1, multiple tracks
+    const ppq=480; // ticks per quarter note
+    const stepsPerBeat=2; // 1 step = 1/8 note = ppq/2 ticks
+    const ticksPerStep=ppq/stepsPerBeat;
+
+    function varLen(v){
+        const bytes=[];
+        bytes.push(v&0x7f); v>>=7;
+        while(v>0){bytes.unshift((v&0x7f)|0x80);v>>=7;}
+        return bytes;
+    }
+    function noteEvents(ch,noteNum,step,len){
+        // returns [delta, event bytes] pairs
+        const onTick=step*ticksPerStep;
+        const offTick=onTick+Math.round(ticksPerStep*0.9);
+        return [{t:onTick, d:[0x90|(ch-1),noteNum,100]},{t:offTick,d:[0x80|(ch-1),noteNum,0]}];
+    }
+    function buildTrack(events){
+        events.sort((a,b)=>a.t-b.t);
+        const bytes=[];
+        let lastT=0;
+        events.forEach(e=>{
+            varLen(e.t-lastT).forEach(b=>bytes.push(b));
+            lastT=e.t;
+            e.d.forEach(b=>bytes.push(b));
+        });
+        // End of track
+        bytes.push(0,0xff,0x2f,0);
+        return bytes;
+    }
+    function trackChunk(bytes){
+        const len=bytes.length;
+        return [0x4d,0x54,0x72,0x6b,(len>>24)&0xff,(len>>16)&0xff,(len>>8)&0xff,len&0xff,...bytes];
+    }
+    function headerChunk(nTracks){
+        return [0x4d,0x54,0x68,0x64,0,0,0,6,0,1,0,nTracks,(ppq>>8)&0xff,ppq&0xff];
+    }
+    // Tempo track
+    const us=Math.round(60000000/bpm);
+    const tempoTrack=trackChunk(buildTrack([{t:0,d:[0,0xff,0x51,0x03,(us>>16)&0xff,(us>>8)&0xff,us&0xff]}]));
+    // Map drum row → GM note on ch10
+    const drumMap=[36,38,39,42,48,37]; // kick,snare,clap,hat,tom,rim (row 0-5)
+    // Drum track
+    const drumEvents=[];
+    for(let r=0;r<6;r++){
+        for(let s=0;s<stepLen;s++){
+            if(sequence[r][s]){
+                const onT=s*ticksPerStep, offT=onT+Math.round(ticksPerStep*0.85);
+                drumEvents.push({t:onT,d:[0x99,drumMap[r],100]});
+                drumEvents.push({t:offT,d:[0x89,drumMap[r],0]});
+            }
+        }
+    }
+    const drumTrack=trackChunk(buildTrack(drumEvents));
+    // Bass track (ch2)
+    const bassEvents=[];
+    for(let s=0;s<stepLen;s++){
+        if(bassSeq[s].on){
+            const nIdx=NOTE_NAMES.indexOf(bassSeq[s].note);
+            const midiNote=nIdx+12*(3+bassOct)+12; // MIDI octave offset
+            const onT=s*ticksPerStep, offT=onT+Math.round(ticksPerStep*0.85);
+            bassEvents.push({t:onT,d:[0x91,midiNote,100]});
+            bassEvents.push({t:offT,d:[0x81,midiNote,0]});
+        }
+    }
+    const bassTrack=trackChunk(buildTrack(bassEvents));
+    // Synth/arp track (ch1) — put arp notes in synth row steps
+    const synthEvents=[];
+    if(arpMemory.length>0){
+        for(let s=0;s<stepLen;s++){
+            if(sequence[6][s]){
+                const freq=arpMemory[s%arpMemory.length]*Math.pow(2,octaveOffset);
+                const midiNote=Math.round(69+12*Math.log2(freq/440));
+                const onT=s*ticksPerStep, offT=onT+Math.round(ticksPerStep*0.85);
+                synthEvents.push({t:onT,d:[0x90,midiNote,100]});
+                synthEvents.push({t:offT,d:[0x80,midiNote,0]});
+            }
+        }
+    }
+    const synthTrack=trackChunk(buildTrack(synthEvents));
+
+    const nTracks=4;
+    const header=headerChunk(nTracks);
+    return new Uint8Array([...header,...tempoTrack,...drumTrack,...bassTrack,...synthTrack]);
+}
+
+function exportMIDI(){
+    initAudio();
+    const bytes=writeMIDI();
+    const blob=new Blob([bytes],{type:'audio/midi'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download='dpaul-mkiv-pattern.mid'; a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════
+// MIDI IMPORT
+// ═══════════════════════════════════════════════════
+document.getElementById('midiFileInput').addEventListener('change',function(e){
+    const file=e.target.files[0]; if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(ev){parseMIDIFile(new Uint8Array(ev.target.result));};
+    reader.readAsArrayBuffer(file);
+    this.value='';
+});
+
+function parseMIDIFile(bytes){
+    try{
+        // Read header
+        if(bytes[0]!==0x4d||bytes[1]!==0x54||bytes[2]!==0x68||bytes[3]!==0x64)throw new Error('Not a MIDI file');
+        const ppq=(bytes[12]<<8)|bytes[13];
+        const nTracks=(bytes[10]<<8)|bytes[11];
+        // Parse first few tracks
+        let offset=14;
+        // Collect all note events from all tracks
+        const drumGM={36:0,38:1,39:2,42:3,48:4,37:5}; // GM→row
+        const collectedDrum=Array.from({length:6},()=>Array(stepLen).fill(0));
+        const collectedBass=Array.from({length:stepLen},()=>({on:false,note:'C'}));
+
+        for(let tr=0;tr<nTracks&&tr<4;tr++){
+            if(offset+8>bytes.length)break;
+            const chunkLen=(bytes[offset+4]<<24)|(bytes[offset+5]<<16)|(bytes[offset+6]<<8)|bytes[offset+7];
+            offset+=8;
+            const end=offset+chunkLen;
+            let tick=0; let runningStatus=0;
+            let i=offset;
+            while(i<end){
+                // Delta time
+                let delta=0, b=0;
+                do{b=bytes[i++];delta=(delta<<7)|(b&0x7f);}while(b&0x80);
+                tick+=delta;
+                // Event
+                let status=bytes[i];
+                if(status&0x80){runningStatus=status;i++;}else{status=runningStatus;}
+                const cmd=status&0xf0; const ch=status&0x0f;
+                if(cmd===0x90||cmd===0x80){
+                    const noteNum=bytes[i++]; const vel=bytes[i++];
+                    const isOn=cmd===0x90&&vel>0;
+                    if(isOn){
+                        const step=Math.floor((tick/(ppq/2))%stepLen);
+                        if(ch===9){// drum channel
+                            const row=drumGM[noteNum];
+                            if(row!==undefined&&step<stepLen)collectedDrum[row][step]=1;
+                        }else{
+                            const nIdx=noteNum%12;
+                            if(step<stepLen){collectedBass[step]={on:true,note:NOTE_NAMES[nIdx]};}
+                        }
+                    }
+                }else if(cmd===0xb0||cmd===0xa0||cmd===0xe0){i+=2;}
+                else if(cmd===0xc0||cmd===0xd0){i+=1;}
+                else if(status===0xff){
+                    const type=bytes[i++]; let mlen=0,b2=0;
+                    do{b2=bytes[i++];mlen=(mlen<<7)|(b2&0x7f);}while(b2&0x80);
+                    i+=mlen;
+                }else{i++;}
+            }
+            offset=end;
+        }
+        // Apply drum pattern
+        for(let r=0;r<6;r++)for(let s=0;s<stepLen;s++){
+            sequence[r][s]=collectedDrum[r][s];
+            const el=document.getElementById(`step-${r}-${s}`);
+            if(el)el.classList.toggle('on',!!collectedDrum[r][s]);
+        }
+        // Apply bass pattern
+        for(let s=0;s<stepLen;s++){
+            bassSeq[s]=collectedBass[s];
+            const btn=document.getElementById(`bstep-${s}`);if(btn)btn.classList.toggle('on',bassSeq[s].on);
+            const sel=document.getElementById(`bpitch-${s}`);if(sel)sel.value=bassSeq[s].note;
+        }
+        document.getElementById('statusBadge').textContent='MIDI LOADED';
+        setTimeout(()=>document.getElementById('statusBadge').textContent='READY',2000);
+    }catch(err){
+        document.getElementById('statusBadge').textContent='MIDI ERROR';
+        setTimeout(()=>document.getElementById('statusBadge').textContent='READY',2000);
+        console.error('MIDI import error',err);
+    }
+}
+
+// ═══════════════════════════════════════════════════
+// MIDI CONTROLLER INPUT
 // ═══════════════════════════════════════════════════
 let midiAccess=null,midiFlashTimer=null;
 function flashMidiLed(){const led=document.getElementById('ledMidi');if(!led)return;led.classList.add('flash');clearTimeout(midiFlashTimer);midiFlashTimer=setTimeout(()=>led.classList.remove('flash'),80);}
@@ -1822,137 +1697,48 @@ function initMIDI(){if(!navigator.requestMIDIAccess){document.getElementById('mi
 initMIDI();
 
 // ═══════════════════════════════════════════════════
-// AI BASS GENERATION (Claude API)
+// AI BASS
 // ═══════════════════════════════════════════════════
-let savedApiKey = localStorage.getItem('dpaul_api_key') || '';
-if(savedApiKey) document.getElementById('apiKeyInput').value = savedApiKey;
-
-function saveApiKey() {
-    const key = document.getElementById('apiKeyInput').value.trim();
-    if(key) {
-        localStorage.setItem('dpaul_api_key', key);
-        savedApiKey = key;
-        setAiStatus('KEY SAVED ✓', 'ok');
-        setTimeout(()=>setAiStatus('AWAITING INPUT',''), 1500);
-    }
+let savedApiKey=localStorage.getItem('dpaul_api_key')||'';
+if(savedApiKey)document.getElementById('apiKeyInput').value=savedApiKey;
+function saveApiKey(){const key=document.getElementById('apiKeyInput').value.trim();if(key){localStorage.setItem('dpaul_api_key',key);savedApiKey=key;setAiStatus('KEY SAVED ✓','ok');setTimeout(()=>setAiStatus('AWAITING INPUT',''),1500);}}
+function setAiStatus(msg,cls=''){const el=document.getElementById('aiStatus');el.textContent=msg;el.className='ai-status'+(cls?' '+cls:'');}
+async function generateBassWithAI(){
+    const apiKey=document.getElementById('apiKeyInput').value.trim()||savedApiKey;
+    if(!apiKey){setAiStatus('⚠ NO API KEY','err');return;}
+    const prompt=document.getElementById('aiPrompt').value.trim();
+    if(!prompt){setAiStatus('⚠ DESCRIBE YOUR BASS LINE FIRST','err');return;}
+    const btn=document.getElementById('aiGenBtn'); btn.disabled=true;
+    setAiStatus('▸▸▸ GENERATING…','ok');
+    const systemPrompt=`You are an expert electronic music sequencer programming assistant. Return ONLY valid JSON with this exact structure:{"engine":"<sub|acid|slap|rubber|reese|click>","steps":[{"on":true|false,"note":"<C,C#,D,D#,E,F,F#,G,G#,A,A#,B>"},...(exactly ${stepLen} steps)],"reasoning":"<one short sentence>"}. Return ONLY the JSON object, no markdown.`;
+    try{
+        const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:systemPrompt,messages:[{role:'user',content:`Create a ${stepLen}-step bass pattern: "${prompt}"`}]})});
+        if(!response.ok){const err=await response.json();throw new Error(err.error?.message||`HTTP ${response.status}`);}
+        const data=await response.json();
+        const text=data.content?.find(b=>b.type==='text')?.text||'';
+        let parsed; try{parsed=JSON.parse(text.replace(/```json|```/g,'').trim());}catch(e){throw new Error('Invalid JSON from API');}
+        if(!parsed.steps||parsed.steps.length===0)throw new Error('No steps returned');
+        if(parsed.engine&&['sub','acid','slap','rubber','reese','click'].includes(parsed.engine))setBassEngine(parsed.engine);
+        applyBassSeqFromAI(Array.from({length:stepLen},(_,i)=>parsed.steps[i]||{on:false,note:'C'}));
+        setAiStatus(`✓ ${(parsed.engine||bassEngine).toUpperCase()}${parsed.reasoning?' — '+parsed.reasoning:''}`, 'ok');
+    }catch(err){setAiStatus(`✗ ${err.message}`,'err');}
+    finally{btn.disabled=false;}
 }
-
-function setAiStatus(msg, cls='') {
-    const el = document.getElementById('aiStatus');
-    el.textContent = msg;
-    el.className = 'ai-status' + (cls ? ' '+cls : '');
-}
-
-async function generateBassWithAI() {
-    const apiKey = document.getElementById('apiKeyInput').value.trim() || savedApiKey;
-    if(!apiKey) { setAiStatus('⚠ NO API KEY — ENTER sk-ant-... KEY ABOVE', 'err'); return; }
-
-    const prompt = document.getElementById('aiPrompt').value.trim();
-    if(!prompt)  { setAiStatus('⚠ DESCRIBE YOUR BASS LINE FIRST', 'err'); return; }
-
-    const btn = document.getElementById('aiGenBtn');
-    btn.disabled = true;
-    setAiStatus('▸▸▸ GENERATING…', 'ok');
-
-    const engineNames = { sub:'Sub Bass', acid:'Acid 303', slap:'Slap Bass', rubber:'Rubber Bass', reese:'Reese Bass', click:'Click Bass' };
-
-    const systemPrompt = `You are an expert electronic music sequencer programming assistant. 
-The user describes a bass line. You must return ONLY valid JSON with this exact structure:
-{
-  "engine": "<one of: sub|acid|slap|rubber|reese|click>",
-  "steps": [
-    {"on": true|false, "note": "<note name like C,C#,D,D#,E,F,F#,G,G#,A,A#,B>"},
-    ... (exactly ${stepLen} steps)
-  ],
-  "reasoning": "<one short sentence>"
-}
-Available engines: sub (deep sine sub), acid (acid 303 saw), slap (percussive slap), rubber (pitch-drop rubber), reese (detuned reese), click (transient click bass).
-Notes must be one of: C, C#, D, D#, E, F, F#, G, G#, A, A#, B.
-Return ONLY the JSON object, no markdown, no explanation outside the JSON.`;
-
-    const userMsg = `Create a ${stepLen}-step bass sequencer pattern: "${prompt}"\nCurrent engine: ${engineNames[bassEngine] || bassEngine}`;
-
-    try {
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': apiKey,
-                'anthropic-version': '2023-06-01',
-                'anthropic-dangerous-direct-browser-access': 'true'
-            },
-            body: JSON.stringify({
-                model: 'claude-sonnet-4-20250514',
-                max_tokens: 1000,
-                system: systemPrompt,
-                messages: [{ role: 'user', content: userMsg }]
-            })
-        });
-
-        if(!response.ok) {
-            const err = await response.json();
-            throw new Error(err.error?.message || `HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-        const text = data.content?.find(b=>b.type==='text')?.text || '';
-
-        let parsed;
-        try {
-            const cleaned = text.replace(/```json|```/g,'').trim();
-            parsed = JSON.parse(cleaned);
-        } catch(e) {
-            throw new Error('Invalid JSON from API');
-        }
-
-        if(!parsed.steps || parsed.steps.length === 0) throw new Error('No steps returned');
-
-        // Apply engine
-        if(parsed.engine && ['sub','acid','slap','rubber','reese','click'].includes(parsed.engine)) {
-            setBassEngine(parsed.engine);
-        }
-
-        // Apply steps (pad/trim to stepLen)
-        const stepsToApply = Array.from({length: stepLen}, (_,i) => parsed.steps[i] || {on:false,note:'C'});
-        applyBassSeqFromAI(stepsToApply);
-
-        const reason = parsed.reasoning ? ` — ${parsed.reasoning}` : '';
-        setAiStatus(`✓ ${(parsed.engine||bassEngine).toUpperCase()}${reason}`, 'ok');
-
-    } catch(err) {
-        setAiStatus(`✗ ${err.message}`, 'err');
-    } finally {
-        btn.disabled = false;
-    }
-}
-
-// Also allow Enter key in prompt textarea (Shift+Enter = newline, Enter = generate)
-document.getElementById('aiPrompt').addEventListener('keydown', e => {
-    if(e.key==='Enter' && !e.shiftKey) { e.preventDefault(); generateBassWithAI(); }
-});
+document.getElementById('aiPrompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();generateBassWithAI();}});
 
 // ═══════════════════════════════════════════════════
 // HELP MODAL
 // ═══════════════════════════════════════════════════
-function openHelp() {
-    document.getElementById('helpOverlay').classList.add('open');
-}
-function closeHelp() {
-    document.getElementById('helpOverlay').classList.remove('open');
-}
-function closeHelpOnBg(e) {
-    if(e.target === document.getElementById('helpOverlay')) closeHelp();
-}
-function switchTab(id) {
-    document.querySelectorAll('.help-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.help-tab').forEach(t => t.classList.remove('active'));
+function openHelp(){document.getElementById('helpOverlay').classList.add('open');}
+function closeHelp(){document.getElementById('helpOverlay').classList.remove('open');}
+function closeHelpOnBg(e){if(e.target===document.getElementById('helpOverlay'))closeHelp();}
+function switchTab(id){
+    document.querySelectorAll('.help-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.help-tab').forEach(t=>t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    document.querySelectorAll('.help-tab').forEach(t => {
-        if(t.getAttribute('onclick') && t.getAttribute('onclick').includes(id)) t.classList.add('active');
-    });
+    document.querySelectorAll('.help-tab').forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes(id))t.classList.add('active');});
 }
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeHelp(); });
-
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHelp();});
 drawScope();
 </script>
 </body>
