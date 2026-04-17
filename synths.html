@@ -336,7 +336,7 @@
     </section>
 
     <!-- PROCESS -->
-    <section class="process-section reveal">
+    <section class="process-section reveal" data-post-section data-post-title="How the DP-ONE Was Built — dPaul Studio">
         <div class="section-label">// How it was built</div>
         <div class="timeline">
             <div class="timeline-step">
@@ -384,7 +384,7 @@
     </div>
 
     <!-- LEARNING SECTION -->
-    <section class="learning-section reveal">
+    <section class="learning-section reveal" data-post-section data-post-title="Learning by Doing — Building Browser Instruments">
         <div class="section-label">// Learning by doing</div>
         <div class="learning-grid">
             <div class="learning-main">
@@ -424,7 +424,7 @@
     </section>
 
     <!-- KORG M1 ORIGIN SECTION -->
-    <section class="origin-section reveal">
+    <section class="origin-section reveal" data-post-section data-post-title="Where It All Began — Thirty Years of Synths">
         <div class="section-label">// Where it all began</div>
         <div class="origin-grid">
             <div class="origin-body">
@@ -456,28 +456,27 @@
     </section>
 
     <!-- MKI -->
-       <div class="instrument reveal">
-        <div class="instrument-eyebrow">// 01 - First Evolution</div>
-        <div class="instrument-name">DPAUL Synth MKII <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyArp</span></div>
+    <div class="instrument reveal" data-post-section data-post-title="DPAUL Synth MKI — Where It Started">
+        <div class="instrument-eyebrow">// 00 - Where it started</div>
+        <div class="instrument-name">DPAUL Synth MKI <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">v1.0</span></div>
         <div class="instrument-body">
             <div>
-                <p class="instrument-story" style="margin-bottom:16px;">A single note gets dull quickly. What makes a synth interesting is movement - sound that evolves, patterns that breathe. The MKII introduced four voices running at once, slightly detuned from each other to give that thick, wide quality hardware polysynths are known for. The arpeggiator came next: hold a chord and the synth cycles through the notes automatically, climbing octaves as it goes.</p>
-                <p class="instrument-story" style="margin-bottom:40px;">Try holding several keys at once with the arp running - it's one of those features that immediately makes you want to play rather than just test.</p>
+                <p class="instrument-story" style="margin-bottom:40px;">Every journey starts somewhere. This one started with a single prompt and a question - can a working synth actually be built in a browser with no coding background? One oscillator, three waveforms, a basic filter, a two-octave keyboard. Barely anything. But it made sound, it responded to the keys, and that was enough to keep going. Everything else on this page grew from here.</p>
                 <div class="mki-embed-wrap">
-                    <div class="mki-label">// Live instrument - hold a key, toggle ARP ON</div>
-                    <iframe class="mki-iframe" style="height: 440px;" src="../dpone/dpone-mki.html" scrolling="no" title="DPAUL Synth MKII PolyArp"></iframe>
-                    <div class="mki-footer">4-voice engine &nbsp;·&nbsp; voice spread/detune &nbsp;·&nbsp; arpeggiator with tempo + octave range &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard</div>
+                    <div class="mki-label">// Live instrument - click a key to play</div>
+                    <iframe class="mki-iframe" style="height: 580px;" src="../dpone/dpone-mki.html" scrolling="no" title="DPAUL Synth MKI v1.0"></iframe>
+                    <div class="mki-footer">1 oscillator &nbsp;·&nbsp; 3 waveforms &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard &nbsp;·&nbsp; ~80 lines of JS</div>
                 </div>
             </div>
             <div class="instrument-visual">
-                <img src="../assets/dpone-mkii-3d.png" alt="DPAUL Synth MKII - 3D render" class="synth-3d-img">
-                <p class="visual-caption">MKII PolyArp — 3D render from HTML UI screenshot</p>
+                <img src="../assets/dpone-mki-3d.png" alt="DPAUL Synth MKI 3D render" class="synth-3d-img" style="border-radius: 4px;">
+                <p class="visual-caption">MKI — 3D render from HTML UI screenshot</p>
             </div>
         </div>
     </div>
 
     <!-- MKII -->
-    <div class="instrument reveal">
+    <div class="instrument reveal" data-post-section data-post-title="DPAUL Synth MKII PolyArp — Browser Instrument">
         <div class="instrument-eyebrow">// 01 - First Evolution</div>
         <div class="instrument-name">DPAUL Synth MKII <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyArp</span></div>
         <div class="instrument-body">
@@ -498,7 +497,7 @@
     </div>
 
     <!-- AI DESIGN FAILURE -->
-    <section class="ai-fail-section reveal">
+    <section class="ai-fail-section reveal" data-post-section data-post-title="When AI Gets It Wrong — dPaul Studio">
         <div class="section-label">// When AI gets it wrong</div>
         <div class="two-col-grid" style="margin-top: 40px;">
             <div class="ai-fail-main">
@@ -516,7 +515,7 @@
     </section>
 
     <!-- MKIII + MKIV -->
-    <div class="instrument reveal">
+    <div class="instrument reveal" data-post-section data-post-title="DPAUL Station MKIII & MKIV — The Middle Versions">
         <div class="instrument-eyebrow">// 02-03 - The Middle Versions</div>
         <div class="instrument-name">DPAUL Station MKIII &amp; MKIV <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyDrum · 37 Keys · Silver Edition</span></div>
         <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII is where the project changed shape. Up to this point it had been a keyboard instrument - something you played note by note. Adding a sequencer and drum machine turned it into something that could run on its own, generating rhythm and melody without anyone touching it. That shift in thinking is what pushed everything forward.</p>
@@ -555,7 +554,7 @@
     </div>
 
     <!-- BRIDGE -->
-    <div class="instrument reveal" style="border-bottom: 1px solid var(--border);">
+    <div class="instrument reveal" data-post-section data-post-title="Strip It Back, Build It Right — The Decision to Rebuild" style="border-bottom: 1px solid var(--border);">
         <div class="instrument-eyebrow">// 03.5 - The decision to start again</div>
         <div class="instrument-name" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">Strip it back.<br><em style="color:var(--orange); font-style:normal;">Build it right.</em></div>
         <div style="display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start;">
@@ -573,7 +572,7 @@
     </div>
 
     <!-- DP-ONE MKV -->
-    <div class="instrument reveal">
+    <div class="instrument reveal" data-post-section data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild">
         <div class="instrument-eyebrow">// 04 - The Rebuild</div>
         <div class="instrument-name">DP-ONE MkV <span style="color:#50c864; font-size:0.72rem; font-weight:400; letter-spacing:0.05em; border: 1px solid rgba(80,200,100,0.4); border-radius:2px; padding: 2px 10px; vertical-align:middle;">Pre-skin build</span></div>
         <div class="instrument-body" style="margin-bottom: 40px;">
@@ -600,7 +599,7 @@
     </div>
 
     <!-- ACID-BOX -->
-    <div class="instrument reveal">
+    <div class="instrument reveal" data-post-section data-post-title="Acid-Box — TB-303 Inspired Bass Synthesiser">
         <div class="instrument-eyebrow">// 05 - TB-303 Inspired Bass Synthesiser</div>
         <div class="instrument-name">Acid-Box</div>
         <div class="instrument-body">
@@ -625,7 +624,7 @@
     </div>
 
     <!-- HARDWARE HISTORY -->
-    <section class="instrument reveal" style="border-bottom: 1px solid var(--border); padding: 80px 0;">
+    <section class="instrument reveal" data-post-section data-post-title="Thirty Years of Synths — Hardware History" style="border-bottom: 1px solid var(--border); padding: 80px 0;">
         <div class="instrument-eyebrow">// The hardware that came before</div>
         <div class="instrument-name">Thirty Years of Synths</div>
         <p class="instrument-story" style="max-width: 820px; margin-bottom: 16px;">
@@ -947,6 +946,8 @@
         }, 800);
     }, 7000);
 </script>
+
+<script src="post-generator.js"></script>
 
 </body>
 </html>
