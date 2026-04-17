@@ -274,17 +274,51 @@
 
     async _generate() {
       const limit = LIMITS[currentPlatform];
+      const now = new Date();
+      const month = now.toLocaleString('en-GB', { month: 'long' });
+      const year  = now.getFullYear();
+      const dateStr = month + ' ' + year;
+
+      // Derive page URL from current page filename
+      const pageName = window.location.pathname.split('/').pop().replace('.html','').replace('index','');
+      const pageSlug = pageName ? pageName : '';
+      const pageUrl  = pageSlug ? 'dpaul.studio/' + pageSlug : 'dpaul.studio';
+
       const platformGuide = currentPlatform === 'twitter'
-        ? `Twitter/X post. Hard limit: ${limit} characters total including hashtags. Punchy, one idea, no fluff. End with 2-3 tight hashtags.`
-        : `Instagram caption. Aim for 150-300 words. Lead with a strong first line (visible before "more"). Conversational but sharp. End with 5-8 relevant hashtags on a new line.`;
+        ? `Twitter/X post. Hard limit: ${limit} characters total including the header and hashtags. Punchy, one idea, no fluff.
+
+Format the output EXACTLY like this with no deviations:
+dpaul.studio
+──────────────
+// [RELEVANT TITLE IN UPPERCASE]
+${dateStr}
+
+[post copy — punchy, 1-3 sentences max]
+
+${pageUrl}
+
+#tag1 #tag2 #tag3`
+        : `Instagram caption. Aim for 150-300 words. Conversational but sharp.
+
+Format the output EXACTLY like this with no deviations:
+dpaul.studio
+──────────────
+// [RELEVANT TITLE IN UPPERCASE]
+${dateStr}
+
+[post copy — first person, direct, no fluff]
+
+${pageUrl}
+
+#tag1 #tag2 #tag3 #tag4 #tag5 #tag6 #tag7 #tag8`
 
       const imageInfo = currentImages.length
         ? `\nImages in this section:\n${currentImages.map(i => `- ${i.filename}${i.alt ? ' (' + i.alt + ')' : ''}`).join('\n')}`
         : '';
 
-      const prompt = `You are writing social media copy for dpaul.studio — a digital design and development studio with a distinct aesthetic: dark backgrounds, monospace type, orange accents, technical precision, creative depth.
+      const prompt = `You are writing social media copy for David, the sole person behind dpaul.studio — a one-person digital design and development studio with a distinct aesthetic: dark backgrounds, monospace type, orange accents, technical precision, creative depth.
 
-The studio makes interactive web components, audio tools, synthesisers, and branded design work. The voice is direct, confident, lowercase-friendly, no corporate fluff.
+David builds interactive web components, audio tools, browser synthesisers, and branded design work. He works alone. The voice is first person singular — "I", "my", "me". Never "we", "our", or "the studio". Direct, confident, lowercase-friendly, no corporate fluff.
 
 Write a ${platformGuide}
 
@@ -296,13 +330,17 @@ ${imageInfo}
 ---
 
 Rules:
-- Write in the studio's voice — technical but human, not salesy
+- Follow the format template EXACTLY — dpaul.studio header, separator line, title, date, copy, page url, hashtags
+- Write the title in the format: // TITLE IN UPPERCASE — keep it short and relevant to the section
+- Write in first person singular — I, my, me. Never we, our, us
+- Technical but human, not salesy
 - Reference specific features or details from the content
-- Always include dpaul.studio somewhere in the post naturally
+- Do NOT open with tech clichés like "git clone", "shipping", "dropping", "just landed"
 - Do NOT use generic phrases like "excited to share" or "check it out"
 - Do NOT use quotation marks around the post
-- If images are listed above, end your response with a new line containing only: IMAGE: <filename of the best image to attach>
-- Output ONLY the post text (and the IMAGE line if applicable), nothing else`;
+- Generate relevant hashtags based on the content — mix of specific and broader reach tags
+- If images are listed above, add one final line after the hashtags containing only: IMAGE: <filename of the best image to attach>
+- Output ONLY the formatted post, nothing else`;
 
       try {
         const res = await fetch('https://dpaul-api-proxy.davidpaulahern.workers.dev', {
