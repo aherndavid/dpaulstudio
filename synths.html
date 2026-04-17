@@ -161,7 +161,7 @@
         .origin-footnote a:hover { color: var(--cream); }
 
         .next-section { padding: 72px 0 0; }
-        .next-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border-dim); border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; margin-top: 32px; }
+        .next-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border-dim); border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; margin-top: 32px; }
         .next-card { background: var(--bg); padding: 28px 24px; }
         .next-card-label { font-size: 1.066rem; color: var(--orange); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
         .next-card-title { font-size: calc(1.3rem * var(--font-scale)); color: #fff; font-weight: 700; margin-bottom: 10px; }
@@ -609,13 +609,6 @@
                     </ul>
                     <a href="https://dpaul.studio/dpone/dpone-mkv-beta.html" target="_blank" rel="noopener noreferrer" class="launch-btn">Launch Beta →</a>
                 </div>
-                    <span class="skill-tag">7-mode filter bank</span>
-                    <span class="skill-tag">LFO + envelope mod</span>
-                    <span class="skill-tag">Joystick pitch/filter</span>
-                    <span class="skill-tag">Chorus · Tape echo · Reverb</span>
-                    <span class="skill-tag">6-row sequencer · 8 or 16 steps</span>
-                    <span class="skill-tag">37-key keyboard</span>
-                </div>
             </div>
             <div class="instrument-visual">
                 <img src="../assets/dpone-mkv.png" alt="DP-ONE MkV - finished HTML interface" class="synth-3d-img" style="border-radius: 4px; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.7));">
@@ -699,8 +692,7 @@
     <!-- WHAT'S NEXT -->
     <section class="next-section reveal">
         <div class="section-label">// What's next</div>
-        <div class="next-grid">
-            <div class="next-card">
+                <div class="next-grid">            <div class="next-card">
                 <div class="next-card-label">In progress</div>
                 <div class="next-card-title">API Sound Library</div>
                 <div class="next-card-desc">Integrating an external API into the DP-ONE to pull in new sounds dynamically - turning a static instrument into an ever-expanding one.</div>
@@ -714,7 +706,13 @@
                 <div class="next-card-label">// Live on Tools</div>
                 <div class="next-card-title">VU Meter &amp; Text-to-Speech</div>
                 <div class="next-card-desc">Two browser tools built and running - functional HTML first, then 3D rendered mockup so each tool is presented as a physical product.</div>
-                <a href="tools.html" class="next-card-link">View Tools &rarr;</a>
+               <a href="tools.html" class="next-card-link">View Tools &rarr;</a>
+            </div>
+            <div class="next-card">
+                <div class="next-card-label">// Stay in the loop</div>
+                <div class="next-card-title">Weekly Updates</div>
+                <div class="next-card-desc">New builds, beta releases, and notes from the studio — direct to your inbox. No pitch. No noise. Just what's been made.</div>
+                <a href="mailto:studio@dpaul.studio?subject=Sign%20me%20up%20for%20updates&body=Hi%20%E2%80%94%20please%20add%20me%20to%20the%20weekly%20updates%20list." class="next-card-link" style="margin-top: 16px;">Get Updates &rarr;</a>
             </div>
         </div>
     </section>
