@@ -33,7 +33,6 @@
     }
     @keyframes dp-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* overlay */
     #dp-modal-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(10,11,10,0.82);
@@ -43,7 +42,6 @@
     }
     #dp-modal-overlay.open { display: flex; }
 
-    /* modal */
     #dp-modal {
       background: #1a1c1a;
       border: 1px solid rgba(255,102,0,0.3);
@@ -69,7 +67,6 @@
     }
     #dp-modal-close:hover { color: #FF6600; }
 
-    /* platform toggle */
     #dp-platform-row {
       display: flex; gap: 8px; padding: 16px 20px 0;
     }
@@ -84,7 +81,6 @@
     .dp-platform-btn:hover { border-color: rgba(255,102,0,0.4); color: #c8c8c0; }
     .dp-platform-btn.active { background: #FF6600; border-color: #FF6600; color: #000; font-weight: bold; }
 
-    /* body */
     #dp-modal-body { padding: 20px; min-height: 140px; }
 
     #dp-loading {
@@ -99,9 +95,8 @@
     }
     @keyframes dp-spin { to { transform: rotate(360deg); } }
 
-    #dp-result {
-      display: none;
-    }
+    #dp-result { display: none; }
+
     #dp-post-text {
       background: #111312;
       border: 1px solid rgba(255,255,255,0.07);
@@ -123,7 +118,6 @@
     }
     #dp-char-count.over { color: #cc3300; }
 
-    /* footer */
     #dp-modal-footer {
       display: flex; gap: 10px; justify-content: flex-end;
       padding: 12px 20px 16px;
@@ -148,7 +142,7 @@
   styleEl.textContent = css;
   document.head.appendChild(styleEl);
 
-  /* ── MODAL HTML ── injected once ────────────────────────── */
+  /* ── MODAL HTML ── */
   const modalHTML = `
     <div id="dp-modal-overlay">
       <div id="dp-modal">
@@ -183,8 +177,8 @@
   const LIMITS = { instagram: 2200, twitter: 280 };
 
   /* ── STATE ── */
-  let currentContent = '';
-  let currentTitle   = '';
+  let currentContent  = '';
+  let currentTitle    = '';
   let currentPlatform = 'instagram';
 
   /* ── PUBLIC API ── */
@@ -211,7 +205,6 @@
       currentPlatform = platform;
       document.querySelectorAll('.dp-platform-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      // re-generate for the new platform using current text as context
       document.getElementById('dp-loading').style.display = 'flex';
       document.getElementById('dp-result').style.display  = 'none';
       this._generate();
@@ -272,7 +265,7 @@ Rules:
 - Output ONLY the post text, nothing else`;
 
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('https://dpaul-api-proxy.davidpaulahern.workers.dev', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -295,13 +288,7 @@ Rules:
     }
   };
 
-  /* ── AUTO-ATTACH BUTTONS ────────────────────────────────── */
-  /*
-    Any element with data-post-section gets a button automatically.
-    Add to your HTML like:
-      <section class="instrument" data-post-section data-post-title="dPaul VU">
-    Or call dpPostGenerator.open(content, title) from anywhere.
-  */
+  /* ── AUTO-ATTACH BUTTONS ── */
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-post-section]').forEach(section => {
       const title   = section.getAttribute('data-post-title') || document.title;
@@ -315,12 +302,10 @@ Rules:
       section.appendChild(btn);
     });
 
-    // close on overlay click
     document.getElementById('dp-modal-overlay').addEventListener('click', function(e) {
       if (e.target === this) dpPostGenerator.close();
     });
 
-    // close on Escape
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') dpPostGenerator.close();
     });
