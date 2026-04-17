@@ -223,7 +223,7 @@
         </div>
     </section>
 
-    <section class="process-section reveal">
+    <section class="process-section reveal" data-post-section data-post-title="How the DP-ONE Was Built — dPaul Studio">
         <div class="section-label">// The Build Path</div>
         <div class="timeline">
             <div class="timeline-step">
@@ -258,7 +258,7 @@
     </div>
 
     <!-- MKI -->
-    <section class="instrument reveal">
+    <section class="instrument reveal" data-post-section data-post-title="DPAUL Synth MKI — Where It Started">
         <div class="instrument-eyebrow">// 00 - Start</div>
         <div class="instrument-name">DPAUL Synth MKI</div>
         <p class="instrument-story">The first prototype. One oscillator, three waveforms, basic filter. It made sound, and that was enough to keep going.</p>
@@ -271,7 +271,7 @@
     </section>
 
     <!-- ORIGIN -->
-    <section class="origin-section reveal">
+    <section class="origin-section reveal" data-post-section data-post-title="Where It All Began — Korg M1 Origin Story">
         <div class="section-label">// Origin Story</div>
         <div class="origin-body">
             <p>It started in 1991. Before the internet, you found gear in <strong>The Loot</strong> classifieds. I bought a Korg M1 from a stranger on a landline.</p>
@@ -285,7 +285,7 @@
     </section>
 
     <!-- MKV -->
-    <section class="instrument reveal">
+    <section class="instrument reveal" data-post-section data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild">
         <div class="instrument-eyebrow">// 04 - The Rebuild</div>
         <div class="instrument-name">DP-ONE MkV</div>
         <p class="instrument-story">A complete ground-up rebuild. 37 keys, joystick pitch/filter, 6-row sequencer, and a full FX chain (Reverb/Tape Echo).</p>
@@ -424,6 +424,10 @@
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
     window.onload = populateVoices;
 </script>
+
+<script src="share.js"></script>
+
+<script src="post-generator.js"></script>
 
 </body>
 </html>

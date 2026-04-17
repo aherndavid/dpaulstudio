@@ -257,7 +257,7 @@
     </section>
 
     <!-- HTML-LIVE -->
-    <section class="tool-section reveal">
+    <section class="tool-section reveal" data-post-section data-post-title="HTML-Live — Browser Code Editor">
         <div class="tool-eyebrow">// 01 — Live HTML Editor</div>
         <div class="tool-name">HTML-Live <span class="status-badge live">v1.6</span></div>
         
@@ -309,7 +309,7 @@
     </section>
 
     <!-- SKRIBLA -->
-    <section class="tool-section reveal">
+    <section class="tool-section reveal" data-post-section data-post-title="Skribla — Browser Scribble Pad">
         <div class="tool-eyebrow">// 02 — Scribble Pad</div>
         <div class="tool-name">Skribla</div>
         <p class="tool-story">A touch-friendly scribble pad that works on any device. Draw, sketch, doodle — lightweight and built for mobile.</p>
@@ -333,7 +333,7 @@
     </section>
 
     <!-- NEON PHOENIX -->
-    <section class="tool-section reveal">
+    <section class="tool-section reveal" data-post-section data-post-title="Neon Phoenix — Browser Retro Game">
         <div class="tool-eyebrow">// 03 — Retro Game</div>
         <div class="tool-name">Neon Phoenix</div>
         <p class="tool-story">A retro arcade space game built entirely in the browser. Classic gameplay, no plugins, no install — just open and play.</p>
@@ -499,6 +499,10 @@
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
     window.onload = populateVoices;
 </script>
+
+<script src="share.js"></script>
+
+<script src="post-generator.js"></script>
 
 </body>
 </html>

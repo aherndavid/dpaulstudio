@@ -195,7 +195,7 @@
     </section>
 
     <!-- VU METER -->
-    <section class="instrument reveal">
+    <section class="instrument reveal" data-post-section data-post-title="dPaul VU — Browser Audio Utility">
         <div class="instrument-eyebrow">// 01 — Audio Utility</div>
         <div class="instrument-name">dPaul VU</div>
         <p class="instrument-story">Monitoring levels accurately is the difference between a clean take and a digital mess. The dPaul VU is a high-sensitivity monitoring tool that captures incoming audio via the Web Audio API to provide real-time decibel tracking and peak history.</p>
@@ -214,7 +214,7 @@
     </section>
 
     <!-- VU CONCEPT -->
-    <section class="instrument reveal">
+    <section class="instrument reveal" data-post-section data-post-title="Pocket VU — Hardware Concept">
         <div class="instrument-eyebrow">// Concept — Hardware Translation</div>
         <div class="instrument-name">Pocket VU Concept</div>
         <p class="instrument-story">What would this look like as a physical object? This concept render explores a slim, pocket-sized VU meter in deep navy blue, running on battery power.</p>
@@ -225,7 +225,7 @@
     </section>
 
     <!-- TTS TOOL -->
-    <section class="instrument reveal">
+    <section class="instrument reveal" data-post-section data-post-title="dPaul TTS — AI Voice Engine">
         <div class="instrument-eyebrow">// 02 — Voice Generation</div>
         <div class="instrument-name">dPaul TTS</div>
         <p class="instrument-story">Voiceover work often requires a quick turnaround. This tool bridges the gap between raw text and professional-grade audio by integrating high-fidelity AI voice models.</p>
@@ -358,6 +358,10 @@
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
     window.onload = populateVoices;
 </script>
+
+<script src="share.js"></script>
+
+<script src="post-generator.js"></script>
 
 </body>
 </html>
