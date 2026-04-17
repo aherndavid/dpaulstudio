@@ -1,14 +1,9 @@
 /* ============================================================
    dpaul.studio — Post Generator
-   Drop this <script> tag at the bottom of any page (before </body>)
-   It auto-attaches a "// generate post" button to every section
-   that has a data-post-section attribute, or you can call
-   dpPostGenerator.open(contentString, titleString) manually.
    ============================================================ */
 
 (function () {
 
-  /* ── STYLES ── injected once ─────────────────────────────── */
   const css = `
     .dp-post-btn {
       display: inline-flex; align-items: center; gap: 8px;
@@ -118,6 +113,24 @@
     }
     #dp-char-count.over { color: #cc3300; }
 
+    #dp-img-suggestion {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(255,102,0,0.06);
+      border: 1px solid rgba(255,102,0,0.2);
+      border-radius: 3px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: #FF6600;
+      display: none;
+    }
+    #dp-img-suggestion span {
+      color: #c8c8c0;
+      display: block;
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
     #dp-modal-footer {
       display: flex; gap: 10px; justify-content: flex-end;
       padding: 12px 20px 16px;
@@ -142,7 +155,6 @@
   styleEl.textContent = css;
   document.head.appendChild(styleEl);
 
-  /* ── MODAL HTML ── */
   const modalHTML = `
     <div id="dp-modal-overlay">
       <div id="dp-modal">
@@ -162,6 +174,7 @@
           <div id="dp-result">
             <textarea id="dp-post-text" spellcheck="false" oninput="dpPostGenerator.updateCount()"></textarea>
             <div id="dp-char-count"></div>
+            <div id="dp-img-suggestion">// attach this image<span id="dp-img-name"></span></div>
           </div>
         </div>
         <div id="dp-modal-footer">
@@ -173,27 +186,38 @@
   `;
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-  /* ── LIMITS ── */
   const LIMITS = { instagram: 2200, twitter: 280 };
 
-  /* ── STATE ── */
   let currentContent  = '';
   let currentTitle    = '';
   let currentPlatform = 'instagram';
+  let currentImages   = [];
 
-  /* ── PUBLIC API ── */
+  /* ── grab image filenames from a section element ── */
+  function getImages(sectionEl) {
+    const imgs = Array.from(sectionEl.querySelectorAll('img'));
+    return imgs.map(img => {
+      const src = img.getAttribute('src') || '';
+      const alt = img.getAttribute('alt') || '';
+      const filename = src.split('/').pop();
+      return { filename, alt };
+    }).filter(i => i.filename);
+  }
+
   window.dpPostGenerator = {
 
-    open(content, title) {
+    open(content, title, sectionEl) {
       currentContent  = content;
       currentTitle    = title || 'dpaul.studio';
       currentPlatform = 'instagram';
+      currentImages   = sectionEl ? getImages(sectionEl) : [];
       document.querySelectorAll('.dp-platform-btn').forEach((b, i) => {
         b.classList.toggle('active', i === 0);
       });
       document.getElementById('dp-modal-overlay').classList.add('open');
       document.getElementById('dp-loading').style.display = 'flex';
       document.getElementById('dp-result').style.display  = 'none';
+      document.getElementById('dp-img-suggestion').style.display = 'none';
       this._generate();
     },
 
@@ -207,12 +231,14 @@
       btn.classList.add('active');
       document.getElementById('dp-loading').style.display = 'flex';
       document.getElementById('dp-result').style.display  = 'none';
+      document.getElementById('dp-img-suggestion').style.display = 'none';
       this._generate();
     },
 
     regenerate() {
       document.getElementById('dp-loading').style.display = 'flex';
       document.getElementById('dp-result').style.display  = 'none';
+      document.getElementById('dp-img-suggestion').style.display = 'none';
       this._generate();
     },
 
@@ -239,11 +265,22 @@
       el.classList.toggle('over', text.length > limit);
     },
 
+    _showImageSuggestion(filename) {
+      if (!filename) return;
+      const el = document.getElementById('dp-img-suggestion');
+      document.getElementById('dp-img-name').textContent = filename;
+      el.style.display = 'block';
+    },
+
     async _generate() {
       const limit = LIMITS[currentPlatform];
       const platformGuide = currentPlatform === 'twitter'
         ? `Twitter/X post. Hard limit: ${limit} characters total including hashtags. Punchy, one idea, no fluff. End with 2-3 tight hashtags.`
         : `Instagram caption. Aim for 150-300 words. Lead with a strong first line (visible before "more"). Conversational but sharp. End with 5-8 relevant hashtags on a new line.`;
+
+      const imageInfo = currentImages.length
+        ? `\nImages in this section:\n${currentImages.map(i => `- ${i.filename}${i.alt ? ' (' + i.alt + ')' : ''}`).join('\n')}`
+        : '';
 
       const prompt = `You are writing social media copy for dpaul.studio — a digital design and development studio with a distinct aesthetic: dark backgrounds, monospace type, orange accents, technical precision, creative depth.
 
@@ -255,14 +292,17 @@ Base the post on this section content:
 ---
 Title: ${currentTitle}
 ${currentContent}
+${imageInfo}
 ---
 
 Rules:
 - Write in the studio's voice — technical but human, not salesy
 - Reference specific features or details from the content
+- Always include dpaul.studio somewhere in the post naturally
 - Do NOT use generic phrases like "excited to share" or "check it out"
 - Do NOT use quotation marks around the post
-- Output ONLY the post text, nothing else`;
+- If images are listed above, end your response with a new line containing only: IMAGE: <filename of the best image to attach>
+- Output ONLY the post text (and the IMAGE line if applicable), nothing else`;
 
       try {
         const res = await fetch('https://dpaul-api-proxy.davidpaulahern.workers.dev', {
@@ -275,7 +315,15 @@ Rules:
           })
         });
         const data = await res.json();
-        const text = data.content?.[0]?.text || 'Could not generate post. Please try again.';
+        let text = data.content?.[0]?.text || 'Could not generate post. Please try again.';
+
+        // Extract IMAGE suggestion if present
+        const imageMatch = text.match(/\nIMAGE:\s*(.+)$/);
+        if (imageMatch) {
+          this._showImageSuggestion(imageMatch[1].trim());
+          text = text.replace(/\nIMAGE:\s*.+$/, '').trim();
+        }
+
         document.getElementById('dp-post-text').value = text;
         document.getElementById('dp-loading').style.display = 'none';
         document.getElementById('dp-result').style.display  = 'block';
@@ -291,13 +339,13 @@ Rules:
   /* ── AUTO-ATTACH BUTTONS ── */
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-post-section]').forEach(section => {
-      const title   = section.getAttribute('data-post-title') || document.title;
-      const btn     = document.createElement('button');
+      const title = section.getAttribute('data-post-title') || document.title;
+      const btn   = document.createElement('button');
       btn.className = 'dp-post-btn';
       btn.innerHTML = '<span class="dp-btn-dot"></span> // generate post';
       btn.addEventListener('click', () => {
         const content = section.innerText.trim().slice(0, 2000);
-        dpPostGenerator.open(content, title);
+        dpPostGenerator.open(content, title, section);
       });
       section.appendChild(btn);
     });
