@@ -293,7 +293,7 @@ dpaul.studio
 // [RELEVANT TITLE IN UPPERCASE]
 ${dateStr}
 
-[post copy — punchy, 1-3 sentences max]
+[post copy — third-party voice, 1-3 sentences max]
 
 ${pageUrl}
 
@@ -306,7 +306,7 @@ dpaul.studio
 // [RELEVANT TITLE IN UPPERCASE]
 ${dateStr}
 
-[post copy — first person, direct, no fluff]
+[post copy — third-party voice, direct, no fluff]
 
 ${pageUrl}
 
@@ -316,9 +316,9 @@ ${pageUrl}
         ? `\nImages in this section:\n${currentImages.map(i => `- ${i.filename}${i.alt ? ' (' + i.alt + ')' : ''}`).join('\n')}`
         : '';
 
-      const prompt = `You are writing social media copy for David, the sole person behind dpaul.studio — a one-person digital design and development studio with a distinct aesthetic: dark backgrounds, monospace type, orange accents, technical precision, creative depth.
+      const prompt = `You are writing social media copy to promote dpaul.studio — a one-person digital design and development studio run by David. The aesthetic is distinct: dark backgrounds, monospace type, orange accents, technical precision, creative depth.
 
-David builds interactive web components, audio tools, browser synthesisers, and branded design work. He works alone. The voice is first person singular — "I", "my", "me". Never "we", "our", or "the studio". Direct, confident, lowercase-friendly, no corporate fluff.
+David builds interactive web components, audio tools, browser synthesisers, and branded design work. He works alone. Write as if a third party has discovered the site and is recommending it to others — use framing like "stumbled across", "check this out", "worth following", "this is worth your time". Never write in first person as David. Direct, confident, lowercase-friendly, no corporate fluff.
 
 Write a ${platformGuide}
 
@@ -332,11 +332,11 @@ ${imageInfo}
 Rules:
 - Follow the format template EXACTLY — dpaul.studio header, separator line, title, date, copy, page url, hashtags
 - Write the title in the format: // TITLE IN UPPERCASE — keep it short and relevant to the section
-- Write in first person singular — I, my, me. Never we, our, us
+- Write in third-party voice — as if someone else discovered and is sharing this. Never use "I", "my", "me" as David
 - Technical but human, not salesy
 - Reference specific features or details from the content
 - Do NOT open with tech clichés like "git clone", "shipping", "dropping", "just landed"
-- Do NOT use generic phrases like "excited to share" or "check it out"
+- Do NOT use generic phrases like "excited to share"
 - Do NOT use quotation marks around the post
 - Generate relevant hashtags based on the content — mix of specific and broader reach tags
 - If images are listed above, add one final line after the hashtags containing only: IMAGE: <filename of the best image to attach>
