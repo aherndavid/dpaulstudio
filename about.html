@@ -353,7 +353,10 @@ body::after {
         </div>
     </section>
 
-    <section class="section reveal" data-post-section data-post-title="dPaul Studio — Background & Story">
+    <section class="section reveal"
+             id="about-background"
+             data-post-section
+             data-post-title="dPaul Studio — Background & Story">
         <div class="section-label">// 01 — Background</div>
         <h2>David. Creative technologist.</h2>
 
@@ -382,7 +385,10 @@ body::after {
         </div>
     </section>
 
-    <section class="section reveal" data-post-section data-post-title="dPaul Studio — Skills & Disciplines">
+    <section class="section reveal"
+             id="about-disciplines"
+             data-post-section
+             data-post-title="dPaul Studio — Skills & Disciplines">
         <div class="section-label">// 02 — Disciplines</div>
         <h2>What I bring to a project</h2>
 
@@ -405,7 +411,11 @@ body::after {
         </div>
     </section>
 
-    <section class="section reveal" data-post-section data-post-title="dPaul Studio — Get in Touch">
+    <section class="section reveal"
+             id="about-contact"
+             data-post-section
+             data-post-title="dPaul Studio — Get in Touch"
+             data-post-content="David Paul is available for creative technology projects in 2026 — web development, design, motion graphics, and brand work. Free 30-minute consultation. Based in the UK. Get in touch at dpaul.studio">
         <div class="section-label">// 03 — Get in Touch</div>
         <div style="display: flex; align-items: flex-end; gap: 32px; margin-bottom: 40px;">
             <img src="../assets/old-mobile-landscape.png" alt="Get in touch" style="width: 220px; opacity: 0.85; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6)); flex-shrink: 0;">
@@ -533,19 +543,33 @@ body::after {
             if (!voices.length) return;
             const sel = document.getElementById('ttsVoiceSel');
             sel.innerHTML = '';
-            const filteredVoices = voices.filter(v =>
-                v.name.includes('Google') &&
-                (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('female'))
-            );
-            const finalSelection = filteredVoices.length ? filteredVoices : voices.filter(v => v.name.includes('Google') && v.lang.startsWith('en'));
-            finalSelection.forEach(v => {
+            const enVoices = voices.filter(v => /^en/i.test(v.lang));
+            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+            function pickVoice(preferred) {
+                for (const name of preferred) {
+                    const match = enVoices.find(v => v.name.includes(name));
+                    if (match) return match;
+                }
+                return null;
+            }
+            const femaleVoice = pickVoice(preferredFemale);
+            const maleVoice   = pickVoice(preferredMale);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+            const options = [
+                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+            ].filter(o => o.voice !== null);
+            options.forEach(({ label, voice }) => {
                 const o = document.createElement('option');
-                o.value = v.name;
-                o.textContent = v.name.replace('Google ', '') + (v.name.toLowerCase().includes('female') ? ' ♀' : ' ♂');
+                o.value = voice.name;
+                o.textContent = label;
                 sel.appendChild(o);
             });
-            if (!selectedVoice && finalSelection.length > 0) selectedVoice = finalSelection[0];
-            if (selectedVoice) sel.value = selectedVoice.name;
+            if (!selectedVoice && options.length > 0) {
+                selectedVoice = options[0].voice;
+                sel.value = options[0].voice.name;
+            }
         }
 
         window.ttsSetVoice = function(name) {
@@ -626,7 +650,6 @@ body::after {
     })();
 </script>
 <script src="share.js"></script>
-
 <script src="post-generator.js"></script>
 
 </body>
