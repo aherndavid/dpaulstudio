@@ -35,21 +35,22 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
-body::after {
-    content: '';
-    position: fixed;
-    top: 72px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('../assets/tools.jpg');
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-    opacity: 0.08;
-    pointer-events: none;
-    z-index: 0;
-}
+        body::after {
+            content: '';
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('../assets/tools.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .font-nudge {
             position: fixed; bottom: 24px; right: 24px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
@@ -280,7 +281,11 @@ body::after {
     </section>
 
     <!-- VU METER -->
-    <div class="instrument reveal" data-post-section data-post-title="dPaul VU — Browser Audio Utility">
+    <div class="instrument reveal"
+         id="tools-vu"
+         data-post-section
+         data-post-title="dPaul VU — Browser Audio Utility"
+         data-post-content="dPaul VU is a high-sensitivity browser audio monitoring tool — real-time decibel tracking, peak history, and signal-to-noise visualisation. Built with the Web Audio API. No install required. dpaul.studio/tools#tools-vu">
         <div class="instrument-eyebrow">// 01 &#8212; Audio Utility</div>
         <div class="instrument-name">dPaul VU <span style="color:var(--dim); font-size:1.2rem; font-weight:400;">v2.01</span></div>
         <div class="instrument-body">
@@ -304,7 +309,12 @@ body::after {
     </div>
 
     <!-- VU CONCEPT RENDER -->
-    <div class="instrument reveal" style="border-bottom: 1px solid var(--border);" data-post-section data-post-title="Pocket VU — Hardware Concept">
+    <div class="instrument reveal"
+         id="tools-vu-concept"
+         style="border-bottom: 1px solid var(--border);"
+         data-post-section
+         data-post-title="Pocket VU — Hardware Concept"
+         data-post-content="What if the dPaul VU meter existed as a physical device? A concept render of a slim, battery-powered pocket VU meter — deep navy blue, LED display, three hardware buttons. Everything the browser version does, in something you could hold in one hand. dpaul.studio/tools#tools-vu-concept">
         <div class="instrument-eyebrow">// Concept — What if it existed in hardware?</div>
         <div class="instrument-name" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">Pocket VU.<br><em style="color:var(--orange); font-style:normal;">Battery powered.</em></div>
         <div class="instrument-body">
@@ -321,7 +331,11 @@ body::after {
     </div>
 
     <!-- TTS TOOL -->
-    <div class="instrument reveal" data-post-section data-post-title="dPaul TTS — AI Voice Engine">
+    <div class="instrument reveal"
+         id="tools-tts"
+         data-post-section
+         data-post-title="dPaul TTS — AI Voice Engine"
+         data-post-content="dPaul TTS is an AI-powered voice generation tool — high-fidelity voice models with granular control over speed, pitch, and export. Direct WAV download at 44.1kHz. No install required. dpaul.studio/tools#tools-tts">
         <div class="instrument-eyebrow">// 02 &#8212; Voice Generation</div>
         <div class="instrument-name">dPaul TTS <span style="color:var(--dim); font-size:1.2rem; font-weight:400;">AI Engine</span></div>
         <div class="instrument-body">
@@ -342,7 +356,6 @@ body::after {
                 <p class="visual-caption">3D render &#8212; the TTS engine as a physical device</p>
             </div>
         </div>
-
     </div>
 
     <!-- PHILOSOPHY -->
@@ -416,11 +429,7 @@ body::after {
     // ─── TTS ENGINE ────────────────────────────────────────────────────
     (function() {
         const synth = window.speechSynthesis;
-        let chunks = [];
-        let idx = 0;
-        let paused = false;
-        let currentUtterance = null;
-        let lastHighlighted = null;
+        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
         let selectedVoice = null;
 
         const READ_SELECTORS = [
@@ -431,50 +440,38 @@ body::after {
             '.hero-label', '.section-label', '.instrument-eyebrow', '.instrument-name'
         ];
 
-        const AUTO_PRIORITY = [
-            'Google UK English Male', 'Google UK English Female', 'Google US English',
-            'Daniel', 'Arthur', 'Google US English Male', 'Google US English Female',
-            'Microsoft Ryan Online (Natural) - English (United Kingdom)',
-            'Microsoft Sonia Online (Natural) - English (United Kingdom)',
-            'Samantha', 'Fred', 'Alex',
-        ];
-
-        function genderGlyph(name) {
-            if (/female|woman|girl|sonia|samantha|karen|moira|fiona|veena|zira|hazel|susan/i.test(name)) return ' ♀';
-            if (/male|man|guy|daniel|arthur|david|james|mark|fred|alex|richard|ryan/i.test(name)) return ' ♂';
-            return '';
-        }
-
         function populateVoiceList() {
             const voices = synth.getVoices();
             if (!voices.length) return;
             const sel = document.getElementById('ttsVoiceSel');
             sel.innerHTML = '';
-            const english = voices.filter(v => /^en/i.test(v.lang));
-            const google  = english.filter(v => v.name.startsWith('Google'));
-            const others  = english.filter(v => !v.name.startsWith('Google'));
-            function addGroup(label, list) {
-                if (!list.length) return;
-                const grp = document.createElement('optgroup');
-                grp.label = label;
-                list.forEach(v => {
-                    const o = document.createElement('option');
-                    o.value = v.name;
-                    o.textContent = v.name + genderGlyph(v.name);
-                    grp.appendChild(o);
-                });
-                sel.appendChild(grp);
-            }
-            addGroup('── Google ──', google);
-            addGroup('── Other ──', others);
-            if (!selectedVoice) {
-                for (const name of AUTO_PRIORITY) {
-                    const found = voices.find(v => v.name === name);
-                    if (found) { selectedVoice = found; break; }
+            const enVoices = voices.filter(v => /^en/i.test(v.lang));
+            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+            function pickVoice(preferred) {
+                for (const name of preferred) {
+                    const match = enVoices.find(v => v.name.includes(name));
+                    if (match) return match;
                 }
-                if (!selectedVoice) selectedVoice = google[0] || english[0] || voices[0];
+                return null;
             }
-            if (selectedVoice) sel.value = selectedVoice.name;
+            const femaleVoice = pickVoice(preferredFemale);
+            const maleVoice   = pickVoice(preferredMale);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+            const options = [
+                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+            ].filter(o => o.voice !== null);
+            options.forEach(({ label, voice }) => {
+                const o = document.createElement('option');
+                o.value = voice.name;
+                o.textContent = label;
+                sel.appendChild(o);
+            });
+            if (!selectedVoice && options.length > 0) {
+                selectedVoice = options[0].voice;
+                sel.value = options[0].voice.name;
+            }
         }
 
         window.ttsSetVoice = function(name) {
@@ -595,9 +592,8 @@ body::after {
     // ─── END TTS ────────────────────────────────────────────────────────
 </script>
 
-<script src="post-generator.js"></script>
-
 <script src="share.js"></script>
+<script src="post-generator.js"></script>
 
 </body>
 </html>
