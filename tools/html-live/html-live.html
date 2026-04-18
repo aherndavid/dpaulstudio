@@ -23,8 +23,7 @@
   #home-btn { margin-left: auto; color: #aaaaff; border-color: #555577; }
   #home-btn:hover { background: #22223a; color: #ccccff; border-color: #aaaaff; }
 
-  #toggle-preview-btn { color: #888; border-color: #444; transition: all 0.15s; }
-  #toggle-preview-btn.preview-off { color: #ff8800; border-color: #ff8800; background: rgba(255,136,0,0.08); }
+  #toggle-preview-btn.preview-off { color: #ff8800; border-color: #ff8800; background: rgba(255,136,0,0.08); box-shadow: 0 0 6px rgba(255,136,0,0.3); }
 
   #inspect-btn { color: #888; border-color: #444; transition: all 0.15s; }
   
@@ -66,17 +65,17 @@
 
   /* ── LEFT PANEL ── */
   #left { width: 45%; display: flex; flex-direction: column; border-right: 1px solid #333; position: relative; }
-  
+
   /* PREVIEW OFF STATE */
-  #app.preview-hidden #right, 
-  #app.preview-hidden #v-divider { display: none; }
-  #app.preview-hidden #left { width: 100% !important; border-right: none; }
+  #app.preview-off #right, #app.preview-off #v-divider { display: none; }
+  #app.preview-off #left { width: 100% !important; border-right: none; }
 
   #editor-toolbar { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid #333; background: #222; flex-shrink: 0; }
   #editor-toolbar span { font-size: 19px; color: #888; letter-spacing: 1px; text-transform: uppercase; flex: 1; }
 
   #left-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
+  /* ── FIND & REPLACE BAR ── */
   #fnr-bar {
     display: none;
     flex-direction: column;
@@ -180,6 +179,7 @@
   .fnr-opt-label input[type=checkbox] { accent-color: #ffdd66; cursor: pointer; }
   .fnr-opt-label.active { color: #ffdd66; }
 
+  /* ── EDITOR WRAPPER with line numbers ── */
   #editor-wrapper {
     flex: 1;
     display: flex;
@@ -578,7 +578,7 @@
     <input type="file" id="import-file-input" accept=".html,.htm" style="display:none;">
     <button class="tbtn" id="export-btn" title="Export / download the current HTML">Export</button>
     <button class="tbtn" id="fnr-btn" title="Find &amp; Replace (Ctrl+H)">Find &amp; Replace</button>
-    <button class="tbtn" id="toggle-preview-btn" title="Toggle Preview Panel (Ctrl+P)">Toggle Preview</button>
+    <button class="tbtn" id="toggle-preview-btn" title="Toggle Preview On/Off (Ctrl+P)">Toggle Preview</button>
     <button class="tbtn" id="inspect-btn" title="Click elements in preview to highlight source (Ctrl+I)">Inspect</button>
     <button class="tbtn" id="debug-btn" title="Toggle HTMLHint debug panel (Ctrl+D)">
       Debug
@@ -731,7 +731,7 @@
   <div id="about-box">
     <h2>HTML Live Preview</h2>
     <div class="version">Version 1.7</div>
-    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel (Ctrl+D), <strong>Toggle Preview</strong> (Ctrl+P), zoom controls, version rollback, and <strong>Export</strong> functionality.</p>
+    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel (Ctrl+D), <strong>Toggle Preview</strong> (Ctrl+P), zoom controls, version rollback, and advanced <strong>Export</strong> options.</p>
     <div class="site">DPAUL.STUDIO</div>
     <button id="about-close">Close</button>
   </div>
@@ -842,3 +842,82 @@
   let activeLine     = 1;
 
   // HTMLHint state
+  let HTMLHint       = null;
+  let hintResults    = [];
+  let activeFilters  = new Set(['error', 'warning']);
+
+  // FNR state
+  let fnrMatches     = [];
+  let fnrCurrent     = -1;
+  let fnrDebounce    = null;
+
+  window.addEventListener('htmlhint-ready', () => {
+    HTMLHint = window.__HTMLHint;
+    if (editor.value.trim()) runHint();
+  });
+
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg, type = '') {
+    clearTimeout(toastTimer);
+    toast.textContent = msg;
+    toast.className = 'show' + (type ? ' toast-' + type : '');
+    toastTimer = setTimeout(() => { toast.className = ''; }, 2400);
+  }
+
+  // ── Export ────────────────────────────────────────────────────────────────
+  exportBtn.addEventListener('click', () => {
+    if (!editor.value.trim()) { showToast('Nothing to export — editor is empty'); return; }
+    exportFlash.textContent = '';
+    exportOverlay.classList.add('visible');
+    exportFilename.focus();
+    exportFilename.select();
+  });
+  exportCancel.addEventListener('click', () => exportOverlay.classList.remove('visible'));
+  exportOverlay.addEventListener('click', (e) => { if (e.target === exportOverlay) exportOverlay.classList.remove('visible'); });
+
+  exportDo.addEventListener('click', () => {
+    const raw      = editor.value;
+    const type     = document.querySelector('input[name="export-type"]:checked').value;
+    let content    = raw;
+
+    if (type === 'minified') {
+      content = raw
+        .replace(//g, '')
+        .replace(/>\s+</g, '><')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    } else if (type === 'pretty') {
+      content = prettyPrintHTML(raw);
+    }
+
+    let fname = exportFilename.value.trim() || 'index.html';
+    if (!fname.match(/\.html?$/i)) fname += '.html';
+
+    const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    exportFlash.textContent = '✓ Downloaded as ' + fname;
+    exportOverlay.classList.remove('visible');
+    showToast('✓ Exported: ' + fname, 'success');
+  });
+
+  function prettyPrintHTML(html) {
+    let indent   = 0;
+    const tab    = '  ';
+    const voids  = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
+    const inlines = new Set(['a','abbr','acronym','b','bdo','big','br','cite','code','dfn','em','i','img','input','kbd','label','map','object','output','q','samp','select','small','span','strong','sub','sup','textarea','time','tt','var']);
+    const result = [];
+    const tokenRe = /|<\/?[a-zA-Z][^>]*\/?>|[^<]+/g;
+    let tok;
+    while ((tok = tokenRe.exec(html)) !== null) {
+      const t = tok[0].trim();
+      if (!t) continue;
+      if (t.startsWith('
