@@ -27,30 +27,24 @@
         html, body {
             width: 100%; height: 100%;
             background-color: var(--bg);
-            /* --- ADDED BACKGROUND IMAGE CONFIG --- */
             background-image: url("assets/desk-phone.png");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-blend-mode: luminosity; /* Blends the image into the dark background */
-            /* -------------------------------------- */
+            background-blend-mode: luminosity;
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             color: var(--cream);
         }
 
-        /* Adjusted to make the image slightly transparent/subtle */
-        body {
-            position: relative;
-        }
-        
-        /* Subtle overlay to dim the image so text stays readable */
+        body { position: relative; }
+
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background: rgba(15, 16, 16, 0.85); /* Adjust 0.85 to make image clearer or darker */
+            background: rgba(15, 16, 16, 0.85);
             z-index: -1;
         }
 
@@ -72,7 +66,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Text shadow added to help text pop against the background image */
             text-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
@@ -134,45 +127,85 @@
             padding: 0 20px;
         }
 
-        .nav-link:hover {
+        .nav-link:hover { color: var(--orange); }
+
+        /* ── LANGUAGE SWITCHER ── */
+        #lang-switcher {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 1000;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            text-transform: uppercase;
+        }
+
+        .lang-btn:hover {
+            color: var(--cream);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .lang-btn.active {
             color: var(--orange);
+            border-color: var(--orange);
         }
 
         @media (max-width: 768px) {
-            #brand-group {
-                width: 90%;
-            }
-            .wordmark {
-                font-size: clamp(4.5rem, 18vw, 7rem);
-            }
-            #nav-bar {
-                margin-top: 20px;
-            }
-            .nav-link {
-                font-size: clamp(0.85rem, 4vw, 1.1rem);
-                padding: 4px 12px;
-            }
+            #brand-group { width: 90%; }
+            .wordmark { font-size: clamp(4.5rem, 18vw, 7rem); }
+            #nav-bar { margin-top: 20px; }
+            .nav-link { font-size: clamp(0.85rem, 4vw, 1.1rem); padding: 4px 12px; }
+            #lang-switcher { top: 14px; right: 16px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Language Switcher -->
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
+        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
+        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
+    </div>
 
     <div id="brand-group">
         <div class="wordmark">
             <span class="accent"><div id="eq-container"></div>d</span>paul<br>.studio
         </div>
         <nav id="nav-bar">
-            <a href="design.html"    class="nav-link">design</a>
-            <a href="merch.html"     class="nav-link">merch</a>
-            <a href="music.html"     class="nav-link">music</a>
-            <a href="synths.html"    class="nav-link">synths</a>
-            <a href="tools.html"     class="nav-link">tools</a>
-            <a href="video.html"     class="nav-link">video</a>
-            <a href="dev-tools.html" class="nav-link">dev tools</a>
-            <a href="about.html"     class="nav-link">about</a>
+            <a href="design.html"    class="nav-link" data-i18n="nav_design">design</a>
+            <a href="merch.html"     class="nav-link" data-i18n="nav_merch">merch</a>
+            <a href="music.html"     class="nav-link" data-i18n="nav_music">music</a>
+            <a href="synths.html"    class="nav-link" data-i18n="nav_synths">synths</a>
+            <a href="tools.html"     class="nav-link" data-i18n="nav_tools">tools</a>
+            <a href="video.html"     class="nav-link" data-i18n="nav_video">video</a>
+            <a href="dev-tools.html" class="nav-link" data-i18n="nav_devtools">dev tools</a>
+            <a href="about.html"     class="nav-link" data-i18n="nav_about">about</a>
         </nav>
     </div>
 
+    <!-- i18n engine -->
+    <script src="assets/translations.js"></script>
+    <script>
+        // Init language on load (respects saved preference & browser language)
+        document.addEventListener('DOMContentLoaded', I18N.init);
+    </script>
+
+    <!-- EQ animation -->
     <script>
         const NUM_BANDS = 10;
         const MAX_H     = 36;
