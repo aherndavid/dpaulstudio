@@ -36,22 +36,24 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
+
         /* Renaissance CD background image */
-          body::after {
-          content: '';
-    position: fixed;
-    top: 72px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('../assets/renaissance-cd-cover.jpg');
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-    opacity: 0.08;
-    pointer-events: none;
-    z-index: 0;
-}
+        body::after {
+            content: '';
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('../assets/renaissance-cd-cover.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         /* ── NAV ── */
         nav {
             position: sticky; top: 0; z-index: 100;
@@ -91,9 +93,18 @@
         .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
         .tts-btn {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            padding: 7px 16px; cursor: pointer; border-radius: 3px; font-family: inherit;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
         }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
         .tts-btn.active { background: var(--orange); color: #000; font-weight: bold; }
+        .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none; max-width: 240px;
+        }
+        .tts-voice-sel:focus { border-color: var(--orange); }
         .tts-highlight { background: rgba(255,102,0,0.15); border-radius: 2px; }
 
         /* ── SECTIONS ── */
@@ -175,7 +186,10 @@
 </nav>
 
 <div class="page">
-    <section class="hero reveal">
+    <section class="hero reveal"
+             id="music-intro"
+             data-post-section
+             data-post-title="dPaul Studio — Music">
         <div class="hero-label">// dPaul Technologies — Music</div>
         <h1>The Renaissance<br><span>"Trilogy Feed"</span> Archive</h1>
         <p>An interactive archive built from three 70-minute master recordings — engineered in Logic Pro and presented as a zero-delay, high-fidelity experience.</p>
@@ -184,11 +198,16 @@
             <span class="tts-label">// Speak page</span>
             <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
             <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
-            <select id="ttsVoiceSel" onchange="ttsSetVoice(this.value)" style="background: #111; color: #fff; border: 1px solid #333; padding: 5px;"></select>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
         </div>
     </section>
 
-    <section class="section reveal">
+    <section class="section reveal"
+             id="music-release"
+             data-post-section
+             data-post-title="dPaul Studio — Renaissance Archive">
         <div class="section-label">// 01 — The Release</div>
         <h2>Sasha & John Digweed — Renaissance</h2>
 
@@ -210,7 +229,11 @@
         </div>
     </section>
 
-    <section class="section reveal">
+    <section class="section reveal"
+             id="music-process"
+             data-post-section
+             data-post-title="dPaul Studio — Music Engineering"
+             data-post-content="A deep-dive into how dPaul Studio engineered an interactive web archive of the Renaissance Trilogy — three 70-minute Logic Pro masters optimised for zero-latency web streaming. DAW expertise meets web infrastructure.">
         <div class="section-label">// 02 — The Build Process</div>
         <h2>Engineering a web archive</h2>
         <p class="section-intro">This project demonstrated how DAW expertise and web infrastructure can deliver professional-grade interactive audio.</p>
@@ -241,7 +264,7 @@
 </div>
 
 <script>
-    // FONT NUDGE logic
+    // FONT NUDGE
     let fontIdx = 0;
     const scales = [1, 1.15, 1.3, 1.5];
     const labels = ['100%', '115%', '130%', '150%'];
@@ -251,53 +274,76 @@
         document.getElementById('fontIndicator').innerText = labels[fontIdx];
     }
 
-    // REVEAL logic
+    // REVEAL
     const obs = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-    // PARALLAX logic
+    // PARALLAX
     const cover = document.getElementById('albumCover');
     window.addEventListener('scroll', () => {
-        if(window.innerWidth > 760) {
+        if (window.innerWidth > 760) {
             cover.style.transform = `translateY(${window.scrollY * 0.15}px)`;
         }
     });
 
-    // TTS logic
+    // TTS
     const synth = window.speechSynthesis;
     let selectedVoice = null;
     let chunks = [];
     let cur = 0;
 
     function populateVoices() {
-        const v = synth.getVoices();
+        const voices = synth.getVoices();
+        if (!voices.length) return;
         const sel = document.getElementById('ttsVoiceSel');
         sel.innerHTML = '';
-        const en = v.filter(x => x.lang.startsWith('en'));
-        en.forEach(x => {
+        const enVoices = voices.filter(v => /^en/i.test(v.lang));
+        const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+        const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+        function pickVoice(preferred) {
+            for (const name of preferred) {
+                const match = enVoices.find(v => v.name.includes(name));
+                if (match) return match;
+            }
+            return null;
+        }
+        const femaleVoice = pickVoice(preferredFemale);
+        const maleVoice   = pickVoice(preferredMale);
+        const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+        const options = [
+            { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+            { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+        ].filter(o => o.voice !== null);
+        options.forEach(({ label, voice }) => {
             const o = document.createElement('option');
-            o.value = x.name; o.textContent = x.name;
+            o.value = voice.name;
+            o.textContent = label;
             sel.appendChild(o);
         });
-        selectedVoice = en[0];
+        if (!selectedVoice && options.length > 0) {
+            selectedVoice = options[0].voice;
+            sel.value = options[0].voice.name;
+        }
     }
 
-    window.ttsSetVoice = (n) => { selectedVoice = synth.getVoices().find(x => x.name === n); };
-    
+    window.ttsSetVoice = (n) => {
+        selectedVoice = synth.getVoices().find(v => v.name === n) || null;
+    };
+
     function speak() {
-        if(cur >= chunks.length) { ttsStop(); return; }
+        if (cur >= chunks.length) { ttsStop(); return; }
         const u = new SpeechSynthesisUtterance(chunks[cur].text);
-        if(selectedVoice) u.voice = selectedVoice;
+        if (selectedVoice) u.voice = selectedVoice;
         chunks[cur].el.classList.add('tts-highlight');
         u.onend = () => { chunks[cur].el.classList.remove('tts-highlight'); cur++; speak(); };
         synth.speak(u);
     }
 
     window.ttsPlay = () => {
-        if(!chunks.length) {
-            document.querySelectorAll('h1, h2, p').forEach(el => chunks.push({el, text: el.innerText}));
+        if (!chunks.length) {
+            document.querySelectorAll('h1, h2, p').forEach(el => chunks.push({ el, text: el.innerText }));
         }
         synth.cancel(); cur = 0; speak();
         document.getElementById('ttsPlay').classList.add('active');
@@ -305,13 +351,16 @@
 
     window.ttsStop = () => {
         synth.cancel();
-        if(chunks[cur]) chunks[cur].el.classList.remove('tts-highlight');
+        if (chunks[cur]) chunks[cur].el.classList.remove('tts-highlight');
         document.getElementById('ttsPlay').classList.remove('active');
     };
 
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
-    window.onload = populateVoices;
+    window.addEventListener('load', populateVoices);
 </script>
+
+<script src="share.js"></script>
+<script src="post-generator.js"></script>
 
 </body>
 </html>
