@@ -75,7 +75,6 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer  { flex: 1; }
 
-        /* Ticker styling */
         .ticker-wrap {
             position: relative; width: 100%; background: #000; border-bottom: 2px solid #222;
             overflow: hidden; padding: 14px 0; box-shadow: inset 0 0 20px rgba(0,0,0,1);
@@ -123,7 +122,6 @@
         }
         .hero-intro + .hero-intro { margin-top: 16px; }
 
-        /* TTS PLAYER STYLING */
         .tts-player {
             background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
             padding: 16px 20px; margin: 32px 0 0; display: flex; flex-wrap: wrap;
@@ -161,7 +159,6 @@
         .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
         .tts-highlight { background: rgba(255,102,0,.15); outline: 1px solid rgba(255,102,0,.3); border-radius: 2px; transition: background .3s; }
 
-        /* Billboard */
         .billboard-wrap { width: 100%; margin-top: 56px; }
         .screen-chrome {
             background: #0e0f0e; border: 1px solid var(--border); border-radius: 8px;
@@ -232,7 +229,12 @@
 <div class="page">
     <div class="content-bg">
         <div class="content-bg-logo"></div>
-        <div class="hero-text reveal" id="design-services" data-post-section data-post-title="dPaul Studio — Design Services">
+        
+        <div class="hero-text reveal" 
+             id="design-services" 
+             data-post-section 
+             data-post-title="dPaul Studio — Design & Brand Identity"
+             data-post-content="Brand identity and logo design that works everywhere. From static concepts to motion graphics and 4K video assets.">
 
             <div class="hero-label">// dPaul Technologies — Design Services</div>
             <h1>Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
@@ -270,7 +272,11 @@
             </div>
         </div>
 
-        <div class="billboard-wrap reveal" id="design-showcase">
+        <div class="billboard-wrap reveal" 
+             id="design-showcase"
+             data-post-section
+             data-post-title="Design Showcase — dPaul Billboard Gallery"
+             data-post-content="Exploring motion graphics and animated brand assets. A showcase of current design work and functional brand identity.">
             <div class="screen-chrome">
                 <div class="chrome-bar">
                     <div class="dot dot-r"></div>
@@ -321,7 +327,6 @@
         const synth=window.speechSynthesis;
         let chunks=[],idx=0,paused=false,currentUtterance=null,lastHighlighted=null,selectedVoice=null;
         
-        // Configuration for Design Page
         const READ_SELECTORS=['.hero-text h1','.hero-intro'];
         const SECTION_SELECTORS=['.hero-label','.chrome-status-left'];
 
@@ -385,5 +390,9 @@
         window.addEventListener('beforeunload',()=>synth.cancel());
     })();
 </script>
+
+<script src="share.js"></script>
+<script src="post-generator.js"></script>
+
 </body>
 </html>
