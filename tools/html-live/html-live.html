@@ -23,8 +23,6 @@
   #home-btn { margin-left: auto; color: #aaaaff; border-color: #555577; }
   #home-btn:hover { background: #22223a; color: #ccccff; border-color: #aaaaff; }
 
-  #toggle-preview-btn.preview-off { color: #ff8800; border-color: #ff8800; background: rgba(255,136,0,0.08); box-shadow: 0 0 6px rgba(255,136,0,0.3); }
-
   #inspect-btn { color: #888; border-color: #444; transition: all 0.15s; }
   
   #import-btn { color: #66bbff; border-color: #336688; transition: all 0.15s; }
@@ -65,11 +63,6 @@
 
   /* ── LEFT PANEL ── */
   #left { width: 45%; display: flex; flex-direction: column; border-right: 1px solid #333; position: relative; }
-
-  /* PREVIEW OFF STATE */
-  #app.preview-off #right, #app.preview-off #v-divider { display: none; }
-  #app.preview-off #left { width: 100% !important; border-right: none; }
-
   #editor-toolbar { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid #333; background: #222; flex-shrink: 0; }
   #editor-toolbar span { font-size: 19px; color: #888; letter-spacing: 1px; text-transform: uppercase; flex: 1; }
 
@@ -568,7 +561,7 @@
 <div id="app">
   <div id="top-toolbar">
     <span class="label">HTML Preview</span>
-    <span id="version-badge">v1.7</span>
+    <span id="version-badge">v1.6</span>
     <div class="sep"></div>
     <span id="font-label">Font</span>
     <input type="range" id="font-size-slider" min="10" max="24" value="13" step="1">
@@ -578,7 +571,6 @@
     <input type="file" id="import-file-input" accept=".html,.htm" style="display:none;">
     <button class="tbtn" id="export-btn" title="Export / download the current HTML">Export</button>
     <button class="tbtn" id="fnr-btn" title="Find &amp; Replace (Ctrl+H)">Find &amp; Replace</button>
-    <button class="tbtn" id="toggle-preview-btn" title="Toggle Preview On/Off (Ctrl+P)">Toggle Preview</button>
     <button class="tbtn" id="inspect-btn" title="Click elements in preview to highlight source (Ctrl+I)">Inspect</button>
     <button class="tbtn" id="debug-btn" title="Toggle HTMLHint debug panel (Ctrl+D)">
       Debug
@@ -597,6 +589,7 @@
       <div id="editor-toolbar"><span>HTML input</span><span id="imported-filename"></span></div>
       <div id="left-body">
 
+        <!-- Find & Replace Bar -->
         <div id="fnr-bar">
           <div class="fnr-row">
             <span class="fnr-label">Find</span>
@@ -637,6 +630,7 @@
           <div id="line-badge"></div>
         </div>
 
+        <!-- Debug Panel -->
         <div id="debug-panel">
           <div id="debug-header">
             <span id="debug-header-title">&#128295; HTMLHint</span>
@@ -689,6 +683,7 @@
 <div id="inspect-tip"></div>
 <div id="toast"></div>
 
+<!-- Export Overlay -->
 <div id="export-overlay">
   <div id="export-box">
     <h3>&#8681; Export HTML</h3>
@@ -730,8 +725,8 @@
 <div id="about-overlay">
   <div id="about-box">
     <h2>HTML Live Preview</h2>
-    <div class="version">Version 1.7</div>
-    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel (Ctrl+D), <strong>Toggle Preview</strong> (Ctrl+P), zoom controls, version rollback, and advanced <strong>Export</strong> options.</p>
+    <div class="version">Version 1.6</div>
+    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel with HTMLHint (Ctrl+D), zoom controls, version rollback, <strong>Export</strong> (raw/formatted/minified), and <strong>Find &amp; Replace</strong> (Ctrl+H).</p>
     <div class="site">DPAUL.STUDIO</div>
     <button id="about-close">Close</button>
   </div>
@@ -747,6 +742,7 @@
   </div>
 </div>
 
+<!-- HTMLHint via esm.sh -->
 <script type="module">
   import { HTMLHint } from 'https://esm.sh/htmlhint@1.4.0';
   window.__HTMLHint = HTMLHint;
@@ -776,7 +772,6 @@
   const aboutClose       = document.getElementById('about-close');
   const dragOverlay      = document.getElementById('drag-overlay');
   const inspectBtn       = document.getElementById('inspect-btn');
-  const togglePreviewBtn = document.getElementById('toggle-preview-btn');
   const highlightOverlay = document.getElementById('highlight-overlay');
   const errorHighlight   = document.getElementById('error-highlight-overlay');
   const fnrHighlight     = document.getElementById('fnr-highlight-overlay');
@@ -800,7 +795,7 @@
   const debugBtn        = document.getElementById('debug-btn');
   const debugBadge      = document.getElementById('debug-badge');
   const debugPanel      = document.getElementById('debug-panel');
-  const debugScroll      = document.getElementById('debug-scroll');
+  const debugScroll     = document.getElementById('debug-scroll');
   const debugEmpty      = document.getElementById('debug-empty');
   const debugSummary    = document.getElementById('debug-summary');
   const debugFilterBtns = document.querySelectorAll('.dfbtn');
@@ -830,7 +825,6 @@
 
   let debounceTimer;
   let inspectMode    = false;
-  let previewHidden  = false;
   let debugOpen      = false;
   let fnrOpen        = false;
   let highlightTimer = null;
@@ -883,7 +877,7 @@
 
     if (type === 'minified') {
       content = raw
-        .replace(//g, '')
+        .replace(/<!--[\s\S]*?-->/g, '')
         .replace(/>\s+</g, '><')
         .replace(/\s{2,}/g, ' ')
         .trim();
@@ -915,9 +909,812 @@
     const voids  = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
     const inlines = new Set(['a','abbr','acronym','b','bdo','big','br','cite','code','dfn','em','i','img','input','kbd','label','map','object','output','q','samp','select','small','span','strong','sub','sup','textarea','time','tt','var']);
     const result = [];
-    const tokenRe = /|<\/?[a-zA-Z][^>]*\/?>|[^<]+/g;
+    const tokenRe = /<!--[\s\S]*?-->|<\/?[a-zA-Z][^>]*\/?>|[^<]+/g;
     let tok;
     while ((tok = tokenRe.exec(html)) !== null) {
       const t = tok[0].trim();
       if (!t) continue;
-      if (t.startsWith('
+      if (t.startsWith('<!--')) {
+        result.push(tab.repeat(indent) + t);
+        continue;
+      }
+      if (t.startsWith('</')) {
+        const tag = t.match(/<\/([a-zA-Z][^\s>]*)/);
+        if (tag && !inlines.has(tag[1].toLowerCase())) {
+          indent = Math.max(0, indent - 1);
+          result.push(tab.repeat(indent) + t);
+        } else {
+          // append inline close to last line
+          if (result.length) result[result.length - 1] += t;
+          else result.push(t);
+        }
+        continue;
+      }
+      if (t.startsWith('<')) {
+        const tag = t.match(/<([a-zA-Z][^\s>/]*)/);
+        const tagName = tag ? tag[1].toLowerCase() : '';
+        if (inlines.has(tagName)) {
+          if (result.length) result[result.length - 1] += t;
+          else result.push(t);
+        } else {
+          result.push(tab.repeat(indent) + t);
+          if (tagName && !voids.has(tagName) && !t.endsWith('/>')) indent++;
+        }
+        continue;
+      }
+      // text node
+      const lastTagMatch = result.length ? result[result.length - 1].match(/<([a-zA-Z][^\s>/]*)/) : null;
+      const lastTag = lastTagMatch ? lastTagMatch[1].toLowerCase() : '';
+      if (inlines.has(lastTag)) {
+        if (result.length) result[result.length - 1] += t;
+        else result.push(t);
+      } else {
+        result.push(tab.repeat(indent) + t);
+      }
+    }
+    return result.join('\n');
+  }
+
+  // ── Find & Replace ────────────────────────────────────────────────────────
+  function setFnrOpen(on) {
+    fnrOpen = on;
+    fnrBtn.classList.toggle('fnr-on', on);
+    fnrBar.classList.toggle('open', on);
+    if (on) {
+      fnrFind.focus();
+      fnrFind.select();
+      runFnrSearch();
+    } else {
+      clearFnrHighlights();
+      fnrMatches = [];
+      fnrCurrent = -1;
+      updateFnrCount();
+    }
+  }
+  fnrBtn.addEventListener('click', () => setFnrOpen(!fnrOpen));
+  fnrCloseBtn.addEventListener('click', () => setFnrOpen(false));
+
+  // Build regex from FNR inputs
+  function buildFnrRegex() {
+    const raw = fnrFind.value;
+    if (!raw) return null;
+    try {
+      let pattern;
+      if (fnrRegexChk.checked) {
+        pattern = raw;
+      } else {
+        pattern = raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        if (fnrWordChk.checked) pattern = '\\b' + pattern + '\\b';
+      }
+      const flags = 'g' + (fnrCaseChk.checked ? '' : 'i');
+      return new RegExp(pattern, flags);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function runFnrSearch() {
+    clearFnrHighlights();
+    fnrMatches = [];
+    fnrCurrent = -1;
+    const rx = buildFnrRegex();
+    if (!rx || !editor.value) {
+      updateFnrCount();
+      return;
+    }
+    const src = editor.value;
+    let m;
+    while ((m = rx.exec(src)) !== null) {
+      fnrMatches.push({ start: m.index, end: m.index + m[0].length, line: src.substring(0, m.index).split('\n').length });
+      if (fnrMatches.length > 5000) break; // safety
+    }
+    if (fnrMatches.length > 0) fnrCurrent = 0;
+    updateFnrCount();
+    updateFnrButtons();
+    if (fnrMatches.length > 0) scrollToFnrMatch(fnrCurrent);
+    markFnrGutter();
+  }
+
+  function updateFnrCount() {
+    const hasQuery = fnrFind.value.trim() !== '';
+    if (!hasQuery) {
+      fnrCount.textContent = '—';
+      fnrCount.className = 'fnr-match-count';
+      fnrFind.classList.remove('fnr-no-match', 'fnr-has-match');
+      return;
+    }
+    if (fnrMatches.length === 0) {
+      fnrCount.textContent = 'No matches';
+      fnrCount.className = 'fnr-match-count no-matches';
+      fnrFind.classList.add('fnr-no-match');
+      fnrFind.classList.remove('fnr-has-match');
+    } else {
+      fnrCount.textContent = (fnrCurrent + 1) + ' / ' + fnrMatches.length;
+      fnrCount.className = 'fnr-match-count has-matches';
+      fnrFind.classList.remove('fnr-no-match');
+      fnrFind.classList.add('fnr-has-match');
+    }
+  }
+
+  function updateFnrButtons() {
+    const has = fnrMatches.length > 0;
+    fnrPrevBtn.disabled   = !has;
+    fnrNextBtn.disabled   = !has;
+    fnrReplaceOne.disabled = !has;
+    fnrReplaceAll.disabled = !has;
+  }
+
+  function scrollToFnrMatch(idx) {
+    if (idx < 0 || idx >= fnrMatches.length) return;
+    const match   = fnrMatches[idx];
+    const lineH   = getLineHeight();
+    const padTop  = 14;
+    const line    = match.line;
+    const topPx   = padTop + (line - 1) * lineH;
+    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH);
+    syncGutterScroll();
+
+    // Highlight the match line in the overlay
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const relTop     = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
+
+    fnrHighlight.style.top    = relTop + 'px';
+    fnrHighlight.style.height = lineH + 'px';
+    fnrHighlight.classList.add('visible');
+
+    // Place editor cursor at match
+    editor.focus();
+    editor.selectionStart = match.start;
+    editor.selectionEnd   = match.end;
+    updateActiveLine();
+    updateFnrCount();
+  }
+
+  function clearFnrHighlights() {
+    fnrHighlight.classList.remove('visible');
+    // Clear gutter markers
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) nums[i].classList.remove('fnr-match');
+  }
+
+  function markFnrGutter() {
+    const nums = lineNumbersInner.children;
+    const lineSet = new Set(fnrMatches.map(m => m.line - 1));
+    lineSet.forEach(i => { if (i >= 0 && i < nums.length) nums[i].classList.add('fnr-match'); });
+  }
+
+  fnrNextBtn.addEventListener('click', () => {
+    if (!fnrMatches.length) return;
+    fnrCurrent = (fnrCurrent + 1) % fnrMatches.length;
+    scrollToFnrMatch(fnrCurrent);
+  });
+  fnrPrevBtn.addEventListener('click', () => {
+    if (!fnrMatches.length) return;
+    fnrCurrent = (fnrCurrent - 1 + fnrMatches.length) % fnrMatches.length;
+    scrollToFnrMatch(fnrCurrent);
+  });
+
+  // Replace current match
+  fnrReplaceOne.addEventListener('click', () => {
+    if (fnrCurrent < 0 || fnrCurrent >= fnrMatches.length) return;
+    const match   = fnrMatches[fnrCurrent];
+    const repText = fnrReplace.value;
+    takeSnapshot(editor.value);
+    const src = editor.value;
+    editor.value = src.substring(0, match.start) + repText + src.substring(match.end);
+    updatePreview();
+    updateLineNumbers();
+    runHint();
+    runFnrSearch();
+    showToast('Replaced 1 match', 'replace');
+  });
+
+  // Replace all matches
+  fnrReplaceAll.addEventListener('click', () => {
+    if (!fnrMatches.length) return;
+    const rx = buildFnrRegex();
+    if (!rx) return;
+    takeSnapshot(editor.value);
+    const count   = fnrMatches.length;
+    const repText = fnrReplace.value;
+    // Use regex replace — handles capture groups if regex mode enabled
+    editor.value = editor.value.replace(rx, fnrRegexChk.checked ? repText : repText.replace(/\$/g, '$$$$'));
+    updatePreview();
+    updateLineNumbers();
+    runHint();
+    runFnrSearch();
+    showToast('Replaced ' + count + ' match' + (count !== 1 ? 'es' : ''), 'replace');
+  });
+
+  // Live search as user types
+  fnrFind.addEventListener('input', () => {
+    clearTimeout(fnrDebounce);
+    fnrDebounce = setTimeout(runFnrSearch, 150);
+  });
+  fnrReplace.addEventListener('input', () => {}); // no-op, just keeps field alive
+
+  // Keyboard nav inside FNR bar
+  fnrFind.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (e.shiftKey) fnrPrevBtn.click();
+      else            fnrNextBtn.click();
+    }
+    if (e.key === 'Escape') setFnrOpen(false);
+  });
+  fnrReplace.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); fnrReplaceOne.click(); }
+    if (e.key === 'Escape') setFnrOpen(false);
+  });
+
+  // Re-run search when options change
+  [fnrCaseChk, fnrWordChk, fnrRegexChk].forEach(chk => {
+    chk.addEventListener('change', () => {
+      const labels = { [fnrCaseChk.id]: 'fnr-case-label', [fnrWordChk.id]: 'fnr-word-label', [fnrRegexChk.id]: 'fnr-regex-label' };
+      document.getElementById(labels[chk.id]).classList.toggle('active', chk.checked);
+      runFnrSearch();
+    });
+  });
+
+  // ── HTMLHint ruleset ──────────────────────────────────────────────────────
+  const HINT_RULES = {
+    'tagname-lowercase':          true,
+    'attr-lowercase':             true,
+    'attr-value-double-quotes':   true,
+    'attr-no-duplication':        true,
+    'doctype-first':              true,
+    'tag-pair':                   true,
+    'tag-self-close':             false,
+    'spec-char-escape':           true,
+    'id-unique':                  true,
+    'src-not-empty':              true,
+    'alt-require':                true,
+    'space-tab-mixed-disabled':   'space',
+    'id-class-ad-disabled':       true,
+    'href-abs-or-rel':            false,
+    'attr-unsafe-chars':          true,
+    'title-require':              true
+  };
+
+  function runHint() {
+    if (!HTMLHint || !editor.value.trim()) {
+      hintResults = [];
+      renderDebugPanel();
+      updateDebugBadge();
+      clearGutterErrors();
+      return;
+    }
+    try { hintResults = HTMLHint.verify(editor.value, HINT_RULES); }
+    catch(e) { hintResults = []; }
+    renderDebugPanel();
+    updateDebugBadge();
+    markGutterErrors();
+  }
+
+  function updateDebugBadge() {
+    const errors   = hintResults.filter(r => r.type === 'error').length;
+    const warnings = hintResults.filter(r => r.type === 'warning').length;
+    const total    = errors + warnings;
+    debugBtn.classList.remove('has-errors', 'has-warnings', 'debug-on');
+    debugBadge.classList.remove('visible', 'warn');
+    if (total > 0) {
+      debugBadge.textContent = total > 99 ? '99+' : total;
+      debugBadge.classList.add('visible');
+      if (errors > 0) debugBtn.classList.add('has-errors');
+      else { debugBtn.classList.add('has-warnings'); debugBadge.classList.add('warn'); }
+    }
+    if (debugOpen) debugBtn.classList.add('debug-on');
+  }
+
+  function markGutterErrors() {
+    clearGutterErrors();
+    const nums = lineNumbersInner.children;
+    hintResults.forEach(r => {
+      const idx = r.line - 1;
+      if (idx >= 0 && idx < nums.length)
+        nums[idx].classList.add(r.type === 'error' ? 'has-error' : 'has-warning');
+    });
+  }
+
+  function clearGutterErrors() {
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) nums[i].classList.remove('has-error', 'has-warning');
+  }
+
+  function renderDebugPanel() {
+    debugScroll.innerHTML = '';
+    const src    = editor.value.trim();
+    const errors = hintResults.filter(r => r.type === 'error').length;
+    const warnings = hintResults.filter(r => r.type === 'warning').length;
+    if (!src) {
+      debugSummary.textContent = '—'; debugSummary.className = '';
+      const el = document.createElement('div'); el.id = 'debug-empty'; el.textContent = 'No document loaded';
+      debugScroll.appendChild(el); return;
+    }
+    if (hintResults.length === 0) {
+      debugSummary.textContent = '✓ No issues'; debugSummary.className = 'clean';
+      const el = document.createElement('div'); el.id = 'debug-empty'; el.className = 'clean'; el.textContent = '✓ All clear — no issues found';
+      debugScroll.appendChild(el); return;
+    }
+    if (errors > 0 && warnings > 0) { debugSummary.textContent = errors + ' error' + (errors > 1 ? 's' : '') + ' · ' + warnings + ' warning' + (warnings > 1 ? 's' : ''); debugSummary.className = 'has-errors'; }
+    else if (errors > 0) { debugSummary.textContent = errors + ' error' + (errors > 1 ? 's' : ''); debugSummary.className = 'has-errors'; }
+    else { debugSummary.textContent = warnings + ' warning' + (warnings > 1 ? 's' : ''); debugSummary.className = 'has-warnings'; }
+    const filtered = hintResults.filter(r => activeFilters.has(r.type));
+    if (filtered.length === 0) {
+      const el = document.createElement('div'); el.id = 'debug-empty'; el.textContent = 'No items match current filters';
+      debugScroll.appendChild(el); return;
+    }
+    filtered.forEach((r, i) => {
+      const item = document.createElement('div'); item.className = 'debug-item'; item.dataset.index = i;
+      const icon = document.createElement('span'); icon.className = 'debug-icon ' + (r.type === 'error' ? 'err-icon' : 'warn-icon'); icon.textContent = r.type === 'error' ? '✖' : '▲';
+      const lineNum = document.createElement('span'); lineNum.className = 'debug-line-num'; lineNum.textContent = 'L' + r.line + ':' + r.col;
+      const rule = document.createElement('span'); rule.className = 'debug-rule'; rule.textContent = r.rule.id;
+      const msg  = document.createElement('span'); msg.className = 'debug-msg';
+      msg.innerHTML = r.message.replace(/`([^`]+)`/g, '<em>$1</em>').replace(/&lt;([a-zA-Z][^>]*)&gt;/g, '<em>&lt;$1&gt;</em>');
+      item.appendChild(icon); item.appendChild(lineNum); item.appendChild(rule); item.appendChild(msg);
+      item.addEventListener('click', () => jumpToHintLine(r, item));
+      debugScroll.appendChild(item);
+    });
+  }
+
+  function jumpToHintLine(r, itemEl) {
+    document.querySelectorAll('.debug-item.active-hint').forEach(el => el.classList.remove('active-hint'));
+    itemEl.classList.add('active-hint');
+    const lineH  = getLineHeight();
+    const padTop = 14;
+    const lineIdx = r.line - 1;
+    const topPx  = padTop + lineIdx * lineH;
+    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH);
+    syncGutterScroll();
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
+    errorHighlight.style.top = relTop + 'px'; errorHighlight.style.height = lineH + 'px';
+    errorHighlight.classList.add('visible');
+    setTimeout(() => errorHighlight.classList.remove('visible'), 2000);
+    const lines = editor.value.split('\n');
+    let charPos = 0;
+    for (let i = 0; i < Math.min(r.line - 1, lines.length); i++) charPos += lines[i].length + 1;
+    charPos += Math.min(r.col - 1, (lines[r.line - 1] || '').length);
+    editor.focus(); editor.selectionStart = editor.selectionEnd = charPos;
+    updateActiveLine();
+  }
+
+  debugFilterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter;
+      if (activeFilters.has(f)) { if (activeFilters.size > 1) { activeFilters.delete(f); btn.classList.remove('active'); } }
+      else { activeFilters.add(f); btn.classList.add('active'); }
+      renderDebugPanel();
+    });
+  });
+
+  function setDebugOpen(on) {
+    debugOpen = on;
+    debugPanel.classList.toggle('open', on);
+    debugBtn.classList.toggle('debug-on', on);
+    if (on) runHint();
+  }
+  debugBtn.addEventListener('click', () => setDebugOpen(!debugOpen));
+
+  // ── Line Numbers ──────────────────────────────────────────────────────────
+  function getLineHeight() {
+    return parseFloat(getComputedStyle(editor).lineHeight) || currentFontSize * 1.6;
+  }
+
+  function updateLineNumbers() {
+    const src   = editor.value;
+    const count = src.split('\n').length;
+    currentLineH = getLineHeight();
+    const existing = lineNumbersInner.children;
+    while (existing.length < count) {
+      const span = document.createElement('span'); span.className = 'line-num';
+      lineNumbersInner.appendChild(span);
+    }
+    while (existing.length > count) lineNumbersInner.removeChild(lineNumbersInner.lastChild);
+    for (let i = 0; i < count; i++) {
+      existing[i].textContent = i + 1;
+      existing[i].style.lineHeight = currentLineH + 'px';
+      existing[i].style.height = currentLineH + 'px';
+    }
+    syncGutterScroll();
+    updateActiveLine();
+  }
+
+  function syncGutterScroll() { lineNumbersEl.scrollTop = editor.scrollTop; }
+
+  function updateActiveLine() {
+    const src = editor.value;
+    const pos = editor.selectionStart;
+    const linesBefore = src.substring(0, pos).split('\n');
+    activeLine = linesBefore.length;
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) nums[i].classList.toggle('active', i + 1 === activeLine);
+    const lineH = getLineHeight();
+    const top   = 14 + (activeLine - 1) * lineH - editor.scrollTop;
+    gutterCursor.style.top = top + 'px';
+    gutterCursor.style.height = lineH + 'px';
+    gutterCursor.style.display = 'block';
+  }
+
+  editor.addEventListener('scroll', () => { syncGutterScroll(); if (fnrOpen && fnrMatches.length) scrollToFnrMatch(fnrCurrent); });
+  editor.addEventListener('input', updateLineNumbers);
+  editor.addEventListener('keyup', updateActiveLine);
+  editor.addEventListener('click', updateActiveLine);
+  editor.addEventListener('mouseup', updateActiveLine);
+
+  // ── Version history ───────────────────────────────────────────────────────
+  const MAX_HISTORY = 20;
+  let history       = [];
+  let snapshotTimer = null;
+
+  function takeSnapshot(code) {
+    if (!code.trim()) return;
+    if (history.length > 0 && history[history.length - 1].code === code) return;
+    const now   = new Date();
+    const lines = code.split('\n').length;
+    const bytes = new Blob([code]).size;
+    history.push({ code, timestamp: now, label: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }), lines, bytes });
+    if (history.length > MAX_HISTORY) history.shift();
+    updateRollbackBtn();
+  }
+
+  function updateRollbackBtn() {
+    const has = history.length > 1;
+    rollbackBtn.disabled = !has;
+    rollbackBtn.classList.toggle('has-history', has);
+  }
+
+  function openRollbackDialog() {
+    rollbackList.innerHTML = '';
+    if (history.length <= 1) {
+      rollbackList.innerHTML = '<div id="rollback-empty">No previous versions yet.<br>Keep editing to build history.</div>';
+    } else {
+      const items = [...history].reverse();
+      items.forEach((snap, idx) => {
+        const isCurrent = idx === 0;
+        const item = document.createElement('div'); item.className = 'rb-item' + (isCurrent ? ' current' : '');
+        const meta = document.createElement('div'); meta.className = 'rb-item-meta';
+        const timeEl = document.createElement('div'); timeEl.className = 'rb-item-time';
+        timeEl.textContent = snap.label + (isCurrent ? '  ← current' : '');
+        const statsEl = document.createElement('div'); statsEl.className = 'rb-item-stats';
+        statsEl.textContent = snap.lines + ' lines · ' + (snap.bytes > 1024 ? (snap.bytes/1024).toFixed(1) + ' kb' : snap.bytes + ' b');
+        const previewEl = document.createElement('div'); previewEl.className = 'rb-item-preview';
+        previewEl.textContent = snap.code.trim().substring(0, 80).replace(/\s+/g, ' ');
+        meta.appendChild(timeEl); meta.appendChild(statsEl); meta.appendChild(previewEl);
+        item.appendChild(meta);
+        if (isCurrent) {
+          const label = document.createElement('span'); label.className = 'rb-current-label'; label.textContent = 'active';
+          item.appendChild(label);
+        } else {
+          const btn = document.createElement('button'); btn.className = 'rb-restore-btn'; btn.textContent = 'Restore';
+          btn.addEventListener('click', () => restoreSnapshot(snap));
+          item.appendChild(btn);
+        }
+        rollbackList.appendChild(item);
+      });
+    }
+    rollbackOverlay.classList.add('visible');
+  }
+
+  function restoreSnapshot(snap) {
+    takeSnapshot(editor.value);
+    editor.value = snap.code;
+    updatePreview(); updateLineNumbers(); hideHighlight();
+    rollbackOverlay.classList.remove('visible');
+    updateRollbackBtn();
+    if (debugOpen) runHint();
+    if (fnrOpen) runFnrSearch();
+    const tb = document.getElementById('editor-toolbar');
+    tb.style.transition = 'background 0.1s';
+    tb.style.background = 'rgba(40,180,40,0.25)';
+    setTimeout(() => { tb.style.background = ''; }, 600);
+  }
+
+  rollbackBtn.addEventListener('click', openRollbackDialog);
+  rollbackClose.addEventListener('click', () => rollbackOverlay.classList.remove('visible'));
+  rollbackOverlay.addEventListener('click', (e) => { if (e.target === rollbackOverlay) rollbackOverlay.classList.remove('visible'); });
+
+  // ── Zoom ──────────────────────────────────────────────────────────────────
+  function applyZoom() {
+    zoomWrapper.style.transform = `scale(${zoomLevel})`;
+    zoomWrapper.style.transformOrigin = 'top center';
+    zoomDisplay.textContent = Math.round(zoomLevel * 100) + '%';
+    updateSizeBadges();
+  }
+
+  function updateSizeBadges() {
+    if (!borderMode) return;
+    sizeBadgeW.textContent = Math.round(preview.offsetWidth) + 'px';
+    sizeBadgeH.textContent = Math.round(preview.offsetHeight) + 'px';
+  }
+
+  zoomInBtn.addEventListener('click',    () => { zoomLevel = Math.min(2.0, +(zoomLevel + 0.1).toFixed(2)); applyZoom(); });
+  zoomOutBtn.addEventListener('click',   () => { zoomLevel = Math.max(0.2, +(zoomLevel - 0.1).toFixed(2)); applyZoom(); });
+  zoomResetBtn.addEventListener('click', () => { zoomLevel = 1.0; applyZoom(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (fnrOpen) { setFnrOpen(false); return; }
+      if (exportOverlay.classList.contains('visible')) { exportOverlay.classList.remove('visible'); return; }
+    }
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === '=' || e.key === '+') { e.preventDefault(); zoomLevel = Math.min(2.0, +(zoomLevel + 0.1).toFixed(2)); applyZoom(); }
+      if (e.key === '-') { e.preventDefault(); zoomLevel = Math.max(0.2, +(zoomLevel - 0.1).toFixed(2)); applyZoom(); }
+      if (e.key === '0') { e.preventDefault(); zoomLevel = 1.0; applyZoom(); }
+      if (e.key === 'i') { e.preventDefault(); setInspectMode(!inspectMode); }
+      if (e.key === 'd') { e.preventDefault(); setDebugOpen(!debugOpen); }
+      if (e.key === 'h') { e.preventDefault(); setFnrOpen(!fnrOpen); }
+      if (e.key === 's') { e.preventDefault(); if (editor.value.trim()) exportBtn.click(); }
+    }
+  });
+
+  // ── Border mode ───────────────────────────────────────────────────────────
+  function setBorderMode(on) {
+    borderMode = on;
+    borderBtn.classList.toggle('border-on', on);
+    pageBorder.classList.toggle('visible', on);
+    sizeBadgeW.classList.toggle('visible', on);
+    sizeBadgeH.classList.toggle('visible', on);
+    if (on) updateSizeBadges();
+  }
+  borderBtn.addEventListener('click', () => setBorderMode(!borderMode));
+
+  // ── Inject inspect script ─────────────────────────────────────────────────
+  const INJECT_SCRIPT = `
+    (function() {
+      let inspecting = false; let hoverEl = null; const OUTLINE = '2px solid #ff8800';
+      window.addEventListener('message', function(e) { if (e.data && e.data.type === 'inspectMode') { inspecting = e.data.value; if (!inspecting && hoverEl) { hoverEl.style.outline = ''; hoverEl = null; } } });
+      document.addEventListener('mouseover', function(e) { if (!inspecting) return; if (hoverEl && hoverEl !== e.target) hoverEl.style.outline = ''; hoverEl = e.target; if (hoverEl && hoverEl !== document.documentElement && hoverEl !== document.body) hoverEl.style.outline = OUTLINE; }, true);
+      document.addEventListener('mouseout', function(e) { if (!inspecting) return; if (e.target && e.target.style) e.target.style.outline = ''; }, true);
+      document.addEventListener('click', function(e) { if (!inspecting) return; e.preventDefault(); e.stopPropagation(); const el = e.target; const tag = el.tagName.toLowerCase(); const id = el.id ? '#' + el.id : ''; const cls = el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\\s+/).join('.') : ''; const outer = el.outerHTML.substring(0, 500); window.parent.postMessage({ type: 'inspectClick', tag, id, cls, outer }, '*'); }, true);
+    })();
+  `;
+
+  function injectInspectScript() {
+    try {
+      const doc = preview.contentDocument;
+      if (!doc) return;
+      const s = doc.createElement('script'); s.textContent = INJECT_SCRIPT;
+      (doc.head || doc.documentElement).appendChild(s);
+      preview.contentWindow.postMessage({ type: 'inspectMode', value: inspectMode }, '*');
+    } catch(e) {}
+  }
+
+  // ── Preview update ────────────────────────────────────────────────────────
+  let hintDebounce;
+  function updatePreview() {
+    const html = editor.value;
+    if (!html.trim()) { preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden'); return; }
+    previewEmpty.classList.add('hidden');
+    preview.srcdoc = html;
+    const lines = html.split('\n').length;
+    const bytes = new Blob([html]).size;
+    status.textContent = lines + ' lines · ' + (bytes > 1024 ? (bytes/1024).toFixed(1) + ' kb' : bytes + ' b');
+    if (borderMode) setTimeout(updateSizeBadges, 200);
+  }
+
+  preview.addEventListener('load', () => {
+    injectInspectScript();
+    if (borderMode) setTimeout(updateSizeBadges, 100);
+  });
+
+  // ── Inspect mode ──────────────────────────────────────────────────────────
+  function setInspectMode(on) {
+    inspectMode = on;
+    inspectBtn.classList.toggle('inspect-on', on);
+    previewArea.classList.toggle('inspecting', on);
+    try { preview.contentWindow.postMessage({ type: 'inspectMode', value: on }, '*'); } catch(e) {}
+    if (!on) { hideHighlight(); inspectTip.style.display = 'none'; }
+  }
+  inspectBtn.addEventListener('click', () => setInspectMode(!inspectMode));
+
+  previewArea.addEventListener('mousemove', (e) => {
+    if (!inspectMode) return;
+    inspectTip.style.display = 'block';
+    inspectTip.style.left = (e.clientX + 14) + 'px';
+    inspectTip.style.top  = (e.clientY + 14) + 'px';
+    inspectTip.textContent = 'Click to find source';
+  });
+  previewArea.addEventListener('mouseleave', () => { inspectTip.style.display = 'none'; });
+
+  window.addEventListener('message', (e) => {
+    if (!e.data || e.data.type !== 'inspectClick') return;
+    const { tag, id, cls, outer } = e.data;
+    findAndHighlight(outer, tag, id, cls);
+    setInspectMode(false);
+    inspectTip.style.display = 'none';
+  });
+
+  // ── Find & highlight ──────────────────────────────────────────────────────
+  function findAndHighlight(outerHTML, tag, id, cls) {
+    const src = editor.value;
+    if (!src.trim()) return;
+    let searchStr = null, matchIndex = -1;
+    if (id) {
+      const idAttr = id.replace('#','');
+      const pattern = new RegExp('<' + tag + '[^>]*id=["\']' + escapeRegex(idAttr) + '["\']', 'i');
+      const m = src.match(pattern);
+      if (m) { searchStr = m[0]; matchIndex = src.search(pattern); }
+    }
+    if (matchIndex === -1) {
+      const openTagMatch = outerHTML.match(/^(<[a-z][^\n>]{0,200}>)/i);
+      if (openTagMatch) { matchIndex = src.indexOf(openTagMatch[1]); if (matchIndex !== -1) searchStr = openTagMatch[1]; }
+    }
+    if (matchIndex === -1 && cls) {
+      const firstCls = cls.replace(/^\./, '').split('.')[0];
+      if (firstCls) {
+        const pattern = new RegExp('<' + tag + '[^>]*class=["\'][^"\']*' + escapeRegex(firstCls), 'i');
+        const m = src.match(pattern); if (m) { searchStr = m[0]; matchIndex = src.search(pattern); }
+      }
+    }
+    if (matchIndex === -1) {
+      const pattern = new RegExp('<' + escapeRegex(tag) + '[\\s>/]', 'i');
+      matchIndex = src.search(pattern);
+      if (matchIndex !== -1) searchStr = tag;
+    }
+    if (matchIndex === -1) { flashNone(); return; }
+    const before    = src.substring(0, matchIndex);
+    const startLine = before.split('\n').length;
+    const snippet   = src.substring(matchIndex);
+    const closingTag = '</' + tag + '>';
+    let endOffset   = snippet.indexOf(closingTag);
+    let endLine;
+    if (endOffset !== -1) { endLine = src.substring(0, matchIndex + endOffset + closingTag.length).split('\n').length; }
+    else { const eol = snippet.indexOf('\n'); endLine = startLine + (eol === -1 ? 0 : src.substring(matchIndex, matchIndex + eol).split('\n').length - 1); }
+    endLine = Math.min(endLine, startLine + 30);
+    scrollEditorToLine(startLine, endLine, tag, id, cls);
+  }
+
+  function flashNone() {
+    const tb = document.getElementById('editor-toolbar');
+    tb.style.transition = 'background 0.1s'; tb.style.background = 'rgba(200,40,40,0.3)';
+    setTimeout(() => { tb.style.background = ''; }, 400);
+  }
+
+  function escapeRegex(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function scrollEditorToLine(startLine, endLine, tag, id, cls) {
+    const lineH  = getLineHeight();
+    const padTop = 14;
+    const topPx  = padTop + (startLine - 1) * lineH;
+    const heightPx = (endLine - startLine + 1) * lineH;
+    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + heightPx / 2);
+    syncGutterScroll();
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const relTop     = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
+    highlightOverlay.style.top = relTop + 'px'; highlightOverlay.style.height = heightPx + 'px';
+    highlightOverlay.classList.add('visible');
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) nums[i].classList.toggle('highlighted', i + 1 >= startLine && i + 1 <= endLine);
+    const selector = (id || cls) ? (tag + (id||'') + (cls||'').split('.').slice(0,2).join('.')) : tag;
+    lineBadge.textContent = 'L' + startLine + '  ' + selector;
+    lineBadge.style.top   = (relTop - 18) + 'px';
+    lineBadge.classList.add('visible');
+    clearTimeout(highlightTimer);
+    highlightTimer = setTimeout(() => {
+      hideHighlight();
+      for (let i = 0; i < nums.length; i++) nums[i].classList.remove('highlighted');
+    }, 2500);
+  }
+
+  function hideHighlight() {
+    highlightOverlay.classList.remove('visible');
+    lineBadge.classList.remove('visible');
+  }
+
+  editor.addEventListener('input', () => {
+    hideHighlight();
+    clearTimeout(debounceTimer);
+    clearTimeout(snapshotTimer);
+    clearTimeout(hintDebounce);
+    debounceTimer  = setTimeout(updatePreview, 300);
+    snapshotTimer  = setTimeout(() => takeSnapshot(editor.value), 2000);
+    hintDebounce   = setTimeout(runHint, 600);
+    if (fnrOpen) { clearTimeout(fnrDebounce); fnrDebounce = setTimeout(runFnrSearch, 300); }
+    updateLineNumbers();
+  });
+
+  editor.addEventListener('paste', () => {
+    setTimeout(() => {
+      takeSnapshot(editor.value);
+      updateLineNumbers();
+      runHint();
+      if (fnrOpen) runFnrSearch();
+    }, 50);
+  });
+
+  // ── Device mode ───────────────────────────────────────────────────────────
+  function setMode(mode) {
+    currentMode = mode;
+    preview.className = mode;
+    previewArea.className = (mode === 'desktop' ? '' : 'device-mode') + (inspectMode ? ' inspecting' : '');
+    devBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    if (borderMode) setTimeout(updateSizeBadges, 100);
+  }
+  devBtns.forEach(btn => btn.addEventListener('click', () => setMode(btn.dataset.mode)));
+
+  editor.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const s = editor.selectionStart;
+      editor.value = editor.value.slice(0, s) + '  ' + editor.value.slice(editor.selectionEnd);
+      editor.selectionStart = editor.selectionEnd = s + 2;
+      updateLineNumbers();
+    }
+  });
+
+  const importBtn        = document.getElementById('import-btn');
+  const importFileInput  = document.getElementById('import-file-input');
+  const importedFilename = document.getElementById('imported-filename');
+  importBtn.addEventListener('click', () => importFileInput.click());
+  importFileInput.addEventListener('change', () => {
+    const file = importFileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      takeSnapshot(editor.value);
+      editor.value = e.target.result;
+      importedFilename.textContent = file.name;
+      exportFilename.value = file.name;
+      updatePreview(); updateLineNumbers(); hideHighlight(); runHint();
+      if (fnrOpen) runFnrSearch();
+      editor.scrollTop = 0; syncGutterScroll(); editor.focus();
+      const tb = document.getElementById('editor-toolbar');
+      tb.style.transition = 'background 0.1s'; tb.style.background = 'rgba(40,160,80,0.25)';
+      setTimeout(() => { tb.style.background = ''; }, 700);
+    };
+    reader.readAsText(file, 'UTF-8');
+    importFileInput.value = '';
+  });
+
+  clearBtn.addEventListener('click', () => {
+    takeSnapshot(editor.value);
+    editor.value = '';
+    importedFilename.textContent = '';
+    preview.srcdoc = ''; status.textContent = '';
+    previewEmpty.classList.remove('hidden');
+    hideHighlight(); hintResults = [];
+    updateLineNumbers(); renderDebugPanel(); updateDebugBadge();
+    if (fnrOpen) { fnrMatches = []; fnrCurrent = -1; clearFnrHighlights(); updateFnrCount(); updateFnrButtons(); }
+    editor.focus();
+  });
+
+  fontSlider.addEventListener('input', () => {
+    currentFontSize = parseInt(fontSlider.value);
+    editor.style.fontSize = currentFontSize + 'px';
+    fontVal.textContent = currentFontSize + 'px';
+    lineNumbersInner.style.fontSize = currentFontSize + 'px';
+    setTimeout(updateLineNumbers, 50);
+  });
+
+  aboutBtn.addEventListener('click',  () => aboutOverlay.classList.add('visible'));
+  aboutClose.addEventListener('click', () => aboutOverlay.classList.remove('visible'));
+  aboutOverlay.addEventListener('click', (e) => { if (e.target === aboutOverlay) aboutOverlay.classList.remove('visible'); });
+
+  // ── Divider drag ──────────────────────────────────────────────────────────
+  let vDrag = false, hDrag = false, hStartY, hStartH;
+  vDivider.addEventListener('mousedown', (e) => {
+    vDrag = true; document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none';
+    dragOverlay.style.display = 'block'; dragOverlay.style.cursor = 'col-resize'; e.preventDefault();
+  });
+  hDivider.addEventListener('mousedown', (e) => {
+    hDrag = true; hStartY = e.clientY; hStartH = topToolbar.offsetHeight;
+    document.body.style.cursor = 'row-resize'; document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (vDrag) { const rect = main.getBoundingClientRect(); const newLeft = Math.min(Math.max(e.clientX - rect.left, 200), rect.width - 200); left.style.width = newLeft + 'px'; left.style.flex = 'none'; }
+    if (hDrag) { const delta = e.clientY - hStartY; const newH = Math.min(Math.max(hStartH + delta, 36), 120); topToolbar.style.height = newH + 'px'; topToolbar.style.flexWrap = newH > 55 ? 'wrap' : 'nowrap'; }
+  });
+  document.addEventListener('mouseup', () => {
+    vDrag = false; hDrag = false; document.body.style.cursor = ''; document.body.style.userSelect = '';
+    dragOverlay.style.display = 'none';
+  });
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  updateLineNumbers();
+</script>
+</body>
+</html>
