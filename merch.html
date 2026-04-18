@@ -82,6 +82,23 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer  { flex: 1; }
 
+        /* ── LANGUAGE SWITCHER ── */
+        #lang-switcher {
+            display: flex; gap: 6px; align-items: center;
+        }
+        .lang-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.12em; padding: 4px 8px;
+            cursor: pointer; transition: color 0.2s, border-color 0.2s;
+            text-transform: uppercase;
+        }
+        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
+        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+
         /* ── PAGE ── */
         .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; }
 
@@ -110,11 +127,6 @@
         }
 
         /* ── MERCH IMAGE STRIP ── */
-        /*
-          Uses aspect-ratio so the container always has height
-          even before images finish loading. No spacer image needed.
-          16/7 suits a wide landscape banner; tweak if your images differ.
-        */
         .merch-image {
             position: relative;
             width: 100%;
@@ -122,7 +134,6 @@
             overflow: hidden;
             background: #0e0f0e;
         }
-
         .merch-image img {
             position: absolute;
             inset: 0;
@@ -132,10 +143,7 @@
             opacity: 0;
             transition: opacity 2s ease-in-out;
         }
-
-        .merch-image img.active {
-            opacity: 1;
-        }
+        .merch-image img.active { opacity: 1; }
 
         /* ── BELOW IMAGE ── */
         .below { padding: 72px 0 0; }
@@ -173,7 +181,6 @@
         /* ── REVEAL ── */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: none; }
-        /* Image strip: suppress Y shift so layout doesn't jump */
         .merch-image.reveal { transform: none; }
 
         @media (max-width: 900px) {
@@ -186,25 +193,30 @@
 <body>
 
 <div class="font-nudge" id="fontNudge">
-    <div class="font-nudge-label">Text too small?</div>
+    <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
     <div class="font-nudge-controls">
         <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A&#8722;</button>
         <span class="font-size-indicator" id="fontIndicator">100%</span>
         <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
     </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss &#215;</button>
 </div>
 
 <nav>
-    <a href="design.html">design</a>
-    <a href="merch.html" class="active">merch</a>
-    <a href="music.html">music</a>
-    <a href="synths.html">synths</a>
-    <a href="tools.html">tools</a>
-    <a href="video.html">video</a>
-    <a href="dev-tools.html">dev tools</a>
+    <a href="design.html"    data-i18n="nav_design">design</a>
+    <a href="merch.html"     data-i18n="nav_merch" class="active">merch</a>
+    <a href="music.html"     data-i18n="nav_music">music</a>
+    <a href="synths.html"    data-i18n="nav_synths">synths</a>
+    <a href="tools.html"     data-i18n="nav_tools">tools</a>
+    <a href="video.html"     data-i18n="nav_video">video</a>
+    <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
     <div class="spacer"></div>
-    <a href="about.html">info</a>
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
+        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
+        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
+    </div>
+    <a href="about.html" data-i18n="nav_about">info</a>
 </nav>
 
 <!-- Image strip sits OUTSIDE .page so it spans full width -->
@@ -217,22 +229,22 @@
 <div class="page" style="padding-top:0;">
 
     <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies &#8212; Merch</div>
-        <h1>Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
-        <p class="hero-intro">
+        <div class="hero-label" data-i18n="merch_hero_label">// dPaul Technologies &#8212; Merch</div>
+        <h1 data-i18n="merch_hero_h1">Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
+        <p class="hero-intro" data-i18n="merch_hero_intro">
             The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic &#8212; once they're gone, they're gone.
         </p>
     </section>
 
     <div class="below reveal">
-        <div class="below-label">// Debut collection</div>
-        <p class="below-copy">
+        <div class="below-label" data-i18n="merch_below_label">// Debut collection</div>
+        <p class="below-copy" data-i18n="merch_below_copy">
             <!-- Your text goes here -->
         </p>
-        <div class="badge">// En Route &#8212; available very soon</div>
+        <div class="badge" data-i18n="merch_badge">// En Route &#8212; available very soon</div>
     </div>
 
-    <div class="footer-line reveal">// dPaul Technologies &#8212; Limited run &#8212; once gone, gone</div>
+    <div class="footer-line reveal" data-i18n="merch_footer">// dPaul Technologies &#8212; Limited run &#8212; once gone, gone</div>
 
 </div>
 
@@ -269,10 +281,7 @@
             document.getElementById('img2')
         ];
         let current = 0;
-
-        // Show first image straight away
         imgs[0].classList.add('active');
-
         setInterval(() => {
             imgs[current].classList.remove('active');
             current = (current + 1) % imgs.length;
@@ -291,6 +300,10 @@
     }, { threshold: 0.05 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
+
+<!-- i18n -->
+<script src="assets/translations.js"></script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
 </body>
 </html>
