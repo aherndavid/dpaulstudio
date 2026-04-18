@@ -35,14 +35,10 @@
             overflow-x: hidden;
         }
 
-        /* Keys background image — sits below nav, above page bg */
         body::after {
             content: '';
             position: fixed;
-            top: 72px;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 72px; left: 0; right: 0; bottom: 0;
             background-image: url('../assets/keys.png');
             background-size: cover;
             background-position: center top;
@@ -52,7 +48,6 @@
             z-index: 0;
         }
 
-        /* Noise grain overlay */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -99,13 +94,22 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer { flex: 1; }
 
+        /* ── LANGUAGE SWITCHER ── */
+        #lang-switcher { display: flex; gap: 6px; align-items: center; }
+        .lang-btn {
+            background: none; border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
+            cursor: pointer; transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
+        }
+        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
+        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+
         .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; }
 
         .hero { padding: 80px 0 72px; border-bottom: 1px solid var(--border); max-width: 1000px; }
-        .hero-label {
-            font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase;
-            margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
-        }
+        .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
         .hero-label::after { content: ''; display: block; width: 48px; height: 1px; background: var(--orange); opacity: 0.5; }
         .hero h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; letter-spacing: -0.02em; }
         .hero h1 em { color: var(--orange); font-style: normal; }
@@ -210,7 +214,6 @@
         .inset-render { border-top: 1px solid var(--border-dim); padding-top: 40px; margin-top: 32px; }
         .inset-render-label { font-size: 1.066rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); margin-bottom: 24px; }
 
-        /* TTS PLAYER */
         .tts-player {
             background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
             padding: 16px 20px; margin: 32px 0 0;
@@ -231,10 +234,7 @@
         .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
         .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
         .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
-        .tts-speed {
-            -webkit-appearance: none; appearance: none;
-            width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer;
-        }
+        .tts-speed { -webkit-appearance: none; appearance: none; width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer; }
         .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
         .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
         .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
@@ -279,60 +279,64 @@
 <body>
 
 <div class="font-nudge" id="fontNudge">
-    <div class="font-nudge-label">Text too small?</div>
+    <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
     <div class="font-nudge-controls">
         <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A-</button>
         <span class="font-size-indicator" id="fontIndicator">100%</span>
         <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
     </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss x</button>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss x</button>
 </div>
 
 <nav>
-    <a href="design.html">design</a>
-    <a href="merch.html">merch</a>
-    <a href="music.html">music</a>
-    <a href="synths.html" class="active">synths</a>
-    <a href="tools.html">tools</a>
-    <a href="video.html">video</a>
-    <a href="dev-tools.html">dev tools</a>
+    <a href="design.html"    data-i18n="nav_design">design</a>
+    <a href="merch.html"     data-i18n="nav_merch">merch</a>
+    <a href="music.html"     data-i18n="nav_music">music</a>
+    <a href="synths.html"    data-i18n="nav_synths" class="active">synths</a>
+    <a href="tools.html"     data-i18n="nav_tools">tools</a>
+    <a href="video.html"     data-i18n="nav_video">video</a>
+    <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
     <div class="spacer"></div>
-    <a href="about.html">info</a>
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
+        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
+        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
+    </div>
+    <a href="about.html" data-i18n="nav_about">info</a>
 </nav>
 
 <div class="page">
 
     <!-- HERO -->
     <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies - Synth Lab</div>
+        <div class="hero-label" data-i18n="synths_hero_label">// dPaul Technologies - Synth Lab</div>
         <h1>Thirty years of<br>hardware. Then<br><em>this happened.</em></h1>
         <p class="hero-intro">
             Curiosity about how things work is what drives most of the interesting things in life. After years of playing with hardware synths, drum machines and music software, a question kept nagging - could something like this actually be built from scratch in a browser? What you'll find on this page is the answer to that question. It's a journey through six months of late nights, broken code, and the slow satisfaction of watching something come to life one feature at a time.
         </p>
 
-        <!-- TTS PLAYER -->
         <div class="tts-player" id="ttsPlayer">
-            <span class="tts-label">// Speak this page</span>
+            <span class="tts-label" data-i18n="tts_speak_label">// Speak this page</span>
             <div class="tts-controls">
                 <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
                 <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
                 <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
                 <div class="tts-sep"></div>
                 <div class="tts-speed-wrap">
-                    <span class="tts-speed-label">Speed</span>
+                    <span class="tts-speed-label" data-i18n="tts_speed">Speed</span>
                     <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
                     <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
                 </div>
                 <div class="tts-sep"></div>
                 <div class="tts-section-wrap">
-                    <span class="tts-section-label">Voice</span>
+                    <span class="tts-section-label" data-i18n="tts_voice">Voice</span>
                     <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
                         <option value="">Loading voices...</option>
                     </select>
                 </div>
                 <div class="tts-sep"></div>
                 <div class="tts-section-wrap">
-                    <span class="tts-section-label">Jump to</span>
+                    <span class="tts-section-label" data-i18n="tts_jump">Jump to</span>
                     <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
                         <option value="-1">-- section --</option>
                     </select>
@@ -343,36 +347,35 @@
     </section>
 
     <!-- PROCESS -->
-    <section class="process-section reveal"
-             id="synths-process"
+    <section class="process-section reveal" id="synths-process"
              data-post-section
              data-post-title="How the DP-ONE Was Built — dPaul Studio"
              data-post-content="How dPaul Studio built a browser synthesiser from scratch — starting with a single AI prompt and building feature by feature over six months. From oscillators to sequencers, MIDI, and 3D rendered hardware mockups.">
-        <div class="section-label">// How it was built</div>
+        <div class="section-label" data-i18n="synths_process_label">// How it was built</div>
         <div class="timeline">
             <div class="timeline-step">
                 <div class="step-num">01</div>
-                <div class="step-title">Single prompt</div>
+                <div class="step-title" data-i18n="step1_title">Single prompt</div>
                 <div class="step-desc">Started with one AI prompt: build a browser synth with a single sound. Read what came back. Asked why it worked.</div>
             </div>
             <div class="timeline-step">
                 <div class="step-num">02</div>
-                <div class="step-title">Feature by feature</div>
+                <div class="step-title" data-i18n="step2_title">Feature by feature</div>
                 <div class="step-desc">Added voices, envelopes, filters, waveforms - one at a time. Each addition meant reading the code before moving on.</div>
             </div>
             <div class="timeline-step">
                 <div class="step-num">03</div>
-                <div class="step-title">Full instrument</div>
+                <div class="step-title" data-i18n="step3_title">Full instrument</div>
                 <div class="step-desc">Integrated a 16-step sequencer, drum machine, and sampler. Added MIDI so any external keyboard works straight away.</div>
             </div>
             <div class="timeline-step">
                 <div class="step-num">04</div>
-                <div class="step-title">Visual identity</div>
+                <div class="step-title" data-i18n="step4_title">Visual identity</div>
                 <div class="step-desc">Screen-captured the HTML UI, fed it into AI image tools, and generated 3D hardware renders - functional code presented as a physical product.</div>
             </div>
             <div class="timeline-step">
                 <div class="step-num">05</div>
-                <div class="step-title">Presentation</div>
+                <div class="step-title" data-i18n="step5_title">Presentation</div>
                 <div class="step-desc">Learned Photoshop and Premiere Pro to finish assets. Built this portfolio site to document the whole journey.</div>
             </div>
         </div>
@@ -395,11 +398,10 @@
     </div>
 
     <!-- LEARNING SECTION -->
-    <section class="learning-section reveal"
-             id="synths-learning"
+    <section class="learning-section reveal" id="synths-learning"
              data-post-section
              data-post-title="Learning by Doing — Building Browser Instruments">
-        <div class="section-label">// Learning by doing</div>
+        <div class="section-label" data-i18n="synths_learning_label">// Learning by doing</div>
         <div class="learning-grid">
             <div class="learning-main">
                 <p class="learning-body">
@@ -414,23 +416,23 @@
             </div>
             <div class="learning-aside">
                 <div class="aside-block">
-                    <div class="aside-label">The honest version</div>
+                    <div class="aside-label" data-i18n="synths_honest_label">The honest version</div>
                     <p class="aside-text">
                         School wasn't a great experience - things at home were complicated, and getting out into the world and starting to earn felt more urgent than qualifications. Looking back, that pushed toward a different kind of learning: working things out on the job, adapting, picking up skills by actually needing them. Which is still exactly how it works.
                     </p>
                 </div>
                 <div class="aside-block" style="margin-top:16px;">
-                    <div class="aside-label">The process, distilled</div>
+                    <div class="aside-label" data-i18n="synths_process_distilled_label">The process, distilled</div>
                     <div class="process-steps">
-                        <div class="ps">Something breaks</div>
+                        <div class="ps" data-i18n="ps1">Something breaks</div>
                         <div class="ps-arrow">down</div>
-                        <div class="ps">Find it in the code</div>
+                        <div class="ps" data-i18n="ps2">Find it in the code</div>
                         <div class="ps-arrow">down</div>
-                        <div class="ps">Search the unfamiliar terms</div>
+                        <div class="ps" data-i18n="ps3">Search the unfamiliar terms</div>
                         <div class="ps-arrow">down</div>
-                        <div class="ps">Ask AI the right question</div>
+                        <div class="ps" data-i18n="ps4">Ask AI the right question</div>
                         <div class="ps-arrow">down</div>
-                        <div class="ps">Understand - then fix</div>
+                        <div class="ps" data-i18n="ps5">Understand - then fix</div>
                     </div>
                 </div>
             </div>
@@ -438,11 +440,10 @@
     </section>
 
     <!-- KORG M1 ORIGIN SECTION -->
-    <section class="origin-section reveal"
-             id="synths-origin"
+    <section class="origin-section reveal" id="synths-origin"
              data-post-section
              data-post-title="Where It All Began — Thirty Years of Synths">
-        <div class="section-label">// Where it all began</div>
+        <div class="section-label" data-i18n="synths_origin_label">// Where it all began</div>
         <div class="origin-grid">
             <div class="origin-body">
                 <p>None of this started with code. It started with a page of small ads and a phone call in 1991.</p>
@@ -458,7 +459,7 @@
             <div class="origin-image-wrap">
                 <div class="origin-img-frame" style="margin-bottom:16px;">
                     <img src="../assets/loot.png" alt="The Loot classified ads newspaper" class="origin-img">
-                    <div class="origin-img-caption"><span class="origin-img-tag">Pre-internet</span>The Loot - classified ads on paper. No photos, no reviews, just a phone number.</div>
+                    <div class="origin-img-caption"><span class="origin-img-tag" data-i18n="tag_pre_internet">Pre-internet</span>The Loot - classified ads on paper. No photos, no reviews, just a phone number.</div>
                 </div>
                 <div class="origin-img-frame">
                     <img src="../assets/korg-m1.png" alt="Korg M1 synthesiser - the instrument that started everything" class="origin-img">
@@ -473,60 +474,56 @@
     </section>
 
     <!-- MKI -->
-    <div class="instrument reveal"
-         id="synths-mki"
+    <div class="instrument reveal" id="synths-mki"
          data-post-section
          data-post-title="DPAUL Synth MKI — Where It Started"
          data-post-content="The DPAUL Synth MKI — where it all started. One oscillator, three waveforms, a basic filter, a two-octave keyboard. Built entirely in the browser using the Web Audio API. The first answer to the question: can a working synth be built from scratch with no coding background?">
-        <div class="instrument-eyebrow">// 00 - Where it started</div>
+        <div class="instrument-eyebrow" data-i18n="mki_eyebrow">// 00 - Where it started</div>
         <div class="instrument-name">DPAUL Synth MKI <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">v1.0</span></div>
         <div class="instrument-body">
             <div>
                 <p class="instrument-story" style="margin-bottom:40px;">Every journey starts somewhere. This one started with a single prompt and a question - can a working synth actually be built in a browser with no coding background? One oscillator, three waveforms, a basic filter, a two-octave keyboard. Barely anything. But it made sound, it responded to the keys, and that was enough to keep going. Everything else on this page grew from here.</p>
                 <div class="mki-embed-wrap">
-                    <div class="mki-label">// Live instrument - click a key to play</div>
+                    <div class="mki-label" data-i18n="mki_live_label">// Live instrument - click a key to play</div>
                     <iframe class="mki-iframe" style="height: 580px;" src="../dpone/dpone-mki.html" scrolling="no" title="DPAUL Synth MKI v1.0"></iframe>
                     <div class="mki-footer">1 oscillator &nbsp;·&nbsp; 3 waveforms &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard &nbsp;·&nbsp; ~80 lines of JS</div>
                 </div>
             </div>
             <div class="instrument-visual">
                 <img src="../assets/dpone-mki-3d.png" alt="DPAUL Synth MKI 3D render" class="synth-3d-img" style="border-radius: 4px;">
-                <p class="visual-caption">MKI — 3D render from HTML UI screenshot</p>
+                <p class="visual-caption" data-i18n="mki_caption">MKI — 3D render from HTML UI screenshot</p>
             </div>
         </div>
     </div>
 
     <!-- MKII -->
-    <div class="instrument reveal"
-         id="synths-mkii"
+    <div class="instrument reveal" id="synths-mkii"
          data-post-section
          data-post-title="DPAUL Synth MKII PolyArp — Browser Instrument">
-        <div class="instrument-eyebrow">// 01 - First Evolution</div>
+        <div class="instrument-eyebrow" data-i18n="mkii_eyebrow">// 01 - First Evolution</div>
         <div class="instrument-name">DPAUL Synth MKII <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyArp</span></div>
         <div class="instrument-body">
             <div>
                 <p class="instrument-story" style="margin-bottom:16px;">A single note gets dull quickly. What makes a synth interesting is movement - sound that evolves, patterns that breathe. The MKII introduced four voices running at once, slightly detuned from each other to give that thick, wide quality hardware polysynths are known for. The arpeggiator came next: hold a chord and the synth cycles through the notes automatically, climbing octaves as it goes.</p>
                 <p class="instrument-story" style="margin-bottom:40px;">Try holding several keys at once with the arp running - it's one of those features that immediately makes you want to play rather than just test.</p>
                 <div class="mki-embed-wrap">
-                    <div class="mki-label">// Live instrument - hold a key, toggle ARP ON</div>
+                    <div class="mki-label" data-i18n="mkii_live_label">// Live instrument - hold a key, toggle ARP ON</div>
                     <iframe class="mki-iframe" style="height: 440px;" src="../dpone/dpone-mkii.html" scrolling="no" title="DPAUL Synth MKII PolyArp"></iframe>
                     <div class="mki-footer">4-voice engine &nbsp;·&nbsp; voice spread/detune &nbsp;·&nbsp; arpeggiator with tempo + octave range &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard</div>
                 </div>
             </div>
             <div class="instrument-visual">
                 <img src="../assets/dpone-mkii-3d.png" alt="DPAUL Synth MKII - 3D render" class="synth-3d-img">
-                <p class="visual-caption">MKII PolyArp — 3D render from HTML UI screenshot</p>
+                <p class="visual-caption" data-i18n="mkii_caption">MKII PolyArp — 3D render from HTML UI screenshot</p>
             </div>
         </div>
     </div>
 
     <!-- AI DESIGN FAILURE -->
-    <section class="ai-fail-section reveal"
-             id="synths-ai-fail"
+    <section class="ai-fail-section reveal" id="synths-ai-fail"
              data-post-section
-             data-post-title="When AI Gets It Wrong — dPaul Studio"
-             data-post-content="A look at what happens when AI-generated design looks convincing but fails functionally — using a synthesiser UI as the example. Spotting the difference between a picture of a synth and an actual working instrument is a skill that only comes from understanding what you're building.">
-        <div class="section-label">// When AI gets it wrong</div>
+             data-post-title="When AI Gets It Wrong — dPaul Studio">
+        <div class="section-label" data-i18n="synths_ai_fail_label">// When AI gets it wrong</div>
         <div class="two-col-grid" style="margin-top: 40px;">
             <div class="ai-fail-main">
                 <p class="learning-body">Something I learned early on - and had to learn the hard way - is recognising when AI is wrong. A generated design can look exactly like a synthesiser: professional layout, labelled controls, convincing colour scheme. And it can have absolutely no understanding of what a synthesiser actually needs to do.</p>
@@ -536,19 +533,17 @@
             <div class="ai-fail-visual">
                 <div class="ai-fail-frame">
                     <img src="../assets/ai-fail-01.png" alt="AI-generated synth design with nonsensical layout" class="ai-fail-img" id="ai-fail-img-01">
-                    <div class="ai-fail-caption"><span class="ai-fail-tag">AI generated</span>Visually polished. Functionally incoherent. Empty panels, a pitch/filter section with one knob, mixer controls with no signal chain logic.</div>
+                    <div class="ai-fail-caption"><span class="ai-fail-tag" data-i18n="tag_ai_generated">AI generated</span>Visually polished. Functionally incoherent. Empty panels, a pitch/filter section with one knob, mixer controls with no signal chain logic.</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- MKIII + MKIV -->
-    <div class="instrument reveal"
-         id="synths-mkiii-mkiv"
+    <div class="instrument reveal" id="synths-mkiii-mkiv"
          data-post-section
-         data-post-title="DPAUL Station MKIII & MKIV — The Middle Versions"
-         data-post-content="The DPAUL Station MKIII and MKIV — where the project changed shape. The MKIII introduced an 8-step sequencer and drum machine. The MKIV expanded to 37 keys, a pitch wheel, arp Hold mode, six drum rows, and a phosphor oscilloscope. Built in the browser using HTML, CSS, and the Web Audio API.">
-        <div class="instrument-eyebrow">// 02-03 - The Middle Versions</div>
+         data-post-title="DPAUL Station MKIII & MKIV — The Middle Versions">
+        <div class="instrument-eyebrow" data-i18n="mkiii_eyebrow">// 02-03 - The Middle Versions</div>
         <div class="instrument-name">DPAUL Station MKIII &amp; MKIV <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyDrum · 37 Keys · Silver Edition</span></div>
         <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII is where the project changed shape. Up to this point it had been a keyboard instrument - something you played note by note. Adding a sequencer and drum machine turned it into something that could run on its own, generating rhythm and melody without anyone touching it. That shift in thinking is what pushed everything forward.</p>
         <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII introduced an 8-step sequencer with four independent rows - kick, snare, hi-hat, and a synth voice - each with its own pattern. A drum mixer handled the balance between them, a BPM control set the pace, and the quad-voice synth engine from the MKII carried over, now driven by the sequencer rather than just the keyboard. Getting the Web Audio scheduler to stay tight at different tempos turned out to be one of the trickier problems in the whole project - timing in a browser is less predictable than it looks.</p>
@@ -568,7 +563,7 @@
             <span class="skill-tag">Sampler (removed)</span>
         </div>
         <div class="inset-render">
-            <div class="inset-render-label">// The Silver MKIV — rendered as hardware</div>
+            <div class="inset-render-label" data-i18n="mkiv_render_label">// The Silver MKIV — rendered as hardware</div>
             <div class="two-col-grid">
                 <div>
                     <p class="instrument-story" style="margin-bottom: 16px;">Once the silver colour scheme was in place, the question became: what would this look like as a real instrument on a studio desk? A screenshot of the finished HTML interface was taken and fed into an AI image generator - the start of a process that turned out to be considerably more involved than expected.</p>
@@ -579,20 +574,18 @@
                 </div>
                 <div class="ai-fail-frame" style="align-self: start; padding-top: 8px;">
                     <img src="../assets/dp-one-3d.png" alt="DPAUL Station MKIV Silver Edition - AI-generated 3D hardware render" style="width:100%; height:auto; display:block; border-radius: 3px;">
-                    <div class="ai-fail-caption"><span class="ai-fail-tag">AI rendered</span>The MKIV in silver - generated from a screenshot of the working HTML interface using a carefully engineered prompt. Note the stray element bottom-right: a reminder that the AI renders what the prompt describes, not what makes sense for the instrument.</div>
+                    <div class="ai-fail-caption"><span class="ai-fail-tag" data-i18n="tag_ai_rendered">AI rendered</span>The MKIV in silver - generated from a screenshot of the working HTML interface using a carefully engineered prompt. Note the stray element bottom-right: a reminder that the AI renders what the prompt describes, not what makes sense for the instrument.</div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- BRIDGE -->
-    <div class="instrument reveal"
-         id="synths-rebuild"
+    <div class="instrument reveal" id="synths-rebuild"
          data-post-section
          data-post-title="Strip It Back, Build It Right — The Decision to Rebuild"
-         data-post-content="After the DPAUL MKIV, the codebase had become a layered accumulation of patches. The decision was made to start again — a complete rebuild from a single voice, adding one feature at a time. The MkV took two to three days. The understanding that made it possible took six months."
          style="border-bottom: 1px solid var(--border);">
-        <div class="instrument-eyebrow">// 03.5 - The decision to start again</div>
+        <div class="instrument-eyebrow" data-i18n="rebuild_eyebrow">// 03.5 - The decision to start again</div>
         <div class="instrument-name" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">Strip it back.<br><em style="color:var(--orange); font-style:normal;">Build it right.</em></div>
         <div style="display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start;">
             <div>
@@ -609,13 +602,11 @@
     </div>
 
     <!-- DP-ONE MKV -->
-    <div class="instrument reveal"
-         id="synths-mkv"
+    <div class="instrument reveal" id="synths-mkv"
          data-post-section
-         data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild"
-         data-post-content="The DP-ONE MkV — a complete rebuild of the browser synthesiser. Three synth engines, a seven-mode filter bank, LFO and envelope modulation, a joystick for pitch and filter expression, a full effects chain, and a 6-row sequencer. Audio recording, MIDI export and import. Run it live in any browser — no install required. dpaul.studio/synths">
-        <div class="instrument-eyebrow">// 04 - The Rebuild</div>
-        <div class="instrument-name">DP-ONE MkV <span style="color:#50c864; font-size:0.72rem; font-weight:400; letter-spacing:0.05em; border: 1px solid rgba(80,200,100,0.4); border-radius:2px; padding: 2px 10px; vertical-align:middle;">Pre-skin build</span></div>
+         data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild">
+        <div class="instrument-eyebrow" data-i18n="mkv_eyebrow">// 04 - The Rebuild</div>
+        <div class="instrument-name">DP-ONE MkV <span style="color:#50c864; font-size:0.72rem; font-weight:400; letter-spacing:0.05em; border: 1px solid rgba(80,200,100,0.4); border-radius:2px; padding: 2px 10px; vertical-align:middle;" data-i18n="mkv_beta_tag">Pre-skin build</span></div>
         <div class="instrument-body" style="margin-bottom: 40px;">
             <div>
                 <p class="instrument-story" style="margin-bottom:16px;">After the MKIII established the sequencer and drum engine, the MKIV pushed things much further. The keyboard grew to 37 keys with full pointer event handling - slide between notes, hold multiple keys at once, no glitches. A pitch wheel arrived for real-time expression. The arpeggiator gained a Hold mode, so a chord could be latched and left cycling while both hands were free. The drum section expanded to six rows - kick, snare, hi-hat, tom and rim alongside the synth voice - and the oscilloscope switched to a green phosphor display.</p>
@@ -632,71 +623,67 @@
                 </div>
 
                 <div style="border-top: 1px solid var(--border-dim); padding-top: 32px; margin-top: 8px;">
-                    <div class="section-label" style="margin-bottom: 20px;">// Beta Testing — new in this build</div>
+                    <div class="section-label" style="margin-bottom: 20px;" data-i18n="mkv_beta_label">// Beta Testing — new in this build</div>
                     <p class="instrument-story" style="margin-bottom: 20px;">The current beta adds a full I/O panel in the top-right corner of the machine — three new features available to test now:</p>
                     <ul class="spec-list" style="margin-bottom: 28px;">
                         <li>
-                            <span class="spec-key">⏺ Audio Save</span>
+                            <span class="spec-key" data-i18n="spec_audio_save">⏺ Audio Save</span>
                             <span class="spec-val">Hit <strong style="color:var(--cream);">REC</strong> to start capturing, then <strong style="color:var(--cream);">SAVE</strong> to stop and download as <code style="color:var(--orange); font-size:0.9em;">.webm</code> — plays in any modern browser or VLC.</span>
                         </li>
                         <li>
-                            <span class="spec-key">↑ MIDI Export</span>
+                            <span class="spec-key" data-i18n="spec_midi_export">↑ MIDI Export</span>
                             <span class="spec-val">Exports the full pattern as a <code style="color:var(--orange); font-size:0.9em;">.mid</code> file — 5 tracks, drums on Ch10, Bass Lines on Ch2/3, synth/arp on Ch1, all at current BPM.</span>
                         </li>
                         <li>
-                            <span class="spec-key">↓ MIDI Import</span>
+                            <span class="spec-key" data-i18n="spec_midi_import">↓ MIDI Import</span>
                             <span class="spec-val">Opens a file picker to load an existing <code style="color:var(--orange); font-size:0.9em;">.mid</code> directly into the sequencer.</span>
                         </li>
                     </ul>
-                    <a href="https://dpaul.studio/dpone/dpone-mkv-beta.html" target="_blank" rel="noopener noreferrer" class="launch-btn">Launch Beta →</a>
+                    <a href="https://dpaul.studio/dpone/dpone-mkv-beta.html" target="_blank" rel="noopener noreferrer" class="launch-btn" data-i18n="mkv_beta_btn">Launch Beta →</a>
                 </div>
             </div>
             <div class="instrument-visual">
                 <img src="../assets/dpone-mkv.png" alt="DP-ONE MkV - finished HTML interface" class="synth-3d-img" style="border-radius: 4px; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.7));">
-                <p class="visual-caption">DP-ONE MkV - finished HTML interface · browser instrument</p>
-                <a href="../dpone/dpone-mkv.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display: block; text-align: center; margin-top: 20px;">Launch DP-ONE MkV</a>
+                <p class="visual-caption" data-i18n="mkv_caption">DP-ONE MkV - finished HTML interface · browser instrument</p>
+                <a href="../dpone/dpone-mkv.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display: block; text-align: center; margin-top: 20px;" data-i18n="mkv_launch_btn">Launch DP-ONE MkV</a>
             </div>
         </div>
     </div>
 
     <!-- ACID-BOX -->
-    <div class="instrument reveal"
-         id="synths-acid-box"
+    <div class="instrument reveal" id="synths-acid-box"
          data-post-section
-         data-post-title="Acid-Box — TB-303 Inspired Bass Synthesiser"
-         data-post-content="The Acid-Box — a TB-303 inspired bass synthesiser built in the browser. Monophonic, squelchy, and immediately recognisable. Full MIDI support. Two-page interface with a mini trigger keyboard. No install required — runs in any modern browser. dpaul.studio/synths#synths-acid-box">
-        <div class="instrument-eyebrow">// 05 - TB-303 Inspired Bass Synthesiser</div>
+         data-post-title="Acid-Box — TB-303 Inspired Bass Synthesiser">
+        <div class="instrument-eyebrow" data-i18n="acid_eyebrow">// 05 - TB-303 Inspired Bass Synthesiser</div>
         <div class="instrument-name">Acid-Box</div>
         <div class="instrument-body">
             <div>
                 <p class="instrument-story">The Roland TB-303 is one of those machines that became famous by accident - designed as a practice tool for guitarists, it ended up defining an entire genre when people figured out what happened if you cranked the resonance and let the filter breathe. The Acid-Box is a dedicated bass synth built around that same character: focused, squelchy, and immediately recognisable.</p>
                 <p class="instrument-story">It runs across two pages - the main sound-shaping panel and a secondary view with a mini keyboard for triggering notes. Fully MIDI compatible, so a hardware controller connects straight in. Custom skins are the next step, with a longer-term goal of a fully 3D-rendered interactive interface.</p>
                 <ul class="spec-list">
-                    <li><span class="spec-key">Type</span><span class="spec-val">Monophonic bass synth</span></li>
-                    <li><span class="spec-key">Character</span><span class="spec-val">303-style filter / resonance</span></li>
-                    <li><span class="spec-key">Interface</span><span class="spec-val">2-page layout</span></li>
-                    <li><span class="spec-key">Keyboard</span><span class="spec-val">Mini trigger keyboard (Page 2)</span></li>
-                    <li><span class="spec-key">MIDI</span><span class="spec-val">Full MIDI input support</span></li>
-                    <li><span class="spec-key">Platform</span><span class="spec-val">Browser - no install required</span></li>
+                    <li><span class="spec-key" data-i18n="spec_type">Type</span><span class="spec-val" data-i18n="acid_type_val">Monophonic bass synth</span></li>
+                    <li><span class="spec-key" data-i18n="spec_character">Character</span><span class="spec-val" data-i18n="acid_char_val">303-style filter / resonance</span></li>
+                    <li><span class="spec-key" data-i18n="spec_interface">Interface</span><span class="spec-val" data-i18n="acid_interface_val">2-page layout</span></li>
+                    <li><span class="spec-key" data-i18n="spec_keyboard">Keyboard</span><span class="spec-val" data-i18n="acid_keyboard_val">Mini trigger keyboard (Page 2)</span></li>
+                    <li><span class="spec-key">MIDI</span><span class="spec-val" data-i18n="acid_midi_val">Full MIDI input support</span></li>
+                    <li><span class="spec-key" data-i18n="spec_platform">Platform</span><span class="spec-val" data-i18n="acid_platform_val">Browser - no install required</span></li>
                 </ul>
-                <a href="../acid-box/acid-box-desktop.html" target="_blank" class="launch-btn">Launch Acid-Box</a>
+                <a href="../acid-box/acid-box-desktop.html" target="_blank" class="launch-btn" data-i18n="acid_launch_btn">Launch Acid-Box</a>
             </div>
             <div class="instrument-visual">
                 <img id="acid-box-render" src="../assets/acid-box-3d-01.png" alt="Acid-Box 3D render" class="synth-3d-img">
-                <p class="visual-caption">3D render generated from HTML UI screenshot</p>
+                <p class="visual-caption" data-i18n="acid_caption">3D render generated from HTML UI screenshot</p>
             </div>
         </div>
     </div>
 
     <!-- HARDWARE HISTORY -->
-    <section class="instrument reveal"
-             id="synths-hardware"
+    <section class="instrument reveal" id="synths-hardware"
              data-post-section
              data-post-title="Thirty Years of Synths — Hardware History"
-             data-post-content="Thirty years of hardware synthesisers — from a Korg M1 bought at Liverpool Street station in 1991 to the current studio setup. Korg Triton, E-mu Proteus, ER-1, EA-1, MicroKorg, Monologue, Roland FP-10. The hardware knowledge that made building browser instruments possible."
              style="border-bottom: 1px solid var(--border); padding: 80px 0;">
-        <div class="instrument-eyebrow">// The hardware that came before</div>
-        <div class="instrument-name">Thirty Years of Synths</div>
+        <div class="instrument-eyebrow" data-i18n="hw_eyebrow">// The hardware that came before</div>
+        <div class="instrument-name" data-i18n="hw_name">Thirty Years of Synths</div>
         <p class="instrument-story" style="max-width: 820px; margin-bottom: 16px;">
             The browser instruments on this page didn't come from nowhere. They came from thirty years of living with hardware — buying, selling, patching, breaking, and learning through actual machines with actual knobs. The Korg M1 that started it all in 1991 was followed by a Triton, an E-mu Proteus for sample playback, the ER-1 and EA-1 for that particular Korg groove-box sound, a MicroKorg for portability, a Monologue for pure analogue mono, and a Roland FP-10 as a proper weighted keyboard. Each one left something behind — a workflow habit, an understanding of envelopes, a preference for how a filter should behave.
         </p>
@@ -705,18 +692,14 @@
         </p>
 
         <div style="width: 100%; overflow-x: auto; margin-bottom: 10px;">
-            <img 
-                src="../assets/all-synths.png" 
-                alt="Hardware synthesisers owned over thirty years — Korg M1, Triton, E-mu Proteus, Korg ER-1 and EA-1, MicroKorg, Korg Monologue, Roland FP-10" 
-                style="width: 100%; min-width: 900px; height: auto; display: block; border-radius: 4px; mix-blend-mode: lighten;"
-            >
+            <img src="../assets/all-synths.png" alt="Hardware synthesisers owned over thirty years" style="width: 100%; min-width: 900px; height: auto; display: block; border-radius: 4px; mix-blend-mode: lighten;">
         </div>
         <p style="font-size: calc(1.066rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; margin-bottom: 40px; text-align: center;">
             M1 &nbsp;·&nbsp; Triton &nbsp;·&nbsp; E-mu Proteus &nbsp;·&nbsp; ER-1 &amp; EA-1 &nbsp;·&nbsp; MicroKorg &nbsp;·&nbsp; Microsampler &nbsp;·&nbsp; Monologue &nbsp;·&nbsp; Roland FP-10
         </p>
 
         <div style="border-top: 1px solid var(--border-dim); padding-top: 48px;">
-            <div class="section-label" style="margin-bottom: 24px;">// Current setup</div>
+            <div class="section-label" style="margin-bottom: 24px;" data-i18n="hw_current_label">// Current setup</div>
             <p class="instrument-story" style="max-width: 820px; margin-bottom: 24px;">
                 The hardware collection has slimmed down over the years — partly practicality, partly a shift toward software that can do things no single piece of hardware ever could. The current setup runs on an <strong style="color: var(--cream);">Apple Mac M2</strong>, with an <strong style="color: var(--cream);">M-Audio Air 192</strong> audio interface feeding a pair of <strong style="color: var(--cream);">Yamaha HS5</strong> studio monitors. An <strong style="color: var(--cream);">Arturia Minilab 3</strong> handles physical controller duties — compact, well-built, and maps cleanly to everything in the software chain.
             </p>
@@ -739,29 +722,29 @@
 
     <!-- WHAT'S NEXT -->
     <section class="next-section reveal">
-        <div class="section-label">// What's next</div>
+        <div class="section-label" data-i18n="synths_next_label">// What's next</div>
         <div class="next-grid">
             <div class="next-card">
-                <div class="next-card-label">In progress</div>
-                <div class="next-card-title">API Sound Library</div>
-                <div class="next-card-desc">Integrating an external API into the DP-ONE to pull in new sounds dynamically - turning a static instrument into an ever-expanding one.</div>
+                <div class="next-card-label" data-i18n="next_inprogress">In progress</div>
+                <div class="next-card-title" data-i18n="next_api_title">API Sound Library</div>
+                <div class="next-card-desc" data-i18n="next_api_desc">Integrating an external API into the DP-ONE to pull in new sounds dynamically - turning a static instrument into an ever-expanding one.</div>
             </div>
             <div class="next-card">
-                <div class="next-card-label">In progress</div>
-                <div class="next-card-title">Custom Skins</div>
-                <div class="next-card-desc">Interchangeable visual skins for both instruments - different colour schemes and panel designs, evolving toward fully 3D-rendered interactive UIs.</div>
+                <div class="next-card-label" data-i18n="next_inprogress">In progress</div>
+                <div class="next-card-title" data-i18n="next_skins_title">Custom Skins</div>
+                <div class="next-card-desc" data-i18n="next_skins_desc">Interchangeable visual skins for both instruments - different colour schemes and panel designs, evolving toward fully 3D-rendered interactive UIs.</div>
             </div>
             <div class="next-card">
-                <div class="next-card-label">// Live on Tools</div>
-                <div class="next-card-title">VU Meter &amp; Text-to-Speech</div>
-                <div class="next-card-desc">Two browser tools built and running - functional HTML first, then 3D rendered mockup so each tool is presented as a physical product.</div>
-                <a href="tools.html" class="next-card-link">View Tools &rarr;</a>
+                <div class="next-card-label" data-i18n="next_live_tools">// Live on Tools</div>
+                <div class="next-card-title" data-i18n="next_tools_title">VU Meter &amp; Text-to-Speech</div>
+                <div class="next-card-desc" data-i18n="next_tools_desc">Two browser tools built and running - functional HTML first, then 3D rendered mockup so each tool is presented as a physical product.</div>
+                <a href="tools.html" class="next-card-link" data-i18n="next_tools_link">View Tools &rarr;</a>
             </div>
             <div class="next-card">
-                <div class="next-card-label">// Stay in the loop</div>
-                <div class="next-card-title">Weekly Updates</div>
-                <div class="next-card-desc">New builds, beta releases, and notes from the studio — direct to your inbox. No pitch. No noise. Just what's been made.</div>
-                <a href="mailto:studio@dpaul.studio?subject=Sign%20me%20up%20for%20updates&body=Hi%20%E2%80%94%20please%20add%20me%20to%20the%20weekly%20updates%20list." class="next-card-link" style="margin-top: 16px;">Get Updates &rarr;</a>
+                <div class="next-card-label" data-i18n="next_loop_label">// Stay in the loop</div>
+                <div class="next-card-title" data-i18n="next_updates_title">Weekly Updates</div>
+                <div class="next-card-desc" data-i18n="next_updates_desc">New builds, beta releases, and notes from the studio — direct to your inbox. No pitch. No noise. Just what's been made.</div>
+                <a href="mailto:studio@dpaul.studio?subject=Sign%20me%20up%20for%20updates&body=Hi%20%E2%80%94%20please%20add%20me%20to%20the%20weekly%20updates%20list." class="next-card-link" data-i18n="next_updates_link">Get Updates &rarr;</a>
             </div>
         </div>
     </section>
@@ -964,8 +947,7 @@
         };
 
         window.addEventListener('load', () => {
-            buildChunks();
-            buildSectionMenu();
+            buildChunks(); buildSectionMenu();
             if (synth.onvoiceschanged !== undefined) {
                 synth.onvoiceschanged = () => { selectedVoice = null; populateVoiceList(); };
             }
@@ -973,7 +955,6 @@
         });
         window.addEventListener('beforeunload', () => synth.cancel());
     })();
-    // ─── END TTS ────────────────────────────────────────────────────────
 
     const acidBoxImg = document.getElementById('acid-box-render');
     const acidImages = ["../assets/acid-box-3d-01.png", "../assets/acid-box-3d-02.png"];
@@ -991,6 +972,10 @@
 
 <script src="share.js"></script>
 <script src="post-generator.js"></script>
+
+<!-- i18n -->
+<script src="assets/translations.js"></script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
 </body>
 </html>
