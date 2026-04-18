@@ -172,6 +172,11 @@
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-post-section]').forEach(section => {
       const title = section.getAttribute('data-post-title') || "Project";
+
+      // Use data-post-content if present, otherwise fall back to scraped DOM text.
+      // This prevents video section filenames and UI chrome text polluting the prompt.
+      const content = section.dataset.postContent || section.innerText.trim().slice(0, 1500);
+
       const container = document.createElement('div');
       container.className = 'dp-btn-group';
       
@@ -179,13 +184,13 @@
       const btnDisc = document.createElement('button');
       btnDisc.className = 'dp-post-btn';
       btnDisc.innerHTML = '<span class="dp-btn-dot"></span> // share discovery';
-      btnDisc.onclick = () => dpPostGenerator.open(section.innerText.trim().slice(0, 1500), title, section, 'discovery');
+      btnDisc.onclick = () => dpPostGenerator.open(content, title, section, 'discovery');
 
       // Button 2: Shout Out (The interactive/vouching vibe)
       const btnShout = document.createElement('button');
       btnShout.className = 'dp-post-btn secondary';
       btnShout.innerHTML = '<span class="dp-btn-dot"></span> // shout out';
-      btnShout.onclick = () => dpPostGenerator.open(section.innerText.trim().slice(0, 1500), title, section, 'shoutout');
+      btnShout.onclick = () => dpPostGenerator.open(content, title, section, 'shoutout');
 
       container.append(btnDisc, btnShout);
       section.appendChild(container);
