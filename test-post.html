@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dPaul Portfolio Scroll Master</title>
+    <style>
+        :root {
+            --bg: #131413;
+            --bg2: #1a1c1a;
+            --orange: #FF6600;
+            --cream: #D4C4A8;
+            --text: transparent; /* Text is invisible for clean recording */
+            --border: rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); overflow-x: hidden; color: var(--text); font-family: 'Courier New', monospace; }
+
+        /* The dPaul Signature Noise Texture */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        .page-container { max-width: 1440px; margin: 0 auto; padding: 0 56px; }
+
+        /* Visual Structure Helpers */
+        section { padding: 120px 0; border-bottom: 1px solid var(--border); position: relative; }
+        .accent-line { height: 4px; background: var(--orange); width: 60px; margin-bottom: 24px; }
+        .text-skeleton { height: 20px; background: rgba(255,255,255,0.05); margin-bottom: 12px; border-radius: 2px; }
+
+        /* Grids and Layouts from your files */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border-dim); }
+
+        /* Preserved Media Containers */
+        .photo-frame { width: 100%; aspect-ratio: 3/4; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; background: #0e0f0e; }
+        .photo-frame img, .wide-img img, .synth-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .wide-img { width: 100vw; margin-left: calc(-50vw + 50%); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
+        
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+        
+        /* Specific Styles for "The Lab" items */
+        .card { background: var(--bg2); border: 1px solid var(--border); padding: 30px; border-radius: 6px; min-height: 200px; }
+        .tag-strip { display: flex; flex-wrap: wrap; gap: 10px; padding: 40px 0; }
+        .tag-pill { padding: 8px 16px; border: 1px solid var(--border-dim); border-radius: 3px; width: 100px; }
+
+        /* Ticker Animation Placeholder */
+        .ticker-mock { height: 60px; background: #000; border-bottom: 2px solid #222; width: 100%; display: flex; align-items: center; }
+        .ticker-orange { height: 20px; background: var(--orange); width: 30%; margin-left: 56px; opacity: 0.6; }
+
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <section>
+        <div class="accent-line" style="width: 200px;"></div>
+        <div class="text-skeleton" style="width: 60%; height: 80px;"></div>
+        <div class="grid-2">
+            <div>
+                <div class="text-skeleton"></div><div class="text-skeleton"></div>
+                <div class="text-skeleton" style="width: 80%;"></div>
+                <div class="tag-strip">
+                    <div class="tag-pill"></div><div class="tag-pill"></div><div class="tag-pill"></div>
+                </div>
+            </div>
+            <div class="photo-frame"><img src="../assets/me.png"></div>
+        </div>
+    </section>
+</div>
+
+<div class="wide-img">
+    <img src="../assets/dpaul-lambo-front.png">
+</div>
+
+<div class="ticker-mock"><div class="ticker-orange"></div><div class="ticker-orange" style="background: var(--cream);"></div></div>
+<div class="page-container">
+    <section>
+        <div class="accent-line"></div>
+        <div class="video-box">
+             <div style="background: #111; height: 40px; width: 100%; border-bottom: 1px solid #333;"></div>
+             <div style="height: 100%; width: 100%; background: radial-gradient(circle, #222 0%, #000 100%);"></div>
+        </div>
+    </section>
+</div>
+
+<div class="page-container">
+    <section>
+        <div class="accent-line" style="height: 10px;"></div>
+        <div class="grid-5">
+            <div class="card" style="border: none; border-right: 1px solid var(--border-dim);"><div class="accent-line"></div></div>
+            <div class="card" style="border: none; border-right: 1px solid var(--border-dim);"><div class="accent-line"></div></div>
+            <div class="card" style="border: none; border-right: 1px solid var(--border-dim);"><div class="accent-line"></div></div>
+            <div class="card" style="border: none; border-right: 1px solid var(--border-dim);"><div class="accent-line"></div></div>
+            <div class="card" style="border: none;"><div class="accent-line"></div></div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 100px;">
+            <div class="synth-img"><img src="../assets/dpone-mkv.png"></div>
+            <div>
+                <div class="text-skeleton" style="height: 40px;"></div>
+                <div class="card" style="height: 300px;"></div>
+            </div>
+        </div>
+
+        <div class="grid-3" style="margin-top: 60px;">
+            <div class="photo-frame"><img src="../assets/dpone-mki-3d.png"></div>
+            <div class="photo-frame"><img src="../assets/dpone-mkii-3d.png"></div>
+            <div class="photo-frame"><img src="../assets/dp-one-3d.png"></div>
+        </div>
+    </section>
+</div>
+
+<div class="page-container">
+    <section>
+        <div class="grid-2">
+            <div>
+                <div class="accent-line" style="width: 150px;"></div>
+                <div class="card" style="height: 400px; background: rgba(0,0,0,0.4);">
+                    <img src="../assets/html-live-laptop.png" style="width: 100%; border-radius: 4px;">
+                </div>
+            </div>
+            <div class="photo-frame" style="aspect-ratio: 16/10;">
+                <img src="../assets/skribla-on-desk.png">
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 80px;">
+            <img src="../assets/vu-3d.png" style="width: 100%; filter: drop-shadow(0 0 20px var(--orange));">
+            <img src="../assets/vu-concept.png" style="width: 80%; justify-self: center;">
+        </div>
+    </section>
+</div>
+
+<div class="page-container">
+    <section>
+        <div class="grid-2">
+             <div class="photo-frame" style="aspect-ratio: 1; border-color: var(--orange);">
+                 <img src="../assets/renaissance-cover.jpg">
+             </div>
+             <div style="display: flex; flex-direction: column; gap: 20px;">
+                 <div class="text-skeleton" style="height: 60px;"></div>
+                 <div class="text-skeleton"></div>
+                 <div class="text-skeleton"></div>
+             </div>
+        </div>
+    </section>
+</div>
+
+<div class="page-container">
+    <section style="border-bottom: none;">
+        <div class="accent-line"></div>
+        <img src="../assets/all-synths.png" style="width: 100%; opacity: 0.9; mix-blend-mode: lighten; margin: 40px 0;">
+        <div class="grid-2">
+            <img src="../assets/korg-m1.png" style="width: 100%; border-radius: 4px; border: 1px solid var(--border-dim);">
+            <img src="../assets/loot.png" style="width: 100%; border-radius: 4px; border: 1px solid var(--border-dim);">
+        </div>
+    </section>
+</div>
+
+</body>
+</html>
