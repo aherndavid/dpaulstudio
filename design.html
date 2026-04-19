@@ -81,6 +81,12 @@
             text-transform: uppercase; color: var(--orange);
             text-shadow: 0 0 8px rgba(255, 102, 0, 0.7);
         }
+        .ticker-track .tick-dot { color: #444; margin: 0 10px; }
+        
+        /* ── BOTTOM BANNER SPECIFIC ── */
+        .ticker-bottom { border-bottom: none; border-top: 2px solid #222; margin-top: 60px; }
+        .ticker-bottom span { color: var(--cream); text-shadow: 0 0 8px rgba(212, 196, 168, 0.4); }
+
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         /* ── PAGE CONTENT ── */
@@ -89,13 +95,7 @@
         .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; }
         .hero-text h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; }
         .hero-text h1 em { color: var(--orange); font-style: normal; }
-        .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); border-left: 2px solid var(--orange); padding-left: 20px; margin-bottom: 16px;}
-
-        /* ── TTS PLAYER ── */
-        .tts-player { background: var(--bg2); border: 1px solid var(--border); border-radius: 4px; padding: 16px 20px; margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-        .tts-btn { background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); padding: 7px 16px; cursor: pointer; font-family: inherit; }
-        .tts-btn.active { background: var(--orange); color: #000; }
-        .tts-highlight { background: rgba(255,102,0,.15); outline: 1px solid rgba(255,102,0,.3); }
+        .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); border-left: 2px solid var(--orange); padding-left: 20px; margin-bottom: 16px; }
 
         /* ── BILLBOARD ── */
         .billboard-wrap { width: 100%; margin-top: 56px; }
@@ -123,9 +123,7 @@
     <a href="video.html">video</a>
     <a href="dev-tools.html">dev tools</a>
     <div class="spacer"></div>
-    
     <div id="nav-eq-container"></div>
-    
     <a href="about.html">info</a>
 </nav>
 
@@ -135,29 +133,21 @@
         <span>ANIMATION</span><span class="tick-dot">-</span>
         <span>BRAND IDENTITY</span><span class="tick-dot">-</span>
         <span>MOTION GRAPHICS</span><span class="tick-dot">-</span>
+        <span>PRINT READY</span><span class="tick-dot">-</span>
         <span>WEB DESIGN</span><span class="tick-dot">-</span>
         <span>LOGO DESIGN</span><span class="tick-dot">-</span>
         <span>ANIMATION</span><span class="tick-dot">-</span>
-        <span>BRAND IDENTITY</span><span class="tick-dot">-</span>
     </div>
 </div>
 
 <div class="page">
-    <div class="hero-text reveal" id="design-services">
+    <div class="hero-text reveal">
         <div class="hero-label">// dPaul Technologies — Design Services</div>
         <h1>Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
-        <p class="hero-intro">Whether you need a static or animated logo for email signatures, labels, or videos — I help you create designs that stay clear and professional.</p>
-        <p class="hero-intro">Every design starts with a conversation. From concept to final print-ready files, the process is straightforward.</p>
-
-        <div class="tts-player" id="ttsPlayer">
-            <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
-            <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>⏸ Pause</button>
-            <button class="tts-btn" id="ttsStop" onclick="ttsStop()" disabled>■ Stop</button>
-            <span id="ttsProgress" style="font-size: 0.8rem; color: var(--dim); margin-left: auto;"></span>
-        </div>
+        <p class="hero-intro">Strategic design built around what you actually need.</p>
     </div>
 
-    <div class="billboard-wrap reveal" id="design-showcase">
+    <div class="billboard-wrap reveal">
         <div class="screen-chrome">
             <div class="chrome-bar">
                 <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
@@ -170,8 +160,19 @@
     </div>
 </div>
 
+<div class="ticker-wrap ticker-bottom">
+    <div class="ticker-track">
+        <span>EST. 2024</span><span class="tick-dot">-</span>
+        <span>LET'S BUILD SOMETHING</span><span class="tick-dot">-</span>
+        <span>GET IN TOUCH</span><span class="tick-dot">-</span>
+        <span>EST. 2024</span><span class="tick-dot">-</span>
+        <span>LET'S BUILD SOMETHING</span><span class="tick-dot">-</span>
+        <span>GET IN TOUCH</span><span class="tick-dot">-</span>
+    </div>
+</div>
+
 <script>
-    // ── MINI NAV EQ LOGIC ──
+    // ── NAV EQ LOGIC ──
     (function() {
         const NUM_BARS = 8;
         const MAX_H = 20;
@@ -200,49 +201,20 @@
     const videos = [document.getElementById('vid1'), document.getElementById('vid2')];
     let currentVid = 0;
     function playNext() {
-        videos[currentVid].style.display = 'none';
+        if(videos[currentVid]) videos[currentVid].style.display = 'none';
         currentVid = (currentVid + 1) % videos.length;
-        videos[currentVid].style.display = 'block';
-        videos[currentVid].play();
+        if(videos[currentVid]) {
+            videos[currentVid].style.display = 'block';
+            videos[currentVid].play();
+        }
     }
-    videos.forEach(v => v.addEventListener('ended', playNext));
+    videos.forEach(v => { if(v) v.addEventListener('ended', playNext); });
 
     // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // ── TTS ENGINE ──
-    const synth = window.speechSynthesis;
-    let chunks = [], idx = 0;
-    function buildChunks() {
-        chunks = [];
-        document.querySelectorAll('.hero-text h1, .hero-intro').forEach(el => chunks.push({el, text: el.innerText}));
-    }
-    window.ttsPlay = () => {
-        if(!chunks.length) buildChunks();
-        speak();
-        document.getElementById('ttsPlay').disabled = true;
-        document.getElementById('ttsStop').disabled = false;
-    };
-    function speak() {
-        if(idx >= chunks.length) return ttsStop();
-        const u = new SpeechSynthesisUtterance(chunks[idx].text);
-        chunks[idx].el.classList.add('tts-highlight');
-        u.onend = () => {
-            chunks[idx].el.classList.remove('tts-highlight');
-            idx++; speak();
-        };
-        synth.speak(u);
-    }
-    window.ttsStop = () => {
-        synth.cancel();
-        if(chunks[idx]) chunks[idx].el.classList.remove('tts-highlight');
-        idx = 0;
-        document.getElementById('ttsPlay').disabled = false;
-        document.getElementById('ttsStop').disabled = true;
-    };
 </script>
 
 </body>
