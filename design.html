@@ -42,7 +42,7 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* ── NAVIGATION & EQ ── */
+        /* ── NAVIGATION ── */
         nav {
             position: sticky; top: 0; z-index: 100;
             background: var(--bg); border-bottom: 1px solid var(--border);
@@ -58,16 +58,17 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer  { flex: 1; }
 
+        /* ── MINI EQ IN NAV ── */
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
-            height: 22px; margin: 0 20px; padding-bottom: 2px;
+            height: 22px; margin: 0 24px; padding-bottom: 2px;
         }
         .nav-eq-bar {
             width: 3px; background: var(--orange);
             transition: height 0.1s ease; border-radius: 1px;
         }
 
-        /* ── TICKER ── */
+        /* ── TICKERS ── */
         .ticker-wrap {
             position: relative; width: 100%; background: #000; border-bottom: 2px solid #222;
             overflow: hidden; padding: 14px 0; box-shadow: inset 0 0 20px rgba(0,0,0,1);
@@ -83,24 +84,27 @@
         }
         .ticker-track .tick-dot { color: #444; margin: 0 10px; }
         
-        /* ── BOTTOM BANNER SPECIFIC ── */
         .ticker-bottom { border-bottom: none; border-top: 2px solid #222; margin-top: 60px; }
         .ticker-bottom span { color: var(--cream); text-shadow: 0 0 8px rgba(212, 196, 168, 0.4); }
 
         @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* ── PAGE CONTENT ── */
+        /* ── CONTENT ── */
         .page { max-width: 1440px; margin: 0 auto; padding: 56px 56px 60px; }
         .hero-text { padding: 64px 0 56px; border-bottom: 1px solid var(--border); max-width: 1000px; }
         .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; }
         .hero-text h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; }
         .hero-text h1 em { color: var(--orange); font-style: normal; }
-        .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); border-left: 2px solid var(--orange); padding-left: 20px; margin-bottom: 16px; }
+        .hero-intro { 
+            font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; 
+            color: var(--text); border-left: 2px solid var(--orange); 
+            padding-left: 20px; margin-bottom: 24px; 
+        }
 
         /* ── BILLBOARD ── */
         .billboard-wrap { width: 100%; margin-top: 56px; }
         .screen-chrome { background: #0e0f0e; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-        .chrome-bar { background: #111; padding: 10px 14px; display: flex; align-items: center; gap: 7px; }
+        .chrome-bar { background: #111; padding: 10px 14px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid rgba(255,102,0,0.1); }
         .dot { width: 9px; height: 9px; border-radius: 50%; }
         .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
         .screen-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
@@ -123,7 +127,9 @@
     <a href="video.html">video</a>
     <a href="dev-tools.html">dev tools</a>
     <div class="spacer"></div>
+    
     <div id="nav-eq-container"></div>
+    
     <a href="about.html">about</a>
 </nav>
 
@@ -143,8 +149,16 @@
 <div class="page">
     <div class="hero-text reveal">
         <div class="hero-label">// dPaul Technologies — Design Services</div>
+        
         <h1>Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
-        <p class="hero-intro">Strategic design built around what you actually need.</p>
+        
+        <p class="hero-intro">
+            Whether you need a static or animated logo for email signatures, labels, or videos — I help you create designs that stay clear and professional.
+        </p>
+        
+        <p class="hero-intro">
+            Every design starts with a conversation. From concept through to final delivery — print-ready files, animated versions, brand guidelines — the process is straightforward and built around what you actually need.
+        </p>
     </div>
 
     <div class="billboard-wrap reveal">
@@ -167,12 +181,11 @@
         <span>GET IN TOUCH</span><span class="tick-dot">-</span>
         <span>EST. 2024</span><span class="tick-dot">-</span>
         <span>LET'S BUILD SOMETHING</span><span class="tick-dot">-</span>
-        <span>GET IN TOUCH</span><span class="tick-dot">-</span>
     </div>
 </div>
 
 <script>
-    // ── NAV EQ LOGIC ──
+    // ── NAV EQ ANIMATION ──
     (function() {
         const NUM_BARS = 8;
         const MAX_H = 20;
@@ -186,27 +199,26 @@
             container.appendChild(b);
             bars.push(b);
         }
-        function animate() {
+        function animateEQ() {
             for (let i = 0; i < NUM_BARS; i++) {
                 if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
                 levels[i] += (targets[i] - levels[i]) * 0.15;
                 bars[i].style.height = levels[i] + 'px';
             }
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateEQ);
         }
-        animate();
+        animateEQ();
     })();
 
     // ── VIDEO PLAYLIST ──
     const videos = [document.getElementById('vid1'), document.getElementById('vid2')];
     let currentVid = 0;
     function playNext() {
-        if(videos[currentVid]) videos[currentVid].style.display = 'none';
+        if(!videos[0]) return;
+        videos[currentVid].style.display = 'none';
         currentVid = (currentVid + 1) % videos.length;
-        if(videos[currentVid]) {
-            videos[currentVid].style.display = 'block';
-            videos[currentVid].play();
-        }
+        videos[currentVid].style.display = 'block';
+        videos[currentVid].play();
     }
     videos.forEach(v => { if(v) v.addEventListener('ended', playNext); });
 
