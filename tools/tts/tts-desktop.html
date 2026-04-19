@@ -11,7 +11,7 @@
 
         body {
             font-family: 'Share Tech Mono', 'Courier New', monospace;
-            background: #0d0d0d;
+            background: #131413;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -804,18 +804,23 @@
         }
 
         .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: linear-gradient(160deg, #1a0810, #100510);
+            border: 1px solid rgba(0,0,0,0.6);
+            border-radius: 5px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 9px;
-            color: #3a1a22;
+            font-size: 8px;
+            color: #8a5060;
             text-decoration: none;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            transition: color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: all 0.15s;
         }
-        .back-link:hover { color: #aa4455; }
+        .back-link:hover { color: #cc8090; border-color: #3a1828; background: linear-gradient(160deg, #251018, #180a10); transform: translateY(-1px); }
 
         /* Speed/pitch display for Google mode */
         .google-sliders-row {
@@ -1045,11 +1050,10 @@
         <div class="bottom-port"><div class="port-icon" style="border-radius:50%; width:12px; height:12px; font-size:10px;">⊞</div>SD</div>
         <div class="bottom-port"><div class="port-icon" style="border-radius:4px; width:22px;">USB-C</div></div>
         <div class="bottom-port"><div class="port-icon" style="font-size:10px;">▣</div></div>
+        <a href="https://www.dpaul.studio/tools" class="back-link" target="_blank">← dPaul Tools</a>
     </div>
 
 </div>
-
-<a href="https://www.dpaul.studio" class="back-link">← back to dpaul.studio</a>
 
 <!-- SETUP OVERLAY -->
 <div id="setup-guide-overlay">
