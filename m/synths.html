@@ -4,27 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synths — dPaul Technologies (Mobile)</title>
-    
+
     <style>
         /* ── THEME VARIABLES ── */
         :root {
-            --bg:      #131413;
-            --bg2:     #1a1c1a;
-            --orange:  #FF6600;
-            --cream:   #D4C4A8;
-            --text:    #c8c8c0;
-            --dim:     #7a7a70;
-            --border:  rgba(255,102,0,0.25);
+            --bg: #131413;
+            --bg2: #1a1c1a;
+            --orange: #FF6600;
+            --cream: #D4C4A8;
+            --text: #c8c8c0;
+            --dim: #7a7a70;
+            --border: rgba(255,102,0,0.25);
             --border-dim: rgba(255,255,255,0.07);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
+        body {
+            background: var(--bg);
+            color: var(--text);
             font-family: 'Courier New', Courier, monospace;
-            font-size: 110%; 
+            font-size: 110%;
             margin: 0;
             line-height: 1.6;
             overflow-x: hidden;
@@ -33,388 +37,741 @@
         /* Grain Overlay */
         body::before {
             content: '';
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 9999; opacity: 0.3;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.3;
         }
 
         /* ── NAVIGATION ── */
         #mobile-nav-container {
-            position: sticky; top: 0; z-index: 1000;
-            background: var(--bg); border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
             height: 64px;
         }
+
         .nav-wrapper {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 20px; height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: 100%;
         }
-        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
-        
+
+        .nav-brand {
+            font-size: 0.8rem;
+            color: var(--orange);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
         .burger {
-            background: none; border: none; cursor: pointer;
-            width: 30px; height: 20px; position: relative; 
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 0; z-index: 1001;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0;
+            z-index: 1001;
         }
+
         .burger span {
-            display: block; width: 100%; height: 2px; 
+            display: block;
+            width: 100%;
+            height: 2px;
             background: var(--cream);
             transition: all 0.3s ease;
         }
-        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
-        .burger.active span:nth-child(2) { opacity: 0; }
-        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .burger.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+            background: var(--orange);
+        }
+
+        .burger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+            background: var(--orange);
+        }
 
         .mobile-menu {
-            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
-            background: var(--bg); overflow: hidden;
+            position: fixed;
+            top: 64px;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: var(--bg);
+            overflow: hidden;
             transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             z-index: 999;
         }
-        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
-        .mobile-menu a {
-            font-size: 1.4rem; color: var(--cream); text-decoration: none;
-            text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+
+        .mobile-menu.open {
+            height: calc(100vh - 64px);
+            border-bottom: 1px solid var(--border);
         }
-        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        .mobile-menu a {
+            font-size: 1.4rem;
+            color: var(--cream);
+            text-decoration: none;
+            text-transform: lowercase;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+        }
+
+        .mobile-menu a.active {
+            color: var(--orange);
+            font-weight: bold;
+        }
 
         /* ── PAGE CONTENT ── */
-        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
+        .page {
+            padding: 0 20px 80px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
-        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
-        .hero h1 { font-size: 1.8rem; line-height: 1.2; margin-bottom: 20px; color: #fff; font-weight: 900; }
-        .hero h1 em { color: var(--orange); font-style: normal; }
-        .hero-intro { font-size: 1.05rem; border-left: 2px solid var(--orange); padding-left: 16px; color: var(--text); }
+        .hero {
+            padding: 40px 0 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-label {
+            font-size: 0.75rem;
+            color: var(--orange);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 1.8rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #fff;
+            font-weight: 900;
+        }
+
+        .hero h1 em {
+            color: var(--orange);
+            font-style: normal;
+        }
+
+        .hero-intro {
+            font-size: 1.05rem;
+            border-left: 2px solid var(--orange);
+            padding-left: 16px;
+            color: var(--text);
+        }
 
         /* TTS PLAYER (Mobile Optimized) */
         .tts-player {
-            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
-            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 16px;
+            margin: 24px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
-        .tts-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
-        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+        .tts-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--orange);
+        }
+
+        .tts-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
         .tts-btn {
-            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            padding: 8px 12px; font-family: inherit; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+            background: #1e201e;
+            border: 1px solid var(--border-dim);
+            color: var(--cream);
+            padding: 8px 12px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            border-radius: 3px;
+            cursor: pointer;
         }
-        .tts-btn.active { background: var(--orange); color: #000; }
-        .tts-voice-sel { 
-            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
-            padding: 8px; font-family: inherit; font-size: 0.85rem; width: 100%;
+
+        .tts-btn.active {
+            background: var(--orange);
+            color: #000;
         }
-        .tts-highlight { background: rgba(255,102,0,0.2); border-radius: 2px; }
+
+        .tts-voice-sel {
+            background: #1e201e;
+            border: 1px solid var(--border-dim);
+            color: var(--cream);
+            padding: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+
+        .tts-highlight {
+            background: rgba(255, 102, 0, 0.2);
+            border-radius: 2px;
+        }
 
         /* TIMELINE (Stacked) */
-        .process-section { padding: 48px 0; border-bottom: 1px solid var(--border); }
-        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 24px; }
-        .timeline { border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; }
-        .timeline-step { padding: 24px 20px; border-bottom: 1px solid var(--border-dim); }
-        .timeline-step:last-child { border-bottom: none; }
-        .step-num { font-size: 1.8rem; font-weight: 900; color: var(--orange); opacity: 0.2; margin-bottom: 8px; }
-        .step-title { font-size: 1rem; color: #fff; text-transform: uppercase; margin-bottom: 8px; }
-        .step-desc { font-size: 0.9rem; color: var(--dim); line-height: 1.5; }
+        .process-section {
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            color: var(--orange);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .timeline {
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .timeline-step {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--border-dim);
+        }
+
+        .timeline-step:last-child {
+            border-bottom: none;
+        }
+
+        .step-num {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--orange);
+            opacity: 0.2;
+            margin-bottom: 8px;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            font-size: 0.9rem;
+            color: var(--dim);
+            line-height: 1.5;
+        }
 
         /* SKILLS */
-        .skills-strip { display: flex; flex-wrap: wrap; gap: 6px; padding: 24px 0; border-bottom: 1px solid var(--border); }
-        .skill-tag { font-size: 0.7rem; border: 1px solid var(--border-dim); padding: 4px 10px; color: var(--cream); text-transform: uppercase; }
+        .skills-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .skill-tag {
+            font-size: 0.7rem;
+            border: 1px solid var(--border-dim);
+            padding: 4px 10px;
+            color: var(--cream);
+            text-transform: uppercase;
+        }
 
         /* INSTRUMENT BLOCKS */
-        .instrument { padding: 48px 0; border-bottom: 1px solid var(--border); }
-        .instrument-eyebrow { font-size: 0.75rem; color: var(--orange); text-transform: uppercase; margin-bottom: 8px; }
-        .instrument-name { font-size: 1.5rem; color: #fff; font-weight: 900; margin-bottom: 24px; }
-        .instrument-story { font-size: 1rem; margin-bottom: 24px; }
-        
-        .mki-embed-wrap { 
-          margin-bottom: 32px; 
-          background: #000; 
-          border-radius: 8px;
-          padding: 10px 0; 
-          border: none; /* Border removed */
+        .instrument {
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
         }
-        .mki-label { font-size: 0.7rem; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; display: block; }
-        .mki-iframe { 
-          width: 100%; 
-          height: 520px; 
-          border: none; 
-          border-radius: 4px;
-          overflow: hidden; 
-          background: #000; 
+
+        .instrument-eyebrow {
+            font-size: 0.75rem;
+            color: var(--orange);
+            text-transform: uppercase;
+            margin-bottom: 8px;
         }
-        
-        .synth-3d-img { width: 100%; height: auto; border-radius: 4px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); margin-bottom: 12px; }
-        .visual-caption { font-size: 0.75rem; color: var(--dim); text-align: center; text-transform: uppercase; }
+
+        .instrument-name {
+            font-size: 1.5rem;
+            color: #fff;
+            font-weight: 900;
+            margin-bottom: 24px;
+        }
+
+        .instrument-story {
+            font-size: 1rem;
+            margin-bottom: 24px;
+        }
+
+        .mki-embed-wrap {
+            margin-bottom: 32px;
+            background: transparent;
+            padding: 0;
+            border: none;
+        }
+
+        .mki-label {
+            font-size: 0.7rem;
+            color: var(--orange);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .mki-iframe {
+            width: 100%;
+            height: 520px;
+            border: none;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        .synth-3d-img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+            margin-bottom: 12px;
+        }
+
+        .visual-caption {
+            font-size: 0.75rem;
+            color: var(--dim);
+            text-align: center;
+            text-transform: uppercase;
+        }
 
         /* ORIGIN SECTION */
-        .origin-section { padding: 48px 0; border-bottom: 1px solid var(--border); }
-        .origin-body p { margin-bottom: 16px; font-size: 1.05rem; }
-        .origin-pull { font-size: 1.4rem; color: var(--orange); font-weight: 700; border-left: 2px solid var(--orange); padding-left: 16px; margin: 32px 0; }
-        
-        .origin-img-frame { margin-top: 24px; border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; }
-        .origin-img { width: 100%; display: block; }
-        .origin-img-caption { padding: 12px; font-size: 0.8rem; color: var(--dim); background: var(--bg2); }
-        .origin-img-tag { font-size: 0.65rem; color: var(--orange); border: 1px solid var(--orange); padding: 2px 6px; margin-right: 8px; text-transform: uppercase; }
-
-        /* AI FAIL */
-        .ai-fail-section { padding: 48px 0; border-bottom: 1px solid var(--border); }
-        .ai-fail-visual { margin-top: 24px; border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; }
-        .ai-fail-img { width: 100%; display: block; }
-        .ai-fail-caption { padding: 12px; font-size: 0.8rem; color: var(--dim); background: var(--bg2); }
-
-        /* HARDWARE TIMELINE */
-        .hardware-scroll-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 24px 0; border-radius: 4px; }
-        .hardware-img { height: 200px; width: auto; display: block; mix-blend-mode: lighten; }
-
-        /* CTAs & NEXT */
-        .next-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
-        .next-card { background: var(--bg2); border: 1px solid var(--border-dim); padding: 20px; border-radius: 4px; }
-        .next-card-label { font-size: 0.7rem; color: var(--orange); text-transform: uppercase; margin-bottom: 8px; }
-        .next-card-title { font-size: 1.1rem; color: #fff; margin-bottom: 8px; }
-        .next-card-desc { font-size: 0.9rem; color: var(--dim); }
-        
-        .launch-btn { 
-            display: inline-block; padding: 12px 24px; border: 1px solid var(--orange); 
-            color: var(--orange); text-decoration: none; font-size: 0.85rem; 
-            text-transform: uppercase; letter-spacing: 0.1em; border-radius: 3px; 
-            margin-top: 16px; text-align: center; width: 100%;
+        .origin-section {
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .footer-toggle { text-align: center; padding: 60px 0; }
-        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+        .origin-body p {
+            margin-bottom: 16px;
+            font-size: 1.05rem;
+        }
 
-        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .origin-pull {
+            font-size: 1.4rem;
+            color: var(--orange);
+            font-weight: 700;
+            border-left: 2px solid var(--orange);
+            padding-left: 16px;
+            margin: 32px 0;
+        }
+
+        .origin-img-frame {
+            margin-top: 24px;
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .origin-img {
+            width: 100%;
+            display: block;
+        }
+
+        .origin-img-caption {
+            padding: 12px;
+            font-size: 0.8rem;
+            color: var(--dim);
+            background: var(--bg2);
+        }
+
+        .origin-img-tag {
+            font-size: 0.65rem;
+            color: var(--orange);
+            border: 1px solid var(--orange);
+            padding: 2px 6px;
+            margin-right: 8px;
+            text-transform: uppercase;
+        }
+
+        /* AI FAIL */
+        .ai-fail-section {
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ai-fail-visual {
+            margin-top: 24px;
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .ai-fail-img {
+            width: 100%;
+            display: block;
+        }
+
+        .ai-fail-caption {
+            padding: 12px;
+            font-size: 0.8rem;
+            color: var(--dim);
+            background: var(--bg2);
+        }
+
+        /* HARDWARE TIMELINE */
+        .hardware-scroll-wrap {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 24px 0;
+            border-radius: 4px;
+        }
+
+        .hardware-img {
+            height: 200px;
+            width: auto;
+            display: block;
+            mix-blend-mode: lighten;
+        }
+
+        /* CTAs & NEXT */
+        .next-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .next-card {
+            background: var(--bg2);
+            border: 1px solid var(--border-dim);
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .next-card-label {
+            font-size: 0.7rem;
+            color: var(--orange);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .next-card-title {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .next-card-desc {
+            font-size: 0.9rem;
+            color: var(--dim);
+        }
+
+        .launch-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: 1px solid var(--orange);
+            color: var(--orange);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-radius: 3px;
+            margin-top: 16px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer-toggle {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .footer-toggle a {
+            color: var(--dim);
+            font-size: 0.8rem;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
 
-<div id="mobile-nav-container">
-    <div class="nav-wrapper">
-        <div class="nav-brand">dPaul Technologies</div>
-        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
-            <span></span><span></span><span></span>
-        </button>
-    </div>
-</div>
-
-<div class="mobile-menu" id="mobileMenu">
-    <a href="design.html">design</a>
-    <a href="merch.html">merch</a>
-    <a href="music.html">music</a>
-    <a href="synths.html" class="active">synths</a>
-    <a href="tools.html">tools</a>
-    <a href="video.html">video</a>
-    <a href="dev-tools.html">dev tools</a>
-    <a href="about.html">info</a>
-</div>
-
-<div class="page">
-    <section class="hero reveal">
-        <div class="hero-label">// Synth Lab</div>
-        <h1>Thirty years of hardware. Then <em>this happened.</em></h1>
-        <p class="hero-intro">Curiosity drives the most interesting parts of life. After years of hardware drum machines and analog keys, I had to know: could I build an instrument from scratch in a browser?</p>
-
-        <div class="tts-player">
-            <span class="tts-label">// Speak page</span>
-            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
-                <option value="">Loading voices...</option>
-            </select>
-            <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
-                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
-            </div>
+    <div id="mobile-nav-container">
+        <div class="nav-wrapper">
+            <div class="nav-brand">dPaul Technologies</div>
+            <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
         </div>
-    </section>
-
-    <section class="process-section reveal" data-post-section data-post-title="How the DP-ONE Was Built — dPaul Studio">
-        <div class="section-label">// The Build Path</div>
-        <div class="timeline">
-            <div class="timeline-step">
-                <div class="step-num">01</div>
-                <div class="step-title">Single Prompt</div>
-                <div class="step-desc">Started with a single sound. Asked why it worked. Learned the basic signal chain.</div>
-            </div>
-            <div class="timeline-step">
-                <div class="step-num">02</div>
-                <div class="step-title">Feature by Feature</div>
-                <div class="step-desc">Added oscillators, filters, and LFOs one at a time. Coding by doing.</div>
-            </div>
-            <div class="timeline-step">
-                <div class="step-num">03</div>
-                <div class="step-title">Full Instrument</div>
-                <div class="step-desc">Integrated sequencers, drum machines, and MIDI support for hardware keys.</div>
-            </div>
-            <div class="timeline-step">
-                <div class="step-num">04</div>
-                <div class="step-title">Visual Identity</div>
-                <div class="step-desc">Turned code into physical product renders using engineered AI prompts.</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="skills-strip reveal">
-        <span class="skill-tag">Web Audio API</span>
-        <span class="skill-tag">MIDI</span>
-        <span class="skill-tag">JavaScript</span>
-        <span class="skill-tag">AI Prompting</span>
-        <span class="skill-tag">3D Rendering</span>
     </div>
 
-    <section class="instrument reveal" data-post-section data-post-title="DPAUL Synth MKI — Where It Started">
-        <div class="instrument-eyebrow">// 00 - Start</div>
-        <div class="instrument-name">DPAUL Synth MKI</div>
-        <p class="instrument-story">The first prototype. One oscillator, three waveforms, basic filter. It made sound, and that was enough to keep going.</p>
-        <div class="mki-embed-wrap">
-            <span class="mki-label">///span>
-            <iframe class="mki-iframe" src="../dpone/dpone-mki.html" scrolling="no"></iframe>
-        </div>
-        <img src="../assets/dpone-mki-3d.png" alt="MKI Render" class="synth-3d-img">
-        <p class="visual-caption">MKI — 3D Render from UI</p>
-    </section>
-
-    <section class="origin-section reveal" data-post-section data-post-title="Where It All Began — Korg M1 Origin Story">
-        <div class="section-label">// Origin Story</div>
-        <div class="origin-body">
-            <p>It started in 1991. Before the internet, you found gear in <strong>The Loot</strong> classifieds. I bought a Korg M1 from a stranger on a landline.</p>
-            <div class="origin-pull">"Same building. One floor apart. Found through a newspaper ad."</div>
-            <p>We both worked at Liverpool Street station. Meeting at the office to swap cash for keys started a 30-year obsession with synthesis.</p>
-        </div>
-        <div class="origin-img-frame">
-            <img src="../assets/korg-m1.png" alt="Korg M1" class="origin-img">
-            <div class="origin-img-caption"><span class="origin-img-tag">1991</span>The Korg M1. The machine that started it all.</div>
-        </div>
-    </section>
-
-    <section class="instrument reveal" data-post-section data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild">
-        <div class="instrument-eyebrow">// 04 - The Rebuild</div>
-        <div class="instrument-name">DP-ONE MkV</div>
-        <p class="instrument-story">A complete ground-up rebuild. 37 keys, joystick pitch/filter, 6-row sequencer, and a full FX chain (Reverb/Tape Echo).</p>
-        <img src="../assets/dpone-mkv.png" alt="MkV UI" class="synth-3d-img">
-        <p class="step-desc">To see these synths in action, visit this website on a desktop/laptop.</p>
-    </section>
-
-    <section class="instrument reveal">
-        <div class="instrument-eyebrow">// 05 - 303 Style</div>
-        <div class="instrument-name">Acid-Box</div>
-        <p class="instrument-story">Inspired by the legendary TB-303. Monophonic, squelchy, and focused on that iconic resonant filter scream.</p>
-        <img src="../assets/acid-box-3d-01.png" alt="Acid-Box Render" class="synth-3d-img">
-
-    </section>
-
-    <section class="instrument reveal">
-        <div class="section-label">// Hardware History</div>
-        <p class="instrument-story">Thirty years of machines. You can't design a browser filter if you haven't twisted a real resonance knob into feedback.</p>
-        <div class="hardware-scroll-wrap">
-            <img src="../assets/all-synths.png" alt="Synth History" class="hardware-img">
-        </div>
-        <p class="visual-caption">M1 · Triton · Proteus · MicroKorg · Monologue</p>
-    </section>
-
-    <section class="next-section reveal">
-        <div class="section-label">// Next Steps</div>
-        <div class="next-grid">
-            <div class="next-card">
-                <div class="next-card-label">In Progress</div>
-                <div class="next-card-title">API Sound Library</div>
-                <div class="next-card-desc">Integrating external APIs to pull new sounds into DP-ONE dynamically.</div>
-            </div>
-            <div class="next-card">
-                <div class="next-card-label">In Progress</div>
-                <div class="next-card-title">Custom Skins</div>
-                <div class="next-card-desc">Fully 3D-rendered interactive UIs and interchangeable panel designs.</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="footer-toggle">
-        <a href="../synths.html">→ View Desktop Version</a>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="design.html">design</a>
+        <a href="merch.html">merch</a>
+        <a href="music.html">music</a>
+        <a href="synths.html" class="active">synths</a>
+        <a href="tools.html">tools</a>
+        <a href="video.html">video</a>
+        <a href="dev-tools.html">dev tools</a>
+        <a href="about.html">info</a>
     </div>
-</div>
 
-<script>
-    // ── MENU LOGIC ──
-    function toggleMenu() {
-        const menu = document.getElementById('mobileMenu');
-        const btn = document.getElementById('burgerBtn');
-        menu.classList.toggle('open');
-        btn.classList.toggle('active');
-        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
-    }
+    <div class="page">
+        <section class="hero reveal">
+            <div class="hero-label">// Synth Lab</div>
+            <h1>Thirty years of hardware. Then <em>this happened.</em></h1>
+            <p class="hero-intro">Curiosity drives the most interesting parts of life. After years of hardware drum machines and analog keys, I had to know: could I build an instrument from scratch in a browser?</p>
 
-    // ── REVEAL ANIMATION ──
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            <div class="tts-player">
+                <span class="tts-label">// Speak page</span>
+                <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                    <option value="">Loading voices...</option>
+                </select>
+                <div class="tts-controls">
+                    <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                    <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
+                </div>
+            </div>
+        </section>
 
-    // ── TTS ENGINE ──
-    const synth = window.speechSynthesis;
-    let selectedVoice = null;
-    let chunks = [];
-    let currentIdx = 0;
+        <section class="process-section reveal" data-post-section data-post-title="How the DP-ONE Was Built — dPaul Studio">
+            <div class="section-label">// The Build Path</div>
+            <div class="timeline">
+                <div class="timeline-step">
+                    <div class="step-num">01</div>
+                    <div class="step-title">Single Prompt</div>
+                    <div class="step-desc">Started with a single sound. Asked why it worked. Learned the basic signal chain.</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-num">02</div>
+                    <div class="step-title">Feature by Feature</div>
+                    <div class="step-desc">Added oscillators, filters, and LFOs one at a time. Coding by doing.</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-num">03</div>
+                    <div class="step-title">Full Instrument</div>
+                    <div class="step-desc">Integrated sequencers, drum machines, and MIDI support for hardware keys.</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="step-num">04</div>
+                    <div class="step-title">Visual Identity</div>
+                    <div class="step-desc">Turned code into physical product renders using engineered AI prompts.</div>
+                </div>
+            </div>
+        </section>
 
-    function populateVoices() {
-        const voices = synth.getVoices();
-        const sel = document.getElementById('ttsVoiceSel');
-        if(!sel) return;
-        sel.innerHTML = '';
-        const enVoices = voices.filter(v => v.lang.startsWith('en'));
-        enVoices.forEach(v => {
-            const opt = document.createElement('option');
-            opt.value = v.name;
-            opt.textContent = v.name.replace('Google ', '');
-            sel.appendChild(opt);
+        <div class="skills-strip reveal">
+            <span class="skill-tag">Web Audio API</span>
+            <span class="skill-tag">MIDI</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">AI Prompting</span>
+            <span class="skill-tag">3D Rendering</span>
+        </div>
+
+        <section class="instrument reveal" data-post-section data-post-title="DPAUL Synth MKI — Where It Started">
+            <div class="instrument-eyebrow">// 00 - Start</div>
+            <div class="instrument-name">DPAUL Synth MKI</div>
+            <p class="instrument-story">The first prototype. One oscillator, three waveforms, basic filter. It made sound, and that was enough to keep going.</p>
+            <div class="mki-embed-wrap">
+                <span class="mki-label">// Live Prototype</span>
+                <iframe class="mki-iframe" src="../dpone/dpone-mki.html" scrolling="no"></iframe>
+            </div>
+            <img src="../assets/dpone-mki-3d.png" alt="MKI Render" class="synth-3d-img">
+            <p class="visual-caption">MKI — 3D Render from UI</p>
+        </section>
+
+        <section class="origin-section reveal" data-post-section data-post-title="Where It All Began — Korg M1 Origin Story">
+            <div class="section-label">// Origin Story</div>
+            <div class="origin-body">
+                <p>It started in 1991. Before the internet, you found gear in <strong>The Loot</strong> classifieds. I bought a Korg M1 from a stranger on a landline.</p>
+                <div class="origin-pull">"Same building. One floor apart. Found through a newspaper ad."</div>
+                <p>We both worked at Liverpool Street station. Meeting at the office to swap cash for keys started a 30-year obsession with synthesis.</p>
+            </div>
+            <div class="origin-img-frame">
+                <img src="../assets/korg-m1.png" alt="Korg M1" class="origin-img">
+                <div class="origin-img-caption"><span class="origin-img-tag">1991</span>The Korg M1. The machine that started it all.</div>
+            </div>
+        </section>
+
+        <section class="instrument reveal" data-post-section data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild">
+            <div class="instrument-eyebrow">// 04 - The Rebuild</div>
+            <div class="instrument-name">DP-ONE MkV</div>
+            <p class="instrument-story">A complete ground-up rebuild. 37 keys, joystick pitch/filter, 6-row sequencer, and a full FX chain (Reverb/Tape Echo).</p>
+            <img src="../assets/dpone-mkv.png" alt="MkV UI" class="synth-3d-img">
+            <p class="step-desc">To see these synths in action, visit this website on a desktop/laptop.</p>
+        </section>
+
+        <section class="instrument reveal">
+            <div class="instrument-eyebrow">// 05 - 303 Style</div>
+            <div class="instrument-name">Acid-Box</div>
+            <p class="instrument-story">Inspired by the legendary TB-303. Monophonic, squelchy, and focused on that iconic resonant filter scream.</p>
+            <img src="../assets/acid-box-3d-01.png" alt="Acid-Box Render" class="synth-3d-img">
+        </section>
+
+        <section class="instrument reveal">
+            <div class="section-label">// Hardware History</div>
+            <p class="instrument-story">Thirty years of machines. You can't design a browser filter if you haven't twisted a real resonance knob into feedback.</p>
+            <div class="hardware-scroll-wrap">
+                <img src="../assets/all-synths.png" alt="Synth History" class="hardware-img">
+            </div>
+            <p class="visual-caption">M1 · Triton · Proteus · MicroKorg · Monologue</p>
+        </section>
+
+        <section class="next-section reveal">
+            <div class="section-label">// Next Steps</div>
+            <div class="next-grid">
+                <div class="next-card">
+                    <div class="next-card-label">In Progress</div>
+                    <div class="next-card-title">API Sound Library</div>
+                    <div class="next-card-desc">Integrating external APIs to pull new sounds into DP-ONE dynamically.</div>
+                </div>
+                <div class="next-card">
+                    <div class="next-card-label">In Progress</div>
+                    <div class="next-card-title">Custom Skins</div>
+                    <div class="next-card-desc">Fully 3D-rendered interactive UIs and interchangeable panel designs.</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-toggle">
+            <a href="../synths.html">→ View Desktop Version</a>
+        </div>
+    </div>
+
+    <script>
+        // ── MENU LOGIC ──
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const btn = document.getElementById('burgerBtn');
+            menu.classList.toggle('open');
+            btn.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+        }
+
+        // ── REVEAL ANIMATION ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) e.target.classList.add('visible');
+            });
+        }, {
+            threshold: 0.1
         });
-        selectedVoice = enVoices[0];
-    }
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
-    
-    function buildChunks() {
-        chunks = [];
-        document.querySelectorAll('h1, h2, .hero-intro, .step-desc, .instrument-story, .origin-body p').forEach(el => {
-            chunks.push({ el, text: el.innerText });
-        });
-    }
+        // ── TTS ENGINE ──
+        const synth = window.speechSynthesis;
+        let selectedVoice = null;
+        let chunks = [];
+        let currentIdx = 0;
 
-    window.ttsPlay = () => {
-        if (!chunks.length) buildChunks();
-        synth.cancel();
-        currentIdx = 0;
-        speak();
-        document.getElementById('ttsPlay').disabled = true;
-    };
+        function populateVoices() {
+            const voices = synth.getVoices();
+            const sel = document.getElementById('ttsVoiceSel');
+            if (!sel) return;
+            sel.innerHTML = '';
+            const enVoices = voices.filter(v => v.lang.startsWith('en'));
+            enVoices.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.name;
+                opt.textContent = v.name.replace('Google ', '');
+                sel.appendChild(opt);
+            });
+            selectedVoice = enVoices[0];
+        }
 
-    window.ttsStop = () => {
-        synth.cancel();
-        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
-        const playBtn = document.getElementById('ttsPlay');
-        if(playBtn) playBtn.disabled = false;
-    };
-
-    function speak() {
-        if (currentIdx >= chunks.length) { ttsStop(); return; }
-        const chunk = chunks[currentIdx];
-        chunk.el.classList.add('tts-highlight');
-        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        const utter = new SpeechSynthesisUtterance(chunk.text);
-        if (selectedVoice) utter.voice = selectedVoice;
-        utter.onend = () => {
-            chunk.el.classList.remove('tts-highlight');
-            currentIdx++;
-            speak();
+        window.ttsSetVoice = (name) => {
+            selectedVoice = synth.getVoices().find(v => v.name === name);
         };
-        synth.speak(utter);
-    }
 
-    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
-    window.onload = populateVoices;
-</script>
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll('h1, h2, .hero-intro, .step-desc, .instrument-story, .origin-body p').forEach(el => {
+                chunks.push({
+                    el,
+                    text: el.innerText
+                });
+            });
+        }
 
-<script src="share.js"></script>
-<script src="post-generator.js"></script>
+        window.ttsPlay = () => {
+            if (!chunks.length) buildChunks();
+            synth.cancel();
+            currentIdx = 0;
+            speak();
+            document.getElementById('ttsPlay').disabled = true;
+        };
+
+        window.ttsStop = () => {
+            synth.cancel();
+            if (chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+            const playBtn = document.getElementById('ttsPlay');
+            if (playBtn) playBtn.disabled = false;
+        };
+
+        function speak() {
+            if (currentIdx >= chunks.length) {
+                ttsStop();
+                return;
+            }
+            const chunk = chunks[currentIdx];
+            chunk.el.classList.add('tts-highlight');
+            chunk.el.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+
+            const utter = new SpeechSynthesisUtterance(chunk.text);
+            if (selectedVoice) utter.voice = selectedVoice;
+            utter.onend = () => {
+                chunk.el.classList.remove('tts-highlight');
+                currentIdx++;
+                speak();
+            };
+            synth.speak(utter);
+        }
+
+        if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+        window.onload = populateVoices;
+    </script>
+
+    <script src="share.js"></script>
+    <script src="post-generator.js"></script>
 
 </body>
 </html>
