@@ -888,6 +888,102 @@
 
         .api-row { display: flex; gap: 6px; align-items: center; }
         .api-note { font-size: 8px; color: #3a1828; margin-top: 4px; line-height: 1.6; letter-spacing: 0.3px; }
+
+        .info-btn {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.6);
+            background: linear-gradient(160deg, #2a1018, #1a0810);
+            color: #8a5060;
+            font-family: Georgia, serif;
+            font-size: 11px;
+            font-style: italic;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .info-btn:hover { color: #dd8090; border-color: #4a1828; transform: translateY(-1px); }
+
+        #info-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 8500;
+            background: rgba(0,0,0,0.88);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        #info-overlay.open { display: flex; }
+
+        .info-box {
+            background: #0d0508;
+            border: 1px solid #2a0a12;
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.95);
+        }
+        .info-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #1a0810;
+        }
+        .info-box-header span {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aa6678;
+        }
+        .info-close {
+            background: none;
+            border: 1px solid #2a1018;
+            border-radius: 4px;
+            color: #664455;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 2px 8px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        .info-close:hover { border-color: #aa5060; color: #cc8090; }
+        .info-section { margin-bottom: 12px; }
+        .info-section:last-child { margin-bottom: 0; }
+        .info-section-title {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #aa6678;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #1a0810;
+        }
+        .info-row { display: flex; gap: 8px; padding: 4px 0; align-items: flex-start; }
+        .info-key {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 8px;
+            color: #cc8090;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            width: 90px;
+            flex-shrink: 0;
+        }
+        .info-desc {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 8px;
+            color: #664455;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -1050,9 +1146,50 @@
         <div class="bottom-port"><div class="port-icon" style="border-radius:50%; width:12px; height:12px; font-size:10px;">⊞</div>SD</div>
         <div class="bottom-port"><div class="port-icon" style="border-radius:4px; width:22px;">USB-C</div></div>
         <div class="bottom-port"><div class="port-icon" style="font-size:10px;">▣</div></div>
+        <button class="info-btn" onclick="document.getElementById('info-overlay').classList.add('open')">i</button>
         <a href="https://www.dpaul.studio/tools" class="back-link" target="_blank">← dPaul Tools</a>
     </div>
 
+</div>
+
+<!-- INFO OVERLAY -->
+<div id="info-overlay">
+    <div class="info-box">
+        <div class="info-box-header">
+            <span>dPaul TTS — User Guide</span>
+            <button class="info-close" onclick="document.getElementById('info-overlay').classList.remove('open')">✕ Close</button>
+        </div>
+
+        <div class="info-section">
+            <div class="info-section-title">Getting Started</div>
+            <div class="info-row"><span class="info-key">Mode</span><span class="info-desc">Choose <b style="color:#cc8090">☁ Google</b> for high-quality AI voices (requires a free API key), or <b style="color:#cc8090">Browser</b> to use your device's built-in voices with no key needed.</span></div>
+            <div class="info-row"><span class="info-key">API Key</span><span class="info-desc">Google TTS is free up to 1M characters/month. Paste your Google Cloud API key and hit SAVE — it's stored locally in your browser only, never sent anywhere else.</span></div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-section-title">Voice Selection</div>
+            <div class="info-row"><span class="info-key">WaveNet</span><span class="info-desc">Natural-sounding AI voices. Best quality for most use cases.</span></div>
+            <div class="info-row"><span class="info-key">Neural2</span><span class="info-desc">Next-generation voices with improved expressiveness.</span></div>
+            <div class="info-row"><span class="info-key">Studio</span><span class="info-desc">Premium voices — may incur costs beyond free tier.</span></div>
+            <div class="info-row"><span class="info-key">Standard</span><span class="info-desc">Basic voices, lightest on quota usage.</span></div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-section-title">Controls</div>
+            <div class="info-row"><span class="info-key">Speed slider</span><span class="info-desc">Adjusts the speaking rate from 0.25× (slow) up to 4.0× (fast).</span></div>
+            <div class="info-row"><span class="info-key">Pitch slider</span><span class="info-desc">Shifts the voice pitch from −20 (low) to +20 (high) semitones.</span></div>
+            <div class="info-row"><span class="info-key">SPEAK</span><span class="info-desc">Generates and plays the audio from your script.</span></div>
+            <div class="info-row"><span class="info-key">CLEAR</span><span class="info-desc">Clears the script text area.</span></div>
+            <div class="info-row"><span class="info-key">STOP</span><span class="info-desc">Stops playback or synthesis immediately.</span></div>
+            <div class="info-row"><span class="info-key">Download MP3</span><span class="info-desc">Saves the generated audio as an MP3 file (Google mode only).</span></div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-section-title">Tips</div>
+            <div class="info-row"><span class="info-key">Script limit</span><span class="info-desc">Up to 5000 characters per generation. The counter turns amber at 4000 and red at 4500.</span></div>
+            <div class="info-row"><span class="info-key">Browser mode</span><span class="info-desc">Voice availability depends on your OS and browser. Chrome on desktop offers the widest selection.</span></div>
+        </div>
+    </div>
 </div>
 
 <!-- SETUP OVERLAY -->
