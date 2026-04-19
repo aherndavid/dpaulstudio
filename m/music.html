@@ -16,7 +16,6 @@
             --dim:     #7a7a70;
             --border:  rgba(255,102,0,0.25);
             --border-dim: rgba(255,255,255,0.07);
-            --font-scale: 1;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,7 +24,7 @@
             background: var(--bg); 
             color: var(--text); 
             font-family: 'Courier New', Courier, monospace;
-            font-size: calc(110% * var(--font-scale)); 
+            font-size: 110%; 
             margin: 0;
             line-height: 1.6;
             overflow-x: hidden;
@@ -165,14 +164,6 @@
             letter-spacing: 0.1em;
         }
 
-        /* FONT NUDGE */
-        .font-nudge {
-            position: fixed; bottom: 20px; right: 20px; z-index: 500;
-            background: var(--bg2); border: 1px solid var(--border);
-            border-radius: 4px; padding: 10px; display: flex; flex-direction: column; gap: 8px;
-        }
-        .font-btn { background: #222; border: 1px solid var(--border-dim); color: var(--cream); width: 35px; height: 35px; cursor: pointer; }
-
         .footer-toggle { text-align: center; padding: 60px 0; }
         .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
 
@@ -287,11 +278,6 @@
     </div>
 </div>
 
-<div class="font-nudge" id="fontNudge">
-    <button class="font-btn" onclick="adjustFont(1)">A+</button>
-    <button class="font-btn" onclick="adjustFont(-1)">A-</button>
-</div>
-
 <script>
     // MENU LOGIC
     function toggleMenu() {
@@ -300,13 +286,6 @@
         menu.classList.toggle('open');
         btn.classList.toggle('active');
         document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
-    }
-
-    // FONT SCALE
-    let fontScale = 1;
-    function adjustFont(dir) {
-        fontScale = Math.max(0.8, Math.min(1.5, fontScale + (dir * 0.1)));
-        document.documentElement.style.setProperty('--font-scale', fontScale);
     }
 
     // REVEAL ANIMATION
@@ -380,7 +359,6 @@
 </script>
 
 <script src="share.js"></script>
-
 <script src="post-generator.js"></script>
 
 </body>
