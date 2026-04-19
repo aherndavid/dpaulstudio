@@ -679,60 +679,81 @@
         });
 
       } else {
-        // Preview only: iframe sandbox blocks html2canvas from reading the DOM.
-        // Solution: render the HTML into a same-origin hidden div, capture that, remove it.
+        // Preview only: html2canvas cannot read iframe DOM regardless of sandbox/origin.
+        // Solution: parse the user's HTML, extract <body> content and <style>/<link> tags,
+        // inject them into a real same-page div, capture it, then remove it.
+
         const previewArea = document.getElementById('preview-area');
         const areaRect = previewArea.getBoundingClientRect();
         const w = Math.round(areaRect.width);
         const h = Math.round(areaRect.height);
 
-        // Create a hidden same-origin container sized to match the preview area
+        // Parse the source HTML
+        const parser = new DOMParser();
+        const srcDoc = parser.parseFromString(editor.value, 'text/html');
+
+        // Build a ghost container div
         const ghost = document.createElement('div');
+        ghost.id = '__html_live_ghost__';
         ghost.style.cssText = [
           'position:fixed',
-          'left:-99999px',
-          'top:0',
+          'left:0', 'top:0',
           'width:' + w + 'px',
           'height:' + h + 'px',
           'overflow:hidden',
           'background:#ffffff',
-          'z-index:-1'
+          'z-index:99999',
+          'pointer-events:none'
         ].join(';');
 
-        // Write the user's HTML directly into the ghost div via a shadow-like wrapper
-        // Use a same-origin blob URL so html2canvas can traverse the DOM
-        const blob = new Blob([editor.value], { type: 'text/html' });
-        const blobUrl = URL.createObjectURL(blob);
+        // Clone styles from the parsed doc into a scoping wrapper
+        const styleWrapper = document.createElement('div');
+        styleWrapper.style.cssText = 'all:initial;display:block;width:' + w + 'px;height:' + h + 'px;overflow:hidden;background:#fff;';
 
-        // Use a regular (non-sandboxed) iframe with the blob URL — same origin, readable by h2c
-        const ghostFrame = document.createElement('iframe');
-        ghostFrame.style.cssText = 'width:' + w + 'px;height:' + h + 'px;border:none;background:#fff;';
-        ghostFrame.src = blobUrl;
-
-        ghost.appendChild(ghostFrame);
-        document.body.appendChild(ghost);
-
-        // Wait for the iframe to load
-        await new Promise((resolve) => {
-          ghostFrame.onload = resolve;
-          setTimeout(resolve, 2000); // fallback timeout
+        // Copy <style> blocks
+        srcDoc.querySelectorAll('style').forEach(s => {
+          const clone = document.createElement('style');
+          clone.textContent = s.textContent;
+          styleWrapper.appendChild(clone);
         });
 
-        // Give scripts/fonts a moment to settle
-        await new Promise(r => setTimeout(r, 300));
+        // Copy <link rel=stylesheet> tags
+        srcDoc.querySelectorAll('link[rel="stylesheet"]').forEach(l => {
+          const clone = document.createElement('link');
+          clone.rel = 'stylesheet';
+          clone.href = l.href;
+          styleWrapper.appendChild(clone);
+        });
 
-        canvas = await html2canvas(ghostFrame, {
+        // Copy body innerHTML
+        const bodyDiv = document.createElement('div');
+        bodyDiv.style.cssText = 'width:' + w + 'px;min-height:' + h + 'px;overflow:hidden;background:#fff;';
+        bodyDiv.innerHTML = srcDoc.body.innerHTML;
+
+        // Copy body inline styles if any
+        const bodyStyle = srcDoc.body.getAttribute('style');
+        if (bodyStyle) bodyDiv.style.cssText += bodyStyle;
+
+        styleWrapper.appendChild(bodyDiv);
+        ghost.appendChild(styleWrapper);
+        document.body.appendChild(ghost);
+
+        // Wait a tick for stylesheets to apply
+        await new Promise(r => setTimeout(r, 400));
+
+        canvas = await html2canvas(ghost, {
           backgroundColor: '#ffffff',
           scale: window.devicePixelRatio || 1,
           useCORS: true,
           allowTaint: true,
           logging: false,
           width: w,
-          height: h
+          height: h,
+          windowWidth: w,
+          windowHeight: h
         });
 
         document.body.removeChild(ghost);
-        URL.revokeObjectURL(blobUrl);
       }
 
       // Download the canvas as PNG
