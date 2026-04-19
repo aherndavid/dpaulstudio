@@ -94,6 +94,16 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer { flex: 1; }
 
+        /* ── MINI EQ IN NAV ── */
+        #nav-eq-container {
+            display: flex; align-items: flex-end; gap: 2px;
+            height: 22px; margin: 0 24px; padding-bottom: 2px;
+        }
+        .nav-eq-bar {
+            width: 3px; background: var(--orange);
+            transition: height 0.1s ease; border-radius: 1px;
+        }
+
         /* ── LANGUAGE SWITCHER ── */
         #lang-switcher { display: flex; gap: 6px; align-items: center; }
         .lang-btn {
@@ -297,6 +307,9 @@
     <a href="video.html"     data-i18n="nav_video">video</a>
     <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
     <div class="spacer"></div>
+    
+    <div id="nav-eq-container"></div>
+    
     <div id="lang-switcher">
         <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
         <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
@@ -307,7 +320,6 @@
 
 <div class="page">
 
-    <!-- HERO -->
     <section class="hero reveal">
         <div class="hero-label" data-i18n="synths_hero_label">// dPaul Technologies - Synth Lab</div>
         <h1>Thirty years of<br>hardware. Then<br><em>this happened.</em></h1>
@@ -346,7 +358,6 @@
         </div>
     </section>
 
-    <!-- PROCESS -->
     <section class="process-section reveal" id="synths-process"
              data-post-section
              data-post-title="How the DP-ONE Was Built — dPaul Studio"
@@ -381,7 +392,6 @@
         </div>
     </section>
 
-    <!-- SKILLS -->
     <div class="skills-strip reveal">
         <span class="skill-tag">HTML / CSS / JS</span>
         <span class="skill-tag">Web Audio API</span>
@@ -397,7 +407,6 @@
         <span class="skill-tag">Iterative prototyping</span>
     </div>
 
-    <!-- LEARNING SECTION -->
     <section class="learning-section reveal" id="synths-learning"
              data-post-section
              data-post-title="Learning by Doing — Building Browser Instruments">
@@ -439,7 +448,6 @@
         </div>
     </section>
 
-    <!-- KORG M1 ORIGIN SECTION -->
     <section class="origin-section reveal" id="synths-origin"
              data-post-section
              data-post-title="Where It All Began — Thirty Years of Synths">
@@ -473,7 +481,6 @@
         </div>
     </section>
 
-    <!-- MKI -->
     <div class="instrument reveal" id="synths-mki"
          data-post-section
          data-post-title="DPAUL Synth MKI — Where It Started"
@@ -496,7 +503,6 @@
         </div>
     </div>
 
-    <!-- MKII -->
     <div class="instrument reveal" id="synths-mkii"
          data-post-section
          data-post-title="DPAUL Synth MKII PolyArp — Browser Instrument">
@@ -519,7 +525,6 @@
         </div>
     </div>
 
-    <!-- AI DESIGN FAILURE -->
     <section class="ai-fail-section reveal" id="synths-ai-fail"
              data-post-section
              data-post-title="When AI Gets It Wrong — dPaul Studio">
@@ -539,7 +544,6 @@
         </div>
     </section>
 
-    <!-- MKIII + MKIV -->
     <div class="instrument reveal" id="synths-mkiii-mkiv"
          data-post-section
          data-post-title="DPAUL Station MKIII & MKIV — The Middle Versions">
@@ -580,7 +584,6 @@
         </div>
     </div>
 
-    <!-- BRIDGE -->
     <div class="instrument reveal" id="synths-rebuild"
          data-post-section
          data-post-title="Strip It Back, Build It Right — The Decision to Rebuild"
@@ -601,7 +604,6 @@
         </div>
     </div>
 
-    <!-- DP-ONE MKV -->
     <div class="instrument reveal" id="synths-mkv"
          data-post-section
          data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild">
@@ -650,7 +652,6 @@
         </div>
     </div>
 
-    <!-- ACID-BOX -->
     <div class="instrument reveal" id="synths-acid-box"
          data-post-section
          data-post-title="Acid-Box — TB-303 Inspired Bass Synthesiser">
@@ -677,7 +678,6 @@
         </div>
     </div>
 
-    <!-- HARDWARE HISTORY -->
     <section class="instrument reveal" id="synths-hardware"
              data-post-section
              data-post-title="Thirty Years of Synths — Hardware History"
@@ -720,7 +720,6 @@
         </div>
     </section>
 
-    <!-- WHAT'S NEXT -->
     <section class="next-section reveal">
         <div class="section-label" data-i18n="synths_next_label">// What's next</div>
         <div class="next-grid">
@@ -752,6 +751,32 @@
 </div>
 
 <script>
+    // ── NAV EQ ANIMATION ──
+    (function() {
+        const NUM_BARS = 8;
+        const MAX_H = 20;
+        const container = document.getElementById('nav-eq-container');
+        if (!container) return;
+        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
+        const targets = [...levels];
+        const bars = [];
+        for (let i = 0; i < NUM_BARS; i++) {
+            const b = document.createElement('div');
+            b.className = 'nav-eq-bar';
+            container.appendChild(b);
+            bars.push(b);
+        }
+        function animateEQ() {
+            for (let i = 0; i < NUM_BARS; i++) {
+                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
+                levels[i] += (targets[i] - levels[i]) * 0.15;
+                bars[i].style.height = levels[i] + 'px';
+            }
+            requestAnimationFrame(animateEQ);
+        }
+        animateEQ();
+    })();
+
     const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
     let fontScaleIndex = 0;
     const indicators = ['100%', '115%', '130%', '150%', '170%'];
@@ -885,7 +910,7 @@
         function setButtons(state) {
             const play = document.getElementById('ttsPlay');
             const pause = document.getElementById('ttsPause');
-            const stop  = document.getElementById('ttsStop');
+            const stop   = document.getElementById('ttsStop');
             if (state === 'idle') {
                 play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
                 pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
@@ -961,19 +986,20 @@
     let acidIdx = 0;
     acidImages.forEach(src => { const i = new Image(); i.src = src; });
     setInterval(() => {
-        acidBoxImg.style.opacity = 0;
-        setTimeout(() => {
-            acidIdx = (acidIdx + 1) % acidImages.length;
-            acidBoxImg.src = acidImages[acidIdx];
-            acidBoxImg.style.opacity = 1;
-        }, 800);
+        if(acidBoxImg) {
+            acidBoxImg.style.opacity = 0;
+            setTimeout(() => {
+                acidIdx = (acidIdx + 1) % acidImages.length;
+                acidBoxImg.src = acidImages[acidIdx];
+                acidBoxImg.style.opacity = 1;
+            }, 800);
+        }
     }, 7000);
 </script>
 
 <script src="share.js"></script>
 <script src="post-generator.js"></script>
 
-<!-- i18n -->
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
