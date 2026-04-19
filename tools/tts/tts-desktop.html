@@ -14,11 +14,10 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        overflow-y: auto; /* Changed to auto for mobile scroll if needed */
+        overflow-y: auto;
         padding: 20px 0;
     }
 
-    /* Tall aspect ratio to match your screenshot */
     .outer-wrap {
         width: 380px; 
         min-height: 720px; 
@@ -32,7 +31,6 @@
         height: 100%;
         background: linear-gradient(180deg, #1e2b58, #0d152d);
         border-radius: 22px;
-        /* Padding-bottom creates the "device body" area after the buttons */
         padding: 24px 20px 140px 20px; 
         box-shadow: 0 35px 70px rgba(0,0,0,0.9),
                     inset 0 1px 2px rgba(255,255,255,0.1);
@@ -43,7 +41,6 @@
         gap: 15px;
     }
 
-    /* ── Top Right Buttons ── */
     .nav-tools {
         position: absolute;
         top: 24px;
@@ -107,7 +104,6 @@
         letter-spacing: 1.5px;
     }
 
-    /* ── Digital Display ── */
     .db-readout { text-align: center; padding: 12px 0; }
     .db-number {
         font-family: 'Courier New', monospace;
@@ -121,7 +117,6 @@
     .db-number.peak { color: #ff1830; text-shadow: 0 0 25px rgba(255,24,48,0.7); }
     .db-unit-label { color: #333; font-size: 11px; text-transform: uppercase; letter-spacing: 4px; margin-top: 10px; font-weight: 700; }
 
-    /* ── Segment bar ── */
     .segments { display: flex; gap: 3px; height: 44px; margin-bottom: 10px; }
     .seg { flex: 1; border-radius: 2px; background: #151515; transition: background 0.05s; }
     .seg.lit-blue { background: #1a7fff; box-shadow: 0 0 12px rgba(26,127,255,0.6); }
@@ -136,7 +131,6 @@
         padding: 0 2px;
     }
 
-    /* ── Peak history ── */
     .peak-list-wrap { 
         height: 80px; 
         overflow-y: auto; 
@@ -163,7 +157,6 @@
     .peak-row.danger { color: #ff1830; border-left-color: #ff1830; }
     .peak-empty { color: #222; font-size: 11px; text-align: center; padding: 10px; font-family: monospace; }
 
-    /* ── Controls ── */
     .button-group { display: flex; gap: 10px; margin-top: 10px; }
     button:not(.round-btn) {
         flex: 1;
@@ -201,9 +194,69 @@
         letter-spacing: 2px;
         box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
     }
+
+    /* ── Info Modal ── */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.85);
+        z-index: 999;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+        width: 100%;
+        max-width: 340px;
+        font-family: 'Courier New', monospace;
+        color: #fff;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+    .modal-box h2 {
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #fff;
+        margin-bottom: 16px;
+    }
+    .modal-box p {
+        margin-bottom: 12px;
+        color: #ccc;
+    }
+    .modal-close {
+        margin-top: 20px;
+        background: none;
+        border: 1px solid #fff;
+        color: #fff;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.08); }
 </style>
 </head>
 <body>
+
+<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)closeInfo()">
+    <div class="modal-box">
+        <h2>dPaul VU — v2.01</h2>
+        <p>A browser-based audio level meter that uses your device microphone to measure and display signal levels in real time.</p>
+        <p>Press MIC to start monitoring. Your browser will ask for microphone permission — this is required for the tool to work. Audio is processed locally in your browser and is never recorded or transmitted.</p>
+        <p>Press TEST to run a simulated signal sweep across the full range. Useful for checking the display without a microphone.</p>
+        <p>Any level above 85 dB is logged to the Peak History with a timestamp. The all-time maximum is shown at the top of the list. Press RESET to clear all history and return to standby.</p>
+        <p>The bar turns red above 90 dB.</p>
+        <button class="modal-close" onclick="closeInfo()">Close</button>
+    </div>
+</div>
 
 <div class="outer-wrap">
     <div class="container">
@@ -279,13 +332,17 @@ let simInterval = null;
 let simMode = null;
 let audioCtx = null;
 let analyser = null;
+let micStream = null;
 
 function showInfo() {
-    alert("dPaul VU v2.01\n\n- MIC: Uses your microphone to track live audio.\n- TEST: Runs a diagnostic signal test.\n- RESET: Clears history and peaks.\n- LOGGING: Levels above 85dB are saved to history.");
+    document.getElementById('infoModal').classList.add('open');
+}
+function closeInfo() {
+    document.getElementById('infoModal').classList.remove('open');
 }
 
 function setLevel(db) {
-    if (db <= MIN_DB) {
+    if (db < MIN_DB) {
         dbDisplay.textContent = '—';
         dbDisplay.classList.remove('peak');
         segs.forEach(s => s.className = 'seg');
@@ -343,10 +400,11 @@ function renderPeakList() {
 
 function stopAll() {
     clearInterval(simInterval);
-    if (audioCtx) audioCtx.close();
+    if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+    if (audioCtx) { audioCtx.close(); audioCtx = null; }
     simInterval = null;
     simMode = null;
-    audioCtx = null;
+    analyser = null;
     document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
     statusEl.textContent = "Stopped";
 }
@@ -367,29 +425,28 @@ document.getElementById('btnTest').addEventListener('click', () => {
 
 document.getElementById('btnMic').addEventListener('click', async () => {
     if (simMode === 'mic') { stopAll(); return; }
+    stopAll();
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stopAll();
+        micStream = stream;
         simMode = 'mic';
         document.getElementById('btnMic').classList.add('active');
         statusEl.textContent = "Microphone Active...";
-        
+
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioCtx.createMediaStreamSource(stream);
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 256;
         source.connect(analyser);
-        
+
         const dataArray = new Float32Array(analyser.fftSize);
         simInterval = setInterval(() => {
             analyser.getFloatTimeDomainData(dataArray);
             let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-                sum += dataArray[i] * dataArray[i];
-            }
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i] * dataArray[i];
             let rms = Math.sqrt(sum / dataArray.length);
-            let db = rms > 0 ? 20 * Math.log10(rms) + 95 : MIN_DB;
-            setLevel(Math.max(MIN_DB, Math.min(MAX_DB, db)));
+            let db = rms > 0 ? 20 * Math.log10(rms) + 95 : MIN_DB - 1;
+            setLevel(Math.max(MIN_DB - 1, Math.min(MAX_DB, db)));
         }, 50);
     } catch (err) {
         statusEl.textContent = "Mic Denied";
@@ -402,7 +459,7 @@ document.getElementById('btnReset').addEventListener('click', () => {
     allTimePeak = null;
     peakMaxVal.textContent = 'Max: —';
     renderPeakList();
-    setLevel(MIN_DB);
+    setLevel(MIN_DB - 1);
     statusEl.textContent = "Ready";
 });
 </script>
