@@ -434,19 +434,26 @@
         <input type="radio" name="screenshot-type" value="preview" checked>
         <div class="screenshot-opt-info">
           <div class="screenshot-opt-title">Preview window only</div>
-          <div class="screenshot-opt-desc">Captures just the rendered HTML output</div>
+          <div class="screenshot-opt-desc">Renders your HTML into a PNG — styles and layout captured</div>
         </div>
       </label>
       <label class="screenshot-opt">
         <input type="radio" name="screenshot-type" value="full">
         <div class="screenshot-opt-info">
           <div class="screenshot-opt-title">Full editor view</div>
-          <div class="screenshot-opt-desc">Captures the entire HTML-Live interface</div>
+          <div class="screenshot-opt-desc">Captures the entire HTML-Live interface as PNG</div>
+        </div>
+      </label>
+      <label class="screenshot-opt">
+        <input type="radio" name="screenshot-type" value="newtab">
+        <div class="screenshot-opt-info">
+          <div class="screenshot-opt-title">Open in new tab</div>
+          <div class="screenshot-opt-desc">Most reliable — use browser's own screenshot or Ctrl+P → Save as PDF</div>
         </div>
       </label>
     </div>
     <div id="screenshot-note">
-      <strong>Note:</strong> The preview is rendered via html2canvas. Complex CSS, web fonts, and some images may render slightly differently than the live preview.
+      <strong>Note:</strong> JS-driven content won't execute in PNG capture mode. For complex pages, use <strong>Open in new tab</strong>.
     </div>
     <div class="screenshot-actions">
       <button class="screenshot-cancel-btn" id="screenshot-cancel">Cancel</button>
@@ -514,8 +521,8 @@
   </div>
 </div>
 
-<!-- html2canvas CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- dom-to-image-more: more reliable than html2canvas for same-page DOM -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/2.9.0/dom-to-image-more.min.js"></script>
 
 <!-- HTMLHint via esm.sh -->
 <script type="module">
@@ -662,116 +669,88 @@
     if (!fname.match(/\.(png|jpg|jpeg|webp)$/i)) fname += '.png';
 
     screenshotOverlay.classList.remove('visible');
+
+    // "Open in new tab" mode — most reliable, zero rendering bugs
+    if (type === 'newtab') {
+      const blob = new Blob([editor.value], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      showToast('📷 Opened in new tab — use browser screenshot or Ctrl+P to save', 'screenshot');
+      return;
+    }
+
     screenshotBtn.classList.add('capturing');
     screenshotBtn.disabled = true;
 
     try {
-      let canvas;
+      let dataUrl;
 
       if (type === 'full') {
-        // Full editor: capture the whole app div directly — no iframe issues here
-        canvas = await html2canvas(document.getElementById('app'), {
-          backgroundColor: '#1a1a1a',
-          scale: window.devicePixelRatio || 1,
-          useCORS: true,
-          allowTaint: true,
-          logging: false
+        // Full editor view — capture the whole app UI, no iframes involved
+        dataUrl = await domtoimage.toPng(document.getElementById('app'), {
+          bgcolor: '#1a1a1a',
+          width: document.getElementById('app').offsetWidth,
+          height: document.getElementById('app').offsetHeight,
+          style: { transform: 'scale(1)', transformOrigin: 'top left' }
         });
 
       } else {
-        // Preview only: html2canvas cannot read iframe DOM regardless of sandbox/origin.
-        // Solution: parse the user's HTML, extract <body> content and <style>/<link> tags,
-        // inject them into a real same-page div, capture it, then remove it.
-
+        // Preview only — inject HTML into a same-page ghost div so dom-to-image can read it
         const previewArea = document.getElementById('preview-area');
         const areaRect = previewArea.getBoundingClientRect();
         const w = Math.round(areaRect.width);
         const h = Math.round(areaRect.height);
 
-        // Parse the source HTML
         const parser = new DOMParser();
         const srcDoc = parser.parseFromString(editor.value, 'text/html');
 
-        // Build a ghost container div
+        // Ghost div sits on top of the page briefly during capture
         const ghost = document.createElement('div');
-        ghost.id = '__html_live_ghost__';
-        ghost.style.cssText = [
-          'position:fixed',
-          'left:0', 'top:0',
-          'width:' + w + 'px',
-          'height:' + h + 'px',
-          'overflow:hidden',
-          'background:#ffffff',
-          'z-index:99999',
-          'pointer-events:none'
-        ].join(';');
+        ghost.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;overflow:hidden;background:#fff;z-index:999999;pointer-events:none;';
 
-        // Clone styles from the parsed doc into a scoping wrapper
-        const styleWrapper = document.createElement('div');
-        styleWrapper.style.cssText = 'all:initial;display:block;width:' + w + 'px;height:' + h + 'px;overflow:hidden;background:#fff;';
-
-        // Copy <style> blocks
+        // Inline all <style> tags
         srcDoc.querySelectorAll('style').forEach(s => {
-          const clone = document.createElement('style');
-          clone.textContent = s.textContent;
-          styleWrapper.appendChild(clone);
+          const el = document.createElement('style');
+          el.textContent = s.textContent;
+          ghost.appendChild(el);
         });
 
-        // Copy <link rel=stylesheet> tags
-        srcDoc.querySelectorAll('link[rel="stylesheet"]').forEach(l => {
-          const clone = document.createElement('link');
-          clone.rel = 'stylesheet';
-          clone.href = l.href;
-          styleWrapper.appendChild(clone);
-        });
-
-        // Copy body innerHTML
-        const bodyDiv = document.createElement('div');
-        bodyDiv.style.cssText = 'width:' + w + 'px;min-height:' + h + 'px;overflow:hidden;background:#fff;';
-        bodyDiv.innerHTML = srcDoc.body.innerHTML;
-
-        // Copy body inline styles if any
+        // Body content
+        const bodyWrap = document.createElement('div');
+        bodyWrap.style.cssText = 'width:' + w + 'px;min-height:' + h + 'px;overflow:hidden;';
         const bodyStyle = srcDoc.body.getAttribute('style');
-        if (bodyStyle) bodyDiv.style.cssText += bodyStyle;
+        if (bodyStyle) bodyWrap.setAttribute('style', bodyWrap.getAttribute('style') + ';' + bodyStyle);
+        bodyWrap.innerHTML = srcDoc.body.innerHTML;
+        ghost.appendChild(bodyWrap);
 
-        styleWrapper.appendChild(bodyDiv);
-        ghost.appendChild(styleWrapper);
         document.body.appendChild(ghost);
 
-        // Wait a tick for stylesheets to apply
-        await new Promise(r => setTimeout(r, 400));
+        // Let styles paint
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        await new Promise(r => setTimeout(r, 200));
 
-        canvas = await html2canvas(ghost, {
-          backgroundColor: '#ffffff',
-          scale: window.devicePixelRatio || 1,
-          useCORS: true,
-          allowTaint: true,
-          logging: false,
+        dataUrl = await domtoimage.toPng(ghost, {
+          bgcolor: '#ffffff',
           width: w,
-          height: h,
-          windowWidth: w,
-          windowHeight: h
+          height: h
         });
 
         document.body.removeChild(ghost);
       }
 
-      // Download the canvas as PNG
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fname;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast('📷 Saved: ' + fname, 'screenshot');
-      }, 'image/png');
+      // Trigger download
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = fname;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('📷 Saved: ' + fname, 'screenshot');
 
     } catch (err) {
       console.error('Screenshot failed:', err);
-      showToast('Screenshot failed — see console for details');
+      showToast('Screenshot failed — try "Open in new tab" instead');
     } finally {
       screenshotBtn.classList.remove('capturing');
       screenshotBtn.disabled = false;
