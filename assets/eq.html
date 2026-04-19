@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic EQ Large - dpaul.studio</title>
+    <style>
+        :root {
+            --bg: #0F1010;
+            --orange: #FF6600;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 300% Scaling Applied Below */
+        #eq-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 9px;        /* Tripled from 3px */
+            height: 180px;    /* Tripled from 60px */
+        }
+
+        .eq-bar {
+            width: 18px;      /* Tripled from 6px */
+            background: var(--orange);
+            transition: height 0.1s ease;
+            /* Optional: added a slight round to the top for the larger scale */
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="eq-container"></div>
+
+    <script>
+        const NUM_BANDS = 15; 
+        const MAX_H     = 180; // Tripled from 60
+        const MIN_H     = 15;  // Tripled from 5
+        const container = document.getElementById('eq-container');
+        const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + MIN_H);
+        const targets   = [...levels];
+        const bars      = [];
+
+        for (let i = 0; i < NUM_BANDS; i++) {
+            const b = document.createElement('div');
+            b.className = 'eq-bar';
+            b.style.height = levels[i] + 'px';
+            container.appendChild(b);
+            bars.push(b);
+        }
+
+        (function animate() {
+            for (let i = 0; i < NUM_BANDS; i++) {
+                // Adjust frequency of movement (0.08) if it feels too fast at this scale
+                if (Math.random() < 0.08) targets[i] = Math.random() * MAX_H + MIN_H;
+                
+                // Smooth interpolation
+                levels[i] += (targets[i] - levels[i]) * 0.12;
+                bars[i].style.height = levels[i].toFixed(1) + 'px';
+            }
+            requestAnimationFrame(animate);
+        })();
+    </script>
+</body>
+</html>
