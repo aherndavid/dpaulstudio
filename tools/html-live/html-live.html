@@ -667,8 +667,9 @@
 
     try {
       let canvas;
+
       if (type === 'full') {
-        // Capture the entire app
+        // Full editor: capture the whole app div directly — no iframe issues here
         canvas = await html2canvas(document.getElementById('app'), {
           backgroundColor: '#1a1a1a',
           scale: window.devicePixelRatio || 1,
@@ -676,25 +677,65 @@
           allowTaint: true,
           logging: false
         });
+
       } else {
-        // Capture only the right preview panel
-        // Strategy: render the iframe srcdoc into an off-screen iframe,
-        // then capture the #preview-area element (which includes the iframe frame itself)
-        // For sandboxed iframes we use the preview-area container
-        canvas = await html2canvas(document.getElementById('preview-area'), {
-          backgroundColor: '#1a1a1a',
+        // Preview only: iframe sandbox blocks html2canvas from reading the DOM.
+        // Solution: render the HTML into a same-origin hidden div, capture that, remove it.
+        const previewArea = document.getElementById('preview-area');
+        const areaRect = previewArea.getBoundingClientRect();
+        const w = Math.round(areaRect.width);
+        const h = Math.round(areaRect.height);
+
+        // Create a hidden same-origin container sized to match the preview area
+        const ghost = document.createElement('div');
+        ghost.style.cssText = [
+          'position:fixed',
+          'left:-99999px',
+          'top:0',
+          'width:' + w + 'px',
+          'height:' + h + 'px',
+          'overflow:hidden',
+          'background:#ffffff',
+          'z-index:-1'
+        ].join(';');
+
+        // Write the user's HTML directly into the ghost div via a shadow-like wrapper
+        // Use a same-origin blob URL so html2canvas can traverse the DOM
+        const blob = new Blob([editor.value], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Use a regular (non-sandboxed) iframe with the blob URL — same origin, readable by h2c
+        const ghostFrame = document.createElement('iframe');
+        ghostFrame.style.cssText = 'width:' + w + 'px;height:' + h + 'px;border:none;background:#fff;';
+        ghostFrame.src = blobUrl;
+
+        ghost.appendChild(ghostFrame);
+        document.body.appendChild(ghost);
+
+        // Wait for the iframe to load
+        await new Promise((resolve) => {
+          ghostFrame.onload = resolve;
+          setTimeout(resolve, 2000); // fallback timeout
+        });
+
+        // Give scripts/fonts a moment to settle
+        await new Promise(r => setTimeout(r, 300));
+
+        canvas = await html2canvas(ghostFrame, {
+          backgroundColor: '#ffffff',
           scale: window.devicePixelRatio || 1,
           useCORS: true,
           allowTaint: true,
           logging: false,
-          ignoreElements: (el) => {
-            // Skip overlays/tips
-            return el.id === 'page-border' || el.id === 'size-badge-w' || el.id === 'size-badge-h' || el.id === 'preview-empty';
-          }
+          width: w,
+          height: h
         });
+
+        document.body.removeChild(ghost);
+        URL.revokeObjectURL(blobUrl);
       }
 
-      // Download
+      // Download the canvas as PNG
       canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
