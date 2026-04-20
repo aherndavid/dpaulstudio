@@ -782,32 +782,127 @@
 
   screenshotDo.addEventListener('click', () => {
     const type = document.querySelector('input[name="screenshot-type"]:checked').value;
-    let fname  = screenshotFilename.value.trim() || 'htmllive.png';
-    if (!fname.match(/\.(png|jpg|jpeg)$/i)) fname += '.png';
-
     screenshotOverlay.classList.remove('visible');
 
     if (type === 'preview') {
-      // Open rendered HTML in new tab — pixel-perfect, no library needed
-      openPreviewInNewTab();
-      showToast('📺 Preview opened — screenshot with your browser or Ctrl+P', 'screenshot');
+      openInNewTab('preview');
+      showToast('📺 Preview opened in new tab', 'screenshot');
 
     } else if (type === 'editor') {
-      // Canvas render of the editor pane — works natively, no library
-      const canvas = captureEditorToCanvas();
-      downloadCanvas(canvas, fname);
-      showToast('📷 Editor saved: ' + fname, 'screenshot');
+      openInNewTab('editor');
+      showToast('📝 Editor opened in new tab', 'screenshot');
 
     } else if (type === 'both') {
-      // Editor as PNG download + preview in new tab
-      const canvas = captureEditorToCanvas();
-      downloadCanvas(canvas, fname.replace(/\.png$/i, '_editor.png'));
-      setTimeout(() => {
-        openPreviewInNewTab();
-        showToast('📷 Editor saved + preview opened in new tab', 'screenshot');
-      }, 300);
+      openInNewTab('both');
+      showToast('📷 Both panes opened in new tab', 'screenshot');
     }
   });
+
+  function openInNewTab(mode) {
+    const src = editor.value || '';
+
+    // Build a print-friendly page with the chosen content
+    let html = '';
+
+    if (mode === 'preview') {
+      // Just the rendered HTML as-is
+      html = src;
+
+    } else if (mode === 'editor') {
+      // The source code displayed as styled, syntax-highlighted text
+      html = buildEditorPage(src);
+
+    } else if (mode === 'both') {
+      // Side-by-side: editor left, preview right, in an iframe
+      html = buildBothPage(src);
+    }
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    const win  = window.open(url, '_blank');
+    setTimeout(() => URL.revokeObjectURL(url), 15000);
+    if (!win || win.closed) {
+      showToast('⚠ Popup blocked — please allow popups for this page', 'screenshot');
+    }
+  }
+
+  function buildEditorPage(src) {
+    const escaped = src
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Basic syntax highlighting via regex replacements
+    const highlighted = escaped
+      // Comments
+      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span style="color:#6a9955">$1</span>')
+      // Doctype
+      .replace(/(&lt;!DOCTYPE[^&]*&gt;)/gi, '<span style="color:#6a9955">$1</span>')
+      // Tag names
+      .replace(/(&lt;\/?)([\w-]+)/g, '<span style="color:#808080">$1</span><span style="color:#4ec9b0">$2</span>')
+      // Attribute values
+      .replace(/=(&quot;[^&]*&quot;|&#039;[^&]*&#039;)/g, '=<span style="color:#ce9178">$1</span>')
+      // Attribute names (word before =)
+      .replace(/\s([\w-]+)=/g, ' <span style="color:#9cdcfe">$1</span>=')
+      // Closing bracket
+      .replace(/(&gt;)/g, '<span style="color:#808080">$1</span>');
+
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>HTML-Live — Editor View</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#1e1e1e; color:#d4d4d4; font-family:'Courier New',monospace; font-size:13px; line-height:1.6; }
+  .toolbar { background:#252526; padding:8px 16px; font-size:11px; color:#888; letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; }
+  .toolbar span { color:#ff8800; }
+  .code-wrap { display:flex; }
+  .line-nums { padding:14px 8px 14px 0; text-align:right; color:#3c3c3c; min-width:44px; background:#1a1a1a; border-right:1px solid #252525; user-select:none; flex-shrink:0; }
+  .line-num { display:block; }
+  .code { padding:14px 16px; flex:1; white-space:pre-wrap; word-break:break-all; }
+  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style></head><body>
+<div class="toolbar"><span>HTML-LIVE</span> <span>EDITOR VIEW</span></div>
+<div class="code-wrap">
+<div class="line-nums">${src.split('\n').map((_,i)=>`<span class="line-num">${i+1}</span>`).join('')}</div>
+<div class="code">${highlighted}</div>
+</div>
+</body></html>`;
+  }
+
+  function buildBothPage(src) {
+    const editorPageJson  = JSON.stringify(buildEditorPage(src));
+    const previewSrcJson  = JSON.stringify(src);
+
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>HTML-Live — Both Panes</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#111; display:flex; flex-direction:column; height:100vh; overflow:hidden; font-family:'Courier New',monospace; }
+  .toolbar { background:#222; padding:8px 16px; font-size:11px; color:#888; letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid #333; flex-shrink:0; display:flex; gap:16px; align-items:center; }
+  .toolbar span { color:#ff8800; }
+  .panes { display:flex; flex:1; min-height:0; }
+  iframe { flex:1; border:none; height:100%; width:100%; }
+  .divider { width:3px; background:#333; flex-shrink:0; }
+  .label { font-size:10px; color:#555; padding:4px 8px; background:#1a1a1a; border-bottom:1px solid #222; letter-spacing:1px; text-transform:uppercase; }
+  .pane { display:flex; flex-direction:column; flex:1; min-width:0; }
+</style></head><body>
+<div class="toolbar"><span>HTML-LIVE</span> <span>BOTH PANES — Ctrl+P to save as PDF</span></div>
+<div class="panes">
+  <div class="pane">
+    <div class="label">📝 Editor</div>
+    <iframe id="ef"></iframe>
+  </div>
+  <div class="divider"></div>
+  <div class="pane">
+    <div class="label">📺 Preview</div>
+    <iframe id="pf"></iframe>
+  </div>
+</div>
+<script>
+  document.getElementById('ef').srcdoc = ${editorPageJson};
+  document.getElementById('pf').srcdoc = ${previewSrcJson};
+<\/script>
+</body></html>`;
+  }
 
   // ── Selection Highlight ───────────────────────────────────────────────────
   function setSelHlMode(on) {
