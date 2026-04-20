@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merch En Route — dPaul Technologies</title>
+    <style>
+        /* 1. Reset default spacing */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: sans-serif; /* Replace with your brand font */
+        }
+
+        /* 2. Style the background image */
+        #bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* 'cover' ensures the portrait image fills the screen 
+               even on wide monitors without stretching */
+            object-fit: cover; 
+            object-position: center;
+            z-index: -1; /* Keeps image behind everything */
+        }
+
+        /* 3. Create a container for your text */
+        .content-overlay {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white; /* Contrast color for text */
+            text-align: center;
+            /* Optional: adds a slight dark tint so text pops */
+            background: rgba(0, 0, 0, 0.3); 
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        }
+
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <img id="bg-image" src="../assets/merch-en-route-two.png" alt="Merch En Route No Car — dPaul Technologies">
+
+    <div class="content-overlay">
+        <h1>Merch En Route</h1>
+        <p>The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.</p>
+    </div>
+
+</body>
+</html>
