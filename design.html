@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <script>
-        if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-            || window.innerWidth <= 768) {
-            window.location.replace('m/index.html');
-        }
-    </script>
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+    var path = window.location.pathname.split("/").pop();
+    if (path === "") path = "index.html";
+    window.location.replace('m/' + path);
+  }
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Design — dPaul Technologies</title>
