@@ -193,7 +193,20 @@
         .instrument-story { font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95; color: var(--text); }
         .instrument-story + .instrument-story { margin-top: 16px; }
         .instrument-visual { position: sticky; top: 100px; }
-        .tool-render-img { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.6)); border-radius: 4px; }
+        .tool-render-img { 
+    /* 1. Make the image wider than the text (100% width + 40px for padding) */
+    width: calc(100% + 40px); 
+    
+    /* 2. Pull the image 20px to the left to align it with the screen edge */
+    margin-left: -20px; 
+
+    height: auto; 
+    object-fit: contain; 
+    filter: drop-shadow(0 24px 40px rgba(0,0,0,0.6)); 
+    border-radius: 0; /* Edge-to-edge usually looks better without rounded corners */
+    display: block;
+    max-width: none; /* Ensures no other rules try to shrink it back down */
+}
         .visual-caption { font-size: calc(1.066rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 14px; text-align: center; }
         .launch-btn {
             display: inline-block; margin-top: 28px; padding: 11px 28px;
