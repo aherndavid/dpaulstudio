@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>dPaul TTS v4.0</title>
+    <style>
+        :root {
+            --red:        #dd0000;
+            --red-bright: #ff4422;
+            --red-dim:    #3a0808;
+            --red-glow:   rgba(180,20,0,0.4);
+            --shell:      #5a1010;
+            --shell-mid:  #3e0a0a;
+            --shell-edge: #7a1818;
+            --panel:      #0a0a0a;
+            --panel-2:    #001a00;
+            --border:     #000000;
+            --border-hi:  #1a0000;
+            --text:       #cccccc;
+            --text-dim:   #888888;
+            --text-muted: #444444;
+            --green:      #00dd00;
+            --green-dim:  #004400;
+            --mono:       'Courier New', Courier, monospace;
+            --display:    Impact, 'Arial Black', sans-serif;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+        body {
+            font-family: var(--mono);
+            background: #131413;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px 32px;
+        }
+
+        /* ── DEVICE SHELL ── */
+        .device {
+            width: 100%;
+            max-width: 480px;
+            background: linear-gradient(160deg, #7a1818 0%, #5a1010 40%, #3e0a0a 100%);
+            border-radius: 22px;
+            padding: 18px 16px 22px;
+            border: 1px solid rgba(58,5,5,0.4);
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.07) inset,
+                0 14px 40px rgba(0,0,0,0.8),
+                0 2px 0 rgba(255,255,255,0.07) inset;
+            position: relative;
+        }
+
+        /* corner bolts — hexagonal raised heads */
+        .screw {
+            width: 24px; height: 24px;
+            position: absolute;
+        }
+        .screw.tl { top:10px; left:10px; }
+        .screw.tr { top:10px; right:10px; }
+        .screw.bl { bottom:10px; left:10px; }
+        .screw.br { bottom:10px; right:10px; }
+        .screw svg { width:100%; height:100%; display:block; }
+
+        /* ── HEADER ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding: 0 36px;
+        }
+        .brand {
+            font-family: var(--display);
+            font-size: 30px;
+            color: #000;
+            letter-spacing: 0.5px;
+            line-height: 1;
+            font-weight: 900;
+        }
+        .brand-ver {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+            margin-left: 4px;
+            vertical-align: middle;
+            font-style: italic;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .icon-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(58,5,5,0.6);
+            color: rgba(0,0,0,0.6);
+            font-size: 15px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: border-color 0.15s, color 0.15s;
+            font-family: var(--mono);
+            font-weight: 700;
+        }
+        .icon-btn:hover { border-color: rgba(0,0,0,0.8); color: #000; }
+        .pwr-wrap {
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+        }
+        .pwr-led {
+            width: 10px; height: 10px; border-radius: 2px;
+            background: #1a0000; border: 1px solid #2a0000;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+            transition: background 0.08s, box-shadow 0.08s;
+        }
+        .pwr-led.on {
+            background: #dd0000;
+            border-color: #aa0000;
+            box-shadow: 0 0 6px rgba(220,0,0,0.95), 0 0 14px rgba(220,0,0,0.5);
+        }
+        .pwr-lbl { font-size: 8px; letter-spacing: 1px; color: #3a0000; font-weight: bold; text-transform: uppercase; }
+
+        /* ── MODE TOGGLE ── */
+        .mode-row {
+            display: flex; gap: 6px; margin-bottom: 12px;
+        }
+        .mode-btn {
+            flex: 1; padding: 11px 4px;
+            background: linear-gradient(145deg, #2a2a2a, #141414);
+            border: 1px solid #000;
+            border-radius: 5px;
+            color: #666;
+            font-family: var(--mono);
+            font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+            text-transform: uppercase; cursor: pointer;
+            transition: all 0.15s;
+            touch-action: manipulation;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .mode-btn.active {
+            background: linear-gradient(145deg, #2a2a2a, #141414);
+            border-color: #000;
+            color: #ff4422;
+        }
+        .mode-btn:active { transform: scale(0.97); }
+
+        /* ── PANEL SECTION ── */
+        .panel {
+            background: #0a0a0a;
+            border: 1px solid #000;
+            border-radius: 5px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.04);
+        }
+        .panel-label {
+            font-size: 11px; letter-spacing: 0.8px; text-transform: uppercase;
+            color: #888; margin-bottom: 9px; font-weight: 700;
+        }
+
+        /* ── API KEY ── */
+        .api-row { display: flex; gap: 7px; align-items: center; }
+        .api-input {
+            flex: 1; padding: 9px 10px;
+            background: #001a00; border: 1px solid #000;
+            border-radius: 3px; color: #00dd00;
+            font-family: var(--mono); font-size: 13px;
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+        }
+        .api-input::placeholder { color: #004400; font-size: 12px; }
+        .api-input:focus { border-color: #003300; }
+
+        /* ── VOICE TABS ── */
+        .vtab-row { display: flex; gap: 5px; margin-bottom: 9px; }
+        .vtab {
+            flex: 1; padding: 7px 2px;
+            background: linear-gradient(145deg, #2a2a2a, #141414);
+            border: 1px solid #000;
+            border-radius: 3px;
+            color: #777;
+            font-family: var(--mono); font-size: 10px; font-weight: 700;
+            letter-spacing: 0.3px; cursor: pointer;
+            touch-action: manipulation; transition: all 0.12s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .vtab.active {
+            background: linear-gradient(145deg, #003300, #001a00);
+            border-color: #005500;
+            color: #00dd00;
+        }
+
+        /* ── SELECT ── */
+        select {
+            width: 100%; padding: 9px 10px;
+            background: #0a0a0a; border: 1px solid #000;
+            border-radius: 3px; color: #fff;
+            font-family: var(--mono); font-size: 13px;
+            cursor: pointer; outline: none;
+            -webkit-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
+        }
+        select:focus { border-color: #1a1a1a; }
+        select option { background: #1a1a1a; }
+
+        /* ── SLIDERS ── */
+        .slider-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+        .slider-row:last-child { margin-bottom:0; }
+        .slider-lbl { font-size:12px; letter-spacing:0.4px; text-transform:uppercase; color:#777; width:52px; flex-shrink:0; }
+        input[type=range] {
+            flex:1; -webkit-appearance:none; appearance:none;
+            height:5px; background:#001a00; border-radius:2px;
+            border:1px solid #000; cursor:pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance:none; width:16px; height:16px; border-radius:2px;
+            background: linear-gradient(145deg, #666, #444);
+            border:1px solid #000;
+            box-shadow:0 1px 3px rgba(0,0,0,0.5);
+        }
+        .slider-val { font-size:13px; color:#00dd00; width:38px; text-align:right; flex-shrink:0; }
+
+        /* ── INC BUTTONS (browser mode) ── */
+        .inc-group { display:flex; gap:6px; }
+        .inc-block { flex:1; }
+        .inc-lbl { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:#666; margin-bottom:6px; }
+        .inc-row { display:flex; align-items:center; gap:6px; }
+        .inc-btn {
+            width:40px; height:40px; border-radius:4px;
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border:1px solid #000;
+            color:#888; font-size:22px; font-weight:900;
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; touch-action:manipulation; transition:all 0.12s;
+            font-family:var(--mono); line-height:1;
+            box-shadow:0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+        }
+        .inc-btn:active { transform:scale(0.94); }
+        .inc-val {
+            flex:1; text-align:center;
+            background:#001a00; border:1px solid #000; border-radius:3px;
+            padding:7px 0; color:#00dd00; font-size:16px; font-family:var(--mono);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+        }
+
+        /* ── NOTE TEXT ── */
+        .note { font-size:11px; color:#555; line-height:1.7; margin-top:6px; font-family:var(--mono); }
+        .note a { color:#666; }
+
+        /* ── TEXTAREA ── */
+        textarea {
+            width:100%; min-height:160px;
+            padding:11px; resize:none;
+            background:#001a00; border:1px solid #000;
+            border-radius:3px; color:#00dd00;
+            font-family:var(--mono); font-size:14px; line-height:1.5;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
+            outline:none;
+        }
+        textarea::placeholder { color:#004400; font-size:13px; }
+        textarea:focus { box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25); }
+        .char-count { font-size:11px; color:#555; text-align:right; margin-top:5px; font-family:var(--mono); }
+        .char-count.warn { color:#aa6600; }
+        .char-count.over { color:#dd4444; }
+
+        /* ── BIG BUTTONS ── */
+        .btn-row { display:flex; gap:8px; margin-bottom:10px; }
+        .hw-btn {
+            flex:1; padding:14px 6px;
+            background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border:1px solid #000;
+            border-radius:3px;
+            color:#999;
+            font-family:var(--mono); font-size:13px; font-weight:700;
+            letter-spacing:0.8px; text-transform:uppercase;
+            cursor:pointer;
+            box-shadow:0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07);
+            transition:all 0.12s; touch-action:manipulation;
+        }
+        .hw-btn:hover { background: linear-gradient(145deg, #444, #222); transform:translateY(-1px); }
+        .hw-btn:active { transform:translateY(1px); box-shadow:0 1px 2px rgba(0,0,0,0.4); }
+        .hw-btn:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+        .hw-btn:disabled:hover { background:linear-gradient(145deg,#3a3a3a,#1a1a1a); transform:none; }
+        .hw-btn.speak {
+            background: linear-gradient(145deg, #555, #333);
+            color:#fff; border-color:#444; flex:2; font-size:14px;
+        }
+        .hw-btn.speak:hover { background: linear-gradient(145deg, #666, #444); }
+        .hw-btn.stop  { color:#dd4444; }
+        .hw-btn.clear { color:#999; }
+
+        /* ── STATUS ── */
+        .status {
+            padding:12px;
+            background:#001a00; border:1px solid #000; border-radius:3px;
+            text-align:center; font-family:var(--mono);
+            font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+            color:#00aa00;
+            box-shadow:inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,80,0,0.15);
+            transition:color 0.2s;
+            margin-bottom:10px;
+        }
+        .status.active { color:#00dd00; }
+        .status.error  { color:#dd4444; }
+
+        /* ── AUDIO PLAYER ── */
+        audio { width:100%; height:30px; border-radius:3px; display:none; margin-bottom:8px; }
+        audio.visible { display:block; }
+
+        /* ── DOWNLOAD ── */
+        .dl-btn {
+            width:100%; padding:12px;
+            background: linear-gradient(145deg, #1a3a1a, #0a1a0a);
+            border:1px solid #000; border-radius:3px;
+            color:#00dd00; font-family:var(--mono);
+            font-size:12px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase;
+            cursor:pointer; display:none; margin-bottom:8px;
+            transition:all 0.15s;
+            box-shadow:0 2px 5px rgba(0,0,0,0.5);
+        }
+        .dl-btn.visible { display:block; }
+        .dl-btn:hover { background:linear-gradient(145deg,#2a5a2a,#1a3a1a); }
+
+        /* ── SETUP TOGGLE ── */
+        .setup-toggle {
+            width:100%; background:none;
+            border:1px dashed #2a2a2a; border-radius:3px;
+            color:#666; font-family:var(--mono);
+            font-size:11px; letter-spacing:0.8px; text-transform:uppercase;
+            padding:7px 10px; cursor:pointer;
+            display:flex; justify-content:space-between; align-items:center;
+            margin-top:8px; transition:border-color 0.15s, color 0.15s;
+        }
+        .setup-toggle:hover { border-color:#555; color:#888; }
+
+        /* ── BACK LINK ── */
+        .back-link {
+            display:block; margin-top:18px; text-align:center;
+            font-family:var(--mono); font-size:12px;
+            color:#444; text-decoration:none; letter-spacing:0.8px;
+            transition:color 0.2s;
+        }
+        .back-link:hover { color:#dd0000; }
+
+        /* ── SETUP OVERLAY ── */
+        #setup-guide-overlay {
+            display:none; position:fixed; inset:0; z-index:8000;
+            background:rgba(0,0,0,0.85);
+            align-items:center; justify-content:center; padding:20px;
+        }
+        #setup-guide-overlay.open { display:flex; }
+        .setup-guide {
+            background:#0a0a0a; border:1px solid #1e1e1e;
+            border-radius:6px; padding:14px;
+            width:100%; max-width:460px; max-height:88vh; overflow-y:auto;
+            box-shadow:0 20px 60px rgba(0,0,0,0.9);
+        }
+        .setup-guide-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid #1a1a1a;
+        }
+        .setup-guide-header span { font-family:var(--mono); font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#666; font-weight:700; }
+        .sg-close {
+            background:none; border:1px solid #2a2a2a; border-radius:3px;
+            color:#555; font-size:13px; cursor:pointer; padding:4px 12px;
+            font-family:var(--mono); transition:border-color 0.15s, color 0.15s;
+        }
+        .sg-close:hover { border-color:#555; color:#aaa; }
+        .sg-step {
+            display:flex; gap:10px; align-items:flex-start;
+            padding:7px 0; border-bottom:1px solid #111;
+        }
+        .sg-step:last-child { border-bottom:none; padding-bottom:0; }
+        .sg-num {
+            width:16px; height:16px; border-radius:2px; flex-shrink:0;
+            background:#1a1a1a; border:1px solid #2a2a2a;
+            color:#555; font-size:8px; font-family:var(--mono);
+            display:flex; align-items:center; justify-content:center; font-weight:700;
+        }
+        .sg-text strong { display:block; color:#777; font-size:11px; font-family:var(--mono); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:3px; }
+        .sg-text span { color:#555; font-size:11px; font-family:var(--mono); line-height:1.6; }
+        .sg-text a { color:#336633; text-decoration:none; }
+
+        /* ── DISCLAIMER OVERLAY ── */
+        #disclaimer-overlay {
+            display:flex; position:fixed; inset:0; z-index:9999;
+            background:rgba(0,0,0,0.92);
+            align-items:center; justify-content:center; padding:20px;
+        }
+        #disclaimer-overlay.hidden { display:none; }
+        #disclaimer-box {
+            background:#0e0e0e; border:1px solid #2a0000;
+            border-radius:8px; padding:24px;
+            max-width:480px; width:100%;
+            box-shadow:0 20px 60px rgba(0,0,0,0.9);
+        }
+        #disclaimer-box h2 {
+            font-family:var(--display); font-size:16px; color:#cc3300;
+            letter-spacing:1.5px; text-transform:uppercase; margin-bottom:14px;
+            border-bottom:1px solid #1a0000; padding-bottom:10px;
+        }
+        .disc-body { font-family:var(--mono); font-size:12px; color:#666; line-height:1.85; margin-bottom:12px; }
+        .disc-body strong { color:#999; }
+        .disc-accept-row {
+            display:flex; align-items:flex-start; gap:10px;
+            margin-bottom:14px; padding:10px;
+            background:#0a0a0a; border:1px solid #1a1a1a; border-radius:4px;
+        }
+        .disc-accept-row input[type=checkbox] { width:15px; height:15px; cursor:pointer; accent-color:#cc3300; flex-shrink:0; margin-top:1px; }
+        .disc-accept-row label { font-family:var(--mono); font-size:12px; color:#555; line-height:1.6; cursor:pointer; font-weight:normal; letter-spacing:0; text-transform:none; }
+        #disc-accept-btn {
+            width:100%; padding:13px;
+            background:linear-gradient(145deg,#1a1a1a,#0a0a0a);
+            border:1px solid #222; border-radius:4px;
+            color:#444; font-family:var(--mono);
+            font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+            cursor:not-allowed; transition:all 0.2s;
+            box-shadow:0 2px 5px rgba(0,0,0,0.5);
+        }
+        #disc-accept-btn.ready {
+            color:#ff6644; border-color:#cc3300; cursor:pointer;
+            background:linear-gradient(145deg,#2a0000,#1a0000);
+        }
+        #disc-accept-btn.ready:hover {
+            background:linear-gradient(145deg,#3a0000,#220000);
+            color:#ff8866; transform:translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="device">
+    <div class="screw tl"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="hg1" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#c8c8c8"/><stop offset="35%" stop-color="#909090"/><stop offset="100%" stop-color="#2a2a2a"/></radialGradient><linearGradient id="hl1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="100%" stop-color="rgba(0,0,0,0.35)"/></linearGradient></defs><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="#1a1a1a" opacity="0.5" transform="translate(0.4,0.6)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hg1)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hl1)"/><line x1="12" y1="1.5" x2="3.2" y2="6.75" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/><line x1="12" y1="1.5" x2="20.8" y2="6.75" stroke="rgba(0,0,0,0.25)" stroke-width="0.5"/><line x1="3.2" y1="6.75" x2="3.2" y2="17.25" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/><polygon points="12,7 16.2,9.5 16.2,14.5 12,17 7.8,14.5 7.8,9.5" fill="rgba(0,0,0,0.45)"/><polygon points="12,8 15.4,9.95 15.4,13.85 12,15.8 8.6,13.85 8.6,9.95" fill="rgba(0,0,0,0.3)"/></svg></div>
+    <div class="screw tr"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="hg2" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#c8c8c8"/><stop offset="35%" stop-color="#909090"/><stop offset="100%" stop-color="#2a2a2a"/></radialGradient><linearGradient id="hl2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="100%" stop-color="rgba(0,0,0,0.35)"/></linearGradient></defs><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="#1a1a1a" opacity="0.5" transform="translate(0.4,0.6)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hg2)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hl2)"/><line x1="12" y1="1.5" x2="3.2" y2="6.75" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/><line x1="12" y1="1.5" x2="20.8" y2="6.75" stroke="rgba(0,0,0,0.25)" stroke-width="0.5"/><line x1="3.2" y1="6.75" x2="3.2" y2="17.25" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/><polygon points="12,7 16.2,9.5 16.2,14.5 12,17 7.8,14.5 7.8,9.5" fill="rgba(0,0,0,0.45)"/><polygon points="12,8 15.4,9.95 15.4,13.85 12,15.8 8.6,13.85 8.6,9.95" fill="rgba(0,0,0,0.3)"/></svg></div>
+    <div class="screw bl"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="hg3" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#c8c8c8"/><stop offset="35%" stop-color="#909090"/><stop offset="100%" stop-color="#2a2a2a"/></radialGradient><linearGradient id="hl3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="100%" stop-color="rgba(0,0,0,0.35)"/></linearGradient></defs><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="#1a1a1a" opacity="0.5" transform="translate(0.4,0.6)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hg3)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hl3)"/><line x1="12" y1="1.5" x2="3.2" y2="6.75" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/><line x1="12" y1="1.5" x2="20.8" y2="6.75" stroke="rgba(0,0,0,0.25)" stroke-width="0.5"/><line x1="3.2" y1="6.75" x2="3.2" y2="17.25" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/><polygon points="12,7 16.2,9.5 16.2,14.5 12,17 7.8,14.5 7.8,9.5" fill="rgba(0,0,0,0.45)"/><polygon points="12,8 15.4,9.95 15.4,13.85 12,15.8 8.6,13.85 8.6,9.95" fill="rgba(0,0,0,0.3)"/></svg></div>
+    <div class="screw br"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="hg4" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#c8c8c8"/><stop offset="35%" stop-color="#909090"/><stop offset="100%" stop-color="#2a2a2a"/></radialGradient><linearGradient id="hl4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.18)"/><stop offset="100%" stop-color="rgba(0,0,0,0.35)"/></linearGradient></defs><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="#1a1a1a" opacity="0.5" transform="translate(0.4,0.6)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hg4)"/><polygon points="12,1.5 20.8,6.75 20.8,17.25 12,22.5 3.2,17.25 3.2,6.75" fill="url(#hl4)"/><line x1="12" y1="1.5" x2="3.2" y2="6.75" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/><line x1="12" y1="1.5" x2="20.8" y2="6.75" stroke="rgba(0,0,0,0.25)" stroke-width="0.5"/><line x1="3.2" y1="6.75" x2="3.2" y2="17.25" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/><polygon points="12,7 16.2,9.5 16.2,14.5 12,17 7.8,14.5 7.8,9.5" fill="rgba(0,0,0,0.45)"/><polygon points="12,8 15.4,9.95 15.4,13.85 12,15.8 8.6,13.85 8.6,9.95" fill="rgba(0,0,0,0.3)"/></svg></div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div>
+            <span class="brand">DPAUL TTS</span>
+            <span class="brand-ver">V2.4</span>
+        </div>
+        <div class="header-right">
+            <a class="icon-btn" href="#" onclick="toggleSetup(); return false;" title="Setup guide">i</a>
+            <a class="icon-btn" href="https://www.dpaul.studio/tools" target="_blank" title="dpaul.studio/tools">↗</a>
+            <div class="pwr-wrap">
+                <div class="pwr-led" id="pwrLed"></div>
+                <span class="pwr-lbl">PWR</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODE TOGGLE -->
+    <div class="mode-row">
+        <button class="mode-btn active" id="modeGoogle" onclick="setMode('google')">&#9729; GOOGLE TTS</button>
+        <button class="mode-btn" id="modeBrowser" onclick="setMode('browser')">BROWSER TTS</button>
+    </div>
+
+    <!-- ── GOOGLE PANEL ── -->
+    <div id="googlePanel">
+        <!-- API Key -->
+        <div class="panel">
+            <div class="panel-label">Google Cloud API Key</div>
+            <div class="api-row">
+                <input type="password" class="api-input" id="apiKey" placeholder="Paste your API key here...">
+                <button class="hw-btn" style="flex:none;padding:9px 14px;font-size:11px;" onclick="saveKey()">SAVE</button>
+            </div>
+            <div class="note">Free tier · 1M chars/mo · Key stored in your browser only</div>
+            <button class="setup-toggle" onclick="toggleSetup()">
+                <span>&#9654; How to get a free API key</span><span>›</span>
+            </button>
+        </div>
+
+        <!-- Voice Type -->
+        <div class="panel">
+            <div class="panel-label">Voice Type</div>
+            <div class="vtab-row">
+                <button class="vtab active" id="tabWavenet" onclick="setVoiceType('Wavenet')">WaveNet</button>
+                <button class="vtab" id="tabNeural2" onclick="setVoiceType('Neural2')">Neural2</button>
+                <button class="vtab" id="tabStudio" onclick="setVoiceType('Studio')">Studio</button>
+                <button class="vtab" id="tabStandard" onclick="setVoiceType('Standard')">Standard</button>
+            </div>
+            <div class="note">WaveNet &amp; Neural2 sound most natural · Studio = premium · Standard = basic</div>
+        </div>
+
+        <!-- Language -->
+        <div class="panel">
+            <div class="panel-label">Language</div>
+            <select id="langSelect" onchange="updateVoiceList()">
+                <option value="en-GB">English (UK)</option>
+                <option value="en-US">English (US)</option>
+                <option value="en-AU">English (AU)</option>
+                <option value="fr-FR">French</option>
+                <option value="de-DE">German</option>
+                <option value="es-ES">Spanish (Spain)</option>
+                <option value="es-US">Spanish (US)</option>
+                <option value="it-IT">Italian</option>
+                <option value="ja-JP">Japanese</option>
+                <option value="ko-KR">Korean</option>
+                <option value="pt-BR">Portuguese (BR)</option>
+                <option value="nl-NL">Dutch</option>
+                <option value="pl-PL">Polish</option>
+                <option value="sv-SE">Swedish</option>
+                <option value="tr-TR">Turkish</option>
+                <option value="ar-XA">Arabic</option>
+                <option value="hi-IN">Hindi</option>
+                <option value="zh-CN">Chinese (Simplified)</option>
+            </select>
+        </div>
+
+        <!-- Voice -->
+        <div class="panel">
+            <div class="panel-label">Voice</div>
+            <select id="googleVoiceSelect"></select>
+        </div>
+
+        <!-- Voice Settings -->
+        <div class="panel">
+            <div class="panel-label">Voice Settings</div>
+            <div class="slider-row">
+                <span class="slider-lbl">Speed</span>
+                <input type="range" id="googleSpeed" min="25" max="400" value="100" step="5">
+                <span class="slider-val" id="googleSpeedVal">1.00</span>
+            </div>
+            <div class="slider-row">
+                <span class="slider-lbl">Pitch</span>
+                <input type="range" id="googlePitch" min="-20" max="20" value="0" step="1">
+                <span class="slider-val" id="googlePitchVal">0.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── BROWSER PANEL ── -->
+    <div id="browserPanel" style="display:none;">
+        <div class="panel">
+            <div class="panel-label">Voice</div>
+            <select id="voiceSelect"><option value="">Loading voices...</option></select>
+        </div>
+        <div class="panel">
+            <div class="panel-label">Controls</div>
+            <div class="inc-group">
+                <div class="inc-block">
+                    <div class="inc-lbl">Speed</div>
+                    <div class="inc-row">
+                        <button class="inc-btn" id="rateDown">&#8722;</button>
+                        <div class="inc-val" id="rateDisplay">1.0x</div>
+                        <button class="inc-btn" id="rateUp">+</button>
+                    </div>
+                </div>
+                <div class="inc-block" style="margin-left:8px;">
+                    <div class="inc-lbl">Pitch</div>
+                    <div class="inc-row">
+                        <button class="inc-btn" id="pitchDown">&#8722;</button>
+                        <div class="inc-val" id="pitchDisplay">1.0</div>
+                        <button class="inc-btn" id="pitchUp">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <div class="panel">
+        <div class="panel-label">Script</div>
+        <textarea id="textInput" placeholder="Enter your script here..." oninput="updateCharCount()"></textarea>
+        <div class="char-count" id="charCount">0 / 5000 chars</div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="btn-row">
+        <button class="hw-btn speak" id="speakBtn">&#9654; SPEAK</button>
+        <button class="hw-btn clear" id="clearBtn">CLEAR</button>
+        <button class="hw-btn stop" id="stopBtn" disabled>STOP</button>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status" id="status">READY</div>
+
+    <!-- AUDIO -->
+    <audio id="audioPlayer" controls></audio>
+    <button class="dl-btn" id="downloadBtn" onclick="downloadAudio()">&#8595; DOWNLOAD MP3</button>
+
+</div>
+
+<a href="https://www.dpaul.studio" class="back-link"></a>
+
+<!-- SETUP GUIDE OVERLAY -->
+<div id="setup-guide-overlay">
+    <div class="setup-guide">
+        <div class="setup-guide-header">
+            <span>&#9654; How to get a free Google API key</span>
+            <button class="sg-close" onclick="closeSetup()">✕ Close</button>
+        </div>
+        <div class="sg-step">
+            <div class="sg-num">1</div>
+            <div class="sg-text"><strong>Create a Google account</strong><span>Need a Gmail account to proceed.</span></div>
+        </div>
+        <div class="sg-step">
+            <div class="sg-num">2</div>
+            <div class="sg-text"><strong>Go to Google Cloud Console</strong><span>Visit <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a></span></div>
+        </div>
+        <div class="sg-step">
+            <div class="sg-num">3</div>
+            <div class="sg-text"><strong>Enable Text-to-Speech API</strong><span>Search for it in the API Library and enable it.</span></div>
+        </div>
+        <div class="sg-step">
+            <div class="sg-num">4</div>
+            <div class="sg-text"><strong>Create an API key</strong><span>Go to Credentials → Create Credentials → API Key.</span></div>
+        </div>
+        <div class="sg-step">
+            <div class="sg-num">5</div>
+            <div class="sg-text"><strong>Paste it above and click SAVE</strong><span>Key is stored in your browser only — never sent anywhere else.</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- DISCLAIMER OVERLAY -->
+<div id="disclaimer-overlay" class="hidden">
+    <div id="disclaimer-box">
+        <h2>⚠ Terms of Use</h2>
+        <div class="disc-body">
+            By using <strong>dPaul TTS</strong>, you agree you are solely responsible for your own Google API key, any associated usage costs, and all audio content you generate.
+        </div>
+        <div class="disc-accept-row">
+            <input type="checkbox" id="disc-checkbox">
+            <label for="disc-checkbox">I understand and agree to the above terms of use.</label>
+        </div>
+        <button id="disc-accept-btn">Tick the box above to continue</button>
+    </div>
+</div>
+
+<script>
+'use strict';
+
+/* ── LED ── */
+const pwrLed = document.getElementById('pwrLed');
+let blinkInterval = null;
+function ledOn()     { pwrLed.classList.add('on'); }
+function ledOff()    { pwrLed.classList.remove('on'); }
+function startBlink(){ ledOn(); blinkInterval = setInterval(() => pwrLed.classList.toggle('on'), 400); }
+function stopBlink() { clearInterval(blinkInterval); blinkInterval = null; ledOff(); }
+ledOn();
+
+/* ── MODE ── */
+let currentMode = 'google';
+function setMode(m) {
+    currentMode = m;
+    document.getElementById('googlePanel').style.display  = m === 'google'  ? '' : 'none';
+    document.getElementById('browserPanel').style.display = m === 'browser' ? '' : 'none';
+    document.getElementById('modeGoogle').classList.toggle('active',  m === 'google');
+    document.getElementById('modeBrowser').classList.toggle('active', m === 'browser');
+    document.getElementById('audioPlayer').classList.remove('visible');
+    document.getElementById('downloadBtn').classList.remove('visible');
+    document.getElementById('stopBtn').disabled = true;
+    setStatus('READY'); ledOn();
+}
+
+/* ── VOICE DB ── */
+const VOICE_DB = {
+    'en-GB': {
+        Wavenet:  ['en-GB-Wavenet-A (Female)','en-GB-Wavenet-B (Male)','en-GB-Wavenet-C (Female)','en-GB-Wavenet-D (Male)','en-GB-Wavenet-F (Female)'],
+        Neural2:  ['en-GB-Neural2-A (Female)','en-GB-Neural2-B (Male)','en-GB-Neural2-C (Female)','en-GB-Neural2-D (Male)','en-GB-Neural2-F (Female)'],
+        Studio:   ['en-GB-Studio-B (Male)','en-GB-Studio-C (Female)'],
+        Standard: ['en-GB-Standard-A (Female)','en-GB-Standard-B (Male)','en-GB-Standard-C (Female)','en-GB-Standard-D (Male)','en-GB-Standard-F (Female)']
+    },
+    'en-US': {
+        Wavenet:  ['en-US-Wavenet-A (Male)','en-US-Wavenet-B (Male)','en-US-Wavenet-C (Female)','en-US-Wavenet-D (Male)','en-US-Wavenet-E (Female)','en-US-Wavenet-F (Female)','en-US-Wavenet-G (Female)','en-US-Wavenet-H (Female)','en-US-Wavenet-I (Male)','en-US-Wavenet-J (Male)'],
+        Neural2:  ['en-US-Neural2-A (Male)','en-US-Neural2-C (Female)','en-US-Neural2-D (Male)','en-US-Neural2-E (Female)','en-US-Neural2-F (Female)','en-US-Neural2-G (Female)','en-US-Neural2-H (Female)','en-US-Neural2-I (Male)','en-US-Neural2-J (Male)'],
+        Studio:   ['en-US-Studio-M (Male)','en-US-Studio-O (Female)','en-US-Studio-Q (Male)'],
+        Standard: ['en-US-Standard-A (Male)','en-US-Standard-B (Male)','en-US-Standard-C (Female)','en-US-Standard-D (Male)','en-US-Standard-E (Female)','en-US-Standard-F (Female)','en-US-Standard-G (Female)','en-US-Standard-H (Female)','en-US-Standard-I (Male)','en-US-Standard-J (Male)']
+    },
+    'en-AU': {
+        Wavenet:  ['en-AU-Wavenet-A (Female)','en-AU-Wavenet-B (Male)','en-AU-Wavenet-C (Female)','en-AU-Wavenet-D (Male)'],
+        Neural2:  ['en-AU-Neural2-A (Female)','en-AU-Neural2-B (Male)','en-AU-Neural2-C (Female)','en-AU-Neural2-D (Male)'],
+        Studio:   ['en-AU-Standard-A (Female)'],
+        Standard: ['en-AU-Standard-A (Female)','en-AU-Standard-B (Male)','en-AU-Standard-C (Female)','en-AU-Standard-D (Male)']
+    },
+    'fr-FR': {
+        Wavenet:  ['fr-FR-Wavenet-A (Female)','fr-FR-Wavenet-B (Male)','fr-FR-Wavenet-C (Female)','fr-FR-Wavenet-D (Male)','fr-FR-Wavenet-E (Female)'],
+        Neural2:  ['fr-FR-Neural2-A (Female)','fr-FR-Neural2-B (Male)','fr-FR-Neural2-C (Female)','fr-FR-Neural2-D (Male)','fr-FR-Neural2-E (Female)'],
+        Studio:   ['fr-FR-Standard-A (Female)'],
+        Standard: ['fr-FR-Standard-A (Female)','fr-FR-Standard-B (Male)','fr-FR-Standard-C (Female)','fr-FR-Standard-D (Male)','fr-FR-Standard-E (Female)']
+    },
+    'de-DE': {
+        Wavenet:  ['de-DE-Wavenet-A (Female)','de-DE-Wavenet-B (Male)','de-DE-Wavenet-C (Female)','de-DE-Wavenet-D (Male)','de-DE-Wavenet-E (Male)','de-DE-Wavenet-F (Female)'],
+        Neural2:  ['de-DE-Neural2-A (Female)','de-DE-Neural2-B (Male)','de-DE-Neural2-C (Female)','de-DE-Neural2-D (Male)','de-DE-Neural2-F (Female)'],
+        Studio:   ['de-DE-Standard-A (Female)'],
+        Standard: ['de-DE-Standard-A (Female)','de-DE-Standard-B (Male)','de-DE-Standard-C (Female)','de-DE-Standard-D (Male)','de-DE-Standard-E (Male)','de-DE-Standard-F (Female)']
+    },
+    'es-ES': {
+        Wavenet:  ['es-ES-Wavenet-B (Male)','es-ES-Wavenet-C (Female)','es-ES-Wavenet-D (Female)'],
+        Neural2:  ['es-ES-Neural2-A (Female)','es-ES-Neural2-B (Male)','es-ES-Neural2-C (Female)','es-ES-Neural2-D (Female)','es-ES-Neural2-E (Female)','es-ES-Neural2-F (Male)'],
+        Studio:   ['es-ES-Standard-A (Female)'],
+        Standard: ['es-ES-Standard-A (Female)','es-ES-Standard-B (Male)','es-ES-Standard-C (Female)','es-ES-Standard-D (Female)']
+    },
+    'es-US': {
+        Wavenet:  ['es-US-Wavenet-A (Female)','es-US-Wavenet-B (Male)','es-US-Wavenet-C (Male)'],
+        Neural2:  ['es-US-Neural2-A (Female)','es-US-Neural2-B (Male)','es-US-Neural2-C (Male)'],
+        Studio:   ['es-US-Standard-A (Female)'],
+        Standard: ['es-US-Standard-A (Female)','es-US-Standard-B (Male)','es-US-Standard-C (Male)']
+    },
+    'it-IT': {
+        Wavenet:  ['it-IT-Wavenet-A (Female)','it-IT-Wavenet-B (Female)','it-IT-Wavenet-C (Male)','it-IT-Wavenet-D (Male)'],
+        Neural2:  ['it-IT-Neural2-A (Female)','it-IT-Neural2-C (Male)'],
+        Studio:   ['it-IT-Standard-A (Female)'],
+        Standard: ['it-IT-Standard-A (Female)','it-IT-Standard-B (Female)','it-IT-Standard-C (Male)','it-IT-Standard-D (Male)']
+    },
+    'ja-JP': {
+        Wavenet:  ['ja-JP-Wavenet-A (Female)','ja-JP-Wavenet-B (Female)','ja-JP-Wavenet-C (Male)','ja-JP-Wavenet-D (Male)'],
+        Neural2:  ['ja-JP-Neural2-B (Female)','ja-JP-Neural2-C (Male)','ja-JP-Neural2-D (Male)'],
+        Studio:   ['ja-JP-Standard-A (Female)'],
+        Standard: ['ja-JP-Standard-A (Female)','ja-JP-Standard-B (Female)','ja-JP-Standard-C (Male)','ja-JP-Standard-D (Male)']
+    },
+    'ko-KR': {
+        Wavenet:  ['ko-KR-Wavenet-A (Female)','ko-KR-Wavenet-B (Female)','ko-KR-Wavenet-C (Male)','ko-KR-Wavenet-D (Male)'],
+        Neural2:  ['ko-KR-Neural2-A (Female)','ko-KR-Neural2-B (Female)'],
+        Studio:   ['ko-KR-Standard-A (Female)'],
+        Standard: ['ko-KR-Standard-A (Female)','ko-KR-Standard-B (Female)','ko-KR-Standard-C (Male)','ko-KR-Standard-D (Male)']
+    },
+    'pt-BR': {
+        Wavenet:  ['pt-BR-Wavenet-A (Female)','pt-BR-Wavenet-B (Male)','pt-BR-Wavenet-C (Female)','pt-BR-Wavenet-D (Female)','pt-BR-Wavenet-E (Male)'],
+        Neural2:  ['pt-BR-Neural2-A (Female)','pt-BR-Neural2-B (Male)','pt-BR-Neural2-C (Female)'],
+        Studio:   ['pt-BR-Standard-A (Female)'],
+        Standard: ['pt-BR-Standard-A (Female)','pt-BR-Standard-B (Male)','pt-BR-Standard-C (Female)']
+    },
+    'nl-NL': {
+        Wavenet:  ['nl-NL-Wavenet-A (Female)','nl-NL-Wavenet-B (Male)','nl-NL-Wavenet-C (Male)','nl-NL-Wavenet-D (Female)','nl-NL-Wavenet-E (Male)'],
+        Neural2:  ['nl-NL-Standard-A (Female)'],
+        Studio:   ['nl-NL-Standard-A (Female)'],
+        Standard: ['nl-NL-Standard-A (Female)','nl-NL-Standard-B (Male)','nl-NL-Standard-C (Male)','nl-NL-Standard-D (Female)','nl-NL-Standard-E (Male)']
+    },
+    'pl-PL': {
+        Wavenet:  ['pl-PL-Wavenet-A (Female)','pl-PL-Wavenet-B (Male)','pl-PL-Wavenet-C (Male)','pl-PL-Wavenet-D (Female)','pl-PL-Wavenet-E (Male)'],
+        Neural2:  ['pl-PL-Standard-A (Female)'],
+        Studio:   ['pl-PL-Standard-A (Female)'],
+        Standard: ['pl-PL-Standard-A (Female)','pl-PL-Standard-B (Male)','pl-PL-Standard-C (Male)','pl-PL-Standard-D (Female)','pl-PL-Standard-E (Male)']
+    },
+    'sv-SE': {
+        Wavenet:  ['sv-SE-Wavenet-A (Female)','sv-SE-Wavenet-B (Female)','sv-SE-Wavenet-C (Male)','sv-SE-Wavenet-D (Male)','sv-SE-Wavenet-E (Male)'],
+        Neural2:  ['sv-SE-Standard-A (Female)'],
+        Studio:   ['sv-SE-Standard-A (Female)'],
+        Standard: ['sv-SE-Standard-A (Female)','sv-SE-Standard-B (Female)','sv-SE-Standard-C (Male)','sv-SE-Standard-D (Male)','sv-SE-Standard-E (Male)']
+    },
+    'tr-TR': {
+        Wavenet:  ['tr-TR-Wavenet-A (Female)','tr-TR-Wavenet-B (Male)','tr-TR-Wavenet-C (Female)','tr-TR-Wavenet-D (Female)','tr-TR-Wavenet-E (Male)'],
+        Neural2:  ['tr-TR-Standard-A (Female)'],
+        Studio:   ['tr-TR-Standard-A (Female)'],
+        Standard: ['tr-TR-Standard-A (Female)','tr-TR-Standard-B (Male)','tr-TR-Standard-C (Female)','tr-TR-Standard-D (Female)','tr-TR-Standard-E (Male)']
+    },
+    'ar-XA': {
+        Wavenet:  ['ar-XA-Wavenet-A (Female)','ar-XA-Wavenet-B (Male)','ar-XA-Wavenet-C (Male)','ar-XA-Wavenet-D (Female)'],
+        Neural2:  ['ar-XA-Standard-A (Female)'],
+        Studio:   ['ar-XA-Standard-A (Female)'],
+        Standard: ['ar-XA-Standard-A (Female)','ar-XA-Standard-B (Male)','ar-XA-Standard-C (Male)','ar-XA-Standard-D (Female)']
+    },
+    'hi-IN': {
+        Wavenet:  ['hi-IN-Wavenet-A (Female)','hi-IN-Wavenet-B (Male)','hi-IN-Wavenet-C (Male)','hi-IN-Wavenet-D (Female)'],
+        Neural2:  ['hi-IN-Neural2-A (Female)','hi-IN-Neural2-B (Male)','hi-IN-Neural2-C (Male)','hi-IN-Neural2-D (Female)'],
+        Studio:   ['hi-IN-Standard-A (Female)'],
+        Standard: ['hi-IN-Standard-A (Female)','hi-IN-Standard-B (Male)','hi-IN-Standard-C (Male)','hi-IN-Standard-D (Female)']
+    },
+    'zh-CN': {
+        Wavenet:  ['cmn-CN-Wavenet-A (Female)','cmn-CN-Wavenet-B (Male)','cmn-CN-Wavenet-C (Male)','cmn-CN-Wavenet-D (Female)'],
+        Neural2:  ['cmn-CN-Standard-A (Female)'],
+        Studio:   ['cmn-CN-Standard-A (Female)'],
+        Standard: ['cmn-CN-Standard-A (Female)','cmn-CN-Standard-B (Male)','cmn-CN-Standard-C (Male)','cmn-CN-Standard-D (Female)']
+    }
+};
+
+let currentVoiceType = 'Wavenet';
+function setVoiceType(type) {
+    currentVoiceType = type;
+    ['Wavenet','Neural2','Studio','Standard'].forEach(t => {
+        document.getElementById('tab'+t).classList.toggle('active', t === type);
+    });
+    updateVoiceList();
+}
+function updateVoiceList() {
+    const lang = document.getElementById('langSelect').value;
+    const sel  = document.getElementById('googleVoiceSelect');
+    const vox  = (VOICE_DB[lang] && VOICE_DB[lang][currentVoiceType]) || [];
+    sel.innerHTML = '';
+    if (!vox.length) { sel.innerHTML = '<option value="">No voices for this combination</option>'; return; }
+    vox.forEach(v => {
+        const o = document.createElement('option');
+        o.value = v.split(' ')[0]; o.textContent = v;
+        sel.appendChild(o);
+    });
+}
+updateVoiceList();
+
+document.getElementById('googleSpeed').addEventListener('input', function() {
+    document.getElementById('googleSpeedVal').textContent = (this.value / 100).toFixed(2);
+});
+document.getElementById('googlePitch').addEventListener('input', function() {
+    document.getElementById('googlePitchVal').textContent = parseFloat(this.value).toFixed(1);
+});
+
+/* ── API KEY ── */
+function saveKey() {
+    const k = document.getElementById('apiKey').value.trim();
+    if (!k) { setStatus('NO KEY ENTERED', false, true); return; }
+    localStorage.setItem('dpaul_gcp_key', k);
+    setStatus('KEY SAVED — READY', true);
+}
+function getKey() {
+    const f = document.getElementById('apiKey').value.trim();
+    return f || localStorage.getItem('dpaul_gcp_key') || '';
+}
+window.addEventListener('DOMContentLoaded', () => {
+    const s = localStorage.getItem('dpaul_gcp_key');
+    if (s) document.getElementById('apiKey').value = s;
+});
+
+/* ── CHAR COUNT ── */
+function updateCharCount() {
+    const len = document.getElementById('textInput').value.length;
+    const el  = document.getElementById('charCount');
+    el.textContent = len + ' / 5000 chars';
+    el.className = 'char-count' + (len > 4500 ? ' over' : len > 4000 ? ' warn' : '');
+}
+
+/* ── GOOGLE SPEAK ── */
+let currentAudioUrl = null, currentAudioBlob = null;
+async function googleSpeak(text) {
+    const apiKey = getKey();
+    if (!apiKey) { setStatus('PASTE & SAVE API KEY FIRST', false, true); return; }
+    const voiceName = document.getElementById('googleVoiceSelect').value;
+    if (!voiceName) { setStatus('NO VOICE SELECTED', false, true); return; }
+    const langCode = document.getElementById('langSelect').value;
+    const speed    = parseFloat(document.getElementById('googleSpeed').value) / 100;
+    const pitch    = parseFloat(document.getElementById('googlePitch').value);
+    setBusy(true); setStatus('GENERATING...', true);
+    document.getElementById('downloadBtn').classList.remove('visible');
+    try {
+        const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                input: { text },
+                voice: { languageCode: langCode, name: voiceName },
+                audioConfig: { audioEncoding: 'MP3', speakingRate: speed, pitch }
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || 'HTTP ' + res.status);
+        const binary = atob(data.audioContent);
+        const bytes  = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        currentAudioBlob = new Blob([bytes], { type: 'audio/mpeg' });
+        if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+        currentAudioUrl = URL.createObjectURL(currentAudioBlob);
+        const player = document.getElementById('audioPlayer');
+        player.src = currentAudioUrl;
+        player.classList.add('visible');
+        document.getElementById('downloadBtn').classList.add('visible');
+        await player.play();
+        player.onended = () => { setStatus('FINISHED'); setBusy(false); };
+        setStatus('PLAYING...', true);
+    } catch(e) {
+        setStatus('ERROR: ' + e.message, false, true);
+        setBusy(false);
+    }
+}
+function downloadAudio() {
+    if (!currentAudioUrl) return;
+    const a = document.createElement('a');
+    a.href = currentAudioUrl; a.download = `dpaul-tts-${Date.now()}.mp3`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ── BROWSER TTS ── */
+const synth = window.speechSynthesis;
+const params = {
+    rate:  { val:1.0, min:0.5, max:2.0, step:0.1 },
+    pitch: { val:1.0, min:0.5, max:2.0, step:0.1 }
+};
+function updateDisplay(key) {
+    document.getElementById(key === 'rate' ? 'rateDisplay' : 'pitchDisplay').textContent =
+        key === 'rate' ? params[key].val.toFixed(1) + 'x' : params[key].val.toFixed(1);
+}
+function step(key, dir) {
+    params[key].val = Math.max(params[key].min, Math.min(params[key].max,
+        Math.round((params[key].val + dir * params[key].step) * 10) / 10));
+    updateDisplay(key);
+}
+document.getElementById('rateDown').addEventListener('click',  () => step('rate',  -1));
+document.getElementById('rateUp').addEventListener('click',    () => step('rate',  +1));
+document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
+document.getElementById('pitchUp').addEventListener('click',   () => step('pitch', +1));
+
+function loadBrowserVoices() {
+    let all  = synth.getVoices();
+    let list = all.filter(v => v.name.toLowerCase().includes('google'));
+    if (!list.length) list = all;
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    list.forEach((v, i) => {
+        const o = document.createElement('option');
+        o.value = i; o.textContent = v.name + ' (' + v.lang + ')';
+        sel.appendChild(o);
+    });
+    window._ttsVoices = list;
+}
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadBrowserVoices;
+loadBrowserVoices();
+
+function browserSpeak(text) {
+    synth.cancel();
+    const utt   = new SpeechSynthesisUtterance(text);
+    const idx   = document.getElementById('voiceSelect').value;
+    utt.voice   = window._ttsVoices?.[idx];
+    utt.rate    = params.rate.val;
+    utt.pitch   = params.pitch.val;
+    utt.onstart = () => { setStatus('SPEAKING...', true); setBusy(true); };
+    utt.onend   = () => { setStatus('FINISHED');           setBusy(false); };
+    synth.speak(utt);
+}
+
+/* ── SHARED ── */
+function setStatus(msg, active=false, isError=false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = 'status' + (isError ? ' error' : active ? ' active' : '');
+}
+function setBusy(busy) {
+    document.getElementById('speakBtn').disabled = busy;
+    document.getElementById('stopBtn').disabled  = !busy;
+    busy ? startBlink() : (stopBlink(), ledOn());
+}
+
+document.getElementById('speakBtn').addEventListener('click', () => {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) return;
+    currentMode === 'google' ? googleSpeak(text) : browserSpeak(text);
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('textInput').value = ''; updateCharCount();
+});
+document.getElementById('stopBtn').addEventListener('click', () => {
+    currentMode === 'google' ? document.getElementById('audioPlayer').pause() : synth.cancel();
+    setBusy(false); setStatus('STOPPED');
+});
+
+/* ── SETUP / DISCLAIMER ── */
+function toggleSetup()  { document.getElementById('setup-guide-overlay').classList.toggle('open'); }
+function closeSetup()   { document.getElementById('setup-guide-overlay').classList.remove('open'); }
+
+document.getElementById('disc-checkbox').addEventListener('change', function() {
+    const btn = document.getElementById('disc-accept-btn');
+    btn.classList.toggle('ready', this.checked);
+    btn.textContent = this.checked ? '▶ I Agree — Continue' : 'Tick the box above to continue';
+});
+document.getElementById('disc-accept-btn').addEventListener('click', function() {
+    if (!this.classList.contains('ready')) return;
+    localStorage.setItem('dpaul_tts_disclaimer', '1');
+    document.getElementById('disclaimer-overlay').classList.add('hidden');
+});
+if (!localStorage.getItem('dpaul_tts_disclaimer')) {
+    document.getElementById('disclaimer-overlay').classList.remove('hidden');
+}
+
+/* ── IOS KEEP-ALIVE ── */
+setInterval(() => { if (synth.speaking && synth.paused) synth.resume(); }, 5000);
+</script>
+</body>
+</html>
