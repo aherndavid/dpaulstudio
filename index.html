@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
     <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-      || window.innerWidth <= 768) {
-    window.location.replace('m/index.html');
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+    // Find the current filename (e.g., 'design.html')
+    var path = window.location.pathname.split("/").pop();
+    // If we're at the root, default to index.html
+    if (path === "") path = "index.html";
+    // Send them to the exact same page but inside the /m/ folder
+    window.location.replace('m/' + path);
   }
 </script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
