@@ -17,16 +17,15 @@
         * { margin: 0; padding: 0; box-sizing: border-box; touch-action: none; }
 
         body {
-            background: transparent; /* Changed to blend with main page */
+            background: #000;
             font-family: 'Courier New', Courier, monospace;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
         }
 
+        /* ── THE CHASSIS ── */
         .synth-chassis {
             background: var(--bg);
             width: 95%;
@@ -36,9 +35,8 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Tighter gap to fit the arpeggiator controls */
+            gap: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            margin: auto;
         }
 
         .synth-header {
@@ -52,24 +50,117 @@
         .synth-title { color: var(--orange); font-size: 1.4rem; letter-spacing: 3px; font-weight: bold; }
         .synth-ver { color: #444; font-size: 0.7rem; text-transform: uppercase; }
 
-        .visualizer { width: 100%; height: 70px; background: #000; border: 1px solid #1a1a1a; display: block; }
-        .controls-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .control-section { background: var(--panel); padding: 15px; border: 1px solid #222; border-radius: 6px; }
-        .section-label { color: #555; font-size: 0.65rem; text-align: center; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; }
+        .visualizer {
+            width: 100%;
+            height: 70px;
+            background: #000;
+            border: 1px solid #1a1a1a;
+            display: block;
+        }
+
+        /* ── CONTROLS ── */
+        .controls-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .control-section {
+            background: var(--panel);
+            padding: 15px;
+            border: 1px solid #222;
+            border-radius: 6px;
+        }
+
+        .section-label {
+            color: #555;
+            font-size: 0.65rem;
+            text-align: center;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
         .knob-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px; }
+
         .knob-container { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .knob { width: 38px; height: 38px; background: radial-gradient(circle at 30% 30%, #333, #000); border-radius: 50%; border: 2px solid #222; position: relative; cursor: ns-resize; }
-        .knob::after { content: ''; position: absolute; top: 5px; left: 50%; width: 2px; height: 12px; background: var(--orange); transform: translateX(-50%); }
+
+        .knob {
+            width: 38px; height: 38px;
+            background: radial-gradient(circle at 30% 30%, #333, #000);
+            border-radius: 50%;
+            border: 2px solid #222;
+            position: relative;
+            cursor: ns-resize;
+        }
+
+        .knob::after {
+            content: ''; position: absolute; top: 5px; left: 50%;
+            width: 2px; height: 12px; background: var(--orange);
+            transform: translateX(-50%);
+        }
+
         .knob-label { color: #666; font-size: 0.6rem; text-transform: uppercase; }
 
-        .wave-btn, .toggle-btn { background: #1a1a1a; border: 1px solid #333; color: #666; padding: 6px 12px; font-size: 0.7rem; cursor: pointer; font-family: inherit; }
-        .wave-btn.active, .toggle-btn.active { color: #fff; background: var(--orange); border-color: var(--orange); }
-        
-        .keyboard { display: flex; width: 100%; height: 120px; background: #000; padding: 0; position: relative; border-radius: 4px; overflow: hidden; border: 2px solid #000; }
-        .key.white { flex: 1; background: var(--white-key); border-right: 1px solid #bbb; position: relative; z-index: 1; border-radius: 0 0 4px 4px; }
-        .key.black { position: absolute; background: var(--black-key); width: 7%; height: 60%; z-index: 10; border-radius: 0 0 3px 3px; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); outline: 1px solid #333; }
+        .waveform-selector { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; }
+
+        .wave-btn, .toggle-btn {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #666;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .wave-btn.active, .toggle-btn.active {
+            color: #fff;
+            background: var(--orange);
+            border-color: var(--orange);
+        }
+
+        /* ── KEYBOARD ── */
+        .keyboard {
+            display: flex;
+            width: 100%;
+            height: 120px;
+            background: #000;
+            padding: 0;
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 2px solid #000;
+        }
+
+        .key.white {
+            flex: 1;
+            background: var(--white-key);
+            border-right: 1px solid #bbb;
+            position: relative;
+            z-index: 1;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .key.black {
+            position: absolute;
+            background: var(--black-key);
+            width: 7%;
+            height: 60%;
+            z-index: 10;
+            border-radius: 0 0 3px 3px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            outline: 1px solid #333;
+        }
+
         .key.playing { background: var(--orange) !important; box-shadow: inset 0 0 20px rgba(0,0,0,0.3); }
-        .arp-toggle-row { display: flex; justify-content: center; margin-bottom: 10px; }
+
+        /* ARP toggle row */
+        .arp-toggle-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -79,11 +170,14 @@
         <div class="synth-title">DPAUL MKII</div>
         <div class="synth-ver">Quad-Voice Arpeggio Engine</div>
     </div>
+
     <canvas id="scope" class="visualizer"></canvas>
+
     <div class="controls-panel">
+
         <div class="control-section">
             <div class="section-label">Voice Engine</div>
-            <div class="waveform-selector" style="display: flex; gap: 6px; justify-content: center; margin-bottom: 10px;">
+            <div class="waveform-selector">
                 <button class="wave-btn active" onclick="setWave('sawtooth', this)">SAW</button>
                 <button class="wave-btn" onclick="setWave('square', this)">SQR</button>
             </div>
@@ -94,6 +188,7 @@
                 </div>
             </div>
         </div>
+
         <div class="control-section">
             <div class="section-label">Arpeggiator</div>
             <div class="arp-toggle-row">
@@ -110,6 +205,7 @@
                 </div>
             </div>
         </div>
+
         <div class="control-section">
             <div class="section-label">Filter</div>
             <div class="knob-grid">
@@ -123,6 +219,7 @@
                 </div>
             </div>
         </div>
+
         <div class="control-section">
             <div class="section-label">Envelope</div>
             <div class="knob-grid">
@@ -136,12 +233,227 @@
                 </div>
             </div>
         </div>
+
     </div>
+
     <div class="keyboard" id="keyboard"></div>
 </div>
 
 <script>
-    // Existing Audio engine and Knob logic remains unchanged...
+    // ── Audio engine ──────────────────────────────────────────────────
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const masterGain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+    masterGain.connect(audioCtx.destination);
+    filter.connect(masterGain);
+    masterGain.gain.value = 0.3;
+    filter.type = 'lowpass';
+    filter.frequency.value = 2000;
+
+    let currentWave = 'sawtooth';
+    let attackTime = 0.05;
+    let releaseTime = 0.4;
+    let spread = 2;
+    let isArpActive = false;
+    let tempo = 120;
+    let arpRange = 1;
+    let activeNotes = [];
+    let currentArpStep = 0;
+    let arpTimer = null;
+    let activeVoices = new Map();
+
+    // ── KEYBOARD GENERATION (MKI absolute-position approach) ──────────
+    const keyboard = document.getElementById('keyboard');
+    const whiteNoteFreqs = [];
+    const allNotes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+    // 2 octaves from C3: 15 white keys
+    const whiteIntervals = [0,2,4,5,7,9,11,12,14,16,17,19,21,23,24];
+    const blackIntervals  = [1,3,6,8,10,13,15,18,20,22];
+    // Black key positions as fraction of white key width from left edge
+    // (slot after white key index 0,1,3,4,5,7,8,10,11,12)
+    const blackAfterWhite = [0,1,3,4,5,7,8,10,11,12];
+
+    const baseFreq = 130.81; // C3
+
+    // White keys
+    whiteIntervals.forEach((semitone, i) => {
+        const key = document.createElement('div');
+        key.className = 'key white';
+        const freq = baseFreq * Math.pow(2, semitone / 12);
+        whiteNoteFreqs.push(freq);
+        setupKeyListeners(key, freq);
+        keyboard.appendChild(key);
+    });
+
+    // Black keys — positioned after white key render
+    const whiteCount = whiteIntervals.length; // 15
+    const whiteKeyWidthPct = 100 / whiteCount;
+
+    blackAfterWhite.forEach((afterIdx, i) => {
+        const key = document.createElement('div');
+        key.className = 'key black';
+        key.style.left = `${(whiteKeyWidthPct * (afterIdx + 1)) - 3.5}%`;
+        const freq = baseFreq * Math.pow(2, blackIntervals[i] / 12);
+        setupKeyListeners(key, freq);
+        keyboard.appendChild(key);
+    });
+
+    function setupKeyListeners(el, freq) {
+        const start = (e) => { e.preventDefault(); handleNoteOn(freq, el); };
+        const end   = (e) => { e.preventDefault(); handleNoteOff(freq, el); };
+        el.addEventListener('mousedown',  start);
+        el.addEventListener('touchstart', start, { passive: false });
+        el.addEventListener('mouseup',    end);
+        el.addEventListener('touchend',   end);
+        el.addEventListener('mouseleave', end);
+    }
+
+    function handleNoteOn(freq, key) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (!activeNotes.includes(freq)) activeNotes.push(freq);
+        if (!isArpActive) { playVoice(freq); }
+        else if (!arpTimer) { startArp(); }
+        key.classList.add('playing');
+    }
+
+    function handleNoteOff(freq, key) {
+        activeNotes = activeNotes.filter(f => f !== freq);
+        if (!isArpActive) stopVoice(freq);
+        if (activeNotes.length === 0 && arpTimer) stopArp();
+        key.classList.remove('playing');
+    }
+
+    function playVoice(freq) {
+        if (activeVoices.has(freq)) return;
+        const voiceGain = audioCtx.createGain();
+        voiceGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        voiceGain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + attackTime);
+        voiceGain.connect(filter);
+        const oscs = [];
+        [0, -spread, spread, spread / 2].forEach(d => {
+            const osc = audioCtx.createOscillator();
+            osc.type = currentWave;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            osc.detune.setValueAtTime(d, audioCtx.currentTime);
+            osc.connect(voiceGain);
+            osc.start();
+            oscs.push(osc);
+        });
+        activeVoices.set(freq, { oscs, voiceGain });
+    }
+
+    function stopVoice(freq) {
+        if (!activeVoices.has(freq)) return;
+        const { oscs, voiceGain } = activeVoices.get(freq);
+        voiceGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        voiceGain.gain.setValueAtTime(voiceGain.gain.value, audioCtx.currentTime);
+        voiceGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + releaseTime);
+        oscs.forEach(o => o.stop(audioCtx.currentTime + releaseTime + 0.1));
+        activeVoices.delete(freq);
+    }
+
+    function toggleArp() {
+        isArpActive = !isArpActive;
+        const btn = document.getElementById('arpToggle');
+        btn.textContent = isArpActive ? 'ARP ON' : 'ARP OFF';
+        btn.classList.toggle('active');
+        if (!isArpActive) { stopArp(); activeVoices.forEach((_, f) => stopVoice(f)); }
+    }
+
+    function startArp() { currentArpStep = 0; tickArp(); }
+
+    function stopArp() {
+        clearTimeout(arpTimer);
+        arpTimer = null;
+        activeVoices.forEach((_, f) => stopVoice(f));
+    }
+
+    function tickArp() {
+        if (activeNotes.length === 0) { arpTimer = setTimeout(tickArp, (60 / tempo) * 250); return; }
+        activeVoices.forEach((_, f) => stopVoice(f));
+        const sorted = [...activeNotes].sort((a, b) => a - b);
+        const note   = sorted[currentArpStep % sorted.length];
+        const shift  = Math.floor(currentArpStep / sorted.length) % arpRange;
+        const freq   = note * Math.pow(2, shift);
+        playVoice(freq);
+        const step = (60 / tempo) * 500;
+        setTimeout(() => stopVoice(freq), step * 0.8);
+        currentArpStep++;
+        arpTimer = setTimeout(tickArp, step);
+    }
+
+    function setWave(wave, btn) {
+        currentWave = wave;
+        document.querySelectorAll('.wave-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // ── Knobs ────────────────────────────────────────────────────────
+    function setupKnob(id, min, max, initial, callback) {
+        const knob = document.getElementById(id);
+        let val = initial;
+        const move = (e) => {
+            e.preventDefault();
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            if (!knob.startY) knob.startY = clientY;
+            let delta = knob.startY - clientY;
+            val = Math.max(-135, Math.min(135, val + delta));
+            knob.style.transform = `rotate(${val}deg)`;
+            callback(min + ((val + 135) / 270) * (max - min));
+            knob.startY = clientY;
+        };
+        const stop = () => {
+            knob.startY = null;
+            window.removeEventListener('mousemove', move);
+            window.removeEventListener('touchmove', move);
+        };
+        knob.addEventListener('mousedown', (e) => {
+            knob.startY = e.clientY;
+            window.addEventListener('mousemove', move);
+            window.addEventListener('mouseup', stop);
+        });
+        knob.addEventListener('touchstart', (e) => {
+            knob.startY = e.touches[0].clientY;
+            window.addEventListener('touchmove', move, { passive: false });
+            window.addEventListener('touchend', stop);
+        });
+        knob.style.transform = `rotate(${val}deg)`;
+    }
+
+    setupKnob('cutoffKnob', 100, 8000,  45,   v => filter.frequency.value = v);
+    setupKnob('resKnob',     0.1,   25, -45,   v => filter.Q.value = v);
+    setupKnob('attackKnob',  0.01,   1, -100,  v => attackTime = v);
+    setupKnob('releaseKnob', 0.1,    2,  -30,  v => releaseTime = v);
+    setupKnob('spreadKnob',  0,     50, -100,  v => spread = v);
+    setupKnob('tempoKnob',   60,   240,    0,  v => tempo = v);
+    setupKnob('octaveKnob',  1,      4, -120,  v => arpRange = Math.round(v));
+
+    // ── Visualizer ───────────────────────────────────────────────────
+    const canvas    = document.getElementById('scope');
+    const canvasCtx = canvas.getContext('2d');
+    const analyser  = audioCtx.createAnalyser();
+    masterGain.connect(analyser);
+
+    function draw() {
+        requestAnimationFrame(draw);
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteTimeDomainData(data);
+        canvasCtx.fillStyle = '#000';
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+        canvasCtx.lineWidth = 2;
+        canvasCtx.strokeStyle = '#FF6600';
+        canvasCtx.beginPath();
+        const sliceWidth = canvas.width / data.length;
+        let x = 0;
+        for (let i = 0; i < data.length; i++) {
+            const y = (data[i] / 128.0) * canvas.height / 2;
+            if (i === 0) canvasCtx.moveTo(x, y); else canvasCtx.lineTo(x, y);
+            x += sliceWidth;
+        }
+        canvasCtx.stroke();
+    }
+    draw();
 </script>
 </body>
 </html>
