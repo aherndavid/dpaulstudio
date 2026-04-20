@@ -24,19 +24,13 @@
   #home-btn:hover { background: #22223a; color: #ccccff; border-color: #aaaaff; }
 
   #inspect-btn { color: #888; border-color: #444; transition: all 0.15s; }
-
+  
   #import-btn { color: #66bbff; border-color: #336688; transition: all 0.15s; }
   #import-btn:hover { background: #1a2a33; color: #99ddff; border-color: #66aacc; }
   #imported-filename { font-size: 11px; color: #557799; font-family: 'Courier New', monospace; letter-spacing: 1px; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
 
   #export-btn { color: #66dd88; border-color: #336644; transition: all 0.15s; }
   #export-btn:hover { background: #1a2a1e; color: #99ffaa; border-color: #66aa77; }
-
-  #screenshot-btn { color: #ff88cc; border-color: #882255; transition: all 0.15s; position: relative; }
-  #screenshot-btn:hover { background: #2a1020; color: #ffaade; border-color: #cc4488; }
-  #screenshot-btn.capturing { color: #ff88cc; border-color: #ff88cc; background: rgba(255,136,204,0.1); box-shadow: 0 0 8px rgba(255,136,204,0.3); animation: pulse-screenshot 0.8s ease-in-out infinite; }
-  @keyframes pulse-screenshot { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
-  #screenshot-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
   #fnr-btn { color: #ddbb66; border-color: #665533; transition: all 0.15s; }
   #fnr-btn:hover { background: #2a2210; color: #ffdd88; border-color: #aa8844; }
@@ -60,6 +54,7 @@
   #debug-badge.visible { opacity: 1; }
   #debug-badge.warn { background: #ffaa00; color: #000; }
 
+  /* Selection highlight button */
   #sel-hl-btn { color: #bb88ff; border-color: #664499; transition: all 0.15s; }
   #sel-hl-btn:hover { background: #1e1030; color: #ddaaff; border-color: #9966cc; }
   #sel-hl-btn.sel-hl-on { color: #cc88ff; border-color: #cc88ff; background: rgba(180,100,255,0.10); box-shadow: 0 0 6px rgba(180,100,255,0.3); }
@@ -76,88 +71,318 @@
   #left-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
   #fnr-bar {
-    display: none; flex-direction: column; gap: 0; background: #181818;
-    border-bottom: 1px solid #2a2a2a; flex-shrink: 0; overflow: hidden;
-    transition: max-height 0.2s ease; max-height: 0;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    background: #181818;
+    border-bottom: 1px solid #2a2a2a;
+    flex-shrink: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease;
+    max-height: 0;
   }
-  #fnr-bar.open { display: flex; max-height: 200px; }
+  #fnr-bar.open {
+    display: flex;
+    max-height: 200px;
+  }
 
-  .fnr-row { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-bottom: 1px solid #1e1e1e; }
+  .fnr-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-bottom: 1px solid #1e1e1e;
+  }
   .fnr-row:last-child { border-bottom: none; }
-  .fnr-label { font-size: 10px; color: #555; letter-spacing: 2px; text-transform: uppercase; min-width: 52px; flex-shrink: 0; }
-  .fnr-input { flex: 1; background: #111; border: 1px solid #2a2a2a; color: #ddd; font-family: 'Courier New', monospace; font-size: 12px; padding: 5px 8px; border-radius: 4px; outline: none; transition: border-color 0.15s; }
+
+  .fnr-label {
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    min-width: 52px;
+    flex-shrink: 0;
+  }
+
+  .fnr-input {
+    flex: 1;
+    background: #111;
+    border: 1px solid #2a2a2a;
+    color: #ddd;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
   .fnr-input:focus { border-color: #ffdd66; }
   .fnr-input.fnr-no-match { border-color: #ff4444; color: #ff7777; }
   .fnr-input.fnr-has-match { border-color: #66dd88; }
-  .fnr-btn { font-size: 11px; padding: 4px 10px; border: 1px solid #333; background: transparent; color: #888; border-radius: 4px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 0.5px; white-space: nowrap; transition: all 0.12s; flex-shrink: 0; }
+
+  .fnr-btn {
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid #333;
+    background: transparent;
+    color: #888;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transition: all 0.12s;
+    flex-shrink: 0;
+  }
   .fnr-btn:hover:not(:disabled) { background: #2a2a2a; color: #ccc; }
   .fnr-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .fnr-btn.fnr-primary { border-color: #ffdd66; color: #ffdd66; }
   .fnr-btn.fnr-primary:hover:not(:disabled) { background: #ffdd66; color: #000; }
   .fnr-btn.fnr-danger { border-color: #ff6644; color: #ff6644; }
   .fnr-btn.fnr-danger:hover:not(:disabled) { background: #ff6644; color: #000; }
-  .fnr-match-count { font-size: 11px; color: #555; font-family: 'Courier New', monospace; min-width: 70px; text-align: right; flex-shrink: 0; }
+
+  .fnr-match-count {
+    font-size: 11px;
+    color: #555;
+    font-family: 'Courier New', monospace;
+    min-width: 70px;
+    text-align: right;
+    flex-shrink: 0;
+  }
   .fnr-match-count.has-matches { color: #66dd88; }
   .fnr-match-count.no-matches  { color: #ff4444; }
-  .fnr-opts { display: flex; align-items: center; gap: 8px; }
-  .fnr-opt-label { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; user-select: none; transition: color 0.12s; }
+
+  .fnr-opts {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fnr-opt-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.12s;
+  }
   .fnr-opt-label:hover { color: #aaa; }
   .fnr-opt-label input[type=checkbox] { accent-color: #ffdd66; cursor: pointer; }
   .fnr-opt-label.active { color: #ffdd66; }
 
-  #editor-wrapper { flex: 1; display: flex; overflow: hidden; position: relative; min-height: 0; }
+  #editor-wrapper {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+  }
 
-  #line-numbers { width: 44px; flex-shrink: 0; background: #141414; border-right: 1px solid #252525; padding: 14px 0; overflow: hidden; user-select: none; position: relative; z-index: 2; }
-  #line-numbers-inner { display: flex; flex-direction: column; align-items: flex-end; padding-right: 8px; }
-  .line-num { display: block; color: #3a3a3a; font-size: 13px; font-family: 'Courier New', monospace; line-height: 1.6; transition: color 0.1s; white-space: nowrap; }
+  #line-numbers {
+    width: 44px;
+    flex-shrink: 0;
+    background: #141414;
+    border-right: 1px solid #252525;
+    padding: 14px 0;
+    overflow: hidden;
+    user-select: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  #line-numbers-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 8px;
+  }
+
+  .line-num {
+    display: block;
+    color: #3a3a3a;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    transition: color 0.1s;
+    white-space: nowrap;
+  }
   .line-num.active { color: #ff8800; }
   .line-num.highlighted { color: #cc6600; }
   .line-num.has-error { color: #ff4444 !important; }
   .line-num.has-warning { color: #ffaa00 !important; }
   .line-num.fnr-match { color: #ffdd66 !important; }
 
-  #editor { flex: 1; resize: none; border: none; outline: none; padding: 14px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; color: #ddd; background: #1a1a1a; tab-size: 2; overflow-y: auto; overflow-x: auto; white-space: pre; }
+  #editor {
+    flex: 1;
+    resize: none;
+    border: none;
+    outline: none;
+    padding: 14px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #ddd;
+    background: #1a1a1a;
+    tab-size: 2;
+    overflow-y: auto;
+    overflow-x: auto;
+    white-space: pre;
+  }
   #editor::placeholder { color: #444; }
 
-  #highlight-overlay { position: absolute; left: 44px; right: 0; background: rgba(255, 136, 0, 0.18); border-left: 2px solid #ff8800; pointer-events: none; opacity: 0; transition: opacity 0.1s; z-index: 10; }
+  #highlight-overlay {
+    position: absolute;
+    left: 44px; right: 0;
+    background: rgba(255, 136, 0, 0.18);
+    border-left: 2px solid #ff8800;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    z-index: 10;
+  }
   #highlight-overlay.visible { opacity: 1; }
-  #error-highlight-overlay { position: absolute; left: 44px; right: 0; background: rgba(255, 68, 68, 0.12); border-left: 2px solid #ff4444; pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 9; }
+
+  #error-highlight-overlay {
+    position: absolute;
+    left: 44px; right: 0;
+    background: rgba(255, 68, 68, 0.12);
+    border-left: 2px solid #ff4444;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 9;
+  }
   #error-highlight-overlay.visible { opacity: 1; }
-  #fnr-highlight-overlay { position: absolute; left: 44px; right: 0; background: rgba(255, 221, 102, 0.14); border-left: 2px solid #ffdd66; pointer-events: none; opacity: 0; transition: opacity 0.1s; z-index: 8; }
+
+  #fnr-highlight-overlay {
+    position: absolute;
+    left: 44px; right: 0;
+    background: rgba(255, 221, 102, 0.14);
+    border-left: 2px solid #ffdd66;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    z-index: 8;
+  }
   #fnr-highlight-overlay.visible { opacity: 1; }
 
-  #line-badge { position: absolute; left: 50px; background: #ff8800; color: #000; font-size: 10px; font-family: 'Courier New', monospace; padding: 1px 6px; border-radius: 3px; pointer-events: none; opacity: 0; transition: opacity 0.1s; z-index: 11; white-space: nowrap; }
+  #line-badge {
+    position: absolute;
+    left: 50px;
+    background: #ff8800;
+    color: #000;
+    font-size: 10px;
+    font-family: 'Courier New', monospace;
+    padding: 1px 6px;
+    border-radius: 3px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    z-index: 11;
+    white-space: nowrap;
+  }
   #line-badge.visible { opacity: 1; }
 
-  #gutter-cursor { position: absolute; left: 0; width: 44px; background: rgba(255,136,0,0.06); border-right: 2px solid rgba(255,136,0,0.3); pointer-events: none; z-index: 3; transition: top 0.05s; }
+  #gutter-cursor {
+    position: absolute;
+    left: 0;
+    width: 44px;
+    background: rgba(255,136,0,0.06);
+    border-right: 2px solid rgba(255,136,0,0.3);
+    pointer-events: none;
+    z-index: 3;
+    transition: top 0.05s;
+  }
 
-  #debug-panel { height: 0; overflow: hidden; border-top: 0 solid #333; background: #141414; display: flex; flex-direction: column; transition: height 0.2s ease, border-top-width 0.2s ease; flex-shrink: 0; }
-  #debug-panel.open { height: 200px; border-top-width: 1px; }
-  #debug-header { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-bottom: 1px solid #1e1e1e; background: #1a1a1a; flex-shrink: 0; }
-  #debug-header-title { font-size: 11px; color: #555; letter-spacing: 2px; text-transform: uppercase; flex: 1; }
-  #debug-summary { font-size: 11px; font-family: 'Courier New', monospace; color: #555; letter-spacing: 1px; }
+  #debug-panel {
+    height: 0;
+    overflow: hidden;
+    border-top: 0 solid #333;
+    background: #141414;
+    display: flex;
+    flex-direction: column;
+    transition: height 0.2s ease, border-top-width 0.2s ease;
+    flex-shrink: 0;
+  }
+  #debug-panel.open {
+    height: 200px;
+    border-top-width: 1px;
+  }
+
+  #debug-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    border-bottom: 1px solid #1e1e1e;
+    background: #1a1a1a;
+    flex-shrink: 0;
+  }
+  #debug-header-title {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    flex: 1;
+  }
+  #debug-summary {
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    color: #555;
+    letter-spacing: 1px;
+  }
   #debug-summary.has-errors { color: #ff4444; }
   #debug-summary.has-warnings { color: #ffaa00; }
   #debug-summary.clean { color: #44aa66; }
-  #debug-filter-bar { display: flex; gap: 6px; padding: 0 12px; }
-  .dfbtn { font-size: 10px; padding: 2px 8px; border: 1px solid #2a2a2a; background: transparent; color: #555; border-radius: 4px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; transition: all 0.1s; }
+
+  #debug-filter-bar {
+    display: flex;
+    gap: 6px;
+    padding: 0 12px;
+  }
+  .dfbtn {
+    font-size: 10px; padding: 2px 8px; border: 1px solid #2a2a2a;
+    background: transparent; color: #555; border-radius: 4px;
+    cursor: pointer; font-family: 'Courier New', monospace;
+    letter-spacing: 1px; text-transform: uppercase; transition: all 0.1s;
+  }
   .dfbtn.active { background: #2a2a2a; color: #ccc; border-color: #444; }
   .dfbtn.error-f.active { color: #ff4444; border-color: #ff4444; background: rgba(255,68,68,0.08); }
   .dfbtn.warn-f.active  { color: #ffaa00; border-color: #ffaa00; background: rgba(255,170,0,0.08); }
-  #debug-scroll { flex: 1; overflow-y: auto; padding: 4px 0; }
+
+  #debug-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
   #debug-scroll::-webkit-scrollbar { width: 4px; }
   #debug-scroll::-webkit-scrollbar-track { background: transparent; }
   #debug-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
-  .debug-item { display: flex; align-items: flex-start; gap: 8px; padding: 5px 12px; cursor: pointer; border-bottom: 1px solid #1a1a1a; transition: background 0.1s; }
+
+  .debug-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #1a1a1a;
+    transition: background 0.1s;
+  }
   .debug-item:hover { background: #1e1e1e; }
   .debug-item.active-hint { background: rgba(255,136,0,0.07); }
+
   .debug-icon { font-size: 11px; width: 14px; flex-shrink: 0; margin-top: 1px; font-style: normal; }
   .err-icon  { color: #ff4444; }
   .warn-icon { color: #ffaa00; }
+
   .debug-line-num { font-size: 11px; color: #555; font-family: 'Courier New', monospace; min-width: 38px; flex-shrink: 0; margin-top: 1px; }
   .debug-rule { font-size: 10px; color: #444; font-family: 'Courier New', monospace; min-width: 140px; flex-shrink: 0; margin-top: 2px; letter-spacing: 0.5px; }
   .debug-msg { font-size: 11px; color: #aaa; font-family: 'Courier New', monospace; flex: 1; line-height: 1.5; }
   .debug-msg em { font-style: normal; color: #ff8800; font-family: 'Courier New', monospace; }
+
   #debug-empty { padding: 20px 12px; font-size: 12px; color: #3a3a3a; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
   #debug-empty.clean { color: #44aa66; }
 
@@ -174,7 +399,11 @@
   .dev-btn.active { background: #333; color: #fff; border-color: #666; }
 
   .zoom-sep { width: 1px; height: 18px; background: #444; margin: 0 2px; }
-  #zoom-out-btn, #zoom-in-btn, #zoom-reset-btn { font-size: 17px; padding: 4px 10px; border: 1px solid #444; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; line-height: 1; transition: background 0.15s, color 0.15s; }
+  #zoom-out-btn, #zoom-in-btn, #zoom-reset-btn {
+    font-size: 17px; padding: 4px 10px; border: 1px solid #444; background: transparent;
+    color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace;
+    line-height: 1; transition: background 0.15s, color 0.15s;
+  }
   #zoom-out-btn:hover, #zoom-in-btn:hover, #zoom-reset-btn:hover { background: #2a2a2a; color: #ccc; }
   #zoom-level-display { font-size: 13px; color: #666; font-family: 'Courier New', monospace; min-width: 38px; text-align: center; letter-spacing: 1px; }
 
@@ -212,10 +441,18 @@
   #export-box h3 { font-family: 'Courier New', monospace; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: #ccc; margin-bottom: 20px; }
   .export-filename-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
   .export-filename-row label { font-size: 11px; color: #555; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
-  #export-filename { flex: 1; background: #111; border: 1px solid #2a2a2a; color: #ddd; font-family: 'Courier New', monospace; font-size: 13px; padding: 6px 10px; border-radius: 4px; outline: none; transition: border-color 0.15s; }
+  #export-filename {
+    flex: 1; background: #111; border: 1px solid #2a2a2a; color: #ddd;
+    font-family: 'Courier New', monospace; font-size: 13px;
+    padding: 6px 10px; border-radius: 4px; outline: none; transition: border-color 0.15s;
+  }
   #export-filename:focus { border-color: #66dd88; }
   .export-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-  .export-opt { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #141414; border: 1px solid #222; border-radius: 6px; cursor: pointer; transition: border-color 0.12s, background 0.12s; }
+  .export-opt {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; background: #141414; border: 1px solid #222; border-radius: 6px;
+    cursor: pointer; transition: border-color 0.12s, background 0.12s;
+  }
   .export-opt:hover { background: #1a1a1a; border-color: #333; }
   .export-opt input[type=radio] { accent-color: #66dd88; cursor: pointer; }
   .export-opt-info { flex: 1; }
@@ -228,60 +465,77 @@
   .export-cancel-btn:hover { background: #333; color: #ccc; }
   #export-flash { font-size: 11px; color: #66dd88; font-family: 'Courier New', monospace; letter-spacing: 1px; text-align: center; height: 16px; margin-bottom: 10px; transition: opacity 0.3s; }
 
-  /* ── Screenshot overlay ─────────────────────────────────────────────────── */
-  #screenshot-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }
-  #screenshot-overlay.visible { display: flex; }
-  #screenshot-box { background: #1e1e1e; border: 1px solid #444; border-radius: 10px; padding: 28px 32px; width: 460px; max-width: 94vw; }
-  #screenshot-box h3 { font-family: 'Courier New', monospace; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: #ccc; margin-bottom: 20px; }
-  .screenshot-filename-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
-  .screenshot-filename-row label { font-size: 11px; color: #555; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
-  #screenshot-filename { flex: 1; background: #111; border: 1px solid #2a2a2a; color: #ddd; font-family: 'Courier New', monospace; font-size: 13px; padding: 6px 10px; border-radius: 4px; outline: none; transition: border-color 0.15s; }
-  #screenshot-filename:focus { border-color: #ff88cc; }
-  .screenshot-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-  .screenshot-opt { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #141414; border: 1px solid #222; border-radius: 6px; cursor: pointer; transition: border-color 0.12s, background 0.12s; }
-  .screenshot-opt:hover { background: #1a1a1a; border-color: #333; }
-  .screenshot-opt input[type=radio] { accent-color: #ff88cc; cursor: pointer; }
-  .screenshot-opt-info { flex: 1; }
-  .screenshot-opt-title { font-size: 13px; color: #ccc; font-family: 'Courier New', monospace; }
-  .screenshot-opt-desc { font-size: 10px; color: #555; font-family: 'Courier New', monospace; margin-top: 2px; letter-spacing: 0.5px; }
-  #screenshot-note { font-size: 11px; color: #664455; font-family: 'Courier New', monospace; letter-spacing: 0.5px; line-height: 1.5; margin-bottom: 18px; padding: 8px 12px; background: #111; border: 1px solid #332233; border-radius: 4px; }
-  #screenshot-note strong { color: #ff88cc; }
-  .screenshot-actions { display: flex; gap: 10px; justify-content: flex-end; }
-  .screenshot-do-btn { font-size: 13px; padding: 7px 22px; border: 1px solid #ff88cc; background: transparent; color: #ff88cc; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; transition: all 0.12s; }
-  .screenshot-do-btn:hover { background: #ff88cc; color: #000; }
-  .screenshot-cancel-btn { font-size: 13px; padding: 7px 16px; border: 1px solid #555; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; }
-  .screenshot-cancel-btn:hover { background: #333; color: #ccc; }
-
   #preview-area { flex: 1; display: flex; align-items: center; justify-content: center; overflow: auto; background: #1a1a1a; position: relative; }
   #preview-area.device-mode { padding: 20px; background: #111; }
   #preview-area.inspecting { cursor: crosshair; }
 
-  #preview-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; z-index: 20; gap: 14px; opacity: 1; transition: opacity 0.3s ease; }
+  #preview-empty {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none; z-index: 20;
+    gap: 14px;
+    opacity: 1; transition: opacity 0.3s ease;
+  }
   #preview-empty.hidden { opacity: 0; }
-  #preview-empty-title { font-family: 'Courier New', monospace; font-size: 22px; letter-spacing: 4px; text-transform: uppercase; color: #2e2e2e; }
+  #preview-empty-title {
+    font-family: 'Courier New', monospace;
+    font-size: 22px; letter-spacing: 4px; text-transform: uppercase;
+    color: #2e2e2e;
+  }
   #preview-empty-title span { color: #ff8800; }
-  #preview-empty-sub { font-family: 'Courier New', monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #272727; }
+  #preview-empty-sub {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: #272727;
+  }
 
-  #zoom-wrapper { display: flex; align-items: flex-start; justify-content: center; transform-origin: top center; transition: transform 0.15s ease; width: 100%; height: 100%; }
+  #zoom-wrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transform-origin: top center;
+    transition: transform 0.15s ease;
+    width: 100%;
+    height: 100%;
+  }
 
   #preview { border: none; background: #fff; }
   #preview.desktop { width: 100%; height: 100%; }
   #preview.tablet  { width: 768px; height: 1024px; border: 6px solid #444; border-radius: 12px; flex-shrink: 0; }
   #preview.mobile  { width: 375px; height: 812px;  border: 6px solid #444; border-radius: 20px; flex-shrink: 0; }
 
-  #page-border { position: absolute; inset: 0; border: 2px solid #ff8800; border-radius: 3px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 5; box-shadow: inset 0 0 0 1px rgba(255,136,0,0.15), 0 0 20px rgba(255,136,0,0.08); }
+  #page-border {
+    position: absolute; inset: 0;
+    border: 2px solid #ff8800; border-radius: 3px;
+    pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 5;
+    box-shadow: inset 0 0 0 1px rgba(255,136,0,0.15), 0 0 20px rgba(255,136,0,0.08);
+  }
   #page-border.visible { opacity: 1; }
   #page-border::before, #page-border::after { content: ''; position: absolute; background: #ff8800; opacity: 0.4; }
   #page-border::before { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
   #page-border::after  { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
 
-  #size-badge-w, #size-badge-h { position: absolute; background: rgba(255,136,0,0.85); color: #000; font-size: 10px; font-family: 'Courier New', monospace; padding: 2px 6px; border-radius: 3px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 6; white-space: nowrap; }
+  #size-badge-w, #size-badge-h {
+    position: absolute; background: rgba(255,136,0,0.85); color: #000;
+    font-size: 10px; font-family: 'Courier New', monospace; padding: 2px 6px;
+    border-radius: 3px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 6; white-space: nowrap;
+  }
   #size-badge-w { bottom: 6px; left: 50%; transform: translateX(-50%); }
   #size-badge-h { top: 50%; right: 6px; transform: translateY(-50%) rotate(90deg); transform-origin: right center; }
   #size-badge-w.visible, #size-badge-h.visible { opacity: 1; }
 
-  #inspect-tip { position: fixed; background: #ff8800; color: #000; font-size: 11px; font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 4px; pointer-events: none; display: none; z-index: 9000; white-space: nowrap; }
-  #sel-hl-tip { position: fixed; background: #9944ee; color: #fff; font-size: 11px; font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 4px; pointer-events: none; display: none; z-index: 9000; white-space: nowrap; }
+  #inspect-tip {
+    position: fixed; background: #ff8800; color: #000; font-size: 11px;
+    font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 4px;
+    pointer-events: none; display: none; z-index: 9000; white-space: nowrap;
+  }
+
+  /* Selection highlight tip */
+  #sel-hl-tip {
+    position: fixed; background: #9944ee; color: #fff; font-size: 11px;
+    font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 4px;
+    pointer-events: none; display: none; z-index: 9000; white-space: nowrap;
+  }
 
   #about-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
   #about-overlay.visible { display: flex; }
@@ -293,19 +547,25 @@
   #about-close { font-size: 13px; padding: 6px 20px; border: 1px solid #555; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; }
   #about-close:hover { background: #333; color: #ccc; }
 
-  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #222; border: 1px solid #444; color: #ccc; font-size: 12px; font-family: 'Courier New', monospace; letter-spacing: 1px; padding: 8px 20px; border-radius: 6px; pointer-events: none; opacity: 0; z-index: 9999; transition: opacity 0.25s; }
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #222; border: 1px solid #444; color: #ccc;
+    font-size: 12px; font-family: 'Courier New', monospace; letter-spacing: 1px;
+    padding: 8px 20px; border-radius: 6px;
+    pointer-events: none; opacity: 0; z-index: 9999;
+    transition: opacity 0.25s;
+  }
   #toast.show { opacity: 1; }
   #toast.toast-success { border-color: #66dd88; color: #66dd88; }
   #toast.toast-replace { border-color: #ffdd66; color: #ffdd66; }
   #toast.toast-sel { border-color: #bb88ff; color: #bb88ff; }
-  #toast.toast-screenshot { border-color: #ff88cc; color: #ff88cc; }
 </style>
 </head>
 <body>
 <div id="app">
   <div id="top-toolbar">
     <span class="label">HTML Preview</span>
-    <span id="version-badge">v1.8</span>
+    <span id="version-badge">v1.7</span>
     <div class="sep"></div>
     <span id="font-label">Font</span>
     <input type="range" id="font-size-slider" min="10" max="24" value="13" step="1">
@@ -314,7 +574,6 @@
     <button class="tbtn" id="import-btn" title="Import an HTML file from disk">Import</button>
     <input type="file" id="import-file-input" accept=".html,.htm" style="display:none;">
     <button class="tbtn" id="export-btn" title="Export / download the current HTML">Export</button>
-    <button class="tbtn" id="screenshot-btn" title="Screenshot / open preview (Ctrl+Shift+S)">📷 Screenshot</button>
     <button class="tbtn" id="fnr-btn" title="Find &amp; Replace (Ctrl+H)">Find &amp; Replace</button>
     <button class="tbtn" id="sel-hl-btn" title="Highlight selected elements in preview (Ctrl+Q)">Sel Highlight</button>
     <button class="tbtn" id="inspect-btn" title="Click elements in preview to highlight source (Ctrl+I)">Inspect</button>
@@ -334,14 +593,22 @@
     <div id="left">
       <div id="editor-toolbar"><span>HTML input</span><span id="imported-filename"></span></div>
       <div id="left-body">
+
+        <!-- Find & Replace Bar -->
         <div id="fnr-bar">
           <div class="fnr-row">
             <span class="fnr-label">Find</span>
             <input class="fnr-input" id="fnr-find" type="text" placeholder="Search text or /regex/…" autocomplete="off" spellcheck="false">
             <div class="fnr-opts">
-              <label class="fnr-opt-label" id="fnr-case-label" title="Case sensitive"><input type="checkbox" id="fnr-case"> Aa</label>
-              <label class="fnr-opt-label" id="fnr-word-label" title="Whole word"><input type="checkbox" id="fnr-word"> W</label>
-              <label class="fnr-opt-label" id="fnr-regex-label" title="Regular expression"><input type="checkbox" id="fnr-regex"> .*</label>
+              <label class="fnr-opt-label" id="fnr-case-label" title="Case sensitive">
+                <input type="checkbox" id="fnr-case"> Aa
+              </label>
+              <label class="fnr-opt-label" id="fnr-word-label" title="Whole word">
+                <input type="checkbox" id="fnr-word"> W
+              </label>
+              <label class="fnr-opt-label" id="fnr-regex-label" title="Regular expression">
+                <input type="checkbox" id="fnr-regex"> .*
+              </label>
             </div>
             <span class="fnr-match-count" id="fnr-count">—</span>
             <button class="fnr-btn" id="fnr-prev-btn" title="Previous match (Shift+Enter)">&#8593;</button>
@@ -368,6 +635,7 @@
           <div id="line-badge"></div>
         </div>
 
+        <!-- Debug Panel -->
         <div id="debug-panel">
           <div id="debug-header">
             <span id="debug-header-title">&#128295; HTMLHint</span>
@@ -421,47 +689,6 @@
 <div id="sel-hl-tip"></div>
 <div id="toast"></div>
 
-<!-- Screenshot Overlay -->
-<div id="screenshot-overlay">
-  <div id="screenshot-box">
-    <h3>📷 Screenshot</h3>
-    <div class="screenshot-filename-row">
-      <label for="screenshot-filename">Filename</label>
-      <input type="text" id="screenshot-filename" value="preview.png" spellcheck="false">
-    </div>
-    <div class="screenshot-options">
-      <label class="screenshot-opt">
-        <input type="radio" name="screenshot-type" value="preview" checked>
-        <div class="screenshot-opt-info">
-          <div class="screenshot-opt-title">📺 Preview pane (right)</div>
-          <div class="screenshot-opt-desc">Opens your rendered HTML in a new tab — use browser screenshot or Ctrl+P</div>
-        </div>
-      </label>
-      <label class="screenshot-opt">
-        <input type="radio" name="screenshot-type" value="editor">
-        <div class="screenshot-opt-info">
-          <div class="screenshot-opt-title">📝 Editor pane (left)</div>
-          <div class="screenshot-opt-desc">Saves your HTML source code as a PNG image</div>
-        </div>
-      </label>
-      <label class="screenshot-opt">
-        <input type="radio" name="screenshot-type" value="both">
-        <div class="screenshot-opt-info">
-          <div class="screenshot-opt-title">⬛ Both panes side by side</div>
-          <div class="screenshot-opt-desc">Editor screenshot + preview opens in new tab</div>
-        </div>
-      </label>
-    </div>
-    <div id="screenshot-note">
-      <strong>Why new tab for preview?</strong> Browsers block direct pixel access to iframe content — opening in a new tab gives a perfect, full-fidelity render you can screenshot natively.
-    </div>
-    <div class="screenshot-actions">
-      <button class="screenshot-cancel-btn" id="screenshot-cancel">Cancel</button>
-      <button class="screenshot-do-btn" id="screenshot-do">📷 Capture</button>
-    </div>
-  </div>
-</div>
-
 <!-- Export Overlay -->
 <div id="export-overlay">
   <div id="export-box">
@@ -504,8 +731,8 @@
 <div id="about-overlay">
   <div id="about-box">
     <h2>HTML Live Preview</h2>
-    <div class="version">Version 1.8</div>
-    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Screenshot</strong> (Ctrl+Shift+S), <strong>Sel Highlight</strong> (Ctrl+Q), <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel with HTMLHint (Ctrl+D), zoom controls, version rollback, <strong>Export</strong> (raw/formatted/minified), and <strong>Find &amp; Replace</strong> (Ctrl+H).</p>
+    <div class="version">Version 1.7</div>
+    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Sel Highlight</strong> (Ctrl+Q — highlight selected code in preview), <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel with HTMLHint (Ctrl+D), zoom controls, version rollback, <strong>Export</strong> (raw/formatted/minified), and <strong>Find &amp; Replace</strong> (Ctrl+H).</p>
     <div class="site">DPAUL.STUDIO</div>
     <button id="about-close">Close</button>
   </div>
@@ -520,8 +747,6 @@
     <button id="rollback-close">Close</button>
   </div>
 </div>
-
-
 
 <!-- HTMLHint via esm.sh -->
 <script type="module">
@@ -573,40 +798,36 @@
   const rollbackList     = document.getElementById('rollback-list');
   const rollbackClose    = document.getElementById('rollback-close');
   const toast            = document.getElementById('toast');
-  const previewEmpty     = document.getElementById('preview-empty');
-  const debugBtn         = document.getElementById('debug-btn');
-  const debugBadge       = document.getElementById('debug-badge');
-  const debugPanel       = document.getElementById('debug-panel');
-  const debugScroll      = document.getElementById('debug-scroll');
-  const debugEmpty       = document.getElementById('debug-empty');
-  const debugSummary     = document.getElementById('debug-summary');
-  const debugFilterBtns  = document.querySelectorAll('.dfbtn');
-  const exportBtn        = document.getElementById('export-btn');
-  const exportOverlay    = document.getElementById('export-overlay');
-  const exportCancel     = document.getElementById('export-cancel');
-  const exportDo         = document.getElementById('export-do');
-  const exportFilename   = document.getElementById('export-filename');
-  const exportFlash      = document.getElementById('export-flash');
-  const fnrBtn           = document.getElementById('fnr-btn');
-  const fnrBar           = document.getElementById('fnr-bar');
-  const fnrFind          = document.getElementById('fnr-find');
-  const fnrReplace       = document.getElementById('fnr-replace');
-  const fnrPrevBtn       = document.getElementById('fnr-prev-btn');
-  const fnrNextBtn       = document.getElementById('fnr-next-btn');
-  const fnrCloseBtn      = document.getElementById('fnr-close-btn');
-  const fnrReplaceOne    = document.getElementById('fnr-replace-one-btn');
-  const fnrReplaceAll    = document.getElementById('fnr-replace-all-btn');
-  const fnrCount         = document.getElementById('fnr-count');
-  const fnrCaseChk       = document.getElementById('fnr-case');
-  const fnrWordChk       = document.getElementById('fnr-word');
-  const fnrRegexChk      = document.getElementById('fnr-regex');
 
-  // Screenshot elements
-  const screenshotBtn      = document.getElementById('screenshot-btn');
-  const screenshotOverlay  = document.getElementById('screenshot-overlay');
-  const screenshotCancel   = document.getElementById('screenshot-cancel');
-  const screenshotDo       = document.getElementById('screenshot-do');
-  const screenshotFilename = document.getElementById('screenshot-filename');
+  const previewEmpty     = document.getElementById('preview-empty');
+  const debugBtn        = document.getElementById('debug-btn');
+  const debugBadge      = document.getElementById('debug-badge');
+  const debugPanel      = document.getElementById('debug-panel');
+  const debugScroll     = document.getElementById('debug-scroll');
+  const debugEmpty      = document.getElementById('debug-empty');
+  const debugSummary    = document.getElementById('debug-summary');
+  const debugFilterBtns = document.querySelectorAll('.dfbtn');
+
+  const exportBtn       = document.getElementById('export-btn');
+  const exportOverlay   = document.getElementById('export-overlay');
+  const exportCancel    = document.getElementById('export-cancel');
+  const exportDo        = document.getElementById('export-do');
+  const exportFilename  = document.getElementById('export-filename');
+  const exportFlash     = document.getElementById('export-flash');
+
+  const fnrBtn          = document.getElementById('fnr-btn');
+  const fnrBar          = document.getElementById('fnr-bar');
+  const fnrFind         = document.getElementById('fnr-find');
+  const fnrReplace      = document.getElementById('fnr-replace');
+  const fnrPrevBtn      = document.getElementById('fnr-prev-btn');
+  const fnrNextBtn      = document.getElementById('fnr-next-btn');
+  const fnrCloseBtn     = document.getElementById('fnr-close-btn');
+  const fnrReplaceOne   = document.getElementById('fnr-replace-one-btn');
+  const fnrReplaceAll   = document.getElementById('fnr-replace-all-btn');
+  const fnrCount        = document.getElementById('fnr-count');
+  const fnrCaseChk      = document.getElementById('fnr-case');
+  const fnrWordChk      = document.getElementById('fnr-word');
+  const fnrRegexChk     = document.getElementById('fnr-regex');
 
   let debounceTimer;
   let inspectMode    = false;
@@ -621,9 +842,11 @@
   let currentFontSize = 13;
   let activeLine     = 1;
   let selHlDebounce  = null;
+
   let HTMLHint       = null;
   let hintResults    = [];
   let activeFilters  = new Set(['error', 'warning']);
+
   let fnrMatches     = [];
   let fnrCurrent     = -1;
   let fnrDebounce    = null;
@@ -642,345 +865,143 @@
     toastTimer = setTimeout(() => { toast.className = ''; }, 2400);
   }
 
-  // ── Screenshot ────────────────────────────────────────────────────────────
-
-  function screenshotOpenDialog() {
-    const now = new Date();
-    const ts = now.getFullYear() + '-' +
-      String(now.getMonth()+1).padStart(2,'0') + '-' +
-      String(now.getDate()).padStart(2,'0') + '_' +
-      String(now.getHours()).padStart(2,'0') + '-' +
-      String(now.getMinutes()).padStart(2,'0') + '-' +
-      String(now.getSeconds()).padStart(2,'0');
-    screenshotFilename.value = 'htmllive_' + ts + '.png';
-    screenshotOverlay.classList.add('visible');
-    screenshotFilename.focus();
-    screenshotFilename.select();
-  }
-
-  screenshotBtn.addEventListener('click', screenshotOpenDialog);
-  screenshotCancel.addEventListener('click', () => screenshotOverlay.classList.remove('visible'));
-  screenshotOverlay.addEventListener('click', (e) => { if (e.target === screenshotOverlay) screenshotOverlay.classList.remove('visible'); });
-
-  // Draw the editor pane onto a canvas using native Canvas 2D API
-  function captureEditorToCanvas() {
-    const editorEl = document.getElementById('editor');
-    const leftEl   = document.getElementById('left');
-    const rect     = leftEl.getBoundingClientRect();
-    const dpr      = window.devicePixelRatio || 1;
-    const w        = Math.round(rect.width);
-    const h        = Math.round(rect.height);
-
-    const canvas   = document.createElement('canvas');
-    canvas.width   = w * dpr;
-    canvas.height  = h * dpr;
-    const ctx      = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-
-    // Background
-    ctx.fillStyle = '#1a1a1a';
-    ctx.fillRect(0, 0, w, h);
-
-    // Header bar
-    ctx.fillStyle = '#222';
-    ctx.fillRect(0, 0, w, 32);
-    ctx.fillStyle = '#888';
-    ctx.font = '12px "Courier New", monospace';
-    ctx.fillText('HTML INPUT', 56, 21);
-
-    // Line numbers column
-    ctx.fillStyle = '#141414';
-    ctx.fillRect(0, 32, 44, h - 32);
-    ctx.strokeStyle = '#252525';
-    ctx.beginPath(); ctx.moveTo(44, 32); ctx.lineTo(44, h); ctx.stroke();
-
-    // Editor background
-    ctx.fillStyle = '#1a1a1a';
-    ctx.fillRect(44, 32, w - 44, h - 32);
-
-    // Draw code text
-    const src       = editorEl.value;
-    const lines     = src.split('\n');
-    const fontSize  = currentFontSize;
-    const lineH     = Math.round(fontSize * 1.6);
-    const padTop    = 14;
-    const scrollTop = editorEl.scrollTop;
-
-    ctx.font = fontSize + 'px "Courier New", monospace';
-
-    const firstLine = Math.max(0, Math.floor(scrollTop / lineH));
-    const lastLine  = Math.min(lines.length - 1, firstLine + Math.ceil((h - 32) / lineH) + 1);
-
-    for (let i = firstLine; i <= lastLine; i++) {
-      const y = 32 + padTop + (i - firstLine) * lineH;
-
-      // Line number
-      ctx.fillStyle = i + 1 === activeLine ? '#ff8800' : '#3a3a3a';
-      ctx.textAlign = 'right';
-      ctx.fillText(i + 1, 36, y + fontSize);
-
-      // Code line — basic keyword colouring
-      ctx.textAlign = 'left';
-      drawColouredLine(ctx, lines[i], 56, y + fontSize, fontSize);
-    }
-
-    return canvas;
-  }
-
-  // Very basic syntax colouring for the canvas render
-  function drawColouredLine(ctx, line, x, y, fontSize) {
-    // Tokenise into segments: tags, attributes, strings, comments, plain text
-    const tokens = [];
-    let rest = line;
-    while (rest.length > 0) {
-      // HTML comment
-      let m = rest.match(/^(<!--.*?-->)/);
-      if (m) { tokens.push({ text: m[1], color: '#557755' }); rest = rest.slice(m[1].length); continue; }
-      // Opening/closing tag name
-      m = rest.match(/^(<\/?)([a-zA-Z][a-zA-Z0-9-]*)/);
-      if (m) { tokens.push({ text: m[1], color: '#888' }); tokens.push({ text: m[2], color: '#66aadd' }); rest = rest.slice(m[0].length); continue; }
-      // Attribute value in quotes
-      m = rest.match(/^(["'][^"']*["'])/);
-      if (m) { tokens.push({ text: m[1], color: '#88cc88' }); rest = rest.slice(m[1].length); continue; }
-      // Angle brackets / equals
-      m = rest.match(/^([<>/=])/);
-      if (m) { tokens.push({ text: m[1], color: '#666' }); rest = rest.slice(1); continue; }
-      // Attribute name
-      m = rest.match(/^([a-zA-Z_:][a-zA-Z0-9_:\-\.]*)/);
-      if (m) { tokens.push({ text: m[1], color: '#ddbb66' }); rest = rest.slice(m[1].length); continue; }
-      // Anything else character by character
-      tokens.push({ text: rest[0], color: '#cccccc' }); rest = rest.slice(1);
-    }
-
-    let cx = x;
-    for (const tok of tokens) {
-      ctx.fillStyle = tok.color;
-      ctx.fillText(tok.text, cx, y);
-      cx += ctx.measureText(tok.text).width;
-      if (cx > 2000) break; // don't draw off-canvas
-    }
-  }
-
-  function downloadCanvas(canvas, fname) {
-    const url = canvas.toDataURL('image/png');
-    const a   = document.createElement('a');
-    a.href    = url;
-    a.download = fname;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-
-  function openPreviewInNewTab() {
-    const blob = new Blob([editor.value], { type: 'text/html' });
-    const url  = URL.createObjectURL(blob);
-    const win  = window.open(url, '_blank');
-    // Revoke after a delay to allow the tab to load
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-    return win;
-  }
-
-  screenshotDo.addEventListener('click', () => {
-    const type = document.querySelector('input[name="screenshot-type"]:checked').value;
-    screenshotOverlay.classList.remove('visible');
-
-    if (type === 'preview') {
-      openInNewTab('preview');
-      showToast('📺 Preview opened in new tab', 'screenshot');
-
-    } else if (type === 'editor') {
-      openInNewTab('editor');
-      showToast('📝 Editor opened in new tab', 'screenshot');
-
-    } else if (type === 'both') {
-      openInNewTab('both');
-      showToast('📷 Both panes opened in new tab', 'screenshot');
-    }
-  });
-
-  function openInNewTab(mode) {
-    const src = editor.value || '';
-
-    // Build a print-friendly page with the chosen content
-    let html = '';
-
-    if (mode === 'preview') {
-      // Just the rendered HTML as-is
-      html = src;
-
-    } else if (mode === 'editor') {
-      // The source code displayed as styled, syntax-highlighted text
-      html = buildEditorPage(src);
-
-    } else if (mode === 'both') {
-      // Side-by-side: editor left, preview right, in an iframe
-      html = buildBothPage(src);
-    }
-
-    const blob = new Blob([html], { type: 'text/html' });
-    const url  = URL.createObjectURL(blob);
-    const win  = window.open(url, '_blank');
-    setTimeout(() => URL.revokeObjectURL(url), 15000);
-    if (!win || win.closed) {
-      showToast('⚠ Popup blocked — please allow popups for this page', 'screenshot');
-    }
-  }
-
-  function buildEditorPage(src) {
-    const escaped = src
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-
-    // Basic syntax highlighting via regex replacements
-    const highlighted = escaped
-      // Comments
-      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span style="color:#6a9955">$1</span>')
-      // Doctype
-      .replace(/(&lt;!DOCTYPE[^&]*&gt;)/gi, '<span style="color:#6a9955">$1</span>')
-      // Tag names
-      .replace(/(&lt;\/?)([\w-]+)/g, '<span style="color:#808080">$1</span><span style="color:#4ec9b0">$2</span>')
-      // Attribute values
-      .replace(/=(&quot;[^&]*&quot;|&#039;[^&]*&#039;)/g, '=<span style="color:#ce9178">$1</span>')
-      // Attribute names (word before =)
-      .replace(/\s([\w-]+)=/g, ' <span style="color:#9cdcfe">$1</span>=')
-      // Closing bracket
-      .replace(/(&gt;)/g, '<span style="color:#808080">$1</span>');
-
-    return `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>HTML-Live — Editor View</title>
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#1e1e1e; color:#d4d4d4; font-family:'Courier New',monospace; font-size:13px; line-height:1.6; }
-  .toolbar { background:#252526; padding:8px 16px; font-size:11px; color:#888; letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid #333; display:flex; justify-content:space-between; align-items:center; }
-  .toolbar span { color:#ff8800; }
-  .code-wrap { display:flex; }
-  .line-nums { padding:14px 8px 14px 0; text-align:right; color:#3c3c3c; min-width:44px; background:#1a1a1a; border-right:1px solid #252525; user-select:none; flex-shrink:0; }
-  .line-num { display:block; }
-  .code { padding:14px 16px; flex:1; white-space:pre-wrap; word-break:break-all; }
-  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
-</style></head><body>
-<div class="toolbar"><span>HTML-LIVE</span> <span>EDITOR VIEW</span></div>
-<div class="code-wrap">
-<div class="line-nums">${src.split('\n').map((_,i)=>`<span class="line-num">${i+1}</span>`).join('')}</div>
-<div class="code">${highlighted}</div>
-</div>
-</body></html>`;
-  }
-
-  function buildBothPage(src) {
-    const editorPageJson  = JSON.stringify(buildEditorPage(src));
-    const previewSrcJson  = JSON.stringify(src);
-
-    return `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>HTML-Live — Both Panes</title>
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#111; display:flex; flex-direction:column; height:100vh; overflow:hidden; font-family:'Courier New',monospace; }
-  .toolbar { background:#222; padding:8px 16px; font-size:11px; color:#888; letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid #333; flex-shrink:0; display:flex; gap:16px; align-items:center; }
-  .toolbar span { color:#ff8800; }
-  .panes { display:flex; flex:1; min-height:0; }
-  iframe { flex:1; border:none; height:100%; width:100%; }
-  .divider { width:3px; background:#333; flex-shrink:0; }
-  .label { font-size:10px; color:#555; padding:4px 8px; background:#1a1a1a; border-bottom:1px solid #222; letter-spacing:1px; text-transform:uppercase; }
-  .pane { display:flex; flex-direction:column; flex:1; min-width:0; }
-</style></head><body>
-<div class="toolbar"><span>HTML-LIVE</span> <span>BOTH PANES — Ctrl+P to save as PDF</span></div>
-<div class="panes">
-  <div class="pane">
-    <div class="label">📝 Editor</div>
-    <iframe id="ef"></iframe>
-  </div>
-  <div class="divider"></div>
-  <div class="pane">
-    <div class="label">📺 Preview</div>
-    <iframe id="pf"></iframe>
-  </div>
-</div>
-<script>
-  document.getElementById('ef').srcdoc = ${editorPageJson};
-  document.getElementById('pf').srcdoc = ${previewSrcJson};
-<\/script>
-</body></html>`;
-  }
-
   // ── Selection Highlight ───────────────────────────────────────────────────
+  // Parses the selected text to extract element selectors, then posts to iframe.
+
   function setSelHlMode(on) {
     selHlMode = on;
     selHlBtn.classList.toggle('sel-hl-on', on);
-    if (!on) { try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {} }
+    if (!on) {
+      // Clear any existing highlights
+      try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {}
+    }
   }
+
   selHlBtn.addEventListener('click', () => setSelHlMode(!selHlMode));
 
   function parseSelectorsFromText(text) {
+    // Extract all opening tags from selected text and build selectors
     const selectors = [];
     const tagRe = /<([a-zA-Z][a-zA-Z0-9-]*)([^>]*)>/g;
     let m;
     while ((m = tagRe.exec(text)) !== null) {
       const tag = m[1].toLowerCase();
       const attrs = m[2];
+      // Skip script, style, meta, link, head, html, body — won't be visible elements
       if (['script','style','meta','link','head','html','body','!doctype'].includes(tag)) continue;
+
       let selector = tag;
+
+      // Try to get id
       const idMatch = attrs.match(/\bid=["']([^"']+)["']/i);
-      if (idMatch) { selector = '#' + CSS.escape(idMatch[1]); selectors.push(selector); continue; }
+      if (idMatch) {
+        selector = '#' + CSS.escape(idMatch[1]);
+        selectors.push(selector);
+        continue; // id is unique, no need to also use class
+      }
+
+      // Try to get first class
       const clsMatch = attrs.match(/\bclass=["']([^"']+)["']/i);
-      if (clsMatch) { const firstCls = clsMatch[1].trim().split(/\s+/)[0]; if (firstCls) selector = tag + '.' + CSS.escape(firstCls); }
+      if (clsMatch) {
+        const firstCls = clsMatch[1].trim().split(/\s+/)[0];
+        if (firstCls) selector = tag + '.' + CSS.escape(firstCls);
+      }
+
+      // Avoid dupes
       if (!selectors.includes(selector)) selectors.push(selector);
-      if (selectors.length >= 12) break;
+      if (selectors.length >= 12) break; // limit
     }
     return selectors;
   }
 
   function triggerSelectionHighlight() {
     if (!selHlMode) return;
-    const start = editor.selectionStart; const end = editor.selectionEnd;
-    if (start === end) { try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {} return; }
+    const start = editor.selectionStart;
+    const end   = editor.selectionEnd;
+    if (start === end) {
+      // No selection — clear
+      try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {}
+      return;
+    }
     const selected = editor.value.substring(start, end);
     const selectors = parseSelectorsFromText(selected);
-    if (!selectors.length) { try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {} return; }
-    try { preview.contentWindow.postMessage({ type: 'highlightSelection', selectors }, '*'); } catch(e) {}
+    if (!selectors.length) {
+      try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {}
+      return;
+    }
+    try {
+      preview.contentWindow.postMessage({ type: 'highlightSelection', selectors }, '*');
+    } catch(e) {}
   }
 
-  editor.addEventListener('mouseup', () => { clearTimeout(selHlDebounce); selHlDebounce = setTimeout(triggerSelectionHighlight, 80); });
+  // Listen for selection changes in the editor
+  editor.addEventListener('mouseup', () => {
+    clearTimeout(selHlDebounce);
+    selHlDebounce = setTimeout(triggerSelectionHighlight, 80);
+  });
   editor.addEventListener('keyup', (e) => {
+    // Only on selection keys
     if (e.shiftKey || ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(e.key)) {
-      clearTimeout(selHlDebounce); selHlDebounce = setTimeout(triggerSelectionHighlight, 80);
+      clearTimeout(selHlDebounce);
+      selHlDebounce = setTimeout(triggerSelectionHighlight, 80);
     }
   });
 
   // ── Export ────────────────────────────────────────────────────────────────
   exportBtn.addEventListener('click', () => {
     if (!editor.value.trim()) { showToast('Nothing to export — editor is empty'); return; }
-    exportFlash.textContent = ''; exportOverlay.classList.add('visible');
-    exportFilename.focus(); exportFilename.select();
+    exportFlash.textContent = '';
+    exportOverlay.classList.add('visible');
+    exportFilename.focus();
+    exportFilename.select();
   });
   exportCancel.addEventListener('click', () => exportOverlay.classList.remove('visible'));
   exportOverlay.addEventListener('click', (e) => { if (e.target === exportOverlay) exportOverlay.classList.remove('visible'); });
 
   exportDo.addEventListener('click', () => {
-    const raw = editor.value; const type = document.querySelector('input[name="export-type"]:checked').value;
-    let content = raw;
-    if (type === 'minified') { content = raw.replace(/<!--[\s\S]*?-->/g, '').replace(/>\s+</g, '><').replace(/\s{2,}/g, ' ').trim(); }
-    else if (type === 'pretty') { content = prettyPrintHTML(raw); }
+    const raw      = editor.value;
+    const type     = document.querySelector('input[name="export-type"]:checked').value;
+    let content    = raw;
+
+    if (type === 'minified') {
+      content = raw
+        .replace(/<!--[\s\S]*?-->/g, '')
+        .replace(/>\s+</g, '><')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    } else if (type === 'pretty') {
+      content = prettyPrintHTML(raw);
+    }
+
     let fname = exportFilename.value.trim() || 'index.html';
     if (!fname.match(/\.html?$/i)) fname += '.html';
+
     const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = fname;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
     exportFlash.textContent = '✓ Downloaded as ' + fname;
-    exportOverlay.classList.remove('visible'); showToast('✓ Exported: ' + fname, 'success');
+    exportOverlay.classList.remove('visible');
+    showToast('✓ Exported: ' + fname, 'success');
   });
 
   function prettyPrintHTML(html) {
-    let indent = 0; const tab = '  ';
-    const voids = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
+    let indent   = 0;
+    const tab    = '  ';
+    const voids  = new Set(['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr']);
     const inlines = new Set(['a','abbr','acronym','b','bdo','big','br','cite','code','dfn','em','i','img','input','kbd','label','map','object','output','q','samp','select','small','span','strong','sub','sup','textarea','time','tt','var']);
     const result = [];
     const tokenRe = /<!--[\s\S]*?-->|<\/?[a-zA-Z][^>]*\/?>|[^<]+/g;
     let tok;
     while ((tok = tokenRe.exec(html)) !== null) {
-      const t = tok[0].trim(); if (!t) continue;
+      const t = tok[0].trim();
+      if (!t) continue;
       if (t.startsWith('<!--')) { result.push(tab.repeat(indent) + t); continue; }
       if (t.startsWith('</')) {
         const tag = t.match(/<\/([a-zA-Z][^\s>]*)/);
@@ -989,7 +1010,8 @@
         continue;
       }
       if (t.startsWith('<')) {
-        const tag = t.match(/<([a-zA-Z][^\s>/]*)/); const tagName = tag ? tag[1].toLowerCase() : '';
+        const tag = t.match(/<([a-zA-Z][^\s>/]*)/);
+        const tagName = tag ? tag[1].toLowerCase() : '';
         if (inlines.has(tagName)) { if (result.length) result[result.length - 1] += t; else result.push(t); }
         else { result.push(tab.repeat(indent) + t); if (tagName && !voids.has(tagName) && !t.endsWith('/>')) indent++; }
         continue;
@@ -1004,7 +1026,9 @@
 
   // ── Find & Replace ────────────────────────────────────────────────────────
   function setFnrOpen(on) {
-    fnrOpen = on; fnrBtn.classList.toggle('fnr-on', on); fnrBar.classList.toggle('open', on);
+    fnrOpen = on;
+    fnrBtn.classList.toggle('fnr-on', on);
+    fnrBar.classList.toggle('open', on);
     if (on) { fnrFind.focus(); fnrFind.select(); runFnrSearch(); }
     else { clearFnrHighlights(); fnrMatches = []; fnrCurrent = -1; updateFnrCount(); }
   }
@@ -1012,7 +1036,8 @@
   fnrCloseBtn.addEventListener('click', () => setFnrOpen(false));
 
   function buildFnrRegex() {
-    const raw = fnrFind.value; if (!raw) return null;
+    const raw = fnrFind.value;
+    if (!raw) return null;
     try {
       let pattern;
       if (fnrRegexChk.checked) { pattern = raw; }
@@ -1024,9 +1049,14 @@
 
   function runFnrSearch() {
     clearFnrHighlights(); fnrMatches = []; fnrCurrent = -1;
-    const rx = buildFnrRegex(); if (!rx || !editor.value) { updateFnrCount(); return; }
-    const src = editor.value; let m;
-    while ((m = rx.exec(src)) !== null) { fnrMatches.push({ start: m.index, end: m.index + m[0].length, line: src.substring(0, m.index).split('\n').length }); if (fnrMatches.length > 5000) break; }
+    const rx = buildFnrRegex();
+    if (!rx || !editor.value) { updateFnrCount(); return; }
+    const src = editor.value;
+    let m;
+    while ((m = rx.exec(src)) !== null) {
+      fnrMatches.push({ start: m.index, end: m.index + m[0].length, line: src.substring(0, m.index).split('\n').length });
+      if (fnrMatches.length > 5000) break;
+    }
     if (fnrMatches.length > 0) fnrCurrent = 0;
     updateFnrCount(); updateFnrButtons();
     if (fnrMatches.length > 0) scrollToFnrMatch(fnrCurrent);
@@ -1040,16 +1070,23 @@
     else { fnrCount.textContent = (fnrCurrent + 1) + ' / ' + fnrMatches.length; fnrCount.className = 'fnr-match-count has-matches'; fnrFind.classList.remove('fnr-no-match'); fnrFind.classList.add('fnr-has-match'); }
   }
 
-  function updateFnrButtons() { const has = fnrMatches.length > 0; fnrPrevBtn.disabled = !has; fnrNextBtn.disabled = !has; fnrReplaceOne.disabled = !has; fnrReplaceAll.disabled = !has; }
+  function updateFnrButtons() {
+    const has = fnrMatches.length > 0;
+    fnrPrevBtn.disabled = !has; fnrNextBtn.disabled = !has; fnrReplaceOne.disabled = !has; fnrReplaceAll.disabled = !has;
+  }
 
   function scrollToFnrMatch(idx) {
     if (idx < 0 || idx >= fnrMatches.length) return;
-    const match = fnrMatches[idx]; const lineH = getLineHeight(); const padTop = 14; const line = match.line;
+    const match = fnrMatches[idx];
+    const lineH = getLineHeight(); const padTop = 14; const line = match.line;
     const topPx = padTop + (line - 1) * lineH;
-    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH); syncGutterScroll();
-    const editorRect = editor.getBoundingClientRect(); const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
+    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH);
+    syncGutterScroll();
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
     const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
-    fnrHighlight.style.top = relTop + 'px'; fnrHighlight.style.height = lineH + 'px'; fnrHighlight.classList.add('visible');
+    fnrHighlight.style.top = relTop + 'px'; fnrHighlight.style.height = lineH + 'px';
+    fnrHighlight.classList.add('visible');
     editor.focus(); editor.selectionStart = match.start; editor.selectionEnd = match.end;
     updateActiveLine(); updateFnrCount();
   }
@@ -1072,15 +1109,18 @@
   fnrReplaceOne.addEventListener('click', () => {
     if (fnrCurrent < 0 || fnrCurrent >= fnrMatches.length) return;
     const match = fnrMatches[fnrCurrent]; const repText = fnrReplace.value;
-    takeSnapshot(editor.value); const src = editor.value;
+    takeSnapshot(editor.value);
+    const src = editor.value;
     editor.value = src.substring(0, match.start) + repText + src.substring(match.end);
-    updatePreview(); updateLineNumbers(); runHint(); runFnrSearch(); showToast('Replaced 1 match', 'replace');
+    updatePreview(); updateLineNumbers(); runHint(); runFnrSearch();
+    showToast('Replaced 1 match', 'replace');
   });
 
   fnrReplaceAll.addEventListener('click', () => {
     if (!fnrMatches.length) return;
     const rx = buildFnrRegex(); if (!rx) return;
-    takeSnapshot(editor.value); const count = fnrMatches.length; const repText = fnrReplace.value;
+    takeSnapshot(editor.value);
+    const count = fnrMatches.length; const repText = fnrReplace.value;
     editor.value = editor.value.replace(rx, fnrRegexChk.checked ? repText : repText.replace(/\$/g, '$$$$'));
     updatePreview(); updateLineNumbers(); runHint(); runFnrSearch();
     showToast('Replaced ' + count + ' match' + (count !== 1 ? 'es' : ''), 'replace');
@@ -1095,10 +1135,12 @@
     if (e.key === 'Enter') { e.preventDefault(); fnrReplaceOne.click(); }
     if (e.key === 'Escape') setFnrOpen(false);
   });
+
   [fnrCaseChk, fnrWordChk, fnrRegexChk].forEach(chk => {
     chk.addEventListener('change', () => {
       const labels = { [fnrCaseChk.id]: 'fnr-case-label', [fnrWordChk.id]: 'fnr-word-label', [fnrRegexChk.id]: 'fnr-regex-label' };
-      document.getElementById(labels[chk.id]).classList.toggle('active', chk.checked); runFnrSearch();
+      document.getElementById(labels[chk.id]).classList.toggle('active', chk.checked);
+      runFnrSearch();
     });
   });
 
@@ -1124,18 +1166,24 @@
     debugBtn.classList.remove('has-errors', 'has-warnings', 'debug-on');
     debugBadge.classList.remove('visible', 'warn');
     if (total > 0) {
-      debugBadge.textContent = total > 99 ? '99+' : total; debugBadge.classList.add('visible');
-      if (errors > 0) debugBtn.classList.add('has-errors'); else { debugBtn.classList.add('has-warnings'); debugBadge.classList.add('warn'); }
+      debugBadge.textContent = total > 99 ? '99+' : total;
+      debugBadge.classList.add('visible');
+      if (errors > 0) debugBtn.classList.add('has-errors');
+      else { debugBtn.classList.add('has-warnings'); debugBadge.classList.add('warn'); }
     }
     if (debugOpen) debugBtn.classList.add('debug-on');
   }
 
   function markGutterErrors() {
-    clearGutterErrors(); const nums = lineNumbersInner.children;
+    clearGutterErrors();
+    const nums = lineNumbersInner.children;
     hintResults.forEach(r => { const idx = r.line - 1; if (idx >= 0 && idx < nums.length) nums[idx].classList.add(r.type === 'error' ? 'has-error' : 'has-warning'); });
   }
 
-  function clearGutterErrors() { const nums = lineNumbersInner.children; for (let i = 0; i < nums.length; i++) nums[i].classList.remove('has-error', 'has-warning'); }
+  function clearGutterErrors() {
+    const nums = lineNumbersInner.children;
+    for (let i = 0; i < nums.length; i++) nums[i].classList.remove('has-error', 'has-warning');
+  }
 
   function renderDebugPanel() {
     debugScroll.innerHTML = '';
@@ -1167,15 +1215,20 @@
     itemEl.classList.add('active-hint');
     const lineH = getLineHeight(); const padTop = 14; const lineIdx = r.line - 1;
     const topPx = padTop + lineIdx * lineH;
-    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH); syncGutterScroll();
-    const editorRect = editor.getBoundingClientRect(); const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
+    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH);
+    syncGutterScroll();
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
     const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
-    errorHighlight.style.top = relTop + 'px'; errorHighlight.style.height = lineH + 'px'; errorHighlight.classList.add('visible');
+    errorHighlight.style.top = relTop + 'px'; errorHighlight.style.height = lineH + 'px';
+    errorHighlight.classList.add('visible');
     setTimeout(() => errorHighlight.classList.remove('visible'), 2000);
-    const lines = editor.value.split('\n'); let charPos = 0;
+    const lines = editor.value.split('\n');
+    let charPos = 0;
     for (let i = 0; i < Math.min(r.line - 1, lines.length); i++) charPos += lines[i].length + 1;
     charPos += Math.min(r.col - 1, (lines[r.line - 1] || '').length);
-    editor.focus(); editor.selectionStart = editor.selectionEnd = charPos; updateActiveLine();
+    editor.focus(); editor.selectionStart = editor.selectionEnd = charPos;
+    updateActiveLine();
   }
 
   debugFilterBtns.forEach(btn => {
@@ -1191,7 +1244,9 @@
   debugBtn.addEventListener('click', () => setDebugOpen(!debugOpen));
 
   // ── Line Numbers ──────────────────────────────────────────────────────────
-  function getLineHeight() { return parseFloat(getComputedStyle(editor).lineHeight) || currentFontSize * 1.6; }
+  function getLineHeight() {
+    return parseFloat(getComputedStyle(editor).lineHeight) || currentFontSize * 1.6;
+  }
 
   function updateLineNumbers() {
     const src = editor.value; const count = src.split('\n').length;
@@ -1207,7 +1262,8 @@
 
   function updateActiveLine() {
     const src = editor.value; const pos = editor.selectionStart;
-    const linesBefore = src.substring(0, pos).split('\n'); activeLine = linesBefore.length;
+    const linesBefore = src.substring(0, pos).split('\n');
+    activeLine = linesBefore.length;
     const nums = lineNumbersInner.children;
     for (let i = 0; i < nums.length; i++) nums[i].classList.toggle('active', i + 1 === activeLine);
     const lineH = getLineHeight();
@@ -1248,7 +1304,8 @@
         const timeEl = document.createElement('div'); timeEl.className = 'rb-item-time'; timeEl.textContent = snap.label + (isCurrent ? '  ← current' : '');
         const statsEl = document.createElement('div'); statsEl.className = 'rb-item-stats'; statsEl.textContent = snap.lines + ' lines · ' + (snap.bytes > 1024 ? (snap.bytes/1024).toFixed(1) + ' kb' : snap.bytes + ' b');
         const previewEl = document.createElement('div'); previewEl.className = 'rb-item-preview'; previewEl.textContent = snap.code.trim().substring(0, 80).replace(/\s+/g, ' ');
-        meta.appendChild(timeEl); meta.appendChild(statsEl); meta.appendChild(previewEl); item.appendChild(meta);
+        meta.appendChild(timeEl); meta.appendChild(statsEl); meta.appendChild(previewEl);
+        item.appendChild(meta);
         if (isCurrent) { const label = document.createElement('span'); label.className = 'rb-current-label'; label.textContent = 'active'; item.appendChild(label); }
         else { const btn = document.createElement('button'); btn.className = 'rb-restore-btn'; btn.textContent = 'Restore'; btn.addEventListener('click', () => restoreSnapshot(snap)); item.appendChild(btn); }
         rollbackList.appendChild(item);
@@ -1289,7 +1346,6 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (screenshotOverlay.classList.contains('visible')) { screenshotOverlay.classList.remove('visible'); return; }
       if (fnrOpen) { setFnrOpen(false); return; }
       if (exportOverlay.classList.contains('visible')) { exportOverlay.classList.remove('visible'); return; }
     }
@@ -1301,8 +1357,7 @@
       if (e.key === 'd') { e.preventDefault(); setDebugOpen(!debugOpen); }
       if (e.key === 'h') { e.preventDefault(); setFnrOpen(!fnrOpen); }
       if (e.key === 'q') { e.preventDefault(); setSelHlMode(!selHlMode); }
-      if (e.key === 's' && !e.shiftKey) { e.preventDefault(); if (editor.value.trim()) exportBtn.click(); }
-      if (e.key === 'S' && e.shiftKey) { e.preventDefault(); if (editor.value.trim()) screenshotOpenDialog(); }
+      if (e.key === 's') { e.preventDefault(); if (editor.value.trim()) exportBtn.click(); }
     }
   });
 
@@ -1318,33 +1373,80 @@
   const INJECT_SCRIPT = `
     (function() {
       var inspecting = false; var hoverEl = null; var OUTLINE = '2px solid #ff8800';
+
+      // ── Selection highlight handler ──────────────────────────────────────
       var selOverlays = [];
-      function clearSelOverlays() { selOverlays.forEach(function(o) { if (o.parentNode) o.parentNode.removeChild(o); }); selOverlays = []; }
+      function clearSelOverlays() {
+        selOverlays.forEach(function(o) { if (o.parentNode) o.parentNode.removeChild(o); });
+        selOverlays = [];
+      }
       function highlightSelElements(selectors) {
-        clearSelOverlays(); if (!selectors || !selectors.length) return;
-        var palette = ['rgba(255,80,180,0.22)','rgba(80,180,255,0.22)','rgba(80,255,140,0.22)','rgba(255,200,50,0.22)','rgba(180,80,255,0.22)','rgba(255,120,60,0.22)'];
+        clearSelOverlays();
+        if (!selectors || !selectors.length) return;
+        // colours cycling through a vivid palette
+        var palette = [
+          'rgba(255,80,180,0.22)',
+          'rgba(80,180,255,0.22)',
+          'rgba(80,255,140,0.22)',
+          'rgba(255,200,50,0.22)',
+          'rgba(180,80,255,0.22)',
+          'rgba(255,120,60,0.22)'
+        ];
         var strokes = ['#ff50b4','#50b4ff','#50ff8c','#ffc832','#b450ff','#ff783c'];
         selectors.forEach(function(sel, idx) {
-          var el = null; try { el = document.querySelector(sel); } catch(e) {}
+          var el = null;
+          try { el = document.querySelector(sel); } catch(e) {}
           if (!el || el === document.documentElement || el === document.body) return;
-          var rect = el.getBoundingClientRect(); if (rect.width === 0 && rect.height === 0) return;
-          var ov = document.createElement('div'); var col = idx % palette.length;
+          var rect = el.getBoundingClientRect();
+          if (rect.width === 0 && rect.height === 0) return;
+          var ov = document.createElement('div');
+          var col = idx % palette.length;
           var scrollX = window.scrollX || 0; var scrollY = window.scrollY || 0;
-          ov.style.cssText = ['position:absolute','pointer-events:none','z-index:2147483647','border-radius:3px','left:' + (rect.left + scrollX) + 'px','top:' + (rect.top + scrollY) + 'px','width:' + rect.width + 'px','height:' + rect.height + 'px','background:' + palette[col],'outline:2px solid ' + strokes[col],'outline-offset:-1px','transition:opacity 0.4s'].join(';');
-          document.documentElement.appendChild(ov); selOverlays.push(ov);
+          ov.style.cssText = [
+            'position:absolute',
+            'pointer-events:none',
+            'z-index:2147483647',
+            'border-radius:3px',
+            'left:' + (rect.left + scrollX) + 'px',
+            'top:' + (rect.top + scrollY) + 'px',
+            'width:' + rect.width + 'px',
+            'height:' + rect.height + 'px',
+            'background:' + palette[col],
+            'outline:2px solid ' + strokes[col],
+            'outline-offset:-1px',
+            'transition:opacity 0.4s'
+          ].join(';');
+          document.documentElement.appendChild(ov);
+          selOverlays.push(ov);
         });
-        setTimeout(function() { selOverlays.forEach(function(o) { o.style.opacity = '0'; }); setTimeout(clearSelOverlays, 420); }, 2500);
+        // Auto-fade after 2.5s
+        setTimeout(function() {
+          selOverlays.forEach(function(o) { o.style.opacity = '0'; });
+          setTimeout(clearSelOverlays, 420);
+        }, 2500);
       }
+
       window.addEventListener('message', function(e) {
         if (!e.data) return;
-        if (e.data.type === 'inspectMode') { inspecting = e.data.value; if (!inspecting && hoverEl) { hoverEl.style.outline = ''; hoverEl = null; } }
+        if (e.data.type === 'inspectMode') {
+          inspecting = e.data.value;
+          if (!inspecting && hoverEl) { hoverEl.style.outline = ''; hoverEl = null; }
+        }
         if (e.data.type === 'highlightSelection') highlightSelElements(e.data.selectors);
         if (e.data.type === 'clearSelHighlights') clearSelOverlays();
       });
-      document.addEventListener('mouseover', function(e) { if (!inspecting) return; if (hoverEl && hoverEl !== e.target) hoverEl.style.outline = ''; hoverEl = e.target; if (hoverEl && hoverEl !== document.documentElement && hoverEl !== document.body) hoverEl.style.outline = OUTLINE; }, true);
+
+      // ── Inspect mode ─────────────────────────────────────────────────────
+      document.addEventListener('mouseover', function(e) {
+        if (!inspecting) return;
+        if (hoverEl && hoverEl !== e.target) hoverEl.style.outline = '';
+        hoverEl = e.target;
+        if (hoverEl && hoverEl !== document.documentElement && hoverEl !== document.body) hoverEl.style.outline = OUTLINE;
+      }, true);
       document.addEventListener('mouseout', function(e) { if (!inspecting) return; if (e.target && e.target.style) e.target.style.outline = ''; }, true);
       document.addEventListener('click', function(e) {
-        if (!inspecting) return; e.preventDefault(); e.stopPropagation();
+        if (!inspecting) return;
+        e.preventDefault(); e.stopPropagation();
         var el = e.target; var tag = el.tagName.toLowerCase();
         var id = el.id ? '#' + el.id : '';
         var cls = el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\\s+/).join('.') : '';
@@ -1394,7 +1496,8 @@
   window.addEventListener('message', (e) => {
     if (!e.data || e.data.type !== 'inspectClick') return;
     const { tag, id, cls, outer } = e.data;
-    findAndHighlight(outer, tag, id, cls); setInspectMode(false); inspectTip.style.display = 'none';
+    findAndHighlight(outer, tag, id, cls);
+    setInspectMode(false); inspectTip.style.display = 'none';
   });
 
   // ── Find & highlight ──────────────────────────────────────────────────────
@@ -1404,7 +1507,8 @@
     if (id) {
       const idAttr = id.replace('#','');
       const pattern = new RegExp('<' + tag + '[^>]*id=["\']' + escapeRegex(idAttr) + '["\']', 'i');
-      const m = src.match(pattern); if (m) { searchStr = m[0]; matchIndex = src.search(pattern); }
+      const m = src.match(pattern);
+      if (m) { searchStr = m[0]; matchIndex = src.search(pattern); }
     }
     if (matchIndex === -1) {
       const openTagMatch = outerHTML.match(/^(<[a-z][^\n>]{0,200}>)/i);
@@ -1422,8 +1526,11 @@
       matchIndex = src.search(pattern); if (matchIndex !== -1) searchStr = tag;
     }
     if (matchIndex === -1) { flashNone(); return; }
-    const before = src.substring(0, matchIndex); const startLine = before.split('\n').length;
-    const snippet = src.substring(matchIndex); const closingTag = '</' + tag + '>'; let endOffset = snippet.indexOf(closingTag); let endLine;
+    const before = src.substring(0, matchIndex);
+    const startLine = before.split('\n').length;
+    const snippet = src.substring(matchIndex);
+    const closingTag = '</' + tag + '>';
+    let endOffset = snippet.indexOf(closingTag); let endLine;
     if (endOffset !== -1) { endLine = src.substring(0, matchIndex + endOffset + closingTag.length).split('\n').length; }
     else { const eol = snippet.indexOf('\n'); endLine = startLine + (eol === -1 ? 0 : src.substring(matchIndex, matchIndex + eol).split('\n').length - 1); }
     endLine = Math.min(endLine, startLine + 30);
@@ -1440,11 +1547,15 @@
 
   function scrollEditorToLine(startLine, endLine, tag, id, cls) {
     const lineH = getLineHeight(); const padTop = 14;
-    const topPx = padTop + (startLine - 1) * lineH; const heightPx = (endLine - startLine + 1) * lineH;
-    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + heightPx / 2); syncGutterScroll();
-    const editorRect = editor.getBoundingClientRect(); const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const topPx = padTop + (startLine - 1) * lineH;
+    const heightPx = (endLine - startLine + 1) * lineH;
+    editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + heightPx / 2);
+    syncGutterScroll();
+    const editorRect = editor.getBoundingClientRect();
+    const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
     const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
-    highlightOverlay.style.top = relTop + 'px'; highlightOverlay.style.height = heightPx + 'px'; highlightOverlay.classList.add('visible');
+    highlightOverlay.style.top = relTop + 'px'; highlightOverlay.style.height = heightPx + 'px';
+    highlightOverlay.classList.add('visible');
     const nums = lineNumbersInner.children;
     for (let i = 0; i < nums.length; i++) nums[i].classList.toggle('highlighted', i + 1 >= startLine && i + 1 <= endLine);
     const selector = (id || cls) ? (tag + (id||'') + (cls||'').split('.').slice(0,2).join('.')) : tag;
@@ -1481,9 +1592,11 @@
 
   editor.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
-      e.preventDefault(); const s = editor.selectionStart;
+      e.preventDefault();
+      const s = editor.selectionStart;
       editor.value = editor.value.slice(0, s) + '  ' + editor.value.slice(editor.selectionEnd);
-      editor.selectionStart = editor.selectionEnd = s + 2; updateLineNumbers();
+      editor.selectionStart = editor.selectionEnd = s + 2;
+      updateLineNumbers();
     }
   });
 
