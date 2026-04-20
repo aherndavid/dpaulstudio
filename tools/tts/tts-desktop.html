@@ -1,468 +1,821 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>dPaul VU Meter</title>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>dPaul TTS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #131413;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .outer-wrap { width: 100%; max-width: 760px; }
+        .container {
+            width: 100%;
+            background: linear-gradient(145deg, #4a0a0a, #6a1010);
+            border-radius: 9px;
+            padding: 17px;
+            box-shadow: 0 14px 39px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.3);
+            border: 1px solid rgba(58,5,5,0.3);
+            position: relative;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 35%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 9px 9px 0 0;
+            pointer-events: none;
+        }
+        .pwr-led-wrap {
+            position: absolute; top: 14px; right: 17px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; z-index: 10;
+        }
+        .pwr-led {
+            width: 10px; height: 10px; border-radius: 2px;
+            background: #1a0000; border: 1px solid #2a0000;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.9);
+            transition: background 0.08s, box-shadow 0.08s;
+        }
+        .pwr-led.on { background: #dd0000; border-color: #aa0000; box-shadow: 0 0 6px rgba(220,0,0,0.95), 0 0 14px rgba(220,0,0,0.5); }
+        .pwr-led-label { font-family: 'Courier New', monospace; font-size: 5.5px; font-weight: bold; letter-spacing: 1px; color: #3a0000; text-transform: uppercase; }
 
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        background-color: #131413; 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        overflow-y: auto;
-        padding: 20px 0;
-    }
+        h1 { color: #000; font-size: 23px; font-weight: 900; margin-bottom: 12px; letter-spacing: 0.5px; font-family: Impact, 'Arial Black', sans-serif; }
 
-    .outer-wrap {
-        width: 380px; 
-        min-height: 720px; 
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
+        .main-layout { display: flex; flex-direction: row; gap: 12px; align-items: flex-start; }
+        .col-left { display: flex; flex-direction: column; gap: 6px; width: 320px; flex-shrink: 0; }
+        .col-right { display: flex; flex-direction: column; gap: 8px; flex: 1; }
 
-    .container {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(180deg, #1e2b58, #0d152d);
-        border-radius: 22px;
-        padding: 24px 20px 140px 20px; 
-        box-shadow: 0 35px 70px rgba(0,0,0,0.9),
-                    inset 0 1px 2px rgba(255,255,255,0.1);
-        border: 1px solid #1a2a5a;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
+        .section {
+            background: #0a0a0a; border-radius: 5px; padding: 7px;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.05), 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid #000;
+        }
+        .section-title { color: #888; font-size: 18px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
 
-    .nav-tools {
-        position: absolute;
-        top: 24px;
-        right: 22px;
-        display: flex;
-        gap: 10px;
-        z-index: 100;
-    }
+        label { display: block; color: #666; font-size: 9px; font-weight: 700; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    .round-btn {
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: #111;
-        border: 1px solid #2a3a6a;
-        color: #4a6a9a;
-        font-size: 14px;
-        font-weight: 900;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.2s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
+        .api-row { display: flex; gap: 6px; align-items: center; }
+        .api-input {
+            flex: 1; padding: 6px 8px; background: #001a00; border: 1px solid #000; border-radius: 3px;
+            color: #00dd00; font-size: 10px; font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+        }
+        .api-input::placeholder { color: #004400; font-size: 9px; }
+        .api-input:focus { outline: none; }
+        .btn-save-key { padding: 6px 10px !important; font-size: 8px !important; flex: none !important; white-space: nowrap; }
 
-    .round-btn:hover {
-        color: #1a7fff;
-        border-color: #1a7fff;
-        transform: translateY(-1px);
-    }
+        textarea {
+            width: 100%; height: 100%; min-height: 180px; padding: 10px;
+            background: #001a00; border: 1px solid #000; border-radius: 3px;
+            color: #00dd00; font-size: 11px; font-family: 'Courier New', monospace;
+            resize: none; line-height: 1.4;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,80,0,0.15);
+        }
+        textarea::placeholder { color: #004400; font-size: 9px; }
+        textarea:focus { outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), inset 0 0 22px rgba(0,100,0,0.25); }
 
-    h1 {
-        color: #000;
-        font-size: 34px;
-        font-weight: 900;
-        letter-spacing: -1.5px;
-        font-family: Impact, sans-serif;
-        margin-bottom: 5px;
-        text-transform: uppercase;
-    }
+        select {
+            padding: 5px 4px; background: #0a0a0a; border: 1px solid #000; border-radius: 3px;
+            color: #fff; font-size: 9px; cursor: pointer; width: 100%;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.5);
+        }
+        select:focus { outline: none; }
+        select option { background: #1a1a1a; color: #fff; }
 
-    .main-layout { display: flex; flex-direction: column; gap: 14px; }
+        .slider-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        .slider-label { color: #555; font-size: 8px; font-family: 'Courier New', monospace; text-transform: uppercase; letter-spacing: 0.4px; width: 60px; flex-shrink: 0; }
+        input[type=range] { flex: 1; -webkit-appearance: none; height: 4px; background: #001a00; border-radius: 2px; border: 1px solid #000; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 2px; background: linear-gradient(145deg, #666, #444); border: 1px solid #000; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .slider-val { color: #00dd00; font-size: 9px; font-family: 'Courier New', monospace; width: 26px; text-align: right; }
 
-    .section {
-        background: #060606;
-        border-radius: 10px;
-        padding: 14px;
-        border: 1px solid #000;
-        box-shadow: inset 0 3px 12px rgba(0,0,0,0.9);
-    }
+        .inc-row { display: flex; align-items: center; gap: 6px; }
+        .inc-btn {
+            width: 32px !important; height: 32px !important; min-height: unset !important;
+            padding: 0 !important; font-size: 18px !important; font-weight: 900 !important;
+            flex: none !important; border-radius: 4px !important; line-height: 1 !important;
+            display: flex !important; align-items: center !important; justify-content: center !important;
+        }
+        .inc-value {
+            flex: 1; text-align: center; color: #00dd00; font-size: 14px; font-weight: 700;
+            font-family: 'Courier New', monospace; background: #001a00; border: 1px solid #000;
+            border-radius: 3px; padding: 4px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+        }
 
-    label {
-        display: block;
-        color: #444;
-        font-size: 10px;
-        font-weight: 900;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-    }
+        .button-group { display: flex; flex-direction: row; gap: 8px; }
+        button {
+            padding: 10px 16px; background: linear-gradient(145deg, #3a3a3a, #1a1a1a);
+            border: 1px solid #000; border-radius: 3px; color: #888;
+            font-size: 9px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+            letter-spacing: 0.5px; text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            flex: 1;
+        }
+        button:hover { background: linear-gradient(145deg, #444, #222); transform: translateY(-1px); }
+        button:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+        button:disabled:hover { background: linear-gradient(145deg, #3a3a3a, #1a1a1a); transform: none; }
+        .btn-primary { background: linear-gradient(145deg, #666, #444); color: #fff; }
+        .btn-primary:hover { background: linear-gradient(145deg, #777, #555); }
 
-    .db-readout { text-align: center; padding: 12px 0; }
-    .db-number {
-        font-family: 'Courier New', monospace;
-        font-size: 78px;
-        font-weight: 800;
-        color: #1a7fff;
-        text-shadow: 0 0 25px rgba(26,127,255,0.7);
-        line-height: 1;
-        transition: color 0.1s;
-    }
-    .db-number.peak { color: #ff1830; text-shadow: 0 0 25px rgba(255,24,48,0.7); }
-    .db-unit-label { color: #333; font-size: 11px; text-transform: uppercase; letter-spacing: 4px; margin-top: 10px; font-weight: 700; }
+        .status {
+            padding: 8px; background: #001a00; border-radius: 3px; text-align: center;
+            color: #00aa00; font-size: 9px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px; font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,80,0,0.15);
+            border: 1px solid #000;
+        }
+        .status.active { color: #00dd00; box-shadow: inset 0 2px 3px rgba(0,0,0,0.8), inset 0 0 17px rgba(0,120,0,0.25); }
+        .status.error { color: #dd4444; }
 
-    .segments { display: flex; gap: 3px; height: 44px; margin-bottom: 10px; }
-    .seg { flex: 1; border-radius: 2px; background: #151515; transition: background 0.05s; }
-    .seg.lit-blue { background: #1a7fff; box-shadow: 0 0 12px rgba(26,127,255,0.6); }
-    .seg.lit-red  { background: #ff1830; box-shadow: 0 0 12px rgba(255,24,48,0.6); }
+        audio { width: 100%; border-radius: 3px; height: 28px; display: none; }
+        audio.visible { display: block; }
 
-    .bar-scale {
-        display: flex;
-        justify-content: space-between;
-        font-size: 11px;
-        font-family: monospace;
-        color: #222;
-        padding: 0 2px;
-    }
+        .mode-toggle { display: flex; gap: 5px; }
+        .mode-btn { flex: 1; padding: 5px !important; font-size: 8px !important; }
+        .mode-btn.active { background: linear-gradient(145deg, #550000, #330000) !important; color: #ff6666 !important; border-color: #440000 !important; }
 
-    .peak-list-wrap { 
-        height: 80px; 
-        overflow-y: auto; 
-        scrollbar-width: none;
-        display: flex; 
-        flex-direction: column; 
-        gap: 4px;
-    }
-    .peak-list-wrap::-webkit-scrollbar { display: none; }
-    .peak-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-    .peak-max-val { font-family: monospace; font-size: 13px; color: #1a7fff; font-weight: bold; }
-    
-    .peak-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 4px 8px;
-        background: rgba(255,255,255,0.03);
-        border-radius: 4px;
-        font-family: monospace;
-        font-size: 12px;
-        color: #1a7fff;
-        border-left: 2px solid #1a7fff;
-    }
-    .peak-row.danger { color: #ff1830; border-left-color: #ff1830; }
-    .peak-empty { color: #222; font-size: 11px; text-align: center; padding: 10px; font-family: monospace; }
+        .api-note { color: #444; font-size: 8px; font-family: 'Courier New', monospace; text-align: center; margin-top: 5px; line-height: 1.6; }
+        .api-note a { color: #555; }
 
-    .button-group { display: flex; gap: 10px; margin-top: 10px; }
-    button:not(.round-btn) {
-        flex: 1;
-        padding: 16px;
-        background: linear-gradient(180deg, #2a2a2a, #151515);
-        border: 1px solid #000;
-        border-radius: 8px;
-        color: #777;
-        font-size: 11px;
-        font-weight: 900;
-        cursor: pointer;
-        text-transform: uppercase;
-        box-shadow: 0 4px 0 #000;
-        transition: all 0.1s;
-    }
+        #downloadBtn { margin-top: 8px; background: linear-gradient(145deg, #1a3a1a, #0a1a0a); color: #00dd00; display: none; }
+        #downloadBtn.visible { display: block; }
 
-    button:not(.round-btn):active, button.active {
-        transform: translateY(2px);
-        box-shadow: 0 2px 0 #000;
-        color: #1a7fff;
-        border-color: #1a7fff;
-    }
+        .voice-tabs { display: flex; gap: 4px; margin-bottom: 6px; }
+        .vtab {
+            flex: 1; padding: 4px 0 !important; font-size: 7px !important;
+            letter-spacing: 0.4px !important;
+        }
+        .vtab.active { background: linear-gradient(145deg, #003300, #001a00) !important; color: #00dd00 !important; border-color: #005500 !important; }
 
-    .status {
-        margin-top: 12px;
-        padding: 15px;
-        background: #050a15;
-        border-radius: 8px;
-        text-align: center;
-        color: #1a7fff;
-        font-size: 11px;
-        font-family: 'Courier New', monospace;
-        border: 1px solid #000;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
-    }
+        .char-count { font-size: 8px; font-family: 'Courier New', monospace; color: #444; text-align: right; margin-top: 3px; }
+        .char-count.warn { color: #aa6600; }
+        .char-count.over { color: #dd4444; }
 
-    /* ── Info Modal ── */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.85);
-        z-index: 999;
-        justify-content: center;
-        align-items: center;
-        padding: 30px 20px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-        width: 100%;
-        max-width: 340px;
-        font-family: 'Courier New', monospace;
-        color: #fff;
-        font-size: 12px;
-        line-height: 1.8;
-    }
-    .modal-box h2 {
-        font-family: 'Courier New', monospace;
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: #fff;
-        margin-bottom: 16px;
-    }
-    .modal-box p {
-        margin-bottom: 12px;
-        color: #ccc;
-    }
-    .modal-close {
-        margin-top: 20px;
-        background: none;
-        border: 1px solid #fff;
-        color: #fff;
-        font-family: 'Courier New', monospace;
-        font-size: 11px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 4px;
-    }
-    .modal-close:hover { background: rgba(255,255,255,0.08); }
-</style>
+        .setup-toggle {
+            width: 100%; background: none; border: 1px dashed #2a2a2a;
+            border-radius: 3px; color: #555; font-size: 8px; font-family: 'Courier New', monospace;
+            letter-spacing: 0.8px; text-transform: uppercase; padding: 5px 8px;
+            cursor: pointer; text-align: left; display: flex; justify-content: space-between;
+            align-items: center; transition: border-color 0.15s, color 0.15s;
+            flex: none !important; margin-top: 6px;
+        }
+        .setup-toggle:hover { border-color: #555; color: #888; transform: none; background: none; box-shadow: none; }
+
+        #setup-guide-overlay {
+            display: none; position: fixed; inset: 0; z-index: 8000;
+            background: rgba(0,0,0,0.85);
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        #setup-guide-overlay.open { display: flex; }
+
+        .setup-guide {
+            background: #0a0a0a; border: 1px solid #1e1e1e;
+            border-radius: 6px; padding: 14px;
+            width: 100%; max-width: 460px;
+            max-height: 88vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+        }
+
+        .setup-guide-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; padding-bottom: 8px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .setup-guide-header span {
+            font-family: 'Courier New', monospace; font-size: 9px;
+            letter-spacing: 1px; text-transform: uppercase; color: #666; font-weight: 700;
+        }
+        .sg-close {
+            background: none; border: 1px solid #2a2a2a; border-radius: 3px;
+            color: #555; font-size: 11px; cursor: pointer; padding: 2px 8px;
+            font-family: 'Courier New', monospace; flex: none !important;
+            line-height: 1.4; transition: border-color 0.15s, color 0.15s;
+        }
+        .sg-close:hover { border-color: #555; color: #aaa; transform: none; background: none; box-shadow: none; }
+
+        .sg-step {
+            display: flex; gap: 8px; align-items: flex-start;
+            padding: 6px 0; border-bottom: 1px solid #111;
+        }
+        .sg-step:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .sg-num {
+            width: 16px; height: 16px; border-radius: 2px;
+            background: #1a1a1a; border: 1px solid #2a2a2a;
+            color: #555; font-size: 8px; font-family: 'Courier New', monospace;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-weight: 700;
+        }
+        .sg-num.done { background: #001a00; border-color: #003300; color: #00aa00; }
+
+        .sg-text { flex: 1; }
+        .sg-text strong {
+            display: block; color: #777; font-size: 8px; font-family: 'Courier New', monospace;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; font-weight: 700;
+        }
+        .sg-text span {
+            color: #444; font-size: 8px; font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+        .sg-text a { color: #336633; text-decoration: none; }
+        .sg-text a:hover { color: #00aa00; }
+
+        .sg-note {
+            margin-top: 8px; padding: 6px 8px;
+            background: #001500; border: 1px solid #002200; border-radius: 3px;
+            color: #336633; font-size: 8px; font-family: 'Courier New', monospace;
+            line-height: 1.7;
+        }
+
+        #disclaimer-overlay {
+            display: flex; position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,0.92);
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        #disclaimer-overlay.hidden { display: none; }
+        #disclaimer-box {
+            background: #0e0e0e;
+            border: 1px solid #2a0000;
+            border-radius: 8px;
+            padding: 24px 26px;
+            max-width: 520px; width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+        }
+        #disclaimer-box h2 {
+            font-family: Impact, 'Arial Black', sans-serif;
+            font-size: 16px; color: #cc3300;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #1a0000;
+            padding-bottom: 10px;
+        }
+        .disc-body {
+            font-family: 'Courier New', monospace;
+            font-size: 9px; color: #666;
+            line-height: 1.85; margin-bottom: 12px;
+        }
+        .disc-body strong { color: #999; font-weight: 700; }
+        .disc-points {
+            list-style: none; margin: 8px 0 12px;
+            display: flex; flex-direction: column; gap: 5px;
+        }
+        .disc-points li {
+            font-family: 'Courier New', monospace;
+            font-size: 9px; color: #555;
+            padding-left: 14px; position: relative; line-height: 1.6;
+        }
+        .disc-points li::before { content: '›'; position: absolute; left: 0; color: #550000; }
+        .disc-accept-row {
+            display: flex; align-items: flex-start; gap: 10px;
+            margin-bottom: 14px; padding: 10px;
+            background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 4px;
+        }
+        .disc-accept-row input[type=checkbox] {
+            width: 13px; height: 13px; cursor: pointer;
+            accent-color: #cc3300; flex-shrink: 0; margin-top: 1px;
+        }
+        .disc-accept-row label {
+            font-family: 'Courier New', monospace;
+            font-size: 9px; color: #555; line-height: 1.6;
+            text-transform: none; letter-spacing: 0; cursor: pointer; font-weight: normal;
+        }
+        #disc-accept-btn {
+            width: 100%; padding: 11px;
+            background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+            border: 1px solid #222; border-radius: 4px;
+            color: #444; font-family: 'Courier New', monospace;
+            font-size: 10px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase; cursor: not-allowed;
+            transition: all 0.2s; flex: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        #disc-accept-btn.ready {
+            color: #ff6644; border-color: #cc3300; cursor: pointer;
+            background: linear-gradient(145deg, #2a0000, #1a0000);
+        }
+        #disc-accept-btn.ready:hover {
+            background: linear-gradient(145deg, #3a0000, #220000);
+            color: #ff8866; transform: translateY(-1px);
+        }
+
+        /* ── Back link ── */
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            color: #444;
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #dd0000; }
+    </style>
 </head>
 <body>
-
-<div class="modal-overlay" id="infoModal" onclick="if(event.target===this)closeInfo()">
-    <div class="modal-box">
-        <h2>dPaul VU — v2.01</h2>
-        <p>A browser-based audio level meter that uses your device microphone to measure and display signal levels in real time.</p>
-        <p>Press MIC to start monitoring. Your browser will ask for microphone permission — this is required for the tool to work. Audio is processed locally in your browser and is never recorded or transmitted.</p>
-        <p>Press TEST to run a simulated signal sweep across the full range. Useful for checking the display without a microphone.</p>
-        <p>Any level above 85 dB is logged to the Peak History with a timestamp. The all-time maximum is shown at the top of the list. Press RESET to clear all history and return to standby.</p>
-        <p>The bar turns red above 90 dB.</p>
-        <button class="modal-close" onclick="closeInfo()">Close</button>
-    </div>
-</div>
-
 <div class="outer-wrap">
     <div class="container">
-        <div class="nav-tools">
-            <div class="round-btn" onclick="showInfo()" title="Instructions">i</div>
-            <a href="https://www.dpaul.studio" class="round-btn" title="Back to dpaul.studio">⬉</a>
+        <div class="pwr-led-wrap">
+            <div class="pwr-led" id="pwrLed"></div>
+            <div class="pwr-led-label">PWR</div>
         </div>
 
-        <h1>dPaul VU <span style="font-size:12px; opacity:0.4; font-family: sans-serif; vertical-align: middle; letter-spacing: 2px;">v2.01</span></h1>
+        <h1>dPaul TTS <span style="font-size:11px;letter-spacing:2px;opacity:0.6;font-family:Impact,'Arial Black',sans-serif;">v4.0</span></h1>
 
         <div class="main-layout">
-            <div class="section">
-                <label>Level Display</label>
-                <div class="db-readout">
-                    <div class="db-number" id="dbDisplay">—</div>
-                    <div class="db-unit-label">Decibels</div>
+            <div class="col-left">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="modeGoogle" onclick="setMode('google')">&#9729; GOOGLE TTS</button>
+                    <button class="mode-btn" id="modeBrowser" onclick="setMode('browser')">BROWSER TTS</button>
+                </div>
+                <div id="googlePanel">
+                    <div class="section" style="margin-bottom:6px;">
+                        <label>Google Cloud API Key</label>
+                        <div class="api-row">
+                            <input type="password" class="api-input" id="apiKey" placeholder="Paste your API key here...">
+                            <button class="btn-save-key" onclick="saveKey()">SAVE</button>
+                        </div>
+                        <div class="api-note">
+                            Free tier · 1M chars/mo · Your key stays in your browser only
+                        </div>
+                        <button class="setup-toggle" id="setupToggle" onclick="toggleSetup()">
+                            <span>&#9654; How to get a free API key</span>
+                        </button>
+                    </div>
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">VOICE TYPE</div>
+                        <div class="voice-tabs">
+                            <button class="vtab active" id="tabWavenet" onclick="setVoiceType('Wavenet')">WaveNet</button>
+                            <button class="vtab" id="tabNeural2" onclick="setVoiceType('Neural2')">Neural2</button>
+                            <button class="vtab" id="tabStudio" onclick="setVoiceType('Studio')">Studio</button>
+                            <button class="vtab" id="tabStandard" onclick="setVoiceType('Standard')">Standard</button>
+                        </div>
+                        <div class="api-note" style="margin-top:4px;">WaveNet &amp; Neural2 sound most natural. Studio = premium (paid). Standard = basic.</div>
+                    </div>
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">LANGUAGE</div>
+                        <select id="langSelect" onchange="updateVoiceList()">
+                            <option value="en-GB">English (UK)</option>
+                            <option value="en-US">English (US)</option>
+                            <option value="en-AU">English (AU)</option>
+                            <option value="fr-FR">French</option>
+                            <option value="de-DE">German</option>
+                            <option value="es-ES">Spanish (Spain)</option>
+                            <option value="es-US">Spanish (US)</option>
+                            <option value="it-IT">Italian</option>
+                            <option value="ja-JP">Japanese</option>
+                            <option value="ko-KR">Korean</option>
+                            <option value="pt-BR">Portuguese (BR)</option>
+                            <option value="nl-NL">Dutch</option>
+                            <option value="pl-PL">Polish</option>
+                            <option value="sv-SE">Swedish</option>
+                            <option value="tr-TR">Turkish</option>
+                            <option value="ar-XA">Arabic</option>
+                            <option value="hi-IN">Hindi</option>
+                            <option value="zh-CN">Chinese (Simplified)</option>
+                        </select>
+                    </div>
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">VOICE</div>
+                        <select id="googleVoiceSelect"></select>
+                    </div>
+                    <div class="section">
+                        <div class="section-title">VOICE SETTINGS</div>
+                        <div class="slider-row">
+                            <span class="slider-label">Speed</span>
+                            <input type="range" id="googleSpeed" min="25" max="400" value="100" step="5">
+                            <span class="slider-val" id="googleSpeedVal">1.00</span>
+                        </div>
+                        <div class="slider-row" style="margin-top:6px;">
+                            <span class="slider-label">Pitch</span>
+                            <input type="range" id="googlePitch" min="-20" max="20" value="0" step="1">
+                            <span class="slider-val" id="googlePitchVal">0.0</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="browserPanel" style="display:none;">
+                    <div class="section" style="margin-bottom:6px;">
+                        <div class="section-title">VOICE</div>
+                        <select id="voiceSelect"><option value="">Loading voices...</option></select>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <div class="section" style="flex:1;">
+                            <div class="section-title">SPEED</div>
+                            <div class="inc-row">
+                                <button class="inc-btn" id="rateDown">&#8722;</button>
+                                <div class="inc-value" id="rateDisplay">1.0x</div>
+                                <button class="inc-btn" id="rateUp">+</button>
+                            </div>
+                        </div>
+                        <div class="section" style="flex:1;">
+                            <div class="section-title">PITCH</div>
+                            <div class="inc-row">
+                                <button class="inc-btn" id="pitchDown">&#8722;</button>
+                                <div class="inc-value" id="pitchDisplay">1.0</div>
+                                <button class="inc-btn" id="pitchUp">+</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="section">
-                <label>Signal Bar</label>
-                <div class="segments" id="segments"></div>
-                <div class="bar-scale">
-                    <span>-40</span><span>-20</span><span>0</span><span>20</span><span>50</span><span>100</span>
+            <div class="col-right">
+                <div class="section">
+                    <label>SCRIPT</label>
+                    <textarea id="textInput" placeholder="Enter your script here..." oninput="updateCharCount()"></textarea>
+                    <div class="char-count" id="charCount">0 / 5000 chars</div>
                 </div>
-            </div>
-
-            <div class="section">
-                <div class="peak-header-row">
-                    <label style="margin:0;">Peak History</label>
-                    <span class="peak-max-val" id="peakMaxVal">Max: —</span>
+                <div class="button-group">
+                    <button class="btn-primary" id="speakBtn">SPEAK</button>
+                    <button id="clearBtn">CLEAR</button>
+                    <button id="stopBtn" disabled>STOP</button>
                 </div>
-                <div class="peak-list-wrap" id="peakList">
-                    <div class="peak-empty" id="peakEmpty">No peaks recorded yet</div>
-                </div>
+                <div class="status" id="status">Ready</div>
+                <audio id="audioPlayer" controls></audio>
+                <button id="downloadBtn" onclick="downloadAudio()">&#8595; DOWNLOAD MP3</button>
             </div>
-
-            <div class="button-group">
-                <button id="btnMic">Mic</button>
-                <button id="btnTest">Test</button>
-                <button id="btnReset">Reset</button>
-            </div>
-
-            <div class="status" id="status">Ready</div>
         </div>
     </div>
+
+    <a href="https://www.dpaul.studio" class="back-link">← back to dpaul.studio</a>
 </div>
 
 <script>
 'use strict';
+const pwrLed = document.getElementById('pwrLed');
+let blinkInterval = null;
+function ledOn() { pwrLed.classList.add('on'); }
+function ledOff() { pwrLed.classList.remove('on'); }
+function startBlink() { ledOn(); blinkInterval = setInterval(() => pwrLed.classList.toggle('on'), 400); }
+function stopBlink() { clearInterval(blinkInterval); blinkInterval = null; ledOff(); }
+ledOn();
 
-const MIN_DB = -40, MAX_DB = 100;
-const NUM_SEGS = 30;
-const PEAK_THRESHOLD = 85;
-
-const segsEl = document.getElementById('segments');
-for (let i = 0; i < NUM_SEGS; i++) {
-    const d = document.createElement('div');
-    d.className = 'seg';
-    segsEl.appendChild(d);
-}
-const segs = Array.from(segsEl.children);
-
-const dbDisplay = document.getElementById('dbDisplay');
-const peakList = document.getElementById('peakList');
-const peakEmpty = document.getElementById('peakEmpty');
-const peakMaxVal = document.getElementById('peakMaxVal');
-const statusEl = document.getElementById('status');
-
-let peakHistory = [];
-let allTimePeak = null;
-let simInterval = null;
-let simMode = null;
-let audioCtx = null;
-let analyser = null;
-let micStream = null;
-
-function showInfo() {
-    document.getElementById('infoModal').classList.add('open');
-}
-function closeInfo() {
-    document.getElementById('infoModal').classList.remove('open');
+let currentMode = 'google';
+function setMode(m) {
+    currentMode = m;
+    document.getElementById('googlePanel').style.display = m === 'google' ? '' : 'none';
+    document.getElementById('browserPanel').style.display = m === 'browser' ? '' : 'none';
+    document.getElementById('modeGoogle').classList.toggle('active', m === 'google');
+    document.getElementById('modeBrowser').classList.toggle('active', m === 'browser');
+    document.getElementById('audioPlayer').classList.remove('visible');
+    document.getElementById('downloadBtn').classList.remove('visible');
+    document.getElementById('stopBtn').disabled = true;
+    setStatus('Ready');
+    ledOn();
 }
 
-function setLevel(db) {
-    if (db < MIN_DB) {
-        dbDisplay.textContent = '—';
-        dbDisplay.classList.remove('peak');
-        segs.forEach(s => s.className = 'seg');
+const VOICE_DB = {
+    'en-GB': {
+        Wavenet: ['en-GB-Wavenet-A (Female)','en-GB-Wavenet-B (Male)','en-GB-Wavenet-C (Female)','en-GB-Wavenet-D (Male)','en-GB-Wavenet-F (Female)'],
+        Neural2: ['en-GB-Neural2-A (Female)','en-GB-Neural2-B (Male)','en-GB-Neural2-C (Female)','en-GB-Neural2-D (Male)','en-GB-Neural2-F (Female)'],
+        Studio: ['en-GB-Studio-B (Male)','en-GB-Studio-C (Female)'],
+        Standard: ['en-GB-Standard-A (Female)','en-GB-Standard-B (Male)','en-GB-Standard-C (Female)','en-GB-Standard-D (Male)','en-GB-Standard-F (Female)']
+    },
+    'en-US': {
+        Wavenet: ['en-US-Wavenet-A (Male)','en-US-Wavenet-B (Male)','en-US-Wavenet-C (Female)','en-US-Wavenet-D (Male)','en-US-Wavenet-E (Female)','en-US-Wavenet-F (Female)','en-US-Wavenet-G (Female)','en-US-Wavenet-H (Female)','en-US-Wavenet-I (Male)','en-US-Wavenet-J (Male)'],
+        Neural2: ['en-US-Neural2-A (Male)','en-US-Neural2-C (Female)','en-US-Neural2-D (Male)','en-US-Neural2-E (Female)','en-US-Neural2-F (Female)','en-US-Neural2-G (Female)','en-US-Neural2-H (Female)','en-US-Neural2-I (Male)','en-US-Neural2-J (Male)'],
+        Studio: ['en-US-Studio-M (Male)','en-US-Studio-O (Female)','en-US-Studio-Q (Male)'],
+        Standard: ['en-US-Standard-A (Male)','en-US-Standard-B (Male)','en-US-Standard-C (Female)','en-US-Standard-D (Male)','en-US-Standard-E (Female)','en-US-Standard-F (Female)','en-US-Standard-G (Female)','en-US-Standard-H (Female)','en-US-Standard-I (Male)','en-US-Standard-J (Male)']
+    },
+    'en-AU': {
+        Wavenet: ['en-AU-Wavenet-A (Female)','en-AU-Wavenet-B (Male)','en-AU-Wavenet-C (Female)','en-AU-Wavenet-D (Male)'],
+        Neural2: ['en-AU-Neural2-A (Female)','en-AU-Neural2-B (Male)','en-AU-Neural2-C (Female)','en-AU-Neural2-D (Male)'],
+        Studio: ['en-AU-Standard-A (Female)'],
+        Standard: ['en-AU-Standard-A (Female)','en-AU-Standard-B (Male)','en-AU-Standard-C (Female)','en-AU-Standard-D (Male)']
+    },
+    'fr-FR': {
+        Wavenet: ['fr-FR-Wavenet-A (Female)','fr-FR-Wavenet-B (Male)','fr-FR-Wavenet-C (Female)','fr-FR-Wavenet-D (Male)','fr-FR-Wavenet-E (Female)'],
+        Neural2: ['fr-FR-Neural2-A (Female)','fr-FR-Neural2-B (Male)','fr-FR-Neural2-C (Female)','fr-FR-Neural2-D (Male)','fr-FR-Neural2-E (Female)'],
+        Studio: ['fr-FR-Standard-A (Female)'],
+        Standard: ['fr-FR-Standard-A (Female)','fr-FR-Standard-B (Male)','fr-FR-Standard-C (Female)','fr-FR-Standard-D (Male)','fr-FR-Standard-E (Female)']
+    },
+    'de-DE': {
+        Wavenet: ['de-DE-Wavenet-A (Female)','de-DE-Wavenet-B (Male)','de-DE-Wavenet-C (Female)','de-DE-Wavenet-D (Male)','de-DE-Wavenet-E (Male)','de-DE-Wavenet-F (Female)'],
+        Neural2: ['de-DE-Neural2-A (Female)','de-DE-Neural2-B (Male)','de-DE-Neural2-C (Female)','de-DE-Neural2-D (Male)','de-DE-Neural2-F (Female)'],
+        Studio: ['de-DE-Standard-A (Female)'],
+        Standard: ['de-DE-Standard-A (Female)','de-DE-Standard-B (Male)','de-DE-Standard-C (Female)','de-DE-Standard-D (Male)','de-DE-Standard-E (Male)','de-DE-Standard-F (Female)']
+    },
+    'es-ES': {
+        Wavenet: ['es-ES-Wavenet-B (Male)','es-ES-Wavenet-C (Female)','es-ES-Wavenet-D (Female)'],
+        Neural2: ['es-ES-Neural2-A (Female)','es-ES-Neural2-B (Male)','es-ES-Neural2-C (Female)','es-ES-Neural2-D (Female)','es-ES-Neural2-E (Female)','es-ES-Neural2-F (Male)'],
+        Studio: ['es-ES-Standard-A (Female)'],
+        Standard: ['es-ES-Standard-A (Female)','es-ES-Standard-B (Male)','es-ES-Standard-C (Female)','es-ES-Standard-D (Female)']
+    },
+    'es-US': {
+        Wavenet: ['es-US-Wavenet-A (Female)','es-US-Wavenet-B (Male)','es-US-Wavenet-C (Male)'],
+        Neural2: ['es-US-Neural2-A (Female)','es-US-Neural2-B (Male)','es-US-Neural2-C (Male)'],
+        Studio: ['es-US-Standard-A (Female)'],
+        Standard: ['es-US-Standard-A (Female)','es-US-Standard-B (Male)','es-US-Standard-C (Male)']
+    },
+    'it-IT': {
+        Wavenet: ['it-IT-Wavenet-A (Female)','it-IT-Wavenet-B (Female)','it-IT-Wavenet-C (Male)','it-IT-Wavenet-D (Male)'],
+        Neural2: ['it-IT-Neural2-A (Female)','it-IT-Neural2-C (Male)'],
+        Studio: ['it-IT-Standard-A (Female)'],
+        Standard: ['it-IT-Standard-A (Female)','it-IT-Standard-B (Female)','it-IT-Standard-C (Male)','it-IT-Standard-D (Male)']
+    },
+    'ja-JP': {
+        Wavenet: ['ja-JP-Wavenet-A (Female)','ja-JP-Wavenet-B (Female)','ja-JP-Wavenet-C (Male)','ja-JP-Wavenet-D (Male)'],
+        Neural2: ['ja-JP-Neural2-B (Female)','ja-JP-Neural2-C (Male)','ja-JP-Neural2-D (Male)'],
+        Studio: ['ja-JP-Standard-A (Female)'],
+        Standard: ['ja-JP-Standard-A (Female)','ja-JP-Standard-B (Female)','ja-JP-Standard-C (Male)','ja-JP-Standard-D (Male)']
+    },
+    'ko-KR': {
+        Wavenet: ['ko-KR-Wavenet-A (Female)','ko-KR-Wavenet-B (Female)','ko-KR-Wavenet-C (Male)','ko-KR-Wavenet-D (Male)'],
+        Neural2: ['ko-KR-Neural2-A (Female)','ko-KR-Neural2-B (Female)'],
+        Studio: ['ko-KR-Standard-A (Female)'],
+        Standard: ['ko-KR-Standard-A (Female)','ko-KR-Standard-B (Female)','ko-KR-Standard-C (Male)','ko-KR-Standard-D (Male)']
+    },
+    'pt-BR': {
+        Wavenet: ['pt-BR-Wavenet-A (Female)','pt-BR-Wavenet-B (Male)','pt-BR-Wavenet-C (Female)','pt-BR-Wavenet-D (Female)','pt-BR-Wavenet-E (Male)'],
+        Neural2: ['pt-BR-Neural2-A (Female)','pt-BR-Neural2-B (Male)','pt-BR-Neural2-C (Female)'],
+        Studio: ['pt-BR-Standard-A (Female)'],
+        Standard: ['pt-BR-Standard-A (Female)','pt-BR-Standard-B (Male)','pt-BR-Standard-C (Female)']
+    },
+    'nl-NL': {
+        Wavenet: ['nl-NL-Wavenet-A (Female)','nl-NL-Wavenet-B (Male)','nl-NL-Wavenet-C (Male)','nl-NL-Wavenet-D (Female)','nl-NL-Wavenet-E (Male)'],
+        Neural2: ['nl-NL-Standard-A (Female)'],
+        Studio: ['nl-NL-Standard-A (Female)'],
+        Standard: ['nl-NL-Standard-A (Female)','nl-NL-Standard-B (Male)','nl-NL-Standard-C (Male)','nl-NL-Standard-D (Female)','nl-NL-Standard-E (Male)']
+    },
+    'pl-PL': {
+        Wavenet: ['pl-PL-Wavenet-A (Female)','pl-PL-Wavenet-B (Male)','pl-PL-Wavenet-C (Male)','pl-PL-Wavenet-D (Female)','pl-PL-Wavenet-E (Male)'],
+        Neural2: ['pl-PL-Standard-A (Female)'],
+        Studio: ['pl-PL-Standard-A (Female)'],
+        Standard: ['pl-PL-Standard-A (Female)','pl-PL-Standard-B (Male)','pl-PL-Standard-C (Male)','pl-PL-Standard-D (Female)','pl-PL-Standard-E (Male)']
+    },
+    'sv-SE': {
+        Wavenet: ['sv-SE-Wavenet-A (Female)','sv-SE-Wavenet-B (Female)','sv-SE-Wavenet-C (Male)','sv-SE-Wavenet-D (Male)','sv-SE-Wavenet-E (Male)'],
+        Neural2: ['sv-SE-Standard-A (Female)'],
+        Studio: ['sv-SE-Standard-A (Female)'],
+        Standard: ['sv-SE-Standard-A (Female)','sv-SE-Standard-B (Female)','sv-SE-Standard-C (Male)','sv-SE-Standard-D (Male)','sv-SE-Standard-E (Male)']
+    },
+    'tr-TR': {
+        Wavenet: ['tr-TR-Wavenet-A (Female)','tr-TR-Wavenet-B (Male)','tr-TR-Wavenet-C (Female)','tr-TR-Wavenet-D (Female)','tr-TR-Wavenet-E (Male)'],
+        Neural2: ['tr-TR-Standard-A (Female)'],
+        Studio: ['tr-TR-Standard-A (Female)'],
+        Standard: ['tr-TR-Standard-A (Female)','tr-TR-Standard-B (Male)','tr-TR-Standard-C (Female)','tr-TR-Standard-D (Female)','tr-TR-Standard-E (Male)']
+    },
+    'ar-XA': {
+        Wavenet: ['ar-XA-Wavenet-A (Female)','ar-XA-Wavenet-B (Male)','ar-XA-Wavenet-C (Male)','ar-XA-Wavenet-D (Female)'],
+        Neural2: ['ar-XA-Standard-A (Female)'],
+        Studio: ['ar-XA-Standard-A (Female)'],
+        Standard: ['ar-XA-Standard-A (Female)','ar-XA-Standard-B (Male)','ar-XA-Standard-C (Male)','ar-XA-Standard-D (Female)']
+    },
+    'hi-IN': {
+        Wavenet: ['hi-IN-Wavenet-A (Female)','hi-IN-Wavenet-B (Male)','hi-IN-Wavenet-C (Male)','hi-IN-Wavenet-D (Female)'],
+        Neural2: ['hi-IN-Neural2-A (Female)','hi-IN-Neural2-B (Male)','hi-IN-Neural2-C (Male)','hi-IN-Neural2-D (Female)'],
+        Studio: ['hi-IN-Standard-A (Female)'],
+        Standard: ['hi-IN-Standard-A (Female)','hi-IN-Standard-B (Male)','hi-IN-Standard-C (Male)','hi-IN-Standard-D (Female)']
+    },
+    'zh-CN': {
+        Wavenet: ['cmn-CN-Wavenet-A (Female)','cmn-CN-Wavenet-B (Male)','cmn-CN-Wavenet-C (Male)','cmn-CN-Wavenet-D (Female)'],
+        Neural2: ['cmn-CN-Standard-A (Female)'],
+        Studio: ['cmn-CN-Standard-A (Female)'],
+        Standard: ['cmn-CN-Standard-A (Female)','cmn-CN-Standard-B (Male)','cmn-CN-Standard-C (Male)','cmn-CN-Standard-D (Female)']
+    }
+};
+
+let currentVoiceType = 'Wavenet';
+
+function setVoiceType(type) {
+    currentVoiceType = type;
+    ['Wavenet','Neural2','Studio','Standard'].forEach(t => {
+        document.getElementById('tab' + t).classList.toggle('active', t === type);
+    });
+    updateVoiceList();
+}
+
+function updateVoiceList() {
+    const lang = document.getElementById('langSelect').value;
+    const sel = document.getElementById('googleVoiceSelect');
+    const voices = (VOICE_DB[lang] && VOICE_DB[lang][currentVoiceType]) || [];
+    sel.innerHTML = '';
+    if (!voices.length) {
+        sel.innerHTML = '<option value="">No voices for this combination</option>';
         return;
     }
-
-    dbDisplay.textContent = db.toFixed(1);
-    dbDisplay.classList.toggle('peak', db >= 90);
-
-    const percent = (db - MIN_DB) / (MAX_DB - MIN_DB);
-    const filled = Math.round(percent * (NUM_SEGS - 1));
-
-    segs.forEach((s, i) => {
-        if (i <= filled) {
-            s.className = (db >= 90 && i > NUM_SEGS * 0.8) ? 'seg lit-red' : 'seg lit-blue';
-        } else {
-            s.className = 'seg';
-        }
-    });
-
-    if (db >= PEAK_THRESHOLD) {
-        recordPeak(db);
-    }
-}
-
-function recordPeak(db) {
-    const time = new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-    if (peakHistory.length > 0 && Math.abs(db - peakHistory[0].db) < 2) return; 
-
-    peakHistory.unshift({ db, time });
-    if (peakHistory.length > 10) peakHistory.pop();
-
-    if (allTimePeak === null || db > allTimePeak) {
-        allTimePeak = db;
-        peakMaxVal.textContent = 'Max: ' + db.toFixed(1) + ' dB';
-    }
-    renderPeakList();
-}
-
-function renderPeakList() {
-    peakList.innerHTML = '';
-    if (peakHistory.length === 0) {
-        peakList.appendChild(peakEmpty);
-        peakEmpty.style.display = 'block';
-        return;
-    }
-    peakEmpty.style.display = 'none';
-    peakHistory.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'peak-row' + (item.db >= 90 ? ' danger' : '');
-        row.innerHTML = `<span>${item.db.toFixed(1)} dB</span><span>${item.time}</span>`;
-        peakList.appendChild(row);
+    voices.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.split(' ')[0];
+        opt.textContent = v;
+        sel.appendChild(opt);
     });
 }
+updateVoiceList();
 
-function stopAll() {
-    clearInterval(simInterval);
-    if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
-    if (audioCtx) { audioCtx.close(); audioCtx = null; }
-    simInterval = null;
-    simMode = null;
-    analyser = null;
-    document.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-    statusEl.textContent = "Stopped";
-}
-
-document.getElementById('btnTest').addEventListener('click', () => {
-    if (simMode === 'test') { stopAll(); return; }
-    stopAll();
-    simMode = 'test';
-    document.getElementById('btnTest').classList.add('active');
-    statusEl.textContent = "Test Signal Active...";
-    let ph = 0;
-    simInterval = setInterval(() => {
-        ph++;
-        let db = 20 + Math.sin(ph * 0.1) * 40 + Math.sin(ph * 0.05) * 20;
-        setLevel(Math.max(MIN_DB, Math.min(MAX_DB, db)));
-    }, 50);
+document.getElementById('googleSpeed').addEventListener('input', function() {
+    document.getElementById('googleSpeedVal').textContent = (this.value / 100).toFixed(2);
+});
+document.getElementById('googlePitch').addEventListener('input', function() {
+    document.getElementById('googlePitchVal').textContent = parseFloat(this.value).toFixed(1);
 });
 
-document.getElementById('btnMic').addEventListener('click', async () => {
-    if (simMode === 'mic') { stopAll(); return; }
-    stopAll();
+function toggleSetup() {
+    document.getElementById('setup-guide-overlay').classList.toggle('open');
+}
+function closeSetup() {
+    document.getElementById('setup-guide-overlay').classList.remove('open');
+}
+
+function saveKey() {
+    const k = document.getElementById('apiKey').value.trim();
+    if (!k) { setStatus('No key entered', false, true); return; }
+    localStorage.setItem('dpaul_gcp_key', k);
+    setStatus('Key saved — ready', true);
+}
+
+function getKey() {
+    const field = document.getElementById('apiKey').value.trim();
+    if (field) return field;
+    return localStorage.getItem('dpaul_gcp_key') || '';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('dpaul_gcp_key');
+    if (saved) document.getElementById('apiKey').value = saved;
+});
+
+function updateCharCount() {
+    const len = document.getElementById('textInput').value.length;
+    const el = document.getElementById('charCount');
+    el.textContent = len + ' / 5000 chars';
+    el.className = 'char-count' + (len > 4500 ? ' over' : len > 4000 ? ' warn' : '');
+}
+
+let currentAudioUrl = null;
+let currentAudioBlob = null;
+
+async function googleSpeak(text) {
+    const apiKey = getKey();
+    if (!apiKey) { setStatus('Paste & SAVE your Google API Key first', false, true); return; }
+    const voiceName = document.getElementById('googleVoiceSelect').value;
+    if (!voiceName) { setStatus('No voice selected', false, true); return; }
+    const langCode = document.getElementById('langSelect').value;
+    const speed = parseFloat(document.getElementById('googleSpeed').value) / 100;
+    const pitch = parseFloat(document.getElementById('googlePitch').value);
+    setBusy(true);
+    setStatus('Generating...', true);
+    document.getElementById('downloadBtn').classList.remove('visible');
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        micStream = stream;
-        simMode = 'mic';
-        document.getElementById('btnMic').classList.add('active');
-        statusEl.textContent = "Microphone Active...";
-
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioCtx.createMediaStreamSource(stream);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
-        source.connect(analyser);
-
-        const dataArray = new Float32Array(analyser.fftSize);
-        simInterval = setInterval(() => {
-            analyser.getFloatTimeDomainData(dataArray);
-            let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i] * dataArray[i];
-            let rms = Math.sqrt(sum / dataArray.length);
-            let db = rms > 0 ? 20 * Math.log10(rms) + 95 : MIN_DB - 1;
-            setLevel(Math.max(MIN_DB - 1, Math.min(MAX_DB, db)));
-        }, 50);
-    } catch (err) {
-        statusEl.textContent = "Mic Denied";
+        const res = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                input: { text },
+                voice: { languageCode: langCode, name: voiceName },
+                audioConfig: { audioEncoding: 'MP3', speakingRate: speed, pitch: pitch }
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || 'HTTP ' + res.status);
+        const binary = atob(data.audioContent);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        currentAudioBlob = new Blob([bytes], { type: 'audio/mpeg' });
+        if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl);
+        currentAudioUrl = URL.createObjectURL(currentAudioBlob);
+        const player = document.getElementById('audioPlayer');
+        player.src = currentAudioUrl;
+        player.classList.add('visible');
+        document.getElementById('downloadBtn').classList.add('visible');
+        await player.play();
+        player.onended = () => { setStatus('Finished'); setBusy(false); };
+        setStatus('Playing...', true);
+    } catch(e) {
+        setStatus('Error: ' + e.message, false, true);
+        setBusy(false);
     }
+}
+
+function downloadAudio() {
+    if (!currentAudioUrl) return;
+    const a = document.createElement('a');
+    a.href = currentAudioUrl;
+    a.download = `dpaul-tts-${Date.now()}.mp3`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+const synth = window.speechSynthesis;
+const params = { rate: { val: 1.0, min: 0.5, max: 2.0, step: 0.1 }, pitch: { val: 1.0, min: 0.5, max: 2.0, step: 0.1 } };
+function updateDisplay(key) { document.getElementById(key === 'rate' ? 'rateDisplay' : 'pitchDisplay').textContent = key === 'rate' ? params[key].val.toFixed(1) + 'x' : params[key].val.toFixed(1); }
+function step(key, dir) {
+    params[key].val = Math.max(params[key].min, Math.min(params[key].max, Math.round((params[key].val + dir * params[key].step) * 10) / 10));
+    updateDisplay(key);
+}
+document.getElementById('rateDown').addEventListener('click', () => step('rate', -1));
+document.getElementById('rateUp').addEventListener('click', () => step('rate', +1));
+document.getElementById('pitchDown').addEventListener('click', () => step('pitch', -1));
+document.getElementById('pitchUp').addEventListener('click', () => step('pitch', +1));
+
+function loadBrowserVoices() {
+    let all = synth.getVoices();
+    let list = all.filter(v => v.name.toLowerCase().includes('google')) || all;
+    const sel = document.getElementById('voiceSelect');
+    sel.innerHTML = '';
+    list.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i; opt.textContent = v.name + ' (' + v.lang + ')';
+        sel.appendChild(opt);
+    });
+    window._ttsVoices = list;
+}
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadBrowserVoices;
+loadBrowserVoices();
+
+function browserSpeak(text) {
+    synth.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    const idx = document.getElementById('voiceSelect').value;
+    utt.voice = window._ttsVoices?.[idx];
+    utt.rate = params.rate.val; utt.pitch = params.pitch.val;
+    utt.onstart = () => { setStatus('Speaking...', true); setBusy(true); };
+    utt.onend = () => { setStatus('Finished'); setBusy(false); };
+    synth.speak(utt);
+}
+
+function setStatus(msg, active = false, isError = false) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = 'status' + (isError ? ' error' : active ? ' active' : '');
+}
+
+function setBusy(busy) {
+    document.getElementById('speakBtn').disabled = busy;
+    document.getElementById('stopBtn').disabled = !busy;
+    busy ? startBlink() : (stopBlink(), ledOn());
+}
+
+document.getElementById('speakBtn').addEventListener('click', () => {
+    const text = document.getElementById('textInput').value.trim();
+    if (!text) return;
+    currentMode === 'google' ? googleSpeak(text) : browserSpeak(text);
 });
 
-document.getElementById('btnReset').addEventListener('click', () => {
-    stopAll();
-    peakHistory = [];
-    allTimePeak = null;
-    peakMaxVal.textContent = 'Max: —';
-    renderPeakList();
-    setLevel(MIN_DB - 1);
-    statusEl.textContent = "Ready";
+document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('textInput').value = '';
+    updateCharCount();
 });
+
+document.getElementById('stopBtn').addEventListener('click', () => {
+    currentMode === 'google' ? document.getElementById('audioPlayer').pause() : synth.cancel();
+    setBusy(false);
+});
+
+function acceptDisclaimer() {
+    localStorage.setItem('dpaul_tts_disclaimer', '1');
+    document.getElementById('disclaimer-overlay').classList.add('hidden');
+}
+
+document.getElementById('disc-checkbox').addEventListener('change', function() {
+    const btn = document.getElementById('disc-accept-btn');
+    btn.classList.toggle('ready', this.checked);
+    btn.textContent = this.checked ? '▶ I Agree — Continue' : 'Tick the box above to continue';
+});
+
+document.getElementById('disc-accept-btn').addEventListener('click', function() {
+    if (this.classList.contains('ready')) acceptDisclaimer();
+});
+
+if (!localStorage.getItem('dpaul_tts_disclaimer')) {
+    document.getElementById('disclaimer-overlay').classList.remove('hidden');
+}
 </script>
+
+<div id="setup-guide-overlay">
+    <div class="setup-guide">
+        <div class="setup-guide-header">
+            <span>▶ How to get a free Google API key</span>
+            <button class="sg-close" onclick="closeSetup()">✕ Close</button>
+        </div>
+        <div class="sg-step"><div class="sg-num">1</div><div class="sg-text"><strong>Create a Google account</strong><span>Need a Gmail account.</span></div></div>
+        <div class="sg-step"><div class="sg-num">2</div><div class="sg-text"><strong>Go to Google Cloud Console</strong><span>Visit console.cloud.google.com.</span></div></div>
+        <div class="sg-step"><div class="sg-num">3</div><div class="sg-text"><strong>Enable Text-to-Speech API</strong><span>Enable it in the API Library.</span></div></div>
+        <div class="sg-step"><div class="sg-num">4</div><div class="sg-text"><strong>Create an API key</strong><span>Credentials -> Create API Key.</span></div></div>
+    </div>
+</div>
+
+<div id="disclaimer-overlay" class="hidden">
+    <div id="disclaimer-box">
+        <h2>⚠ Terms of Use</h2>
+        <div class="disc-body">By using dPaul TTS, you agree that you are responsible for your own API key and usage costs.</div>
+        <div class="disc-accept-row">
+            <input type="checkbox" id="disc-checkbox">
+            <label for="disc-checkbox">I agree to the terms.</label>
+        </div>
+        <button id="disc-accept-btn">Tick the box above to continue</button>
+    </div>
+</div>
 
 </body>
 </html>
