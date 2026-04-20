@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
     <script>
-        // Mobile Redirect
-        if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-            var path = window.location.pathname.split("/").pop();
-            if (path === "") path = "index.html";
-            window.location.replace('m/' + path);
-        }
-    </script>
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+    // Find the current filename (e.g., 'design.html')
+    var path = window.location.pathname.split("/").pop();
+    // If we're at the root, default to index.html
+    if (path === "") path = "index.html";
+    // Send them to the exact same page but inside the /m/ folder
+    window.location.replace('m/' + path);
+  }
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synths — dPaul Technologies</title>
@@ -37,13 +39,49 @@
             overflow-x: hidden;
         }
 
-        /* Background Noise/Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 72px; left: 0; right: 0; bottom: 0;
+            background-image: url('../assets/keys.png');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         body::before {
             content: '';
             position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
+
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 12px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
 
         nav {
             position: sticky; top: 0; z-index: 100;
@@ -57,87 +95,917 @@
             letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
         }
         nav a:hover { border-color: var(--orange); color: var(--orange); }
-        nav a.active { background: var(--orange); color: #000; font-weight: bold; }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer { flex: 1; }
+
+        /* ── MINI EQ IN NAV ── */
+        #nav-eq-container {
+            display: flex; align-items: flex-end; gap: 2px;
+            height: 22px; margin: 0 24px; padding-bottom: 2px;
+        }
+        .nav-eq-bar {
+            width: 3px; background: var(--orange);
+            transition: height 0.1s ease; border-radius: 1px;
+        }
+
+        /* ── LANGUAGE SWITCHER ── */
+        #lang-switcher { display: flex; gap: 6px; align-items: center; }
+        .lang-btn {
+            background: none; border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
+            cursor: pointer; transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
+        }
+        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
+        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
 
         .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; }
 
         .hero { padding: 80px 0 72px; border-bottom: 1px solid var(--border); max-width: 1000px; }
         .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
-        .hero h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; }
+        .hero-label::after { content: ''; display: block; width: 48px; height: 1px; background: var(--orange); opacity: 0.5; }
+        .hero h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; letter-spacing: -0.02em; }
         .hero h1 em { color: var(--orange); font-style: normal; }
-        .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); border-left: 2px solid var(--orange); padding-left: 20px; }
+        .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); max-width: 660px; border-left: 2px solid var(--orange); padding-left: 20px; margin-top: 8px; }
 
-        /* Animation Fallback: If JS fails, show content anyway */
+        .process-section { padding: 80px 0 64px; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 1.17rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); margin-bottom: 40px; }
+        .timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; }
+        .timeline-step { padding: 32px 24px; border-right: 1px solid var(--border-dim); }
+        .timeline-step:last-child { border-right: none; }
+        .step-num { font-size: 2.4rem; font-weight: 900; color: var(--orange); opacity: 0.18; line-height: 1; margin-bottom: 14px; letter-spacing: -0.03em; }
+        .step-title { font-size: calc(1.235rem * var(--font-scale)); color: #fff; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+        .step-desc { font-size: calc(1.17rem * var(--font-scale)); line-height: 1.8; color: var(--dim); }
+
+        .skills-strip { display: flex; flex-wrap: wrap; gap: 8px; padding: 32px 0; border-bottom: 1px solid var(--border); }
+        .skill-tag { font-size: calc(1.105rem * var(--font-scale)); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream); border: 1px solid var(--border-dim); border-radius: 2px; padding: 6px 14px; transition: border-color 0.2s, color 0.2s; }
+        .skill-tag:hover { border-color: var(--orange); color: var(--orange); }
+
+        .instrument { padding: 80px 0; border-bottom: 1px solid var(--border); }
+        .instrument-eyebrow { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+        .instrument-name { font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; letter-spacing: -0.02em; margin-bottom: 40px; }
+        .instrument-body { display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start; }
+        .spec-list { list-style: none; margin: 24px 0 32px; }
+        .spec-list li { display: grid; grid-template-columns: 150px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-dim); font-size: calc(1.17rem * var(--font-scale)); }
+        .spec-list li:first-child { border-top: 1px solid var(--border-dim); }
+        .spec-key { color: var(--dim); }
+        .spec-val { color: var(--cream); }
+        .instrument-story { font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95; color: var(--text); }
+        .instrument-story + .instrument-story { margin-top: 16px; }
+        .launch-btn {
+            display: inline-block; margin-top: 28px; padding: 11px 28px;
+            border: 1px solid var(--orange); color: var(--orange);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.066rem;
+            letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+            border-radius: 3px; transition: all 0.2s;
+        }
+        .launch-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
+        .instrument-visual { position: sticky; top: 100px; }
+        .synth-3d-img { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.6)); transition: opacity 0.8s ease-in-out; }
+        .visual-caption { font-size: calc(1.066rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 14px; text-align: center; }
+
+        .origin-section { padding: 88px 0 80px; border-bottom: 1px solid var(--border); }
+        .origin-grid { display: grid; grid-template-columns: 2fr 1.4fr; gap: 80px; align-items: start; margin-top: 40px; }
+        .origin-body { font-size: calc(1.43rem * var(--font-scale)); line-height: 2.05; color: var(--text); }
+        .origin-body p + p { margin-top: 24px; }
+        .origin-body em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
+        .origin-body strong { color: #fff; font-weight: 700; }
+        .origin-body a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,102,0,0.4); transition: opacity 0.2s; }
+        .origin-body a:hover { opacity: 0.75; }
+        .origin-pull { font-size: calc(1.885rem * var(--font-scale)); line-height: 1.6; color: var(--orange); font-weight: 700; border-left: 3px solid var(--orange); padding-left: 24px; margin: 36px 0; letter-spacing: -0.01em; }
+        .origin-image-wrap { position: sticky; top: 100px; }
+        .origin-img-frame { overflow: hidden; }
+        .origin-img { width: 100%; height: auto; display: block; transition: opacity 0.3s; }
+        .origin-img:hover { opacity: 0.9; }
+        .origin-img-caption { padding: 10px 0; font-size: calc(1.144rem * var(--font-scale)); line-height: 1.7; color: var(--dim); letter-spacing: 0.06em; }
+        .origin-img-tag { display: inline-block; font-size: calc(1.014rem * var(--font-scale)); letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); border: 1px solid var(--border); border-radius: 2px; padding: 2px 8px; margin-right: 8px; vertical-align: middle; }
+        .origin-footnote { margin-top: 24px; font-size: calc(1.17rem * var(--font-scale)); line-height: 1.85; color: var(--dim); border-left: 2px solid var(--border-dim); padding-left: 16px; }
+        .origin-footnote strong { color: var(--cream); font-weight: 600; }
+        .origin-footnote a { color: var(--dim); border-bottom: 1px solid rgba(122,122,112,0.4); text-decoration: none; }
+        .origin-footnote a:hover { color: var(--cream); }
+
+        .next-section { padding: 72px 0 0; }
+        .next-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border-dim); border: 1px solid var(--border-dim); border-radius: 4px; overflow: hidden; margin-top: 32px; }
+        .next-card { background: var(--bg); padding: 28px 24px; }
+        .next-card-label { font-size: 1.066rem; color: var(--orange); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
+        .next-card-title { font-size: calc(1.3rem * var(--font-scale)); color: #fff; font-weight: 700; margin-bottom: 10px; }
+        .next-card-desc { font-size: calc(1.17rem * var(--font-scale)); line-height: 1.75; color: var(--dim); }
+        .next-card-link {
+            display: inline-block; margin-top: 16px; padding: 8px 20px;
+            border: 1px solid var(--orange); color: var(--orange);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.9rem;
+            letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none;
+            border-radius: 3px; transition: all 0.2s;
+        }
+        .next-card-link:hover { background: var(--orange); color: #000; }
+
+        .mki-embed-wrap { overflow: hidden; max-width: 620px; }
+        .mki-label { font-size: calc(1.105rem * var(--font-scale)); letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); padding: 0 0 12px 0; }
+        .mki-iframe { width: 100%; height: 420px; border: none; display: block; border-radius: 4px; }
+        .mki-footer { font-size: calc(1.105rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.1em; padding: 12px 0 0 0; }
+
+        .ai-fail-section { padding: 80px 0 72px; border-bottom: 1px solid var(--border); }
+        .two-col-grid { display: grid; grid-template-columns: 1fr 480px; gap: 56px; align-items: start; }
+        .ai-fail-frame { overflow: hidden; }
+        .ai-fail-img { width: 100%; height: auto; display: block; transition: opacity 0.3s; }
+        .ai-fail-img:hover { opacity: 0.9; }
+        .ai-fail-caption { padding: 10px 0 0 0; font-size: calc(1.144rem * var(--font-scale)); line-height: 1.7; color: var(--dim); }
+        .ai-fail-tag { display: inline-block; font-size: calc(1.014rem * var(--font-scale)); letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); border: 1px solid var(--border); border-radius: 2px; padding: 2px 8px; margin-right: 8px; margin-bottom: 6px; vertical-align: middle; }
+
+        .learning-section { padding: 80px 0 72px; border-bottom: 1px solid var(--border); }
+        .learning-grid { display: grid; grid-template-columns: 1fr 340px; gap: 64px; align-items: start; margin-top: 40px; }
+        .learning-body { font-size: calc(1.235rem * var(--font-scale)); line-height: 2; color: var(--text); }
+        .learning-body + .learning-body { margin-top: 20px; }
+        .learning-body em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
+        .aside-block { padding: 0; }
+        .aside-label { font-size: 1.105rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+        .aside-text { font-size: calc(1.196rem * var(--font-scale)); line-height: 1.85; color: var(--text); }
+        .process-steps { display: flex; flex-direction: column; gap: 0; }
+        .ps { font-size: calc(1.17rem * var(--font-scale)); color: var(--cream); padding: 9px 12px; background: rgba(255,102,0,0.05); border: 1px solid var(--border-dim); border-radius: 2px; letter-spacing: 0.04em; }
+        .ps-arrow { font-size: 1.105rem; color: var(--orange); opacity: 0.5; text-align: center; padding: 2px 0; }
+
+        .inset-render { border-top: 1px solid var(--border-dim); padding-top: 40px; margin-top: 32px; }
+        .inset-render-label { font-size: 1.066rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); margin-bottom: 24px; }
+
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
+        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
+        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-speed { -webkit-appearance: none; appearance: none; width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer; }
+        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
+        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
+        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-section-sel, .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+        }
+        .tts-section-sel { max-width: 200px; }
+        .tts-voice-sel  { max-width: 240px; }
+        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
+        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: none; }
 
-        .instrument { padding: 80px 0; border-bottom: 1px solid var(--border); }
-        .instrument-name { font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; margin-bottom: 40px; }
-        .instrument-body { display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start; }
-        
-        .mki-iframe { 
-            width: 100%; height: 580px; border: none; border-radius: 4px; background: transparent; 
+        @media (max-width: 900px) {
+            .timeline { grid-template-columns: repeat(3, 1fr); }
+            .timeline-step:nth-child(3) { border-right: none; }
+            .timeline-step:nth-child(n+4) { border-top: 1px solid var(--border-dim); }
+            .origin-grid { grid-template-columns: 1fr; }
+            .origin-image-wrap { position: relative; top: 0; }
+            .two-col-grid { grid-template-columns: 1fr; }
         }
-
         @media (max-width: 760px) {
             .instrument-body { grid-template-columns: 1fr; }
-            nav { padding: 0 20px; }
+            .instrument-visual { position: relative; top: 0; margin-top: 40px; }
+            .next-grid { grid-template-columns: 1fr; }
+            .timeline { grid-template-columns: 1fr 1fr; }
+            .learning-grid { grid-template-columns: 1fr; }
+            .font-nudge { bottom: 16px; right: 16px; }
+        }
+        @media (max-width: 480px) {
+            .timeline { grid-template-columns: 1fr; }
+            .timeline-step { border-right: none; border-bottom: 1px solid var(--border-dim); }
         }
     </style>
 </head>
 <body>
 
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A-</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss x</button>
+</div>
+
 <nav>
-    <a href="design.html">design</a>
-    <a href="music.html">music</a>
-    <a href="synths.html" class="active">synths</a>
+    <a href="design.html"    data-i18n="nav_design">design</a>
+    <a href="merch.html"     data-i18n="nav_merch">merch</a>
+    <a href="music.html"     data-i18n="nav_music">music</a>
+    <a href="synths.html"    data-i18n="nav_synths" class="active">synths</a>
+    <a href="tools.html"     data-i18n="nav_tools">tools</a>
+    <a href="video.html"     data-i18n="nav_video">video</a>
+    <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
     <div class="spacer"></div>
-    <a href="about.html">info</a>
+    
+    <div id="nav-eq-container"></div>
+    
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
+        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
+        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
+    </div>
+    <a href="about.html" data-i18n="nav_about">info</a>
 </nav>
 
 <div class="page">
+
     <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies - Synth Lab</div>
-        <h1>Thirty years of hardware. Then <em>this happened.</em></h1>
+        <div class="hero-label" data-i18n="synths_hero_label">// dPaul Technologies - Synth Lab</div>
+        <h1>Thirty years of<br>hardware. Then<br><em>this happened.</em></h1>
         <p class="hero-intro">
-            A journey through six months of late nights and the satisfaction of watching something come to life in a browser.
+            Curiosity about how things work is what drives most of the interesting things in life. After years of playing with hardware synths, drum machines and music software, a question kept nagging - could something like this actually be built from scratch in a browser? What you'll find on this page is the answer to that question. It's a journey through six months of late nights, broken code, and the slow satisfaction of watching something come to life one feature at a time.
         </p>
+
+        <div class="tts-player" id="ttsPlayer">
+            <span class="tts-label" data-i18n="tts_speak_label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <div class="tts-sep"></div>
+                <div class="tts-speed-wrap">
+                    <span class="tts-speed-label" data-i18n="tts_speed">Speed</span>
+                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label" data-i18n="tts_voice">Voice</span>
+                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                        <option value="">Loading voices...</option>
+                    </select>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label" data-i18n="tts_jump">Jump to</span>
+                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
+                        <option value="-1">-- section --</option>
+                    </select>
+                </div>
+            </div>
+            <span class="tts-progress" id="ttsProgress"></span>
+        </div>
     </section>
 
-    <div class="instrument reveal" id="synths-mki">
-        <div class="instrument-name">DPAUL Synth MKI</div>
+    <section class="process-section reveal" id="synths-process"
+             data-post-section
+             data-post-title="How the DP-ONE Was Built — dPaul Studio"
+             data-post-content="How dPaul Studio built a browser synthesiser from scratch — starting with a single AI prompt and building feature by feature over six months. From oscillators to sequencers, MIDI, and 3D rendered hardware mockups.">
+        <div class="section-label" data-i18n="synths_process_label">// How it was built</div>
+        <div class="timeline">
+            <div class="timeline-step">
+                <div class="step-num">01</div>
+                <div class="step-title" data-i18n="step1_title">Single prompt</div>
+                <div class="step-desc">Started with one AI prompt: build a browser synth with a single sound. Read what came back. Asked why it worked.</div>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num">02</div>
+                <div class="step-title" data-i18n="step2_title">Feature by feature</div>
+                <div class="step-desc">Added voices, envelopes, filters, waveforms - one at a time. Each addition meant reading the code before moving on.</div>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num">03</div>
+                <div class="step-title" data-i18n="step3_title">Full instrument</div>
+                <div class="step-desc">Integrated a 16-step sequencer, drum machine, and sampler. Added MIDI so any external keyboard works straight away.</div>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num">04</div>
+                <div class="step-title" data-i18n="step4_title">Visual identity</div>
+                <div class="step-desc">Screen-captured the HTML UI, fed it into AI image tools, and generated 3D hardware renders - functional code presented as a physical product.</div>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num">05</div>
+                <div class="step-title" data-i18n="step5_title">Presentation</div>
+                <div class="step-desc">Learned Photoshop and Premiere Pro to finish assets. Built this portfolio site to document the whole journey.</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="skills-strip reveal">
+        <span class="skill-tag">HTML / CSS / JS</span>
+        <span class="skill-tag">Web Audio API</span>
+        <span class="skill-tag">MIDI Integration</span>
+        <span class="skill-tag">AI-assisted development</span>
+        <span class="skill-tag">Prompt engineering</span>
+        <span class="skill-tag">Adobe Photoshop</span>
+        <span class="skill-tag">Adobe Premiere Pro</span>
+        <span class="skill-tag">3D mockup rendering</span>
+        <span class="skill-tag">UI / UX design</span>
+        <span class="skill-tag">Readymag</span>
+        <span class="skill-tag">GitHub</span>
+        <span class="skill-tag">Iterative prototyping</span>
+    </div>
+
+    <section class="learning-section reveal" id="synths-learning"
+             data-post-section
+             data-post-title="Learning by Doing — Building Browser Instruments">
+        <div class="section-label" data-i18n="synths_learning_label">// Learning by doing</div>
+        <div class="learning-grid">
+            <div class="learning-main">
+                <p class="learning-body">
+                    None of this came from a course or a textbook. Knobs stopped responding. Keys triggered the wrong notes. The arpeggiator timing would drift. The whole thing would occasionally freeze mid-session. Every time something broke, there was a choice - start over, or figure out why.
+                </p>
+                <p class="learning-body">
+                    The method that emerged was simple enough: copy the HTML into a reader, go through it line by line, find whatever was causing the problem. Search the terms that made no sense. Then go back to AI with something specific - <em>"this section here - what's wrong with it?"</em> That back-and-forth turned out to be the whole education.
+                </p>
+                <p class="learning-body">
+                    Understanding code by fixing it is a perfectly valid way in. Problem first, knowledge second - the learning is a side effect of just wanting something to work. Which, it turns out, is how most useful skills get learned.
+                </p>
+            </div>
+            <div class="learning-aside">
+                <div class="aside-block">
+                    <div class="aside-label" data-i18n="synths_honest_label">The honest version</div>
+                    <p class="aside-text">
+                        School wasn't a great experience - things at home were complicated, and getting out into the world and starting to earn felt more urgent than qualifications. Looking back, that pushed toward a different kind of learning: working things out on the job, adapting, picking up skills by actually needing them. Which is still exactly how it works.
+                    </p>
+                </div>
+                <div class="aside-block" style="margin-top:16px;">
+                    <div class="aside-label" data-i18n="synths_process_distilled_label">The process, distilled</div>
+                    <div class="process-steps">
+                        <div class="ps" data-i18n="ps1">Something breaks</div>
+                        <div class="ps-arrow">down</div>
+                        <div class="ps" data-i18n="ps2">Find it in the code</div>
+                        <div class="ps-arrow">down</div>
+                        <div class="ps" data-i18n="ps3">Search the unfamiliar terms</div>
+                        <div class="ps-arrow">down</div>
+                        <div class="ps" data-i18n="ps4">Ask AI the right question</div>
+                        <div class="ps-arrow">down</div>
+                        <div class="ps" data-i18n="ps5">Understand - then fix</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="origin-section reveal" id="synths-origin"
+             data-post-section
+             data-post-title="Where It All Began — Thirty Years of Synths">
+        <div class="section-label" data-i18n="synths_origin_label">// Where it all began</div>
+        <div class="origin-grid">
+            <div class="origin-body">
+                <p>None of this started with code. It started with a page of small ads and a phone call in 1991.</p>
+                <p>The internet didn't exist - not for most people, anyway. If you wanted to buy something secondhand, you read <em>the Loot</em> - a weekly classified ads paper where buying something meant actually picking up the phone and speaking to a stranger. A <a href="https://en.wikipedia.org/wiki/Korg_M1" target="_blank" rel="noopener noreferrer"><strong>Korg M1</strong></a> appeared in the listings. I made the call, agreed a price, and arranged to meet the seller at Liverpool Street station.</p>
+                <div class="origin-pull">"Same building.<br>One floor apart.<br>Found each other<br>through a newspaper ad."</div>
+                <p>The seller worked in London - and as we were sorting out the details over the phone, it slowly dawned on both of us that so did I. Right there at Liverpool Street, at <em>County NatWest</em>. Same building. One floor apart. Two people who'd never met, connected by a column of small print and a landline.</p>
+                <p>Around <strong>300 pounds</strong> changed hands. The M1 came home with me. And that was the beginning of a long relationship with synthesisers - hardware first, then software, and eventually the question that led to everything on this page: could I actually build one from scratch?</p>
+                <p>Thirty years on, here's the answer.</p>
+                <div class="origin-footnote">
+                    <strong>// For the younger viewers:</strong> The Loot was a weekly classified ads newspaper - physically printed, delivered to newsagents. No photos. No reviews. No buyer protection. Just a phone number, a price, and the hope that the person on the other end was being straight with you. The <a href="https://en.wikipedia.org/wiki/Korg_M1" target="_blank" rel="noopener noreferrer">Korg M1</a> was one of the best-selling synthesisers ever made - used on countless records in the late 80s and early 90s, from house music to film scores. A month's rent, roughly, for a machine that changed everything.
+                </div>
+            </div>
+            <div class="origin-image-wrap">
+                <div class="origin-img-frame" style="margin-bottom:16px;">
+                    <img src="../assets/loot.png" alt="The Loot classified ads newspaper" class="origin-img">
+                    <div class="origin-img-caption"><span class="origin-img-tag" data-i18n="tag_pre_internet">Pre-internet</span>The Loot - classified ads on paper. No photos, no reviews, just a phone number.</div>
+                </div>
+                <div class="origin-img-frame">
+                    <img src="../assets/korg-m1.png" alt="Korg M1 synthesiser - the instrument that started everything" class="origin-img">
+                    <div class="origin-img-caption"><span class="origin-img-tag">1991</span>The Korg M1. Bought for 300 pounds. Found one floor away.</div>
+                </div>
+                <div class="origin-footnote" style="margin-top:16px;">
+                    <strong>// <a href="https://en.wikipedia.org/wiki/Korg_M1" target="_blank" rel="noopener noreferrer">Korg M1</a></strong><br>
+                    Released 1988. 8-voice workstation synth. Over 250,000 units sold. The piano preset alone appeared on more records than most musicians ever will.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="instrument reveal" id="synths-mki"
+         data-post-section
+         data-post-title="DPAUL Synth MKI — Where It Started"
+         data-post-content="The DPAUL Synth MKI — where it all started. One oscillator, three waveforms, a basic filter, a two-octave keyboard. Built entirely in the browser using the Web Audio API. The first answer to the question: can a working synth be built from scratch with no coding background?">
+        <div class="instrument-eyebrow" data-i18n="mki_eyebrow">// 00 - Where it started</div>
+        <div class="instrument-name">DPAUL Synth MKI <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">v1.0</span></div>
         <div class="instrument-body">
             <div>
-                <p>Every journey starts somewhere. This one started with a single prompt.</p>
+                <p class="instrument-story" style="margin-bottom:40px;">Every journey starts somewhere. This one started with a single prompt and a question - can a working synth actually be built in a browser with no coding background? One oscillator, three waveforms, a basic filter, a two-octave keyboard. Barely anything. But it made sound, it responded to the keys, and that was enough to keep going. Everything else on this page grew from here.</p>
                 <div class="mki-embed-wrap">
-                    <iframe class="mki-iframe" src="../dpone/dpone-mki.html" title="DPAUL Synth MKI"></iframe>
+                    <div class="mki-label" data-i18n="mki_live_label">// Live instrument - click a key to play</div>
+                    <iframe class="mki-iframe" style="height: 480px;" src="../dpone/dpone-mki.html" scrolling="no" title="DPAUL Synth MKI v1.0"></iframe>
+                    <div class="mki-footer">1 oscillator &nbsp;·&nbsp; 3 waveforms &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard &nbsp;·&nbsp; ~80 lines of JS</div>
                 </div>
             </div>
             <div class="instrument-visual">
-                <div style="background: #222; width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; color: var(--dim);">[MKI Render]</div>
+                <img src="../assets/dpone-mki-3d.png" alt="DPAUL Synth MKI - 3D render" class="synth-3d-img">
+                <p class="visual-caption" data-i18n="mki_caption">MKI — 3D render from HTML UI screenshot</p>
             </div>
         </div>
     </div>
+
+    <div class="instrument reveal" id="synths-mkii"
+         data-post-section
+         data-post-title="DPAUL Synth MKII PolyArp — Browser Instrument">
+        <div class="instrument-eyebrow" data-i18n="mkii_eyebrow">// 01 - First Evolution</div>
+        <div class="instrument-name">DPAUL Synth MKII <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyArp</span></div>
+        <div class="instrument-body">
+            <div>
+                <p class="instrument-story" style="margin-bottom:16px;">A single note gets dull quickly. What makes a synth interesting is movement - sound that evolves, patterns that breathe. The MKII introduced four voices running at once, slightly detuned from each other to give that thick, wide quality hardware polysynths are known for. The arpeggiator came next: hold a chord and the synth cycles through the notes automatically, climbing octaves as it goes.</p>
+                <p class="instrument-story" style="margin-bottom:40px;">Try holding several keys at once with the arp running - it's one of those features that immediately makes you want to play rather than just test.</p>
+                <div class="mki-embed-wrap">
+                    <div class="mki-label" data-i18n="mkii_live_label">// Live instrument - hold a key, toggle ARP ON</div>
+                    <iframe class="mki-iframe" style="height: 480px;" src="../dpone/dpone-mkii.html" scrolling="no" title="DPAUL Synth MKII PolyArp"></iframe>
+                    <div class="mki-footer">4-voice engine &nbsp;·&nbsp; voice spread/detune &nbsp;·&nbsp; arpeggiator with tempo + octave range &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard</div>
+                </div>
+            </div>
+            <div class="instrument-visual">
+                <img src="../assets/dpone-mkii-3d.png" alt="DPAUL Synth MKII - 3D render" class="synth-3d-img">
+                <p class="visual-caption" data-i18n="mkii_caption">MKII PolyArp — 3D render from HTML UI screenshot</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="ai-fail-section reveal" id="synths-ai-fail"
+             data-post-section
+             data-post-title="When AI Gets It Wrong — dPaul Studio">
+        <div class="section-label" data-i18n="synths_ai_fail_label">// When AI gets it wrong</div>
+        <div class="two-col-grid" style="margin-top: 40px;">
+            <div class="ai-fail-main">
+                <p class="learning-body">Something I learned early on - and had to learn the hard way - is recognising when AI is wrong. A generated design can look exactly like a synthesiser: professional layout, labelled controls, convincing colour scheme. And it can have absolutely no understanding of what a synthesiser actually needs to do.</p>
+                <p class="learning-body" style="margin-top:16px;">The example here is a generated MKIV design. At a glance it's convincing. Look closer and it falls apart: a large empty panel with no function, a pitch/filter section with a single knob, mixer controls floating with no relationship to the signal chain, a keyboard awkwardly isolated in a corner. It's a picture of a synthesiser, not a synthesiser.</p>
+                <p class="learning-body" style="margin-top:16px;">Catching this requires genuine understanding of what's being built - which controls belong together and why, what signal flow looks like, where a player's hands actually need to reach. That critical eye is what separates someone who uses AI from someone who works with it. It's a skill that develops through breaking things and knowing why they broke.</p>
+            </div>
+            <div class="ai-fail-visual">
+                <div class="ai-fail-frame">
+                    <img src="../assets/ai-fail-01.png" alt="AI-generated synth design with nonsensical layout" class="ai-fail-img" id="ai-fail-img-01">
+                    <div class="ai-fail-caption"><span class="ai-fail-tag" data-i18n="tag_ai_generated">AI generated</span>Visually polished. Functionally incoherent. Empty panels, a pitch/filter section with one knob, mixer controls with no signal chain logic.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="instrument reveal" id="synths-mkiii-mkiv"
+         data-post-section
+         data-post-title="DPAUL Station MKIII & MKIV — The Middle Versions">
+        <div class="instrument-eyebrow" data-i18n="mkiii_eyebrow">// 02-03 - The Middle Versions</div>
+        <div class="instrument-name">DPAUL Station MKIII &amp; MKIV <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyDrum · 37 Keys · Silver Edition</span></div>
+        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII is where the project changed shape. Up to this point it had been a keyboard instrument - something you played note by note. Adding a sequencer and drum machine turned it into something that could run on its own, generating rhythm and melody without anyone touching it. That shift in thinking is what pushed everything forward.</p>
+        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII introduced an 8-step sequencer with four independent rows - kick, snare, hi-hat, and a synth voice - each with its own pattern. A drum mixer handled the balance between them, a BPM control set the pace, and the quad-voice synth engine from the MKII carried over, now driven by the sequencer rather than just the keyboard. Getting the Web Audio scheduler to stay tight at different tempos turned out to be one of the trickier problems in the whole project - timing in a browser is less predictable than it looks.</p>
+        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">One experiment that came and went was a sampler - the ability to load local audio files and trigger them from the keyboard. It worked, but it was limited to short samples and it pulled the instrument in the wrong direction. Adding files in advance felt clumsy; the whole point was something anyone could pick up and play immediately, without preparation. The sampler came out. Knowing what to remove turned out to be as important as knowing what to add.</p>
+        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">By the MKIV the instrument had grown considerably. The keyboard expanded to 37 keys with full pointer event handling - slide between notes, hold multiple keys at once, no glitches. A pitch wheel arrived for real-time expression. The arpeggiator gained a Hold mode, so a chord could be latched and left cycling while both hands were free. The drum section expanded to six rows, and the oscilloscope switched to a green phosphor display - because at a certain point the way something looks becomes part of what it's for.</p>
+        <p class="instrument-story" style="max-width:820px; margin-bottom:28px;">One of the more visible changes at this stage was switching the colour scheme from black to silver. The original dark panels had a certain industrial feel, but the silver version gave it a cleaner, more professional finish - closer to the kind of hardware workstation it was increasingly starting to resemble. That silver MKIV became the reference point for the next phase: turning the HTML interface into something that looked like a real physical object.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 40px;">
+            <span class="skill-tag">8-step sequencer</span>
+            <span class="skill-tag">Kick · Snare · Hi-Hat · Tom · Rim · Synth rows</span>
+            <span class="skill-tag">Drum mixer</span>
+            <span class="skill-tag">BPM control</span>
+            <span class="skill-tag">37-key keyboard</span>
+            <span class="skill-tag">Pitch wheel</span>
+            <span class="skill-tag">Arp Hold mode</span>
+            <span class="skill-tag">Phosphor oscilloscope</span>
+            <span class="skill-tag">Silver colour scheme</span>
+            <span class="skill-tag">Sampler (removed)</span>
+        </div>
+        <div class="inset-render">
+            <div class="inset-render-label" data-i18n="mkiv_render_label">// The Silver MKIV — rendered as hardware</div>
+            <div class="two-col-grid">
+                <div>
+                    <p class="instrument-story" style="margin-bottom: 16px;">Once the silver colour scheme was in place, the question became: what would this look like as a real instrument on a studio desk? A screenshot of the finished HTML interface was taken and fed into an AI image generator - the start of a process that turned out to be considerably more involved than expected.</p>
+                    <p class="instrument-story" style="margin-bottom: 16px;">Early attempts were rough. One prompt produced a carbon fibre finish that came out looking exactly like a chessboard. Others got the proportions wrong or placed controls with no logic to their position. The lettering was a persistent problem - labels would come out blurred, misspelled, or with letters missing entirely. What you put in is broadly what you get back, but it took several rounds to understand what that actually meant in practice.</p>
+                    <p class="instrument-story" style="margin-bottom: 16px;">The approach that worked was using AI to construct the image prompt itself - asking it to generate a detailed, well-structured description of a realistic hardware synthesiser based on the screenshot, with very specific instructions about material finish, lighting, and - critically - text accuracy. Feeding that engineered prompt into the image tool produced far more predictable results. The silver render you see here came from that process, using two different AI tools at different stages.</p>
+                    <p class="instrument-story" style="margin-bottom: 16px;">There's a stray element visible in the bottom-right corner that shouldn't be there - a reminder that the AI renders what the prompt suggests, not what makes sense for the instrument. Catching that kind of thing requires knowing the instrument well enough to spot what's wrong. Which is, again, the whole point.</p>
+                    <div class="origin-footnote" style="margin-top: 20px;"><strong>// The render process:</strong> Screenshot the working HTML UI → ask AI to generate a detailed prompt describing a real hardware instrument based on it → refine with specific instructions on text accuracy, material and lighting → iterate → use two different AI tools at key stages for best results.</div>
+                </div>
+                <div class="ai-fail-frame" style="align-self: start; padding-top: 8px;">
+                    <img src="../assets/dp-one-3d.png" alt="DPAUL Station MKIV Silver Edition - AI-generated 3D hardware render" style="width:100%; height:auto; display:block; border-radius: 3px;">
+                    <div class="ai-fail-caption"><span class="ai-fail-tag" data-i18n="tag_ai_rendered">AI rendered</span>The MKIV in silver - generated from a screenshot of the working HTML interface using a carefully engineered prompt. Note the stray element bottom-right: a reminder that the AI renders what the prompt describes, not what makes sense for the instrument.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="instrument reveal" id="synths-rebuild"
+         data-post-section
+         data-post-title="Strip It Back, Build It Right — The Decision to Rebuild"
+         style="border-bottom: 1px solid var(--border);">
+        <div class="instrument-eyebrow" data-i18n="rebuild_eyebrow">// 03.5 - The decision to start again</div>
+        <div class="instrument-name" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">Strip it back.<br><em style="color:var(--orange); font-style:normal;">Build it right.</em></div>
+        <div style="display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start;">
+            <div>
+                <p class="instrument-story" style="margin-bottom: 16px;">After the MKIV the codebase had become a layered accumulation of fixes on top of fixes. Each problem had been solved in isolation, and it showed. Everything worked - but only just, and only because six months of patches were holding it together. At a certain point continuing to patch stops making sense. The right call was to go back to zero.</p>
+                <p class="instrument-story" style="margin-bottom: 16px;">The MkV is a complete rebuild - started from a very basic single-voice synth and rebuilt one feature at a time, with nothing added until the previous thing was genuinely understood. The knowledge built up over those six months made all the difference: knowing exactly what to ask for, which architectural decisions would cause problems later, and which features were worth carrying across and which weren't. The rebuild took two to three days. The understanding that made it possible took six months.</p>
+                <p class="instrument-story" style="margin-bottom: 16px;">Two different AI tools were used across different stages of the rebuild. Switching between them at key points - rather than committing to one throughout - produced noticeably better results. Different tools have different strengths, and knowing when to move between them is its own skill.</p>
+                <p class="instrument-story" style="margin-bottom: 28px;">The MkV is also still in progress - and that's deliberate. The way this work tends to go is across several projects at once. At any given time there are usually five or six things running in parallel: if an idea isn't flowing on one, there's always something else to move to. Things get noted down, set aside, and returned to when the time feels right. It's a working method that suits the way ideas actually arrive - not in a straight line, but in waves. The synth continues on that same basis.</p>
+            </div>
+            <div style="position: sticky; top: 100px;">
+                <img src="../assets/dpone-mki-lif-off.png" alt="DPAUL Synth MKI lift off" class="synth-3d-img" style="border-radius: 4px; margin-bottom: 24px;">
+                <img src="../assets/process.png" alt="The rebuild process" class="synth-3d-img" style="border-radius: 4px;">
+            </div>
+        </div>
+    </div>
+
+    <div class="instrument reveal" id="synths-mkv"
+         data-post-section
+         data-post-title="DP-ONE MkV — Browser Synthesiser Rebuild">
+        <div class="instrument-eyebrow" data-i18n="mkv_eyebrow">// 04 - The Rebuild</div>
+        <div class="instrument-name">DP-ONE MkV <span style="color:#50c864; font-size:0.72rem; font-weight:400; letter-spacing:0.05em; border: 1px solid rgba(80,200,100,0.4); border-radius:2px; padding: 2px 10px; vertical-align:middle;" data-i18n="mkv_beta_tag">Pre-skin build</span></div>
+        <div class="instrument-body" style="margin-bottom: 40px;">
+            <div>
+                <p class="instrument-story" style="margin-bottom:16px;">After the MKIII established the sequencer and drum engine, the MKIV pushed things much further. The keyboard grew to 37 keys with full pointer event handling - slide between notes, hold multiple keys at once, no glitches. A pitch wheel arrived for real-time expression. The arpeggiator gained a Hold mode, so a chord could be latched and left cycling while both hands were free. The drum section expanded to six rows - kick, snare, hi-hat, tom and rim alongside the synth voice - and the oscilloscope switched to a green phosphor display.</p>
+                <p class="instrument-story" style="margin-bottom:16px;">By that point the codebase had been patched so many times that a complete rebuild made more sense than continuing. So that's what happened - one feature at a time, nothing added until the previous thing was properly understood. The MkV is the result: three synth engines, a seven-mode filter bank, LFO and envelope modulation, a joystick for pitch and filter expression, a full effects chain, and a 6-row sequencer running 8 or 16 steps. The skin and visual finish are still in progress. The sound came first.</p>
+                <p class="instrument-story" style="margin-bottom:28px;">The image shows the finished HTML interface as it runs in the browser. Use the launch button to open it in a new tab.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 40px;">
+                    <span class="skill-tag">SuperSaw · Moog Bass · FM Lead</span>
+                    <span class="skill-tag">7-mode filter bank</span>
+                    <span class="skill-tag">LFO + envelope mod</span>
+                    <span class="skill-tag">Joystick pitch/filter</span>
+                    <span class="skill-tag">Chorus · Tape echo · Reverb</span>
+                    <span class="skill-tag">6-row sequencer · 8 or 16 steps</span>
+                    <span class="skill-tag">37-key keyboard</span>
+                </div>
+
+                <div style="border-top: 1px solid var(--border-dim); padding-top: 32px; margin-top: 8px;">
+                    <div class="section-label" style="margin-bottom: 20px;" data-i18n="mkv_beta_label">// Beta Testing — new in this build</div>
+                    <p class="instrument-story" style="margin-bottom: 20px;">The current beta adds a full I/O panel in the top-right corner of the machine — three new features available to test now:</p>
+                    <ul class="spec-list" style="margin-bottom: 28px;">
+                        <li>
+                            <span class="spec-key" data-i18n="spec_audio_save">⏺ Audio Save</span>
+                            <span class="spec-val">Hit <strong style="color:var(--cream);">REC</strong> to start capturing, then <strong style="color:var(--cream);">SAVE</strong> to stop and download as <code style="color:var(--orange); font-size:0.9em;">.webm</code> — plays in any modern browser or VLC.</span>
+                        </li>
+                        <li>
+                            <span class="spec-key" data-i18n="spec_midi_export">↑ MIDI Export</span>
+                            <span class="spec-val">Exports the full pattern as a <code style="color:var(--orange); font-size:0.9em;">.mid</code> file — 5 tracks, drums on Ch10, Bass Lines on Ch2/3, synth/arp on Ch1, all at current BPM.</span>
+                        </li>
+                        <li>
+                            <span class="spec-key" data-i18n="spec_midi_import">↓ MIDI Import</span>
+                            <span class="spec-val">Opens a file picker to load an existing <code style="color:var(--orange); font-size:0.9em;">.mid</code> directly into the sequencer.</span>
+                        </li>
+                    </ul>
+                    <a href="https://dpaul.studio/dpone/dpone-mkv-beta.html" target="_blank" rel="noopener noreferrer" class="launch-btn" data-i18n="mkv_beta_btn">Launch Beta →</a>
+                </div>
+            </div>
+            <div class="instrument-visual">
+                <img src="../assets/dpone-mkv.png" alt="DP-ONE MkV - finished HTML interface" class="synth-3d-img" style="border-radius: 4px; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.7));">
+                <p class="visual-caption" data-i18n="mkv_caption">DP-ONE MkV - finished HTML interface · browser instrument</p>
+                <a href="../dpone/dpone-mkv.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display: block; text-align: center; margin-top: 20px;" data-i18n="mkv_launch_btn">Launch DP-ONE MkV</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="instrument reveal" id="synths-acid-box"
+         data-post-section
+         data-post-title="Acid-Box — TB-303 Inspired Bass Synthesiser">
+        <div class="instrument-eyebrow" data-i18n="acid_eyebrow">// 05 - TB-303 Inspired Bass Synthesiser</div>
+        <div class="instrument-name">Acid-Box</div>
+        <div class="instrument-body">
+            <div>
+                <p class="instrument-story">The Roland TB-303 is one of those machines that became famous by accident - designed as a practice tool for guitarists, it ended up defining an entire genre when people figured out what happened if you cranked the resonance and let the filter breathe. The Acid-Box is a dedicated bass synth built around that same character: focused, squelchy, and immediately recognisable.</p>
+                <p class="instrument-story">It runs across two pages - the main sound-shaping panel and a secondary view with a mini keyboard for triggering notes. Fully MIDI compatible, so a hardware controller connects straight in. Custom skins are the next step, with a longer-term goal of a fully 3D-rendered interactive interface.</p>
+                <ul class="spec-list">
+                    <li><span class="spec-key" data-i18n="spec_type">Type</span><span class="spec-val" data-i18n="acid_type_val">Monophonic bass synth</span></li>
+                    <li><span class="spec-key" data-i18n="spec_character">Character</span><span class="spec-val" data-i18n="acid_char_val">303-style filter / resonance</span></li>
+                    <li><span class="spec-key" data-i18n="spec_interface">Interface</span><span class="spec-val" data-i18n="acid_interface_val">2-page layout</span></li>
+                    <li><span class="spec-key" data-i18n="spec_keyboard">Keyboard</span><span class="spec-val" data-i18n="acid_keyboard_val">Mini trigger keyboard (Page 2)</span></li>
+                    <li><span class="spec-key">MIDI</span><span class="spec-val" data-i18n="acid_midi_val">Full MIDI input support</span></li>
+                    <li><span class="spec-key" data-i18n="spec_platform">Platform</span><span class="spec-val" data-i18n="acid_platform_val">Browser - no install required</span></li>
+                </ul>
+                <a href="../acid-box/acid-box-desktop.html" target="_blank" class="launch-btn" data-i18n="acid_launch_btn">Launch Acid-Box</a>
+            </div>
+            <div class="instrument-visual">
+                <img id="acid-box-render" src="../assets/acid-box-3d-01.png" alt="Acid-Box 3D render" class="synth-3d-img">
+                <p class="visual-caption" data-i18n="acid_caption">3D render generated from HTML UI screenshot</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="instrument reveal" id="synths-hardware"
+             data-post-section
+             data-post-title="Thirty Years of Synths — Hardware History"
+             style="border-bottom: 1px solid var(--border); padding: 80px 0;">
+        <div class="instrument-eyebrow" data-i18n="hw_eyebrow">// The hardware that came before</div>
+        <div class="instrument-name" data-i18n="hw_name">Thirty Years of Synths</div>
+        <p class="instrument-story" style="max-width: 820px; margin-bottom: 16px;">
+            The browser instruments on this page didn't come from nowhere. They came from thirty years of living with hardware — buying, selling, patching, breaking, and learning through actual machines with actual knobs. The Korg M1 that started it all in 1991 was followed by a Triton, an E-mu Proteus for sample playback, the ER-1 and EA-1 for that particular Korg groove-box sound, a MicroKorg for portability, a Monologue for pure analogue mono, and a Roland FP-10 as a proper weighted keyboard. Each one left something behind — a workflow habit, an understanding of envelopes, a preference for how a filter should behave.
+        </p>
+        <p class="instrument-story" style="max-width: 820px; margin-bottom: 40px;">
+            That accumulation of hardware knowledge is what made building software versions possible. You can't design a convincing filter section if you've never twisted a resonance knob into feedback on a real machine.
+        </p>
+
+        <div style="width: 100%; overflow-x: auto; margin-bottom: 10px;">
+            <img src="../assets/all-synths.png" alt="Hardware synthesisers owned over thirty years" style="width: 100%; min-width: 900px; height: auto; display: block; border-radius: 4px; mix-blend-mode: lighten;">
+        </div>
+        <p style="font-size: calc(1.066rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; margin-bottom: 40px; text-align: center;">
+            M1 &nbsp;·&nbsp; Triton &nbsp;·&nbsp; E-mu Proteus &nbsp;·&nbsp; ER-1 &amp; EA-1 &nbsp;·&nbsp; MicroKorg &nbsp;·&nbsp; Microsampler &nbsp;·&nbsp; Monologue &nbsp;·&nbsp; Roland FP-10
+        </p>
+
+        <div style="border-top: 1px solid var(--border-dim); padding-top: 48px;">
+            <div class="section-label" style="margin-bottom: 24px;" data-i18n="hw_current_label">// Current setup</div>
+            <p class="instrument-story" style="max-width: 820px; margin-bottom: 24px;">
+                The hardware collection has slimmed down over the years — partly practicality, partly a shift toward software that can do things no single piece of hardware ever could. The current setup runs on an <strong style="color: var(--cream);">Apple Mac M2</strong>, with an <strong style="color: var(--cream);">M-Audio Air 192</strong> audio interface feeding a pair of <strong style="color: var(--cream);">Yamaha HS5</strong> studio monitors. An <strong style="color: var(--cream);">Arturia Minilab 3</strong> handles physical controller duties — compact, well-built, and maps cleanly to everything in the software chain.
+            </p>
+            <p class="instrument-story" style="max-width: 820px; margin-bottom: 32px;">
+                On the software side: <strong style="color: var(--cream);">Arturia</strong> for the analogue modelled instruments and V Collection, <strong style="color: var(--cream);">Moog</strong> plugins for that particular low-end weight, <strong style="color: var(--cream);">Korg</strong> software editions of the hardware classics, <strong style="color: var(--cream);">Serum</strong> for wavetable work, and <strong style="color: var(--cream);">Splice</strong> for samples and sounds. The browser synths on this page sit alongside all of that — a parallel track, not a replacement.
+            </p>
+            <div class="skills-strip" style="border: none; padding: 0;">
+                <span class="skill-tag">Apple Mac M2</span>
+                <span class="skill-tag">M-Audio Air 192</span>
+                <span class="skill-tag">Yamaha HS5</span>
+                <span class="skill-tag">Arturia Minilab 3</span>
+                <span class="skill-tag">Arturia V Collection</span>
+                <span class="skill-tag">Moog Plugins</span>
+                <span class="skill-tag">Korg Software</span>
+                <span class="skill-tag">Serum</span>
+                <span class="skill-tag">Splice</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="next-section reveal">
+        <div class="section-label" data-i18n="synths_next_label">// What's next</div>
+        <div class="next-grid">
+            <div class="next-card">
+                <div class="next-card-label" data-i18n="next_inprogress">In progress</div>
+                <div class="next-card-title" data-i18n="next_api_title">API Sound Library</div>
+                <div class="next-card-desc" data-i18n="next_api_desc">Integrating an external API into the DP-ONE to pull in new sounds dynamically - turning a static instrument into an ever-expanding one.</div>
+            </div>
+            <div class="next-card">
+                <div class="next-card-label" data-i18n="next_inprogress">In progress</div>
+                <div class="next-card-title" data-i18n="next_skins_title">Custom Skins</div>
+                <div class="next-card-desc" data-i18n="next_skins_desc">Interchangeable visual skins for both instruments - different colour schemes and panel designs, evolving toward fully 3D-rendered interactive UIs.</div>
+            </div>
+            <div class="next-card">
+                <div class="next-card-label" data-i18n="next_live_tools">// Live on Tools</div>
+                <div class="next-card-title" data-i18n="next_tools_title">VU Meter &amp; Text-to-Speech</div>
+                <div class="next-card-desc" data-i18n="next_tools_desc">Two browser tools built and running - functional HTML first, then 3D rendered mockup so each tool is presented as a physical product.</div>
+                <a href="tools.html" class="next-card-link" data-i18n="next_tools_link">View Tools &rarr;</a>
+            </div>
+            <div class="next-card">
+                <div class="next-card-label" data-i18n="next_loop_label">// Stay in the loop</div>
+                <div class="next-card-title" data-i18n="next_updates_title">Weekly Updates</div>
+                <div class="next-card-desc" data-i18n="next_updates_desc">New builds, beta releases, and notes from the studio — direct to your inbox. No pitch. No noise. Just what's been made.</div>
+                <a href="mailto:studio@dpaul.studio?subject=Sign%20me%20up%20for%20updates&body=Hi%20%E2%80%94%20please%20add%20me%20to%20the%20weekly%20updates%20list." class="next-card-link" data-i18n="next_updates_link">Get Updates &rarr;</a>
+            </div>
+        </div>
+    </section>
+
 </div>
 
 <script>
-    // Reveal Observer
+    // ── NAV EQ ANIMATION ──
+    (function() {
+        const NUM_BARS = 8;
+        const MAX_H = 20;
+        const container = document.getElementById('nav-eq-container');
+        if (!container) return;
+        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
+        const targets = [...levels];
+        const bars = [];
+        for (let i = 0; i < NUM_BARS; i++) {
+            const b = document.createElement('div');
+            b.className = 'nav-eq-bar';
+            container.appendChild(b);
+            bars.push(b);
+        }
+        function animateEQ() {
+            for (let i = 0; i < NUM_BARS; i++) {
+                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
+                levels[i] += (targets[i] - levels[i]) * 0.15;
+                bars[i].style.height = levels[i] + 'px';
+            }
+            requestAnimationFrame(animateEQ);
+        }
+        animateEQ();
+    })();
+
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    function dismissNudge() {
+        document.getElementById('fontNudge').style.opacity = '0';
+        document.getElementById('fontNudge').style.pointerEvents = 'none';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
+
+    const revealEls = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
-            if (e.isIntersecting) { 
-                e.target.classList.add('visible'); 
-            }
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
         });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.08 });
+    revealEls.forEach(el => observer.observe(el));
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    // ─── TTS ENGINE ────────────────────────────────────────────────────
+    (function() {
+        const synth = window.speechSynthesis;
+        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
+        let selectedVoice = null;
 
-    // Emergency Fallback: If observer doesn't fire in 2 seconds, show all
-    setTimeout(() => {
-        document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-    }, 2000);
+        const READ_SELECTORS = [
+            '.hero h1', '.hero-intro', '.step-desc',
+            '.origin-body p', '.origin-pull', '.origin-footnote',
+            '.learning-body', '.aside-text', '.instrument-story',
+            '.ai-fail-caption', '.next-card-title', '.next-card-desc', '.origin-img-caption'
+        ];
+        const SECTION_SELECTORS = [
+            '.hero-label', '.section-label', '.inset-render-label',
+            '.instrument-eyebrow', '.instrument-name'
+        ];
+
+        function populateVoiceList() {
+            const voices = synth.getVoices();
+            if (!voices.length) return;
+            const sel = document.getElementById('ttsVoiceSel');
+            sel.innerHTML = '';
+            const enVoices = voices.filter(v => /^en/i.test(v.lang));
+            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+            function pickVoice(preferred) {
+                for (const name of preferred) {
+                    const match = enVoices.find(v => v.name.includes(name));
+                    if (match) return match;
+                }
+                return null;
+            }
+            const femaleVoice = pickVoice(preferredFemale);
+            const maleVoice   = pickVoice(preferredMale);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+            const options = [
+                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+            ].filter(o => o.voice !== null);
+            options.forEach(({ label, voice }) => {
+                const o = document.createElement('option');
+                o.value = voice.name;
+                o.textContent = label;
+                sel.appendChild(o);
+            });
+            if (!selectedVoice && options.length > 0) {
+                selectedVoice = options[0].voice;
+                sel.value = options[0].voice.name;
+            }
+        }
+
+        window.ttsSetVoice = function(name) {
+            const voices = synth.getVoices();
+            selectedVoice = voices.find(v => v.name === name) || null;
+            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
+        };
+
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
+                const txt = el.innerText.trim();
+                if (txt.length > 2) chunks.push({ el, text: txt });
+            });
+        }
+
+        function buildSectionMenu() {
+            const sel = document.getElementById('ttsSectionSel');
+            while (sel.options.length > 1) sel.remove(1);
+            let map = [];
+            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
+                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
+                if (!label || label.length < 2) return;
+                let matchIdx = -1;
+                for (let i = 0; i < chunks.length; i++) {
+                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
+                }
+                if (matchIdx >= 0) map.push({ label, idx: matchIdx });
+            });
+            const seen = new Set();
+            map = map.filter(s => { if (seen.has(s.idx)) return false; seen.add(s.idx); return true; });
+            map.forEach(s => {
+                const o = document.createElement('option');
+                o.value = s.idx;
+                o.textContent = s.label.length > 38 ? s.label.slice(0, 36) + '...' : s.label;
+                sel.appendChild(o);
+            });
+        }
+
+        function highlight(el) {
+            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
+            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            lastHighlighted = el;
+        }
+
+        function setProgress() {
+            document.getElementById('ttsProgress').textContent = chunks.length ? (idx + 1) + ' / ' + chunks.length : '';
+        }
+
+        function setButtons(state) {
+            const play = document.getElementById('ttsPlay');
+            const pause = document.getElementById('ttsPause');
+            const stop   = document.getElementById('ttsStop');
+            if (state === 'idle') {
+                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
+                pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
+            } else if (state === 'playing') {
+                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
+                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active');
+                stop.disabled = false;
+            } else if (state === 'paused') {
+                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
+                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
+            }
+        }
+
+        function speakAt(startIdx) {
+            synth.cancel();
+            if (startIdx >= chunks.length) { ttsStop(); return; }
+            idx = startIdx; paused = false; setButtons('playing'); speakCurrent();
+        }
+
+        function speakCurrent() {
+            if (idx >= chunks.length) { ttsStop(); return; }
+            const chunk = chunks[idx];
+            highlight(chunk.el); setProgress();
+            const rate = parseFloat(document.getElementById('ttsSpeed').value);
+            const u = new SpeechSynthesisUtterance(chunk.text);
+            u.rate = rate; u.lang = 'en-GB';
+            if (selectedVoice) u.voice = selectedVoice;
+            u.onend  = () => { if (!paused) { idx++; speakCurrent(); } };
+            u.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') { idx++; speakCurrent(); } };
+            currentUtterance = u;
+            synth.speak(u);
+        }
+
+        window.ttsPlay = function() {
+            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
+            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
+            else { speakAt(idx); }
+        };
+        window.ttsPause = function() {
+            if (synth.speaking && !synth.paused) { paused = true; synth.pause(); setButtons('paused'); }
+        };
+        window.ttsStop = function() {
+            paused = false; synth.cancel(); idx = 0;
+            if (lastHighlighted) { lastHighlighted.classList.remove('tts-highlight'); lastHighlighted = null; }
+            document.getElementById('ttsProgress').textContent = '';
+            document.getElementById('ttsSectionSel').value = '-1';
+            setButtons('idle');
+        };
+        window.ttsUpdateSpeed = function() {
+            const val = parseFloat(document.getElementById('ttsSpeed').value).toFixed(2);
+            document.getElementById('ttsSpeedVal').textContent = val + 'x';
+            if (currentUtterance) currentUtterance.rate = parseFloat(val);
+        };
+        window.ttsJumpTo = function(val) {
+            const i = parseInt(val);
+            if (isNaN(i) || i < 0) return;
+            speakAt(i);
+            document.getElementById('ttsSectionSel').value = '-1';
+        };
+
+        window.addEventListener('load', () => {
+            buildChunks(); buildSectionMenu();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = () => { selectedVoice = null; populateVoiceList(); };
+            }
+            populateVoiceList();
+        });
+        window.addEventListener('beforeunload', () => synth.cancel());
+    })();
+
+    const acidBoxImg = document.getElementById('acid-box-render');
+    const acidImages = ["../assets/acid-box-3d-01.png", "../assets/acid-box-3d-02.png"];
+    let acidIdx = 0;
+    acidImages.forEach(src => { const i = new Image(); i.src = src; });
+    setInterval(() => {
+        if(acidBoxImg) {
+            acidBoxImg.style.opacity = 0;
+            setTimeout(() => {
+                acidIdx = (acidIdx + 1) % acidImages.length;
+                acidBoxImg.src = acidImages[acidIdx];
+                acidBoxImg.style.opacity = 1;
+            }, 800);
+        }
+    }, 7000);
 </script>
+
+<script src="share.js"></script>
+<script src="post-generator.js"></script>
+
+<script src="assets/translations.js"></script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
 </body>
 </html>
