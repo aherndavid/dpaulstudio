@@ -314,7 +314,7 @@
     <button class="tbtn" id="import-btn" title="Import an HTML file from disk">Import</button>
     <input type="file" id="import-file-input" accept=".html,.htm" style="display:none;">
     <button class="tbtn" id="export-btn" title="Export / download the current HTML">Export</button>
-    <button class="tbtn" id="screenshot-btn" title="Screenshot the preview window (Ctrl+Shift+S)" disabled>📷 Screenshot</button>
+    <button class="tbtn" id="screenshot-btn" title="Screenshot / open preview (Ctrl+Shift+S)">📷 Screenshot</button>
     <button class="tbtn" id="fnr-btn" title="Find &amp; Replace (Ctrl+H)">Find &amp; Replace</button>
     <button class="tbtn" id="sel-hl-btn" title="Highlight selected elements in preview (Ctrl+Q)">Sel Highlight</button>
     <button class="tbtn" id="inspect-btn" title="Click elements in preview to highlight source (Ctrl+I)">Inspect</button>
@@ -645,7 +645,6 @@
   // ── Screenshot ────────────────────────────────────────────────────────────
 
   function screenshotOpenDialog() {
-    if (!editor.value.trim()) { showToast('Nothing to screenshot — editor is empty'); return; }
     const now = new Date();
     const ts = now.getFullYear() + '-' +
       String(now.getMonth()+1).padStart(2,'0') + '-' +
@@ -1273,11 +1272,10 @@
   let hintDebounce;
   function updatePreview() {
     const html = editor.value;
-    if (!html.trim()) { preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden'); screenshotBtn.disabled = true; return; }
+    if (!html.trim()) { preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden'); return; }
     previewEmpty.classList.add('hidden'); preview.srcdoc = html;
     const lines = html.split('\n').length; const bytes = new Blob([html]).size;
     status.textContent = lines + ' lines · ' + (bytes > 1024 ? (bytes/1024).toFixed(1) + ' kb' : bytes + ' b');
-    screenshotBtn.disabled = false;
     if (borderMode) setTimeout(updateSizeBadges, 200);
   }
 
@@ -1417,7 +1415,6 @@
   clearBtn.addEventListener('click', () => {
     takeSnapshot(editor.value); editor.value = ''; importedFilename.textContent = '';
     preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden');
-    screenshotBtn.disabled = true;
     hideHighlight(); hintResults = []; updateLineNumbers(); renderDebugPanel(); updateDebugBadge();
     if (fnrOpen) { fnrMatches = []; fnrCurrent = -1; clearFnrHighlights(); updateFnrCount(); updateFnrButtons(); }
     editor.focus();
