@@ -424,7 +424,7 @@
 <!-- Screenshot Overlay -->
 <div id="screenshot-overlay">
   <div id="screenshot-box">
-    <h3>📷 Screenshot Preview</h3>
+    <h3>📷 Screenshot</h3>
     <div class="screenshot-filename-row">
       <label for="screenshot-filename">Filename</label>
       <input type="text" id="screenshot-filename" value="preview.png" spellcheck="false">
@@ -433,27 +433,27 @@
       <label class="screenshot-opt">
         <input type="radio" name="screenshot-type" value="preview" checked>
         <div class="screenshot-opt-info">
-          <div class="screenshot-opt-title">Preview window only</div>
-          <div class="screenshot-opt-desc">Renders your HTML into a PNG — styles and layout captured</div>
+          <div class="screenshot-opt-title">📺 Preview pane (right)</div>
+          <div class="screenshot-opt-desc">Opens your rendered HTML in a new tab — use browser screenshot or Ctrl+P</div>
         </div>
       </label>
       <label class="screenshot-opt">
-        <input type="radio" name="screenshot-type" value="full">
+        <input type="radio" name="screenshot-type" value="editor">
         <div class="screenshot-opt-info">
-          <div class="screenshot-opt-title">Full editor view</div>
-          <div class="screenshot-opt-desc">Captures the entire HTML-Live interface as PNG</div>
+          <div class="screenshot-opt-title">📝 Editor pane (left)</div>
+          <div class="screenshot-opt-desc">Saves your HTML source code as a PNG image</div>
         </div>
       </label>
       <label class="screenshot-opt">
-        <input type="radio" name="screenshot-type" value="newtab">
+        <input type="radio" name="screenshot-type" value="both">
         <div class="screenshot-opt-info">
-          <div class="screenshot-opt-title">Open in new tab</div>
-          <div class="screenshot-opt-desc">Most reliable — use browser's own screenshot or Ctrl+P → Save as PDF</div>
+          <div class="screenshot-opt-title">⬛ Both panes side by side</div>
+          <div class="screenshot-opt-desc">Editor screenshot + preview opens in new tab</div>
         </div>
       </label>
     </div>
     <div id="screenshot-note">
-      <strong>Note:</strong> JS-driven content won't execute in PNG capture mode. For complex pages, use <strong>Open in new tab</strong>.
+      <strong>Why new tab for preview?</strong> Browsers block direct pixel access to iframe content — opening in a new tab gives a perfect, full-fidelity render you can screenshot natively.
     </div>
     <div class="screenshot-actions">
       <button class="screenshot-cancel-btn" id="screenshot-cancel">Cancel</button>
@@ -521,8 +521,7 @@
   </div>
 </div>
 
-<!-- dom-to-image-more: more reliable than html2canvas for same-page DOM -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image-more/2.9.0/dom-to-image-more.min.js"></script>
+
 
 <!-- HTMLHint via esm.sh -->
 <script type="module">
@@ -644,9 +643,9 @@
   }
 
   // ── Screenshot ────────────────────────────────────────────────────────────
-  screenshotBtn.addEventListener('click', () => {
-    if (!editor.value.trim()) { showToast('Nothing to screenshot — preview is empty'); return; }
-    // Auto-generate filename with timestamp
+
+  function screenshotOpenDialog() {
+    if (!editor.value.trim()) { showToast('Nothing to screenshot — editor is empty'); return; }
     const now = new Date();
     const ts = now.getFullYear() + '-' +
       String(now.getMonth()+1).padStart(2,'0') + '-' +
@@ -654,106 +653,160 @@
       String(now.getHours()).padStart(2,'0') + '-' +
       String(now.getMinutes()).padStart(2,'0') + '-' +
       String(now.getSeconds()).padStart(2,'0');
-    screenshotFilename.value = 'preview_' + ts + '.png';
+    screenshotFilename.value = 'htmllive_' + ts + '.png';
     screenshotOverlay.classList.add('visible');
     screenshotFilename.focus();
     screenshotFilename.select();
-  });
+  }
 
+  screenshotBtn.addEventListener('click', screenshotOpenDialog);
   screenshotCancel.addEventListener('click', () => screenshotOverlay.classList.remove('visible'));
   screenshotOverlay.addEventListener('click', (e) => { if (e.target === screenshotOverlay) screenshotOverlay.classList.remove('visible'); });
 
-  screenshotDo.addEventListener('click', async () => {
+  // Draw the editor pane onto a canvas using native Canvas 2D API
+  function captureEditorToCanvas() {
+    const editorEl = document.getElementById('editor');
+    const leftEl   = document.getElementById('left');
+    const rect     = leftEl.getBoundingClientRect();
+    const dpr      = window.devicePixelRatio || 1;
+    const w        = Math.round(rect.width);
+    const h        = Math.round(rect.height);
+
+    const canvas   = document.createElement('canvas');
+    canvas.width   = w * dpr;
+    canvas.height  = h * dpr;
+    const ctx      = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // Background
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, w, h);
+
+    // Header bar
+    ctx.fillStyle = '#222';
+    ctx.fillRect(0, 0, w, 32);
+    ctx.fillStyle = '#888';
+    ctx.font = '12px "Courier New", monospace';
+    ctx.fillText('HTML INPUT', 56, 21);
+
+    // Line numbers column
+    ctx.fillStyle = '#141414';
+    ctx.fillRect(0, 32, 44, h - 32);
+    ctx.strokeStyle = '#252525';
+    ctx.beginPath(); ctx.moveTo(44, 32); ctx.lineTo(44, h); ctx.stroke();
+
+    // Editor background
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(44, 32, w - 44, h - 32);
+
+    // Draw code text
+    const src       = editorEl.value;
+    const lines     = src.split('\n');
+    const fontSize  = currentFontSize;
+    const lineH     = Math.round(fontSize * 1.6);
+    const padTop    = 14;
+    const scrollTop = editorEl.scrollTop;
+
+    ctx.font = fontSize + 'px "Courier New", monospace';
+
+    const firstLine = Math.max(0, Math.floor(scrollTop / lineH));
+    const lastLine  = Math.min(lines.length - 1, firstLine + Math.ceil((h - 32) / lineH) + 1);
+
+    for (let i = firstLine; i <= lastLine; i++) {
+      const y = 32 + padTop + (i - firstLine) * lineH;
+
+      // Line number
+      ctx.fillStyle = i + 1 === activeLine ? '#ff8800' : '#3a3a3a';
+      ctx.textAlign = 'right';
+      ctx.fillText(i + 1, 36, y + fontSize);
+
+      // Code line — basic keyword colouring
+      ctx.textAlign = 'left';
+      drawColouredLine(ctx, lines[i], 56, y + fontSize, fontSize);
+    }
+
+    return canvas;
+  }
+
+  // Very basic syntax colouring for the canvas render
+  function drawColouredLine(ctx, line, x, y, fontSize) {
+    // Tokenise into segments: tags, attributes, strings, comments, plain text
+    const tokens = [];
+    let rest = line;
+    while (rest.length > 0) {
+      // HTML comment
+      let m = rest.match(/^(<!--.*?-->)/);
+      if (m) { tokens.push({ text: m[1], color: '#557755' }); rest = rest.slice(m[1].length); continue; }
+      // Opening/closing tag name
+      m = rest.match(/^(<\/?)([a-zA-Z][a-zA-Z0-9-]*)/);
+      if (m) { tokens.push({ text: m[1], color: '#888' }); tokens.push({ text: m[2], color: '#66aadd' }); rest = rest.slice(m[0].length); continue; }
+      // Attribute value in quotes
+      m = rest.match(/^(["'][^"']*["'])/);
+      if (m) { tokens.push({ text: m[1], color: '#88cc88' }); rest = rest.slice(m[1].length); continue; }
+      // Angle brackets / equals
+      m = rest.match(/^([<>/=])/);
+      if (m) { tokens.push({ text: m[1], color: '#666' }); rest = rest.slice(1); continue; }
+      // Attribute name
+      m = rest.match(/^([a-zA-Z_:][a-zA-Z0-9_:\-\.]*)/);
+      if (m) { tokens.push({ text: m[1], color: '#ddbb66' }); rest = rest.slice(m[1].length); continue; }
+      // Anything else character by character
+      tokens.push({ text: rest[0], color: '#cccccc' }); rest = rest.slice(1);
+    }
+
+    let cx = x;
+    for (const tok of tokens) {
+      ctx.fillStyle = tok.color;
+      ctx.fillText(tok.text, cx, y);
+      cx += ctx.measureText(tok.text).width;
+      if (cx > 2000) break; // don't draw off-canvas
+    }
+  }
+
+  function downloadCanvas(canvas, fname) {
+    const url = canvas.toDataURL('image/png');
+    const a   = document.createElement('a');
+    a.href    = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function openPreviewInNewTab() {
+    const blob = new Blob([editor.value], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    const win  = window.open(url, '_blank');
+    // Revoke after a delay to allow the tab to load
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    return win;
+  }
+
+  screenshotDo.addEventListener('click', () => {
     const type = document.querySelector('input[name="screenshot-type"]:checked').value;
-    let fname = screenshotFilename.value.trim() || 'preview.png';
-    if (!fname.match(/\.(png|jpg|jpeg|webp)$/i)) fname += '.png';
+    let fname  = screenshotFilename.value.trim() || 'htmllive.png';
+    if (!fname.match(/\.(png|jpg|jpeg)$/i)) fname += '.png';
 
     screenshotOverlay.classList.remove('visible');
 
-    // "Open in new tab" mode — most reliable, zero rendering bugs
-    if (type === 'newtab') {
-      const blob = new Blob([editor.value], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
-      showToast('📷 Opened in new tab — use browser screenshot or Ctrl+P to save', 'screenshot');
-      return;
-    }
+    if (type === 'preview') {
+      // Open rendered HTML in new tab — pixel-perfect, no library needed
+      openPreviewInNewTab();
+      showToast('📺 Preview opened — screenshot with your browser or Ctrl+P', 'screenshot');
 
-    screenshotBtn.classList.add('capturing');
-    screenshotBtn.disabled = true;
+    } else if (type === 'editor') {
+      // Canvas render of the editor pane — works natively, no library
+      const canvas = captureEditorToCanvas();
+      downloadCanvas(canvas, fname);
+      showToast('📷 Editor saved: ' + fname, 'screenshot');
 
-    try {
-      let dataUrl;
-
-      if (type === 'full') {
-        // Full editor view — capture the whole app UI, no iframes involved
-        dataUrl = await domtoimage.toPng(document.getElementById('app'), {
-          bgcolor: '#1a1a1a',
-          width: document.getElementById('app').offsetWidth,
-          height: document.getElementById('app').offsetHeight,
-          style: { transform: 'scale(1)', transformOrigin: 'top left' }
-        });
-
-      } else {
-        // Preview only — inject HTML into a same-page ghost div so dom-to-image can read it
-        const previewArea = document.getElementById('preview-area');
-        const areaRect = previewArea.getBoundingClientRect();
-        const w = Math.round(areaRect.width);
-        const h = Math.round(areaRect.height);
-
-        const parser = new DOMParser();
-        const srcDoc = parser.parseFromString(editor.value, 'text/html');
-
-        // Ghost div sits on top of the page briefly during capture
-        const ghost = document.createElement('div');
-        ghost.style.cssText = 'position:fixed;left:0;top:0;width:' + w + 'px;height:' + h + 'px;overflow:hidden;background:#fff;z-index:999999;pointer-events:none;';
-
-        // Inline all <style> tags
-        srcDoc.querySelectorAll('style').forEach(s => {
-          const el = document.createElement('style');
-          el.textContent = s.textContent;
-          ghost.appendChild(el);
-        });
-
-        // Body content
-        const bodyWrap = document.createElement('div');
-        bodyWrap.style.cssText = 'width:' + w + 'px;min-height:' + h + 'px;overflow:hidden;';
-        const bodyStyle = srcDoc.body.getAttribute('style');
-        if (bodyStyle) bodyWrap.setAttribute('style', bodyWrap.getAttribute('style') + ';' + bodyStyle);
-        bodyWrap.innerHTML = srcDoc.body.innerHTML;
-        ghost.appendChild(bodyWrap);
-
-        document.body.appendChild(ghost);
-
-        // Let styles paint
-        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-        await new Promise(r => setTimeout(r, 200));
-
-        dataUrl = await domtoimage.toPng(ghost, {
-          bgcolor: '#ffffff',
-          width: w,
-          height: h
-        });
-
-        document.body.removeChild(ghost);
-      }
-
-      // Trigger download
-      const a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = fname;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      showToast('📷 Saved: ' + fname, 'screenshot');
-
-    } catch (err) {
-      console.error('Screenshot failed:', err);
-      showToast('Screenshot failed — try "Open in new tab" instead');
-    } finally {
-      screenshotBtn.classList.remove('capturing');
-      screenshotBtn.disabled = false;
+    } else if (type === 'both') {
+      // Editor as PNG download + preview in new tab
+      const canvas = captureEditorToCanvas();
+      downloadCanvas(canvas, fname.replace(/\.png$/i, '_editor.png'));
+      setTimeout(() => {
+        openPreviewInNewTab();
+        showToast('📷 Editor saved + preview opened in new tab', 'screenshot');
+      }, 300);
     }
   });
 
@@ -1155,7 +1208,7 @@
       if (e.key === 'h') { e.preventDefault(); setFnrOpen(!fnrOpen); }
       if (e.key === 'q') { e.preventDefault(); setSelHlMode(!selHlMode); }
       if (e.key === 's' && !e.shiftKey) { e.preventDefault(); if (editor.value.trim()) exportBtn.click(); }
-      if (e.key === 'S' && e.shiftKey) { e.preventDefault(); if (editor.value.trim()) screenshotBtn.click(); }
+      if (e.key === 'S' && e.shiftKey) { e.preventDefault(); if (editor.value.trim()) screenshotOpenDialog(); }
     }
   });
 
