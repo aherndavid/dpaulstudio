@@ -28,6 +28,7 @@
             overflow-x: hidden;
         }
 
+        /* Film Grain Overlay */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -38,7 +39,8 @@
         /* ── NAVIGATION ── */
         #mobile-nav-container {
             position: sticky; top: 0; z-index: 1000;
-            background: var(--bg); border-bottom: 1px solid var(--border);
+            background: rgba(19, 20, 19, 0.9); /* Slight transparency */
+            border-bottom: 1px solid var(--border);
             height: 64px;
         }
         .nav-wrapper {
@@ -75,15 +77,17 @@
         }
         .mobile-menu a.active { color: var(--orange); font-weight: bold; }
 
-        /* ── CROSSFADE IMAGE ── */
-        .merch-image {
+        /* ── BACKGROUND FULL-PAGE IMAGES ── */
+        .background-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            position: relative;
-            aspect-ratio: 16 / 9;
-            overflow: hidden;
+            height: 100%;
+            z-index: -1;
             background: #0e0f0e;
         }
-        .merch-image img {
+        .background-wrap img {
             position: absolute;
             inset: 0;
             width: 100%;
@@ -92,12 +96,25 @@
             opacity: 0;
             transition: opacity 1.2s ease-in-out;
         }
-        .merch-image img.active { opacity: 1; }
+        .background-wrap img.active { opacity: 1; }
 
-        /* ── PAGE ── */
-        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
+        /* Dimmer Overlay to make text readable */
+        .overlay-dim {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
 
-        /* ── HERO ── */
+        /* ── CONTENT PAGE ── */
+        .page { 
+            position: relative;
+            z-index: 1;
+            padding: 0 20px 80px; 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+
         .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
         .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
         .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
@@ -107,7 +124,6 @@
             border-left: 2px solid var(--orange); padding-left: 16px;
         }
 
-        /* ── SECTION ── */
         .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
         .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
 
@@ -126,7 +142,6 @@
         }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
-        /* ── FOOTER LINE ── */
         .footer-line {
             margin-top: 60px; padding-top: 24px;
             border-top: 1px solid var(--border-dim);
@@ -141,7 +156,6 @@
         /* ── REVEAL ── */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
-        .merch-image.reveal { transform: none; }
     </style>
 </head>
 <body>
@@ -166,11 +180,13 @@
     <a href="../about.html">info</a>
 </div>
 
-<div class="merch-image reveal" id="merchImgWrap">
+<div class="background-wrap">
     <img id="img0" src="../assets/merch-trolley.png"   alt="Merch En Route — dPaul Technologies">
     <img id="img1" src="../assets/merch-en-route-two.png"   alt="Merch En Route No Car — dPaul Technologies">
     <img id="img2" src="../assets/merch-en-route-three.png" alt="Merch En Route No Bird — dPaul Technologies">
 </div>
+
+<div class="overlay-dim"></div>
 
 <div class="page">
 
@@ -185,7 +201,8 @@
     <section class="section reveal">
         <div class="section-label">// Debut collection</div>
         <p class="below-copy">
-            </p>
+            Explore the intersection of functional utility and technical design.
+        </p>
         <div class="badge">// En Route — available very soon</div>
     </section>
 
@@ -207,7 +224,7 @@
         document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
     }
 
-    // ── IMAGE CROSSFADE ──
+    // ── BACKGROUND CROSSFADE ──
     (function () {
         const imgs = [
             document.getElementById('img0'),
@@ -216,14 +233,13 @@
         ];
         let current = 0;
 
-        // Show first image immediately
         if (imgs[0]) imgs[0].classList.add('active');
 
         setInterval(() => {
             if (imgs[current]) imgs[current].classList.remove('active');
             current = (current + 1) % imgs.length;
             if (imgs[current]) imgs[current].classList.add('active');
-        }, 15000);
+        }, 8000); // Swapping every 8 seconds for a smoother feel
     })();
 
     // ── REVEAL ──
