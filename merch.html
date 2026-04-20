@@ -1,19 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    // Find the current filename (e.g., 'design.html')
-    var path = window.location.pathname.split("/").pop();
-    // If we're at the root, default to index.html
-    if (path === "") path = "index.html";
-    // Send them to the exact same page but inside the /m/ folder
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merch — dPaul Technologies</title>
+    <title>Merch — dPaul Technologies (Mobile)</title>
+
     <style>
         :root {
             --bg:      #131413;
@@ -24,7 +15,6 @@
             --dim:     #7a7a70;
             --border:  rgba(255,102,0,0.25);
             --border-dim: rgba(255,255,255,0.07);
-            --font-scale: 1;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,288 +23,205 @@
             background: var(--bg);
             color: var(--text);
             font-family: 'Courier New', Courier, monospace;
-            font-size: 130%;
-            min-height: 100vh;
+            font-size: 110%;
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
+        /* Film Grain Overlay */
         body::before {
             content: '';
             position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 9999; opacity: 0.35;
+            pointer-events: none; z-index: 9999; opacity: 0.3;
         }
 
-        /* ── FONT NUDGE ── */
-        .font-nudge {
-            position: fixed; bottom: 24px; right: 24px; z-index: 500;
-            background: var(--bg2); border: 1px solid var(--border);
-            border-radius: 4px; padding: 12px 16px;
-            display: flex; flex-direction: column; gap: 8px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
-        }
-        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
-        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
-        .font-btn {
-            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius: 3px; font-size: 1rem;
-            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-        }
-        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
-        .font-nudge-dismiss {
-            background: none; border: none; color: var(--dim);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
-            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
-        }
-        .font-nudge-dismiss:hover { color: var(--orange); }
-
-        /* ── NAV ── */
-        nav {
-            position: sticky; top: 0; z-index: 100;
-            background: var(--bg); border-bottom: 1px solid var(--border);
-            padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
-        }
-        nav a {
-            font-family: 'Courier New', Courier, monospace; font-size: 1.4rem;
-            color: var(--cream); text-decoration: none; padding: 10px 20px;
-            border: 1px solid transparent; border-radius: 3px;
-            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
-        }
-        nav a:hover  { border-color: var(--orange); color: var(--orange); }
-        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
-        nav .spacer  { flex: 1; }
-
-        /* ── MINI EQ IN NAV ── */
-        #nav-eq-container {
-            display: flex; align-items: flex-end; gap: 2px;
-            height: 22px; margin: 0 24px; padding-bottom: 2px;
-        }
-        .nav-eq-bar {
-            width: 3px; background: var(--orange);
-            transition: height 0.1s ease; border-radius: 1px;
-        }
-
-        /* ── LANGUAGE SWITCHER ── */
-        #lang-switcher {
-            display: flex; gap: 6px; align-items: center;
-        }
-        .lang-btn {
-            background: none;
-            border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.7rem; font-weight: 700;
-            letter-spacing: 0.12em; padding: 4px 8px;
-            cursor: pointer; transition: color 0.2s, border-color 0.2s;
-            text-transform: uppercase;
-        }
-        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
-        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
-
-        /* ── PAGE ── */
-        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; }
-
-        /* ── HERO ── */
-        .hero {
-            padding: 64px 0 56px;
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(19, 20, 19, 0.9); /* Slight transparency */
             border-bottom: 1px solid var(--border);
-            max-width: 1000px;
+            height: 64px;
         }
-        .hero-label {
-            font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em;
-            text-transform: uppercase; margin-bottom: 24px;
-            display: flex; align-items: center; gap: 12px;
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
         }
-        .hero-label::after { content: ''; display: block; width: 48px; height: 1px; background: var(--orange); opacity: 0.5; }
-        .hero h1 {
-            font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900;
-            color: #fff; line-height: 1.08; margin-bottom: 28px; letter-spacing: -0.02em;
-        }
-        .hero h1 em { color: var(--orange); font-style: normal; }
-        .hero-intro {
-            font-size: calc(1.365rem * var(--font-scale));
-            line-height: 1.95; color: var(--text);
-            max-width: 660px; border-left: 2px solid var(--orange);
-            padding-left: 20px; margin-top: 8px;
-        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
 
-        /* ── MERCH IMAGE STRIP ── */
-        .merch-image {
-            position: relative;
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px;
+            background: var(--cream); transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        /* ── BACKGROUND FULL-PAGE IMAGES ── */
+        .background-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            aspect-ratio: 16 / 7;
-            overflow: hidden;
+            height: 100%;
+            z-index: -1;
             background: #0e0f0e;
         }
-        .merch-image img {
+        .background-wrap img {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 2s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
-        .merch-image img.active { opacity: 1; }
+        .background-wrap img.active { opacity: 1; }
 
-        /* ── BELOW IMAGE ── */
-        .below { padding: 72px 0 0; }
-        .below-label {
-            font-size: 1.17rem; letter-spacing: 0.22em;
-            text-transform: uppercase; color: var(--orange); margin-bottom: 20px;
+        /* Dimmer Overlay to make text readable */
+        .overlay-dim {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
         }
+
+        /* ── CONTENT PAGE ── */
+        .page { 
+            position: relative;
+            z-index: 1;
+            padding: 0 20px 80px; 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
+        .hero h1 em { color: var(--orange); font-style: normal; }
+        .hero-intro {
+            font-size: 1.1rem; line-height: 1.75; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 16px;
+        }
+
+        .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
+
         .below-copy {
-            font-size: calc(1.235rem * var(--font-scale));
-            line-height: 1.95; color: var(--text);
-            max-width: 660px;
-            border-left: 2px solid var(--orange);
-            padding-left: 20px;
+            font-size: 1.1rem; line-height: 1.75; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 16px;
+            margin-bottom: 24px;
         }
 
         .badge {
-            display: inline-block; margin-top: 32px;
-            padding: 8px 18px; border: 1px solid var(--orange);
-            color: var(--orange);
-            font-size: calc(1.04rem * var(--font-scale));
-            letter-spacing: 0.25em; text-transform: uppercase;
+            display: inline-block;
+            padding: 8px 16px; border: 1px solid var(--orange);
+            color: var(--orange); font-size: 0.85rem;
+            letter-spacing: 0.2em; text-transform: uppercase;
             animation: pulse 2.5s infinite;
         }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
 
-        /* ── FOOTER ── */
         .footer-line {
-            margin-top: 80px;
-            padding-top: 32px;
+            margin-top: 60px; padding-top: 24px;
             border-top: 1px solid var(--border-dim);
-            font-size: calc(1.04rem * var(--font-scale));
-            letter-spacing: 0.2em; color: var(--dim); text-transform: uppercase;
+            font-size: 0.75rem; letter-spacing: 0.15em;
+            color: var(--dim); text-transform: uppercase;
         }
+
+        .footer-toggle { text-align: center; padding: 48px 0 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; }
+        .footer-toggle a:hover { color: var(--orange); }
 
         /* ── REVEAL ── */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
-        .reveal.visible { opacity: 1; transform: none; }
-        .merch-image.reveal { transform: none; }
-
-        @media (max-width: 900px) {
-            nav { padding: 0 24px; }
-            .page { padding: 0 24px 80px; }
-            .merch-image { aspect-ratio: 4 / 3; }
-        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="font-nudge" id="fontNudge">
-    <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
-    <div class="font-nudge-controls">
-        <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A&#8722;</button>
-        <span class="font-size-indicator" id="fontIndicator">100%</span>
-        <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
     </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss &#215;</button>
 </div>
 
-<nav>
-    <a href="design.html"    data-i18n="nav_design">design</a>
-    <a href="merch.html"     data-i18n="nav_merch" class="active">merch</a>
-    <a href="music.html"     data-i18n="nav_music">music</a>
-    <a href="synths.html"    data-i18n="nav_synths">synths</a>
-    <a href="tools.html"     data-i18n="nav_tools">tools</a>
-    <a href="video.html"     data-i18n="nav_video">video</a>
-    <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
-    <div class="spacer"></div>
-    
-    <div id="nav-eq-container"></div>
-    
-    <div id="lang-switcher">
-        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
-        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
-        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
-    </div>
-    <a href="about.html" data-i18n="nav_about">info</a>
-</nav>
-
-<div class="merch-image reveal" id="merchImgWrap">
-    <img id="img0" src="assets/merch-en-route-one.png"   alt="Merch En Route — dPaul Technologies">
-    <img id="img1" src="assets/merch-en-route-two.png"   alt="Merch En Route No Car — dPaul Technologies">
-    <img id="img2" src="assets/merch-en-route-three.png" alt="Merch En Route No Bird — dPaul Technologies">
+<div class="mobile-menu" id="mobileMenu">
+    <a href="../design.html">design</a>
+    <a href="merch.html" class="active">merch</a>
+    <a href="../music.html">music</a>
+    <a href="../synths.html">synths</a>
+    <a href="../tools.html">tools</a>
+    <a href="../video.html">video</a>
+    <a href="../dev-tools.html">dev tools</a>
+    <a href="../about.html">info</a>
 </div>
 
-<div class="page" style="padding-top:0;">
+<div class="background-wrap">
+    <img id="img0" src="../assets/merch-trolley.png"   alt="Merch En Route — dPaul Technologies">
+    <img id="img1" src="../assets/merch-trolley-2.png"   alt="Merch En Route — dPaul Technologies">
+
+</div>
+
+<div class="overlay-dim"></div>
+
+<div class="page">
 
     <section class="hero reveal">
-        <div class="hero-label" data-i18n="merch_hero_label">// dPaul Technologies &#8212; Merch</div>
-        <h1 data-i18n="merch_hero_h1">Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
-        <p class="hero-intro" data-i18n="merch_hero_intro">
-            The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic &#8212; once they're gone, they're gone.
+        <div class="hero-label">// dPaul Technologies — Merch</div>
+        <h1>Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
+        <p class="hero-intro">
+            The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.
         </p>
     </section>
 
-    <div class="below reveal">
-        <div class="below-label" data-i18n="merch_below_label">// Debut collection</div>
-        <p class="below-copy" data-i18n="merch_below_copy">
-            </p>
-        <div class="badge" data-i18n="merch_badge">// En Route &#8212; available very soon</div>
-    </div>
+    <section class="section reveal">
+        <div class="section-label">// Debut collection</div>
+        <p class="below-copy">
+            Explore the intersection of functional utility and technical design.
+        </p>
+        <div class="badge">// En Route — available very soon</div>
+    </section>
 
-    <div class="footer-line reveal" data-i18n="merch_footer">// dPaul Technologies &#8212; Limited run &#8212; once gone, gone</div>
+    <div class="footer-line reveal">// dPaul Technologies — Limited run — once gone, gone</div>
+    </div>
 
 </div>
 
 <script>
-    // ── NAV EQ ANIMATION ──
-    (function() {
-        const NUM_BARS = 8;
-        const MAX_H = 20;
-        const container = document.getElementById('nav-eq-container');
-        if (!container) return;
-        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
-        const targets = [...levels];
-        const bars = [];
-        for (let i = 0; i < NUM_BARS; i++) {
-            const b = document.createElement('div');
-            b.className = 'nav-eq-bar';
-            container.appendChild(b);
-            bars.push(b);
-        }
-        function animateEQ() {
-            for (let i = 0; i < NUM_BARS; i++) {
-                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
-                levels[i] += (targets[i] - levels[i]) * 0.15;
-                bars[i].style.height = levels[i] + 'px';
-            }
-            requestAnimationFrame(animateEQ);
-        }
-        animateEQ();
-    })();
+    // ── MENU ──
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn  = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
 
-    // ── FONT NUDGE ──
-    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
-    let fontScaleIndex = 0;
-    const indicators = ['100%', '115%', '130%', '150%', '170%'];
-    function applyFontScale() {
-        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
-        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
-        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
-    }
-    function adjustFont(dir) {
-        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
-        applyFontScale();
-    }
-    function dismissNudge() {
-        document.getElementById('fontNudge').style.opacity = '0';
-        document.getElementById('fontNudge').style.pointerEvents = 'none';
-        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
-    }
-    try {
-        const saved = localStorage.getItem('dp-font-scale');
-        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
-        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
-    } catch(e) {}
-
-    // ── IMAGE CROSSFADE ──
+    // ── BACKGROUND CROSSFADE ──
     (function () {
         const imgs = [
             document.getElementById('img0'),
@@ -322,12 +229,14 @@
             document.getElementById('img2')
         ];
         let current = 0;
-        imgs[0].classList.add('active');
+
+        if (imgs[0]) imgs[0].classList.add('active');
+
         setInterval(() => {
-            imgs[current].classList.remove('active');
+            if (imgs[current]) imgs[current].classList.remove('active');
             current = (current + 1) % imgs.length;
-            imgs[current].classList.add('active');
-        }, 15000);
+            if (imgs[current]) imgs[current].classList.add('active');
+        }, 8000); // Swapping every 8 seconds for a smoother feel
     })();
 
     // ── REVEAL ──
@@ -341,9 +250,6 @@
     }, { threshold: 0.05 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
-
-<script src="assets/translations.js"></script>
-<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
 </body>
 </html>
