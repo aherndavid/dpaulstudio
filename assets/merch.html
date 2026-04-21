@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merch — dPaul Technologies (Mobile)</title>
+
+    <style>
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 110%;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Film Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(19, 20, 19, 0.9); /* Slight transparency */
+            border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px;
+            background: var(--cream); transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        /* ── BACKGROUND FULL-PAGE IMAGES ── */
+        .background-wrap {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #0e0f0e;
+        }
+        .background-wrap img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+        }
+        .background-wrap img.active { opacity: 1; }
+
+        /* Dimmer Overlay to make text readable */
+        .overlay-dim {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 0;
+        }
+
+        /* ── CONTENT PAGE ── */
+        .page { 
+            position: relative;
+            z-index: 1;
+            padding: 0 20px 80px; 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
+        .hero h1 em { color: var(--orange); font-style: normal; }
+        .hero-intro {
+            font-size: 1.1rem; line-height: 1.75; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 16px;
+        }
+
+        .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
+
+        .below-copy {
+            font-size: 1.1rem; line-height: 1.75; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 16px;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px; border: 1px solid var(--orange);
+            color: var(--orange); font-size: 0.85rem;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            animation: pulse 2.5s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+        .footer-line {
+            margin-top: 60px; padding-top: 24px;
+            border-top: 1px solid var(--border-dim);
+            font-size: 0.75rem; letter-spacing: 0.15em;
+            color: var(--dim); text-transform: uppercase;
+        }
+
+        .footer-toggle { text-align: center; padding: 48px 0 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; }
+        .footer-toggle a:hover { color: var(--orange); }
+
+        /* ── REVEAL ── */
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="../design.html">design</a>
+    <a href="merch.html" class="active">merch</a>
+    <a href="../music.html">music</a>
+    <a href="../synths.html">synths</a>
+    <a href="../tools.html">tools</a>
+    <a href="../video.html">video</a>
+    <a href="../dev-tools.html">dev tools</a>
+    <a href="../about.html">info</a>
+</div>
+
+<div class="background-wrap">
+    <img id="img0" src="../assets/merch-trolley.png"   alt="Merch En Route — dPaul Technologies">
+    <img id="img1" src="../assets/merch-trolley-2.png"   alt="Merch En Route — dPaul Technologies">
+
+</div>
+
+<div class="overlay-dim"></div>
+
+<div class="page">
+
+    <section class="hero reveal">
+        <div class="hero-label" data-i18n="merch_hero_label">// dPaul Technologies — Merch</div>
+        <h1 data-i18n="merch_hero_h1">Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
+        <p class="hero-intro" data-i18n="merch_hero_intro">
+            The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.
+        </p>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label" data-i18n="merch_below_label">// Debut collection</div>
+        <p class="below-copy" data-i18n="merch_below_copy">
+            Explore the intersection of functional utility and technical design.
+        </p>
+        <div class="badge" data-i18n="merch_badge">// En Route — available very soon</div>
+    </section>
+
+    <div class="footer-line reveal" data-i18n="merch_footer">// dPaul Technologies — Limited run — once gone, gone</div>
+    </div>
+
+</div>
+
+<script>
+    // ── MENU ──
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn  = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
+
+    // ── BACKGROUND CROSSFADE ──
+    (function () {
+        const imgs = [
+            document.getElementById('img0'),
+            document.getElementById('img1'),
+            document.getElementById('img2')
+        ];
+        let current = 0;
+
+        if (imgs[0]) imgs[0].classList.add('active');
+
+        setInterval(() => {
+            if (imgs[current]) imgs[current].classList.remove('active');
+            current = (current + 1) % imgs.length;
+            if (imgs[current]) imgs[current].classList.add('active');
+        }, 8000); // Swapping every 8 seconds for a smoother feel
+    })();
+
+    // ── REVEAL ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+<script src="../assets/translations.js"></script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
+
+</body>
+</html>
