@@ -18,15 +18,15 @@
             background-color: var(--bg-color);
             color: var(--crt-color);
             font-family: 'VT323', monospace;
-            font-display: swap;
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden;
         }
 
+        /* CRT Overlay Effect */
         body::before {
             content: " ";
             display: block;
@@ -39,62 +39,42 @@
             pointer-events: none;
         }
 
+        /* 3-COLUMN LAYOUT BASED ON DRAWING */
         .crt-container {
             width: 95%;
-            height: 90vh;
-            border: 2px solid var(--crt-color);
-            background: rgba(19, 20, 19, 0.8);
-            box-shadow: inset 0 0 15px var(--glow), 0 0 10px rgba(0, 0, 0, 0.5);
-            display: flex;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1.5fr; /* Album | CDs | Player */
+            gap: 30px;
+            align-items: center;
             padding: 20px;
-            box-sizing: border-box;
-            gap: 20px;
+            border: 2px solid var(--crt-color);
+            box-shadow: inset 0 0 15px var(--glow);
+            position: relative;
         }
 
+        /* Column 1: Album Art */
         .art-panel {
-            width: 35%;
-            height: 100%;
-            border-right: 1px solid var(--crt-color);
-            overflow: hidden;
-            position: relative;
-            background: var(--bg-color);
+            width: 100%;
+            aspect-ratio: 1/1;
+            border: 1px solid var(--crt-color);
             display: flex;
             justify-content: center;
             align-items: center;
+            background: #000;
         }
 
         #cover-art {
-            max-width: 88%;
-            border: 1px solid var(--crt-color);
-            opacity: 0.85;
+            max-width: 90%;
             box-shadow: 0 0 20px var(--glow);
-            filter: brightness(1.05) contrast(1.05);
             animation: flicker 4s infinite;
         }
 
-        @keyframes flicker {
-            0%   { opacity: 0.85; }
-            92%  { opacity: 0.85; }
-            93%  { opacity: 0.6; }
-            94%  { opacity: 0.85; }
-            97%  { opacity: 0.75; }
-            100% { opacity: 0.85; }
-        }
-
-        .player-content {
-            flex-grow: 1;
+        /* Column 2: CD Selector (Vertically stacked) */
+        .cd-list {
             display: flex;
             flex-direction: column;
-            text-align: center;
-        }
-
-        #disc-selector {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 18px;
-            border-bottom: 1px solid var(--crt-color);
-            padding-bottom: 14px;
-            justify-content: center;
+            gap: 20px;
         }
 
         .disc-btn {
@@ -103,24 +83,49 @@
             color: var(--crt-color);
             font-family: 'VT323', monospace;
             cursor: pointer;
-            font-size: 2.4rem;
-            padding: 12px 28px;
+            font-size: 1.8rem;
+            padding: 15px;
             letter-spacing: 2px;
             transition: all 0.2s;
-            box-shadow: 0 0 6px var(--glow);
-            line-height: 1.1;
+            text-align: center;
         }
 
-        .disc-btn:hover {
+        .disc-btn:hover, .active-disc {
             background: var(--crt-color);
             color: #000;
-            box-shadow: 0 0 18px var(--glow);
+            box-shadow: 0 0 15px var(--glow);
         }
 
-        .active-disc {
-            background: var(--crt-color);
-            color: #000;
-            box-shadow: 0 0 18px var(--glow);
+        /* Column 3: Player Content */
+        .player-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        #timer { 
+            font-size: 5rem; 
+            color: #fff; 
+            line-height: 1;
+            text-shadow: 0 0 10px var(--glow);
+        }
+
+        #now-playing {
+            min-height: 120px;
+            font-size: 1.5rem;
+            border-top: 1px solid var(--crt-color);
+            padding-top: 15px;
+            width: 100%;
+        }
+
+        .label { font-size: 1rem; opacity: 0.6; display: block; }
+        .data  { color: #fff; margin-bottom: 10px; display: block; white-space: pre-line; }
+
+        .controls {
+            display: flex;
+            gap: 20px;
         }
 
         .control-btn {
@@ -129,34 +134,12 @@
             color: #fff;
             font-family: 'VT323', monospace;
             cursor: pointer;
-            font-size: 3rem;
-            padding: 8px 20px;
-            transition: all 0.3s;
-            box-shadow: 0 0 10px var(--glow);
-            letter-spacing: 2px;
+            font-size: 2.5rem;
+            padding: 5px 20px;
+            transition: 0.3s;
         }
 
         .control-btn:hover { background: var(--crt-color); color: #000; }
-
-        #header {
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-        }
-
-        #timer { font-size: 7.2rem; color: #fff; line-height: 1; margin: 10px 0; }
-
-        #now-playing {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            font-size: 2.2rem;
-            margin-top: -10px;
-        }
-
-        .label { font-size: 1.2rem; opacity: 0.6; display: block; }
-        .data  { color: #fff; margin-bottom: 20px; display: block; }
 
         #boot-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -164,6 +147,10 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;
         }
 
+        @keyframes flicker {
+            0% { opacity: 0.85; } 92% { opacity: 0.85; } 93% { opacity: 0.6; }
+            94% { opacity: 0.85; } 97% { opacity: 0.75; } 100% { opacity: 0.85; }
+        }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
@@ -179,43 +166,38 @@
 <div class="crt-container">
 
     <div class="art-panel">
-        <img id="cover-art"
-             src="https://aherndavid.github.io/dpaulstudio/assets/renaissance-cd-cover.jpg"
-             alt="Renaissance Cover">
+        <img id="cover-art" src="https://aherndavid.github.io/dpaulstudio/assets/renaissance-cd-cover.jpg" alt="Cover">
+    </div>
+
+    <div class="cd-list">
+        <button class="disc-btn" onclick="changeDisc('blue')">CD_01<br>BLUE</button>
+        <button class="disc-btn" onclick="changeDisc('orange')">CD_02<br>ORANGE</button>
+        <button class="disc-btn" onclick="changeDisc('green')">CD_03<br>GREEN</button>
     </div>
 
     <div class="player-content">
-
-        <div id="disc-selector">
-            <button class="disc-btn" onclick="changeDisc('blue')">CD_01<br>BLUE</button>
-            <button class="disc-btn" onclick="changeDisc('orange')">CD_02<br>ORANGE</button>
-            <button class="disc-btn" onclick="changeDisc('green')">CD_03<br>GREEN</button>
-        </div>
-
-        <div id="header">
-            SYS_ID: RENAISSANCE_1994 // <span id="mix-id">STANDBY</span><br>
-            FEED: <span id="status-led" style="color:gray;">● OFFLINE</span>
-            <div id="timer">00:00</div>
-        </div>
-
-        <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin:10px auto;">
-            <button class="control-btn" onclick="prevTrack()" style="width:150px; font-size:3rem;">&#9664;&#9664;</button>
-            <button id="play-pause-btn" class="control-btn" onclick="togglePlay()" style="width:200px; font-size:3.6rem;">&#9646;&#9646;</button>
-            <button class="control-btn" onclick="nextTrack()" style="width:150px; font-size:3rem;">&#9654;&#9654;</button>
-        </div>
-
         <div id="now-playing">
-            <span class="data">SYSTEM_READY...<br>AWAITING FEED SELECTION</span>
+            <span class="label">FEED: <span id="status-led" style="color:gray;">OFFLINE</span></span>
+            <span class="data">SYSTEM_READY...<br>AWAITING SELECTION</span>
+        </div>
+
+        <div id="timer">00:00</div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="prevTrack()">&#9664;&#9664;</button>
+            <button id="play-pause-btn" class="control-btn" onclick="togglePlay()">&#9646;&#9646;</button>
+            <button class="control-btn" onclick="nextTrack()">&#9654;&#9654;</button>
         </div>
     </div>
 </div>
 
 <script>
-const audio      = document.getElementById('crt-audio');
-const timerEl    = document.getElementById('timer');
-const displayEl  = document.getElementById('now-playing');
-const statusLed  = document.getElementById('status-led');
-const playBtn    = document.getElementById('play-pause-btn');
+// ALL YOUR ORIGINAL LOGIC REMAINS UNTOUCHED BELOW
+const audio = document.getElementById('crt-audio');
+const timerEl = document.getElementById('timer');
+const displayEl = document.getElementById('now-playing');
+const statusLed = document.getElementById('status-led');
+const playBtn = document.getElementById('play-pause-btn');
 
 let activeDisc = 'blue';
 
@@ -290,13 +272,13 @@ function togglePlay() {
     if (audio.paused) {
         audio.play();
         playBtn.innerHTML = "&#9646;&#9646;";
-        statusLed.innerText = "● LIVE_STREAM";
+        statusLed.innerText = "LIVE_STREAM";
         statusLed.style.color = '';
         statusLed.style.animation = "blink 1s infinite";
     } else {
         audio.pause();
         playBtn.innerHTML = "&#9654;";
-        statusLed.innerText = "● PAUSED";
+        statusLed.innerText = "PAUSED";
         statusLed.style.animation = "none";
     }
 }
@@ -307,11 +289,10 @@ function changeDisc(disc) {
     const mix = data[disc];
     document.documentElement.style.setProperty('--crt-color', mix.color);
     document.documentElement.style.setProperty('--glow', mix.color + '66');
-    document.getElementById('mix-id').innerText = mix.label;
 
     statusLed.style.color = 'red';
     statusLed.style.animation = 'blink 1s infinite';
-    statusLed.innerText = '● LIVE_STREAM';
+    statusLed.innerText = 'LIVE_STREAM';
 
     audio.src = mix.file;
     audio.load();

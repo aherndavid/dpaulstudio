@@ -29,7 +29,6 @@
   #import-btn:hover { background: #1a2a33; color: #99ddff; border-color: #66aacc; }
   #imported-filename { font-size: 11px; color: #557799; font-family: 'Courier New', monospace; letter-spacing: 1px; font-style: italic; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
 
-  /* Export btn */
   #export-btn { color: #66dd88; border-color: #336644; transition: all 0.15s; }
   #export-btn:hover { background: #1a2a1e; color: #99ffaa; border-color: #66aa77; }
 /* Save btn */
@@ -37,7 +36,6 @@
   #save-btn:hover { background: #2a1a00; color: #ffaa33; border-color: #aa7700; }
   #save-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  /* Find & Replace btn */
   #fnr-btn { color: #ddbb66; border-color: #665533; transition: all 0.15s; }
   #fnr-btn:hover { background: #2a2210; color: #ffdd88; border-color: #aa8844; }
   #fnr-btn.fnr-on { color: #ffdd66; border-color: #ffdd66; background: rgba(255,221,102,0.08); box-shadow: 0 0 6px rgba(255,221,102,0.25); }
@@ -60,19 +58,22 @@
   #debug-badge.visible { opacity: 1; }
   #debug-badge.warn { background: #ffaa00; color: #000; }
 
+  /* Selection highlight button */
+  #sel-hl-btn { color: #bb88ff; border-color: #664499; transition: all 0.15s; }
+  #sel-hl-btn:hover { background: #1e1030; color: #ddaaff; border-color: #9966cc; }
+  #sel-hl-btn.sel-hl-on { color: #cc88ff; border-color: #cc88ff; background: rgba(180,100,255,0.10); box-shadow: 0 0 6px rgba(180,100,255,0.3); }
+
   #h-divider { height: 4px; background: #2a2a2a; cursor: row-resize; flex-shrink: 0; }
   #h-divider:hover { background: #555; }
 
   #main { display: flex; flex: 1; min-height: 0; }
 
-  /* ── LEFT PANEL ── */
   #left { width: 45%; display: flex; flex-direction: column; border-right: 1px solid #333; position: relative; }
   #editor-toolbar { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid #333; background: #222; flex-shrink: 0; }
   #editor-toolbar span { font-size: 19px; color: #888; letter-spacing: 1px; text-transform: uppercase; flex: 1; }
 
   #left-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 
-  /* ── FIND & REPLACE BAR ── */
   #fnr-bar {
     display: none;
     flex-direction: column;
@@ -176,7 +177,6 @@
   .fnr-opt-label input[type=checkbox] { accent-color: #ffdd66; cursor: pointer; }
   .fnr-opt-label.active { color: #ffdd66; }
 
-  /* ── EDITOR WRAPPER with line numbers ── */
   #editor-wrapper {
     flex: 1;
     display: flex;
@@ -261,7 +261,6 @@
   }
   #error-highlight-overlay.visible { opacity: 1; }
 
-  /* FNR match highlight overlay */
   #fnr-highlight-overlay {
     position: absolute;
     left: 44px; right: 0;
@@ -302,7 +301,6 @@
     transition: top 0.05s;
   }
 
-  /* ── DEBUG PANEL ── */
   #debug-panel {
     height: 0;
     overflow: hidden;
@@ -441,7 +439,6 @@
   #rollback-close:hover { background: #333; color: #ccc; }
   #rollback-empty { color: #555; font-family: 'Courier New', monospace; font-size: 13px; text-align: center; padding: 20px 0; }
 
-  /* Export overlay */
   #export-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }
   #export-overlay.visible { display: flex; }
   #export-box { background: #1e1e1e; border: 1px solid #444; border-radius: 10px; padding: 28px 32px; width: 420px; max-width: 94vw; }
@@ -537,6 +534,13 @@
     pointer-events: none; display: none; z-index: 9000; white-space: nowrap;
   }
 
+  /* Selection highlight tip */
+  #sel-hl-tip {
+    position: fixed; background: #9944ee; color: #fff; font-size: 11px;
+    font-family: 'Courier New', monospace; padding: 3px 8px; border-radius: 4px;
+    pointer-events: none; display: none; z-index: 9000; white-space: nowrap;
+  }
+
   #about-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
   #about-overlay.visible { display: flex; }
   #about-box { background: #222; border: 1px solid #444; border-radius: 10px; padding: 36px 40px; max-width: 420px; width: 90%; text-align: center; }
@@ -547,7 +551,6 @@
   #about-close { font-size: 13px; padding: 6px 20px; border: 1px solid #555; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; }
   #about-close:hover { background: #333; color: #ccc; }
 
-  /* Toast notification */
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: #222; border: 1px solid #444; color: #ccc;
@@ -559,13 +562,14 @@
   #toast.show { opacity: 1; }
   #toast.toast-success { border-color: #66dd88; color: #66dd88; }
   #toast.toast-replace { border-color: #ffdd66; color: #ffdd66; }
+  #toast.toast-sel { border-color: #bb88ff; color: #bb88ff; }
 </style>
 </head>
 <body>
 <div id="app">
   <div id="top-toolbar">
     <span class="label">HTML Preview</span>
-    <span id="version-badge">v1.6</span>
+    <span id="version-badge">v1.7</span>
     <div class="sep"></div>
     <span id="font-label">Font</span>
     <input type="range" id="font-size-slider" min="10" max="24" value="13" step="1">
@@ -575,6 +579,7 @@
     <button class="tbtn" id="save-btn" title="Save changes directly to file (Ctrl+S)">Save</button>
     <button class="tbtn" id="export-btn" title="Export / download the current HTML">Export</button>
     <button class="tbtn" id="fnr-btn" title="Find &amp; Replace (Ctrl+H)">Find &amp; Replace</button>
+    <button class="tbtn" id="sel-hl-btn" title="Highlight selected elements in preview (Ctrl+Q)">Sel Highlight</button>
     <button class="tbtn" id="inspect-btn" title="Click elements in preview to highlight source (Ctrl+I)">Inspect</button>
     <button class="tbtn" id="debug-btn" title="Toggle HTMLHint debug panel (Ctrl+D)">
       Debug
@@ -685,6 +690,7 @@
 </div>
 
 <div id="inspect-tip"></div>
+<div id="sel-hl-tip"></div>
 <div id="toast"></div>
 
 <!-- Export Overlay -->
@@ -729,8 +735,8 @@
 <div id="about-overlay">
   <div id="about-box">
     <h2>HTML Live Preview</h2>
-    <div class="version">Version 1.6</div>
-    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel with HTMLHint (Ctrl+D), zoom controls, version rollback, <strong>Export</strong> (raw/formatted/minified), and <strong>Find &amp; Replace</strong> (Ctrl+H).</p>
+    <div class="version">Version 1.7</div>
+    <p>A free browser-based tool for previewing HTML in real time. Features line numbers, <strong>Sel Highlight</strong> (Ctrl+Q — highlight selected code in preview), <strong>Inspect</strong> mode (Ctrl+I), <strong>Debug</strong> panel with HTMLHint (Ctrl+D), zoom controls, version rollback, <strong>Export</strong> (raw/formatted/minified), and <strong>Find &amp; Replace</strong> (Ctrl+H).</p>
     <div class="site">DPAUL.STUDIO</div>
     <button id="about-close">Close</button>
   </div>
@@ -781,6 +787,8 @@
   const fnrHighlight     = document.getElementById('fnr-highlight-overlay');
   const lineBadge        = document.getElementById('line-badge');
   const inspectTip       = document.getElementById('inspect-tip');
+  const selHlBtn         = document.getElementById('sel-hl-btn');
+  const selHlTip         = document.getElementById('sel-hl-tip');
   const zoomInBtn        = document.getElementById('zoom-in-btn');
   const zoomOutBtn       = document.getElementById('zoom-out-btn');
   const zoomResetBtn     = document.getElementById('zoom-reset-btn');
@@ -804,7 +812,6 @@
   const debugSummary    = document.getElementById('debug-summary');
   const debugFilterBtns = document.querySelectorAll('.dfbtn');
 
-  // Export
   const exportBtn       = document.getElementById('export-btn');
   const exportOverlay   = document.getElementById('export-overlay');
   const exportCancel    = document.getElementById('export-cancel');
@@ -812,7 +819,6 @@
   const exportFilename  = document.getElementById('export-filename');
   const exportFlash     = document.getElementById('export-flash');
 
-  // Find & Replace
   const fnrBtn          = document.getElementById('fnr-btn');
   const fnrBar          = document.getElementById('fnr-bar');
   const fnrFind         = document.getElementById('fnr-find');
@@ -829,6 +835,7 @@
 
   let debounceTimer;
   let inspectMode    = false;
+  let selHlMode      = false;
   let debugOpen      = false;
   let fnrOpen        = false;
   let highlightTimer = null;
@@ -838,13 +845,12 @@
   let currentLineH   = 20.8;
   let currentFontSize = 13;
   let activeLine     = 1;
+  let selHlDebounce  = null;
 
-  // HTMLHint state
   let HTMLHint       = null;
   let hintResults    = [];
   let activeFilters  = new Set(['error', 'warning']);
 
-  // FNR state
   let fnrMatches     = [];
   let fnrCurrent     = -1;
   let fnrDebounce    = null;
@@ -862,6 +868,88 @@
     toast.className = 'show' + (type ? ' toast-' + type : '');
     toastTimer = setTimeout(() => { toast.className = ''; }, 2400);
   }
+
+  // ── Selection Highlight ───────────────────────────────────────────────────
+  // Parses the selected text to extract element selectors, then posts to iframe.
+
+  function setSelHlMode(on) {
+    selHlMode = on;
+    selHlBtn.classList.toggle('sel-hl-on', on);
+    if (!on) {
+      // Clear any existing highlights
+      try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {}
+    }
+  }
+
+  selHlBtn.addEventListener('click', () => setSelHlMode(!selHlMode));
+
+  function parseSelectorsFromText(text) {
+    // Extract all opening tags from selected text and build selectors
+    const selectors = [];
+    const tagRe = /<([a-zA-Z][a-zA-Z0-9-]*)([^>]*)>/g;
+    let m;
+    while ((m = tagRe.exec(text)) !== null) {
+      const tag = m[1].toLowerCase();
+      const attrs = m[2];
+      // Skip script, style, meta, link, head, html, body — won't be visible elements
+      if (['script','style','meta','link','head','html','body','!doctype'].includes(tag)) continue;
+
+      let selector = tag;
+
+      // Try to get id
+      const idMatch = attrs.match(/\bid=["']([^"']+)["']/i);
+      if (idMatch) {
+        selector = '#' + CSS.escape(idMatch[1]);
+        selectors.push(selector);
+        continue; // id is unique, no need to also use class
+      }
+
+      // Try to get first class
+      const clsMatch = attrs.match(/\bclass=["']([^"']+)["']/i);
+      if (clsMatch) {
+        const firstCls = clsMatch[1].trim().split(/\s+/)[0];
+        if (firstCls) selector = tag + '.' + CSS.escape(firstCls);
+      }
+
+      // Avoid dupes
+      if (!selectors.includes(selector)) selectors.push(selector);
+      if (selectors.length >= 12) break; // limit
+    }
+    return selectors;
+  }
+
+  function triggerSelectionHighlight() {
+    if (!selHlMode) return;
+    const start = editor.selectionStart;
+    const end   = editor.selectionEnd;
+    if (start === end) {
+      // No selection — clear
+      try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {}
+      return;
+    }
+    const selected = editor.value.substring(start, end);
+    const selectors = parseSelectorsFromText(selected);
+    if (!selectors.length) {
+      try { preview.contentWindow.postMessage({ type: 'clearSelHighlights' }, '*'); } catch(e) {}
+      return;
+    }
+    try {
+      preview.contentWindow.postMessage({ type: 'highlightSelection', selectors }, '*');
+    } catch(e) {}
+  }
+
+  // Listen for selection changes in the editor
+  editor.addEventListener('mouseup', () => {
+    clearTimeout(selHlDebounce);
+    selHlDebounce = setTimeout(triggerSelectionHighlight, 80);
+  });
+  editor.addEventListener('keyup', (e) => {
+    // Only on selection keys
+    if (e.shiftKey || ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End','PageUp','PageDown'].includes(e.key)) {
+      clearTimeout(selHlDebounce);
+      selHlDebounce = setTimeout(triggerSelectionHighlight, 80);
+    }
+  });
 
   // ── Export ────────────────────────────────────────────────────────────────
   exportBtn.addEventListener('click', () => {
@@ -918,43 +1006,24 @@
     while ((tok = tokenRe.exec(html)) !== null) {
       const t = tok[0].trim();
       if (!t) continue;
-      if (t.startsWith('<!--')) {
-        result.push(tab.repeat(indent) + t);
-        continue;
-      }
+      if (t.startsWith('<!--')) { result.push(tab.repeat(indent) + t); continue; }
       if (t.startsWith('</')) {
         const tag = t.match(/<\/([a-zA-Z][^\s>]*)/);
-        if (tag && !inlines.has(tag[1].toLowerCase())) {
-          indent = Math.max(0, indent - 1);
-          result.push(tab.repeat(indent) + t);
-        } else {
-          // append inline close to last line
-          if (result.length) result[result.length - 1] += t;
-          else result.push(t);
-        }
+        if (tag && !inlines.has(tag[1].toLowerCase())) { indent = Math.max(0, indent - 1); result.push(tab.repeat(indent) + t); }
+        else { if (result.length) result[result.length - 1] += t; else result.push(t); }
         continue;
       }
       if (t.startsWith('<')) {
         const tag = t.match(/<([a-zA-Z][^\s>/]*)/);
         const tagName = tag ? tag[1].toLowerCase() : '';
-        if (inlines.has(tagName)) {
-          if (result.length) result[result.length - 1] += t;
-          else result.push(t);
-        } else {
-          result.push(tab.repeat(indent) + t);
-          if (tagName && !voids.has(tagName) && !t.endsWith('/>')) indent++;
-        }
+        if (inlines.has(tagName)) { if (result.length) result[result.length - 1] += t; else result.push(t); }
+        else { result.push(tab.repeat(indent) + t); if (tagName && !voids.has(tagName) && !t.endsWith('/>')) indent++; }
         continue;
       }
-      // text node
       const lastTagMatch = result.length ? result[result.length - 1].match(/<([a-zA-Z][^\s>/]*)/) : null;
       const lastTag = lastTagMatch ? lastTagMatch[1].toLowerCase() : '';
-      if (inlines.has(lastTag)) {
-        if (result.length) result[result.length - 1] += t;
-        else result.push(t);
-      } else {
-        result.push(tab.repeat(indent) + t);
-      }
+      if (inlines.has(lastTag)) { if (result.length) result[result.length - 1] += t; else result.push(t); }
+      else { result.push(tab.repeat(indent) + t); }
     }
     return result.join('\n');
   }
@@ -964,120 +1033,70 @@
     fnrOpen = on;
     fnrBtn.classList.toggle('fnr-on', on);
     fnrBar.classList.toggle('open', on);
-    if (on) {
-      fnrFind.focus();
-      fnrFind.select();
-      runFnrSearch();
-    } else {
-      clearFnrHighlights();
-      fnrMatches = [];
-      fnrCurrent = -1;
-      updateFnrCount();
-    }
+    if (on) { fnrFind.focus(); fnrFind.select(); runFnrSearch(); }
+    else { clearFnrHighlights(); fnrMatches = []; fnrCurrent = -1; updateFnrCount(); }
   }
   fnrBtn.addEventListener('click', () => setFnrOpen(!fnrOpen));
   fnrCloseBtn.addEventListener('click', () => setFnrOpen(false));
 
-  // Build regex from FNR inputs
   function buildFnrRegex() {
     const raw = fnrFind.value;
     if (!raw) return null;
     try {
       let pattern;
-      if (fnrRegexChk.checked) {
-        pattern = raw;
-      } else {
-        pattern = raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        if (fnrWordChk.checked) pattern = '\\b' + pattern + '\\b';
-      }
+      if (fnrRegexChk.checked) { pattern = raw; }
+      else { pattern = raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); if (fnrWordChk.checked) pattern = '\\b' + pattern + '\\b'; }
       const flags = 'g' + (fnrCaseChk.checked ? '' : 'i');
       return new RegExp(pattern, flags);
-    } catch (e) {
-      return null;
-    }
+    } catch (e) { return null; }
   }
 
   function runFnrSearch() {
-    clearFnrHighlights();
-    fnrMatches = [];
-    fnrCurrent = -1;
+    clearFnrHighlights(); fnrMatches = []; fnrCurrent = -1;
     const rx = buildFnrRegex();
-    if (!rx || !editor.value) {
-      updateFnrCount();
-      return;
-    }
+    if (!rx || !editor.value) { updateFnrCount(); return; }
     const src = editor.value;
     let m;
     while ((m = rx.exec(src)) !== null) {
       fnrMatches.push({ start: m.index, end: m.index + m[0].length, line: src.substring(0, m.index).split('\n').length });
-      if (fnrMatches.length > 5000) break; // safety
+      if (fnrMatches.length > 5000) break;
     }
     if (fnrMatches.length > 0) fnrCurrent = 0;
-    updateFnrCount();
-    updateFnrButtons();
+    updateFnrCount(); updateFnrButtons();
     if (fnrMatches.length > 0) scrollToFnrMatch(fnrCurrent);
     markFnrGutter();
   }
 
   function updateFnrCount() {
     const hasQuery = fnrFind.value.trim() !== '';
-    if (!hasQuery) {
-      fnrCount.textContent = '—';
-      fnrCount.className = 'fnr-match-count';
-      fnrFind.classList.remove('fnr-no-match', 'fnr-has-match');
-      return;
-    }
-    if (fnrMatches.length === 0) {
-      fnrCount.textContent = 'No matches';
-      fnrCount.className = 'fnr-match-count no-matches';
-      fnrFind.classList.add('fnr-no-match');
-      fnrFind.classList.remove('fnr-has-match');
-    } else {
-      fnrCount.textContent = (fnrCurrent + 1) + ' / ' + fnrMatches.length;
-      fnrCount.className = 'fnr-match-count has-matches';
-      fnrFind.classList.remove('fnr-no-match');
-      fnrFind.classList.add('fnr-has-match');
-    }
+    if (!hasQuery) { fnrCount.textContent = '—'; fnrCount.className = 'fnr-match-count'; fnrFind.classList.remove('fnr-no-match', 'fnr-has-match'); return; }
+    if (fnrMatches.length === 0) { fnrCount.textContent = 'No matches'; fnrCount.className = 'fnr-match-count no-matches'; fnrFind.classList.add('fnr-no-match'); fnrFind.classList.remove('fnr-has-match'); }
+    else { fnrCount.textContent = (fnrCurrent + 1) + ' / ' + fnrMatches.length; fnrCount.className = 'fnr-match-count has-matches'; fnrFind.classList.remove('fnr-no-match'); fnrFind.classList.add('fnr-has-match'); }
   }
 
   function updateFnrButtons() {
     const has = fnrMatches.length > 0;
-    fnrPrevBtn.disabled   = !has;
-    fnrNextBtn.disabled   = !has;
-    fnrReplaceOne.disabled = !has;
-    fnrReplaceAll.disabled = !has;
+    fnrPrevBtn.disabled = !has; fnrNextBtn.disabled = !has; fnrReplaceOne.disabled = !has; fnrReplaceAll.disabled = !has;
   }
 
   function scrollToFnrMatch(idx) {
     if (idx < 0 || idx >= fnrMatches.length) return;
-    const match   = fnrMatches[idx];
-    const lineH   = getLineHeight();
-    const padTop  = 14;
-    const line    = match.line;
-    const topPx   = padTop + (line - 1) * lineH;
+    const match = fnrMatches[idx];
+    const lineH = getLineHeight(); const padTop = 14; const line = match.line;
+    const topPx = padTop + (line - 1) * lineH;
     editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH);
     syncGutterScroll();
-
-    // Highlight the match line in the overlay
     const editorRect = editor.getBoundingClientRect();
-    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
-    const relTop     = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
-
-    fnrHighlight.style.top    = relTop + 'px';
-    fnrHighlight.style.height = lineH + 'px';
+    const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
+    fnrHighlight.style.top = relTop + 'px'; fnrHighlight.style.height = lineH + 'px';
     fnrHighlight.classList.add('visible');
-
-    // Place editor cursor at match
-    editor.focus();
-    editor.selectionStart = match.start;
-    editor.selectionEnd   = match.end;
-    updateActiveLine();
-    updateFnrCount();
+    editor.focus(); editor.selectionStart = match.start; editor.selectionEnd = match.end;
+    updateActiveLine(); updateFnrCount();
   }
 
   function clearFnrHighlights() {
     fnrHighlight.classList.remove('visible');
-    // Clear gutter markers
     const nums = lineNumbersInner.children;
     for (let i = 0; i < nums.length; i++) nums[i].classList.remove('fnr-match');
   }
@@ -1088,63 +1107,32 @@
     lineSet.forEach(i => { if (i >= 0 && i < nums.length) nums[i].classList.add('fnr-match'); });
   }
 
-  fnrNextBtn.addEventListener('click', () => {
-    if (!fnrMatches.length) return;
-    fnrCurrent = (fnrCurrent + 1) % fnrMatches.length;
-    scrollToFnrMatch(fnrCurrent);
-  });
-  fnrPrevBtn.addEventListener('click', () => {
-    if (!fnrMatches.length) return;
-    fnrCurrent = (fnrCurrent - 1 + fnrMatches.length) % fnrMatches.length;
-    scrollToFnrMatch(fnrCurrent);
-  });
+  fnrNextBtn.addEventListener('click', () => { if (!fnrMatches.length) return; fnrCurrent = (fnrCurrent + 1) % fnrMatches.length; scrollToFnrMatch(fnrCurrent); });
+  fnrPrevBtn.addEventListener('click', () => { if (!fnrMatches.length) return; fnrCurrent = (fnrCurrent - 1 + fnrMatches.length) % fnrMatches.length; scrollToFnrMatch(fnrCurrent); });
 
-  // Replace current match
   fnrReplaceOne.addEventListener('click', () => {
     if (fnrCurrent < 0 || fnrCurrent >= fnrMatches.length) return;
-    const match   = fnrMatches[fnrCurrent];
-    const repText = fnrReplace.value;
+    const match = fnrMatches[fnrCurrent]; const repText = fnrReplace.value;
     takeSnapshot(editor.value);
     const src = editor.value;
     editor.value = src.substring(0, match.start) + repText + src.substring(match.end);
-    updatePreview();
-    updateLineNumbers();
-    runHint();
-    runFnrSearch();
+    updatePreview(); updateLineNumbers(); runHint(); runFnrSearch();
     showToast('Replaced 1 match', 'replace');
   });
 
-  // Replace all matches
   fnrReplaceAll.addEventListener('click', () => {
     if (!fnrMatches.length) return;
-    const rx = buildFnrRegex();
-    if (!rx) return;
+    const rx = buildFnrRegex(); if (!rx) return;
     takeSnapshot(editor.value);
-    const count   = fnrMatches.length;
-    const repText = fnrReplace.value;
-    // Use regex replace — handles capture groups if regex mode enabled
+    const count = fnrMatches.length; const repText = fnrReplace.value;
     editor.value = editor.value.replace(rx, fnrRegexChk.checked ? repText : repText.replace(/\$/g, '$$$$'));
-    updatePreview();
-    updateLineNumbers();
-    runHint();
-    runFnrSearch();
+    updatePreview(); updateLineNumbers(); runHint(); runFnrSearch();
     showToast('Replaced ' + count + ' match' + (count !== 1 ? 'es' : ''), 'replace');
   });
 
-  // Live search as user types
-  fnrFind.addEventListener('input', () => {
-    clearTimeout(fnrDebounce);
-    fnrDebounce = setTimeout(runFnrSearch, 150);
-  });
-  fnrReplace.addEventListener('input', () => {}); // no-op, just keeps field alive
-
-  // Keyboard nav inside FNR bar
+  fnrFind.addEventListener('input', () => { clearTimeout(fnrDebounce); fnrDebounce = setTimeout(runFnrSearch, 150); });
   fnrFind.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (e.shiftKey) fnrPrevBtn.click();
-      else            fnrNextBtn.click();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); if (e.shiftKey) fnrPrevBtn.click(); else fnrNextBtn.click(); }
     if (e.key === 'Escape') setFnrOpen(false);
   });
   fnrReplace.addEventListener('keydown', (e) => {
@@ -1152,7 +1140,6 @@
     if (e.key === 'Escape') setFnrOpen(false);
   });
 
-  // Re-run search when options change
   [fnrCaseChk, fnrWordChk, fnrRegexChk].forEach(chk => {
     chk.addEventListener('change', () => {
       const labels = { [fnrCaseChk.id]: 'fnr-case-label', [fnrWordChk.id]: 'fnr-word-label', [fnrRegexChk.id]: 'fnr-regex-label' };
@@ -1161,45 +1148,25 @@
     });
   });
 
-  // ── HTMLHint ruleset ──────────────────────────────────────────────────────
+  // ── HTMLHint ──────────────────────────────────────────────────────────────
   const HINT_RULES = {
-    'tagname-lowercase':          true,
-    'attr-lowercase':             true,
-    'attr-value-double-quotes':   true,
-    'attr-no-duplication':        true,
-    'doctype-first':              true,
-    'tag-pair':                   true,
-    'tag-self-close':             false,
-    'spec-char-escape':           true,
-    'id-unique':                  true,
-    'src-not-empty':              true,
-    'alt-require':                true,
-    'space-tab-mixed-disabled':   'space',
-    'id-class-ad-disabled':       true,
-    'href-abs-or-rel':            false,
-    'attr-unsafe-chars':          true,
-    'title-require':              true
+    'tagname-lowercase': true, 'attr-lowercase': true, 'attr-value-double-quotes': true,
+    'attr-no-duplication': true, 'doctype-first': true, 'tag-pair': true, 'tag-self-close': false,
+    'spec-char-escape': true, 'id-unique': true, 'src-not-empty': true, 'alt-require': true,
+    'space-tab-mixed-disabled': 'space', 'id-class-ad-disabled': true, 'href-abs-or-rel': false,
+    'attr-unsafe-chars': true, 'title-require': true
   };
 
   function runHint() {
-    if (!HTMLHint || !editor.value.trim()) {
-      hintResults = [];
-      renderDebugPanel();
-      updateDebugBadge();
-      clearGutterErrors();
-      return;
-    }
-    try { hintResults = HTMLHint.verify(editor.value, HINT_RULES); }
-    catch(e) { hintResults = []; }
-    renderDebugPanel();
-    updateDebugBadge();
-    markGutterErrors();
+    if (!HTMLHint || !editor.value.trim()) { hintResults = []; renderDebugPanel(); updateDebugBadge(); clearGutterErrors(); return; }
+    try { hintResults = HTMLHint.verify(editor.value, HINT_RULES); } catch(e) { hintResults = []; }
+    renderDebugPanel(); updateDebugBadge(); markGutterErrors();
   }
 
   function updateDebugBadge() {
-    const errors   = hintResults.filter(r => r.type === 'error').length;
+    const errors = hintResults.filter(r => r.type === 'error').length;
     const warnings = hintResults.filter(r => r.type === 'warning').length;
-    const total    = errors + warnings;
+    const total = errors + warnings;
     debugBtn.classList.remove('has-errors', 'has-warnings', 'debug-on');
     debugBadge.classList.remove('visible', 'warn');
     if (total > 0) {
@@ -1214,11 +1181,7 @@
   function markGutterErrors() {
     clearGutterErrors();
     const nums = lineNumbersInner.children;
-    hintResults.forEach(r => {
-      const idx = r.line - 1;
-      if (idx >= 0 && idx < nums.length)
-        nums[idx].classList.add(r.type === 'error' ? 'has-error' : 'has-warning');
-    });
+    hintResults.forEach(r => { const idx = r.line - 1; if (idx >= 0 && idx < nums.length) nums[idx].classList.add(r.type === 'error' ? 'has-error' : 'has-warning'); });
   }
 
   function clearGutterErrors() {
@@ -1228,33 +1191,22 @@
 
   function renderDebugPanel() {
     debugScroll.innerHTML = '';
-    const src    = editor.value.trim();
+    const src = editor.value.trim();
     const errors = hintResults.filter(r => r.type === 'error').length;
     const warnings = hintResults.filter(r => r.type === 'warning').length;
-    if (!src) {
-      debugSummary.textContent = '—'; debugSummary.className = '';
-      const el = document.createElement('div'); el.id = 'debug-empty'; el.textContent = 'No document loaded';
-      debugScroll.appendChild(el); return;
-    }
-    if (hintResults.length === 0) {
-      debugSummary.textContent = '✓ No issues'; debugSummary.className = 'clean';
-      const el = document.createElement('div'); el.id = 'debug-empty'; el.className = 'clean'; el.textContent = '✓ All clear — no issues found';
-      debugScroll.appendChild(el); return;
-    }
+    if (!src) { debugSummary.textContent = '—'; debugSummary.className = ''; const el = document.createElement('div'); el.id = 'debug-empty'; el.textContent = 'No document loaded'; debugScroll.appendChild(el); return; }
+    if (hintResults.length === 0) { debugSummary.textContent = '✓ No issues'; debugSummary.className = 'clean'; const el = document.createElement('div'); el.id = 'debug-empty'; el.className = 'clean'; el.textContent = '✓ All clear — no issues found'; debugScroll.appendChild(el); return; }
     if (errors > 0 && warnings > 0) { debugSummary.textContent = errors + ' error' + (errors > 1 ? 's' : '') + ' · ' + warnings + ' warning' + (warnings > 1 ? 's' : ''); debugSummary.className = 'has-errors'; }
     else if (errors > 0) { debugSummary.textContent = errors + ' error' + (errors > 1 ? 's' : ''); debugSummary.className = 'has-errors'; }
     else { debugSummary.textContent = warnings + ' warning' + (warnings > 1 ? 's' : ''); debugSummary.className = 'has-warnings'; }
     const filtered = hintResults.filter(r => activeFilters.has(r.type));
-    if (filtered.length === 0) {
-      const el = document.createElement('div'); el.id = 'debug-empty'; el.textContent = 'No items match current filters';
-      debugScroll.appendChild(el); return;
-    }
+    if (filtered.length === 0) { const el = document.createElement('div'); el.id = 'debug-empty'; el.textContent = 'No items match current filters'; debugScroll.appendChild(el); return; }
     filtered.forEach((r, i) => {
       const item = document.createElement('div'); item.className = 'debug-item'; item.dataset.index = i;
       const icon = document.createElement('span'); icon.className = 'debug-icon ' + (r.type === 'error' ? 'err-icon' : 'warn-icon'); icon.textContent = r.type === 'error' ? '✖' : '▲';
       const lineNum = document.createElement('span'); lineNum.className = 'debug-line-num'; lineNum.textContent = 'L' + r.line + ':' + r.col;
       const rule = document.createElement('span'); rule.className = 'debug-rule'; rule.textContent = r.rule.id;
-      const msg  = document.createElement('span'); msg.className = 'debug-msg';
+      const msg = document.createElement('span'); msg.className = 'debug-msg';
       msg.innerHTML = r.message.replace(/`([^`]+)`/g, '<em>$1</em>').replace(/&lt;([a-zA-Z][^>]*)&gt;/g, '<em>&lt;$1&gt;</em>');
       item.appendChild(icon); item.appendChild(lineNum); item.appendChild(rule); item.appendChild(msg);
       item.addEventListener('click', () => jumpToHintLine(r, item));
@@ -1265,14 +1217,12 @@
   function jumpToHintLine(r, itemEl) {
     document.querySelectorAll('.debug-item.active-hint').forEach(el => el.classList.remove('active-hint'));
     itemEl.classList.add('active-hint');
-    const lineH  = getLineHeight();
-    const padTop = 14;
-    const lineIdx = r.line - 1;
-    const topPx  = padTop + lineIdx * lineH;
+    const lineH = getLineHeight(); const padTop = 14; const lineIdx = r.line - 1;
+    const topPx = padTop + lineIdx * lineH;
     editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + lineH);
     syncGutterScroll();
     const editorRect = editor.getBoundingClientRect();
-    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
     const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
     errorHighlight.style.top = relTop + 'px'; errorHighlight.style.height = lineH + 'px';
     errorHighlight.classList.add('visible');
@@ -1294,12 +1244,7 @@
     });
   });
 
-  function setDebugOpen(on) {
-    debugOpen = on;
-    debugPanel.classList.toggle('open', on);
-    debugBtn.classList.toggle('debug-on', on);
-    if (on) runHint();
-  }
+  function setDebugOpen(on) { debugOpen = on; debugPanel.classList.toggle('open', on); debugBtn.classList.toggle('debug-on', on); if (on) runHint(); }
   debugBtn.addEventListener('click', () => setDebugOpen(!debugOpen));
 
   // ── Line Numbers ──────────────────────────────────────────────────────────
@@ -1308,38 +1253,26 @@
   }
 
   function updateLineNumbers() {
-    const src   = editor.value;
-    const count = src.split('\n').length;
+    const src = editor.value; const count = src.split('\n').length;
     currentLineH = getLineHeight();
     const existing = lineNumbersInner.children;
-    while (existing.length < count) {
-      const span = document.createElement('span'); span.className = 'line-num';
-      lineNumbersInner.appendChild(span);
-    }
+    while (existing.length < count) { const span = document.createElement('span'); span.className = 'line-num'; lineNumbersInner.appendChild(span); }
     while (existing.length > count) lineNumbersInner.removeChild(lineNumbersInner.lastChild);
-    for (let i = 0; i < count; i++) {
-      existing[i].textContent = i + 1;
-      existing[i].style.lineHeight = currentLineH + 'px';
-      existing[i].style.height = currentLineH + 'px';
-    }
-    syncGutterScroll();
-    updateActiveLine();
+    for (let i = 0; i < count; i++) { existing[i].textContent = i + 1; existing[i].style.lineHeight = currentLineH + 'px'; existing[i].style.height = currentLineH + 'px'; }
+    syncGutterScroll(); updateActiveLine();
   }
 
   function syncGutterScroll() { lineNumbersEl.scrollTop = editor.scrollTop; }
 
   function updateActiveLine() {
-    const src = editor.value;
-    const pos = editor.selectionStart;
+    const src = editor.value; const pos = editor.selectionStart;
     const linesBefore = src.substring(0, pos).split('\n');
     activeLine = linesBefore.length;
     const nums = lineNumbersInner.children;
     for (let i = 0; i < nums.length; i++) nums[i].classList.toggle('active', i + 1 === activeLine);
     const lineH = getLineHeight();
-    const top   = 14 + (activeLine - 1) * lineH - editor.scrollTop;
-    gutterCursor.style.top = top + 'px';
-    gutterCursor.style.height = lineH + 'px';
-    gutterCursor.style.display = 'block';
+    const top = 14 + (activeLine - 1) * lineH - editor.scrollTop;
+    gutterCursor.style.top = top + 'px'; gutterCursor.style.height = lineH + 'px'; gutterCursor.style.display = 'block';
   }
 
   editor.addEventListener('scroll', () => { syncGutterScroll(); if (fnrOpen && fnrMatches.length) scrollToFnrMatch(fnrCurrent); });
@@ -1350,52 +1283,35 @@
 
   // ── Version history ───────────────────────────────────────────────────────
   const MAX_HISTORY = 20;
-  let history       = [];
-  let snapshotTimer = null;
+  let history = []; let snapshotTimer = null;
 
   function takeSnapshot(code) {
     if (!code.trim()) return;
     if (history.length > 0 && history[history.length - 1].code === code) return;
-    const now   = new Date();
-    const lines = code.split('\n').length;
-    const bytes = new Blob([code]).size;
+    const now = new Date(); const lines = code.split('\n').length; const bytes = new Blob([code]).size;
     history.push({ code, timestamp: now, label: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }), lines, bytes });
     if (history.length > MAX_HISTORY) history.shift();
     updateRollbackBtn();
   }
 
-  function updateRollbackBtn() {
-    const has = history.length > 1;
-    rollbackBtn.disabled = !has;
-    rollbackBtn.classList.toggle('has-history', has);
-  }
+  function updateRollbackBtn() { const has = history.length > 1; rollbackBtn.disabled = !has; rollbackBtn.classList.toggle('has-history', has); }
 
   function openRollbackDialog() {
     rollbackList.innerHTML = '';
-    if (history.length <= 1) {
-      rollbackList.innerHTML = '<div id="rollback-empty">No previous versions yet.<br>Keep editing to build history.</div>';
-    } else {
+    if (history.length <= 1) { rollbackList.innerHTML = '<div id="rollback-empty">No previous versions yet.<br>Keep editing to build history.</div>'; }
+    else {
       const items = [...history].reverse();
       items.forEach((snap, idx) => {
         const isCurrent = idx === 0;
         const item = document.createElement('div'); item.className = 'rb-item' + (isCurrent ? ' current' : '');
         const meta = document.createElement('div'); meta.className = 'rb-item-meta';
-        const timeEl = document.createElement('div'); timeEl.className = 'rb-item-time';
-        timeEl.textContent = snap.label + (isCurrent ? '  ← current' : '');
-        const statsEl = document.createElement('div'); statsEl.className = 'rb-item-stats';
-        statsEl.textContent = snap.lines + ' lines · ' + (snap.bytes > 1024 ? (snap.bytes/1024).toFixed(1) + ' kb' : snap.bytes + ' b');
-        const previewEl = document.createElement('div'); previewEl.className = 'rb-item-preview';
-        previewEl.textContent = snap.code.trim().substring(0, 80).replace(/\s+/g, ' ');
+        const timeEl = document.createElement('div'); timeEl.className = 'rb-item-time'; timeEl.textContent = snap.label + (isCurrent ? '  ← current' : '');
+        const statsEl = document.createElement('div'); statsEl.className = 'rb-item-stats'; statsEl.textContent = snap.lines + ' lines · ' + (snap.bytes > 1024 ? (snap.bytes/1024).toFixed(1) + ' kb' : snap.bytes + ' b');
+        const previewEl = document.createElement('div'); previewEl.className = 'rb-item-preview'; previewEl.textContent = snap.code.trim().substring(0, 80).replace(/\s+/g, ' ');
         meta.appendChild(timeEl); meta.appendChild(statsEl); meta.appendChild(previewEl);
         item.appendChild(meta);
-        if (isCurrent) {
-          const label = document.createElement('span'); label.className = 'rb-current-label'; label.textContent = 'active';
-          item.appendChild(label);
-        } else {
-          const btn = document.createElement('button'); btn.className = 'rb-restore-btn'; btn.textContent = 'Restore';
-          btn.addEventListener('click', () => restoreSnapshot(snap));
-          item.appendChild(btn);
-        }
+        if (isCurrent) { const label = document.createElement('span'); label.className = 'rb-current-label'; label.textContent = 'active'; item.appendChild(label); }
+        else { const btn = document.createElement('button'); btn.className = 'rb-restore-btn'; btn.textContent = 'Restore'; btn.addEventListener('click', () => restoreSnapshot(snap)); item.appendChild(btn); }
         rollbackList.appendChild(item);
       });
     }
@@ -1403,16 +1319,12 @@
   }
 
   function restoreSnapshot(snap) {
-    takeSnapshot(editor.value);
-    editor.value = snap.code;
+    takeSnapshot(editor.value); editor.value = snap.code;
     updatePreview(); updateLineNumbers(); hideHighlight();
-    rollbackOverlay.classList.remove('visible');
-    updateRollbackBtn();
-    if (debugOpen) runHint();
-    if (fnrOpen) runFnrSearch();
+    rollbackOverlay.classList.remove('visible'); updateRollbackBtn();
+    if (debugOpen) runHint(); if (fnrOpen) runFnrSearch();
     const tb = document.getElementById('editor-toolbar');
-    tb.style.transition = 'background 0.1s';
-    tb.style.background = 'rgba(40,180,40,0.25)';
+    tb.style.transition = 'background 0.1s'; tb.style.background = 'rgba(40,180,40,0.25)';
     setTimeout(() => { tb.style.background = ''; }, 600);
   }
 
@@ -1422,10 +1334,8 @@
 
   // ── Zoom ──────────────────────────────────────────────────────────────────
   function applyZoom() {
-    zoomWrapper.style.transform = `scale(${zoomLevel})`;
-    zoomWrapper.style.transformOrigin = 'top center';
-    zoomDisplay.textContent = Math.round(zoomLevel * 100) + '%';
-    updateSizeBadges();
+    zoomWrapper.style.transform = `scale(${zoomLevel})`; zoomWrapper.style.transformOrigin = 'top center';
+    zoomDisplay.textContent = Math.round(zoomLevel * 100) + '%'; updateSizeBadges();
   }
 
   function updateSizeBadges() {
@@ -1434,8 +1344,8 @@
     sizeBadgeH.textContent = Math.round(preview.offsetHeight) + 'px';
   }
 
-  zoomInBtn.addEventListener('click',    () => { zoomLevel = Math.min(2.0, +(zoomLevel + 0.1).toFixed(2)); applyZoom(); });
-  zoomOutBtn.addEventListener('click',   () => { zoomLevel = Math.max(0.2, +(zoomLevel - 0.1).toFixed(2)); applyZoom(); });
+  zoomInBtn.addEventListener('click', () => { zoomLevel = Math.min(2.0, +(zoomLevel + 0.1).toFixed(2)); applyZoom(); });
+  zoomOutBtn.addEventListener('click', () => { zoomLevel = Math.max(0.2, +(zoomLevel - 0.1).toFixed(2)); applyZoom(); });
   zoomResetBtn.addEventListener('click', () => { zoomLevel = 1.0; applyZoom(); });
 
   document.addEventListener('keydown', (e) => {
@@ -1450,36 +1360,109 @@
       if (e.key === 'i') { e.preventDefault(); setInspectMode(!inspectMode); }
       if (e.key === 'd') { e.preventDefault(); setDebugOpen(!debugOpen); }
       if (e.key === 'h') { e.preventDefault(); setFnrOpen(!fnrOpen); }
+      if (e.key === 'q') { e.preventDefault(); setSelHlMode(!selHlMode); }
       if (e.key === 's') { e.preventDefault(); if (editor.value.trim()) exportBtn.click(); }
     }
   });
 
   // ── Border mode ───────────────────────────────────────────────────────────
   function setBorderMode(on) {
-    borderMode = on;
-    borderBtn.classList.toggle('border-on', on);
-    pageBorder.classList.toggle('visible', on);
-    sizeBadgeW.classList.toggle('visible', on);
-    sizeBadgeH.classList.toggle('visible', on);
+    borderMode = on; borderBtn.classList.toggle('border-on', on); pageBorder.classList.toggle('visible', on);
+    sizeBadgeW.classList.toggle('visible', on); sizeBadgeH.classList.toggle('visible', on);
     if (on) updateSizeBadges();
   }
   borderBtn.addEventListener('click', () => setBorderMode(!borderMode));
 
-  // ── Inject inspect script ─────────────────────────────────────────────────
+  // ── Inject script into iframe ─────────────────────────────────────────────
   const INJECT_SCRIPT = `
     (function() {
-      let inspecting = false; let hoverEl = null; const OUTLINE = '2px solid #ff8800';
-      window.addEventListener('message', function(e) { if (e.data && e.data.type === 'inspectMode') { inspecting = e.data.value; if (!inspecting && hoverEl) { hoverEl.style.outline = ''; hoverEl = null; } } });
-      document.addEventListener('mouseover', function(e) { if (!inspecting) return; if (hoverEl && hoverEl !== e.target) hoverEl.style.outline = ''; hoverEl = e.target; if (hoverEl && hoverEl !== document.documentElement && hoverEl !== document.body) hoverEl.style.outline = OUTLINE; }, true);
+      var inspecting = false; var hoverEl = null; var OUTLINE = '2px solid #ff8800';
+
+      // ── Selection highlight handler ──────────────────────────────────────
+      var selOverlays = [];
+      function clearSelOverlays() {
+        selOverlays.forEach(function(o) { if (o.parentNode) o.parentNode.removeChild(o); });
+        selOverlays = [];
+      }
+      function highlightSelElements(selectors) {
+        clearSelOverlays();
+        if (!selectors || !selectors.length) return;
+        // colours cycling through a vivid palette
+        var palette = [
+          'rgba(255,80,180,0.22)',
+          'rgba(80,180,255,0.22)',
+          'rgba(80,255,140,0.22)',
+          'rgba(255,200,50,0.22)',
+          'rgba(180,80,255,0.22)',
+          'rgba(255,120,60,0.22)'
+        ];
+        var strokes = ['#ff50b4','#50b4ff','#50ff8c','#ffc832','#b450ff','#ff783c'];
+        selectors.forEach(function(sel, idx) {
+          var el = null;
+          try { el = document.querySelector(sel); } catch(e) {}
+          if (!el || el === document.documentElement || el === document.body) return;
+          var rect = el.getBoundingClientRect();
+          if (rect.width === 0 && rect.height === 0) return;
+          var ov = document.createElement('div');
+          var col = idx % palette.length;
+          var scrollX = window.scrollX || 0; var scrollY = window.scrollY || 0;
+          ov.style.cssText = [
+            'position:absolute',
+            'pointer-events:none',
+            'z-index:2147483647',
+            'border-radius:3px',
+            'left:' + (rect.left + scrollX) + 'px',
+            'top:' + (rect.top + scrollY) + 'px',
+            'width:' + rect.width + 'px',
+            'height:' + rect.height + 'px',
+            'background:' + palette[col],
+            'outline:2px solid ' + strokes[col],
+            'outline-offset:-1px',
+            'transition:opacity 0.4s'
+          ].join(';');
+          document.documentElement.appendChild(ov);
+          selOverlays.push(ov);
+        });
+        // Auto-fade after 2.5s
+        setTimeout(function() {
+          selOverlays.forEach(function(o) { o.style.opacity = '0'; });
+          setTimeout(clearSelOverlays, 420);
+        }, 2500);
+      }
+
+      window.addEventListener('message', function(e) {
+        if (!e.data) return;
+        if (e.data.type === 'inspectMode') {
+          inspecting = e.data.value;
+          if (!inspecting && hoverEl) { hoverEl.style.outline = ''; hoverEl = null; }
+        }
+        if (e.data.type === 'highlightSelection') highlightSelElements(e.data.selectors);
+        if (e.data.type === 'clearSelHighlights') clearSelOverlays();
+      });
+
+      // ── Inspect mode ─────────────────────────────────────────────────────
+      document.addEventListener('mouseover', function(e) {
+        if (!inspecting) return;
+        if (hoverEl && hoverEl !== e.target) hoverEl.style.outline = '';
+        hoverEl = e.target;
+        if (hoverEl && hoverEl !== document.documentElement && hoverEl !== document.body) hoverEl.style.outline = OUTLINE;
+      }, true);
       document.addEventListener('mouseout', function(e) { if (!inspecting) return; if (e.target && e.target.style) e.target.style.outline = ''; }, true);
-      document.addEventListener('click', function(e) { if (!inspecting) return; e.preventDefault(); e.stopPropagation(); const el = e.target; const tag = el.tagName.toLowerCase(); const id = el.id ? '#' + el.id : ''; const cls = el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\\s+/).join('.') : ''; const outer = el.outerHTML.substring(0, 500); window.parent.postMessage({ type: 'inspectClick', tag, id, cls, outer }, '*'); }, true);
+      document.addEventListener('click', function(e) {
+        if (!inspecting) return;
+        e.preventDefault(); e.stopPropagation();
+        var el = e.target; var tag = el.tagName.toLowerCase();
+        var id = el.id ? '#' + el.id : '';
+        var cls = el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\\s+/).join('.') : '';
+        var outer = el.outerHTML.substring(0, 500);
+        window.parent.postMessage({ type: 'inspectClick', tag, id, cls, outer }, '*');
+      }, true);
     })();
   `;
 
   function injectInspectScript() {
     try {
-      const doc = preview.contentDocument;
-      if (!doc) return;
+      const doc = preview.contentDocument; if (!doc) return;
       const s = doc.createElement('script'); s.textContent = INJECT_SCRIPT;
       (doc.head || doc.documentElement).appendChild(s);
       preview.contentWindow.postMessage({ type: 'inspectMode', value: inspectMode }, '*');
@@ -1491,6 +1474,7 @@
   function updatePreview() {
     const html = editor.value;
     if (!html.trim()) { preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden'); return; }
+<<<<<<< HEAD
     
     // This looks for <head> regardless of case, and if it's missing, just adds the base tag at the start
     const baseTag = '<base href="/">';
@@ -1512,12 +1496,19 @@
     injectInspectScript();
     if (borderMode) setTimeout(updateSizeBadges, 100);
   });
+=======
+    previewEmpty.classList.add('hidden'); preview.srcdoc = html;
+    const lines = html.split('\n').length; const bytes = new Blob([html]).size;
+    status.textContent = lines + ' lines · ' + (bytes > 1024 ? (bytes/1024).toFixed(1) + ' kb' : bytes + ' b');
+    if (borderMode) setTimeout(updateSizeBadges, 200);
+  }
+
+  preview.addEventListener('load', () => { injectInspectScript(); if (borderMode) setTimeout(updateSizeBadges, 100); });
+>>>>>>> 010ba8b67bab531f3e3d07345db8331a7ba2d391
 
   // ── Inspect mode ──────────────────────────────────────────────────────────
   function setInspectMode(on) {
-    inspectMode = on;
-    inspectBtn.classList.toggle('inspect-on', on);
-    previewArea.classList.toggle('inspecting', on);
+    inspectMode = on; inspectBtn.classList.toggle('inspect-on', on); previewArea.classList.toggle('inspecting', on);
     try { preview.contentWindow.postMessage({ type: 'inspectMode', value: on }, '*'); } catch(e) {}
     if (!on) { hideHighlight(); inspectTip.style.display = 'none'; }
   }
@@ -1525,9 +1516,7 @@
 
   previewArea.addEventListener('mousemove', (e) => {
     if (!inspectMode) return;
-    inspectTip.style.display = 'block';
-    inspectTip.style.left = (e.clientX + 14) + 'px';
-    inspectTip.style.top  = (e.clientY + 14) + 'px';
+    inspectTip.style.display = 'block'; inspectTip.style.left = (e.clientX + 14) + 'px'; inspectTip.style.top = (e.clientY + 14) + 'px';
     inspectTip.textContent = 'Click to find source';
   });
   previewArea.addEventListener('mouseleave', () => { inspectTip.style.display = 'none'; });
@@ -1536,14 +1525,12 @@
     if (!e.data || e.data.type !== 'inspectClick') return;
     const { tag, id, cls, outer } = e.data;
     findAndHighlight(outer, tag, id, cls);
-    setInspectMode(false);
-    inspectTip.style.display = 'none';
+    setInspectMode(false); inspectTip.style.display = 'none';
   });
 
   // ── Find & highlight ──────────────────────────────────────────────────────
   function findAndHighlight(outerHTML, tag, id, cls) {
-    const src = editor.value;
-    if (!src.trim()) return;
+    const src = editor.value; if (!src.trim()) return;
     let searchStr = null, matchIndex = -1;
     if (id) {
       const idAttr = id.replace('#','');
@@ -1564,16 +1551,14 @@
     }
     if (matchIndex === -1) {
       const pattern = new RegExp('<' + escapeRegex(tag) + '[\\s>/]', 'i');
-      matchIndex = src.search(pattern);
-      if (matchIndex !== -1) searchStr = tag;
+      matchIndex = src.search(pattern); if (matchIndex !== -1) searchStr = tag;
     }
     if (matchIndex === -1) { flashNone(); return; }
-    const before    = src.substring(0, matchIndex);
+    const before = src.substring(0, matchIndex);
     const startLine = before.split('\n').length;
-    const snippet   = src.substring(matchIndex);
+    const snippet = src.substring(matchIndex);
     const closingTag = '</' + tag + '>';
-    let endOffset   = snippet.indexOf(closingTag);
-    let endLine;
+    let endOffset = snippet.indexOf(closingTag); let endLine;
     if (endOffset !== -1) { endLine = src.substring(0, matchIndex + endOffset + closingTag.length).split('\n').length; }
     else { const eol = snippet.indexOf('\n'); endLine = startLine + (eol === -1 ? 0 : src.substring(matchIndex, matchIndex + eol).split('\n').length - 1); }
     endLine = Math.min(endLine, startLine + 30);
@@ -1589,60 +1574,44 @@
   function escapeRegex(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
   function scrollEditorToLine(startLine, endLine, tag, id, cls) {
-    const lineH  = getLineHeight();
-    const padTop = 14;
-    const topPx  = padTop + (startLine - 1) * lineH;
+    const lineH = getLineHeight(); const padTop = 14;
+    const topPx = padTop + (startLine - 1) * lineH;
     const heightPx = (endLine - startLine + 1) * lineH;
     editor.scrollTop = Math.max(0, topPx - editor.clientHeight / 2 + heightPx / 2);
     syncGutterScroll();
     const editorRect = editor.getBoundingClientRect();
-    const wrapRect   = document.getElementById('editor-wrapper').getBoundingClientRect();
-    const relTop     = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
+    const wrapRect = document.getElementById('editor-wrapper').getBoundingClientRect();
+    const relTop = (editorRect.top - wrapRect.top) + topPx - editor.scrollTop;
     highlightOverlay.style.top = relTop + 'px'; highlightOverlay.style.height = heightPx + 'px';
     highlightOverlay.classList.add('visible');
     const nums = lineNumbersInner.children;
     for (let i = 0; i < nums.length; i++) nums[i].classList.toggle('highlighted', i + 1 >= startLine && i + 1 <= endLine);
     const selector = (id || cls) ? (tag + (id||'') + (cls||'').split('.').slice(0,2).join('.')) : tag;
     lineBadge.textContent = 'L' + startLine + '  ' + selector;
-    lineBadge.style.top   = (relTop - 18) + 'px';
-    lineBadge.classList.add('visible');
+    lineBadge.style.top = (relTop - 18) + 'px'; lineBadge.classList.add('visible');
     clearTimeout(highlightTimer);
-    highlightTimer = setTimeout(() => {
-      hideHighlight();
-      for (let i = 0; i < nums.length; i++) nums[i].classList.remove('highlighted');
-    }, 2500);
+    highlightTimer = setTimeout(() => { hideHighlight(); for (let i = 0; i < nums.length; i++) nums[i].classList.remove('highlighted'); }, 2500);
   }
 
-  function hideHighlight() {
-    highlightOverlay.classList.remove('visible');
-    lineBadge.classList.remove('visible');
-  }
+  function hideHighlight() { highlightOverlay.classList.remove('visible'); lineBadge.classList.remove('visible'); }
 
   editor.addEventListener('input', () => {
     hideHighlight();
-    clearTimeout(debounceTimer);
-    clearTimeout(snapshotTimer);
-    clearTimeout(hintDebounce);
-    debounceTimer  = setTimeout(updatePreview, 300);
-    snapshotTimer  = setTimeout(() => takeSnapshot(editor.value), 2000);
-    hintDebounce   = setTimeout(runHint, 600);
+    clearTimeout(debounceTimer); clearTimeout(snapshotTimer); clearTimeout(hintDebounce);
+    debounceTimer = setTimeout(updatePreview, 300);
+    snapshotTimer = setTimeout(() => takeSnapshot(editor.value), 2000);
+    hintDebounce = setTimeout(runHint, 600);
     if (fnrOpen) { clearTimeout(fnrDebounce); fnrDebounce = setTimeout(runFnrSearch, 300); }
     updateLineNumbers();
   });
 
   editor.addEventListener('paste', () => {
-    setTimeout(() => {
-      takeSnapshot(editor.value);
-      updateLineNumbers();
-      runHint();
-      if (fnrOpen) runFnrSearch();
-    }, 50);
+    setTimeout(() => { takeSnapshot(editor.value); updateLineNumbers(); runHint(); if (fnrOpen) runFnrSearch(); }, 50);
   });
 
   // ── Device mode ───────────────────────────────────────────────────────────
   function setMode(mode) {
-    currentMode = mode;
-    preview.className = mode;
+    currentMode = mode; preview.className = mode;
     previewArea.className = (mode === 'desktop' ? '' : 'device-mode') + (inspectMode ? ' inspecting' : '');
     devBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
     if (borderMode) setTimeout(updateSizeBadges, 100);
@@ -1665,6 +1634,7 @@
   // 2. Updated Import Logic (Using the Modern File System API)
   const importBtn = document.getElementById('import-btn');
   const importedFilename = document.getElementById('imported-filename');
+<<<<<<< HEAD
 
   importBtn.addEventListener('click', async () => {
     try {
@@ -1688,6 +1658,16 @@
       hideHighlight(); 
       runHint();
       
+=======
+  importBtn.addEventListener('click', () => importFileInput.click());
+  importFileInput.addEventListener('change', () => {
+    const file = importFileInput.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      takeSnapshot(editor.value); editor.value = e.target.result;
+      importedFilename.textContent = file.name; exportFilename.value = file.name;
+      updatePreview(); updateLineNumbers(); hideHighlight(); runHint();
+>>>>>>> 010ba8b67bab531f3e3d07345db8331a7ba2d391
       if (fnrOpen) runFnrSearch();
       
       editor.scrollTop = 0; 
@@ -1699,6 +1679,7 @@
       tb.style.transition = 'background 0.1s'; 
       tb.style.background = 'rgba(40,160,80,0.25)';
       setTimeout(() => { tb.style.background = ''; }, 700);
+<<<<<<< HEAD
 
       showToast("File linked! You can now use 'Save' or Ctrl+S", "success");
     } catch (err) {
@@ -1729,24 +1710,23 @@
       e.preventDefault();
       saveBtn.click();
     }
+=======
+    };
+    reader.readAsText(file, 'UTF-8'); importFileInput.value = '';
+>>>>>>> 010ba8b67bab531f3e3d07345db8331a7ba2d391
   });
 
   clearBtn.addEventListener('click', () => {
-    takeSnapshot(editor.value);
-    editor.value = '';
-    importedFilename.textContent = '';
-    preview.srcdoc = ''; status.textContent = '';
-    previewEmpty.classList.remove('hidden');
-    hideHighlight(); hintResults = [];
-    updateLineNumbers(); renderDebugPanel(); updateDebugBadge();
+    takeSnapshot(editor.value); editor.value = ''; importedFilename.textContent = '';
+    preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden');
+    hideHighlight(); hintResults = []; updateLineNumbers(); renderDebugPanel(); updateDebugBadge();
     if (fnrOpen) { fnrMatches = []; fnrCurrent = -1; clearFnrHighlights(); updateFnrCount(); updateFnrButtons(); }
     editor.focus();
   });
 
   fontSlider.addEventListener('input', () => {
     currentFontSize = parseInt(fontSlider.value);
-    editor.style.fontSize = currentFontSize + 'px';
-    fontVal.textContent = currentFontSize + 'px';
+    editor.style.fontSize = currentFontSize + 'px'; fontVal.textContent = currentFontSize + 'px';
     lineNumbersInner.style.fontSize = currentFontSize + 'px';
     setTimeout(updateLineNumbers, 50);
   });

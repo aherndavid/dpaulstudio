@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      || window.innerWidth <= 768) {
+    window.location.replace('m/index.html');
+  }
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — dPaul Technologies</title>
+    
+    <!-- ── TRAFFIC CONTROLLER ── -->
+    <script>
+        (function() {
+            if (window.innerWidth <= 760 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                window.location.href = './m/about.html';
+            }
+        })();
+    </script>
+    
+    <style>
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 130%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 72px; left: 0; right: 0; bottom: 0;
+            background-image: url('../assets/old-mobile-landscape.png');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── FONT NUDGE ── */
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 12px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
+        }
+        nav a {
+            font-family: 'Courier New', Courier, monospace; font-size: 1.4rem;
+            color: var(--cream); text-decoration: none; padding: 10px 20px;
+            border: 1px solid transparent; border-radius: 3px;
+            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
+        }
+        nav a:hover { border-color: var(--orange); color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav .spacer { flex: 1; }
+
+        /* ── LANGUAGE SWITCHER ── */
+        #lang-switcher {
+            display: flex; gap: 6px; align-items: center;
+        }
+        .lang-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.12em; padding: 4px 8px;
+            cursor: pointer; transition: color 0.2s, border-color 0.2s;
+            text-transform: uppercase;
+        }
+        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
+        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+
+        /* ── PAGE ── */
+        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 80px; }
+
+        /* ── HERO ── */
+        .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); }
+        .hero-label {
+            font-size: 1.04rem; color: var(--orange);
+            letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(3.12rem, 5.5vw, 5.46rem);
+            font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px;
+            letter-spacing: -0.02em;
+        }
+        .hero h1 span { color: var(--orange); }
+
+        /* ── TTS PLAYER ── */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
+        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
+        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-speed {
+            -webkit-appearance: none; appearance: none;
+            width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer;
+        }
+        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
+        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
+        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-section-sel, .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+        }
+        .tts-section-sel { max-width: 200px; }
+        .tts-voice-sel  { max-width: 240px; }
+        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
+        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+
+        /* ── SECTION ── */
+        .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+        .section-label {
+            font-size: 1.04rem;
+            letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px;
+        }
+        .section h2 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(2.6rem, 4vw, 3.9rem);
+            font-weight: 900; color: #fff; margin-bottom: 40px; letter-spacing: -0.02em;
+        }
+
+        /* ── BIO SPLIT ── */
+        .bio-split { display: grid; grid-template-columns: 1fr 320px; gap: 56px; align-items: start; }
+        .bio-text p {
+            font-size: calc(1.365rem * var(--font-scale));
+            line-height: 1.95; color: var(--text); margin-bottom: 18px;
+        }
+        .bio-text p strong { color: var(--orange); font-weight: normal; }
+        .bio-text a {
+            color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,102,0,0.3); transition: border-color 0.2s;
+        }
+        .bio-text a:hover { border-color: var(--orange); }
+
+        .photo-frame {
+            width: 100%; aspect-ratio: 3/4; border: 1px solid var(--border); border-radius: 4px;
+            overflow: hidden; background: #0e0f0e; position: sticky; top: 72px; transition: border-color 0.2s;
+        }
+        .photo-frame:hover { border-color: var(--orange); }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%); transition: filter 0.3s; }
+        .photo-frame:hover img { filter: grayscale(0%); }
+
+        /* ── SKILLS GRID ── */
+        .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+        .skill-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 20px 18px; transition: border-color 0.2s; }
+        .skill-card:hover { border-color: var(--orange); }
+        .skill-card .card-label {
+            font-size: 0.936rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px;
+        }
+        .skill-card h3 { font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .skill-card p { font-size: 1.05rem; line-height: 1.75; color: var(--text); }
+
+        /* ── TAGS ── */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+        .tag {
+            font-size: 0.95rem; letter-spacing: 0.1em; padding: 5px 12px;
+            border: 1px solid var(--border); border-radius: 2px;
+            color: var(--cream); text-transform: uppercase; transition: border-color 0.2s, color 0.2s;
+        }
+        .tag:hover { border-color: var(--orange); color: var(--orange); }
+
+        /* ── CONTACT SECTION ── */
+        .contact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+        .contact-info p {
+            font-size: calc(1.365rem * var(--font-scale));
+            line-height: 1.9; color: var(--text); margin-bottom: 14px;
+        }
+        .contact-info p strong { color: var(--orange); font-weight: normal; }
+        .contact-info a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,102,0,0.3); transition: border-color 0.2s; }
+        .contact-info a:hover { border-color: var(--orange); }
+
+        /* ── CONTACT FORM ── */
+        .contact-form { display: flex; flex-direction: column; gap: 12px; }
+        .form-field { display: flex; flex-direction: column; gap: 4px; }
+        .form-field label { font-size: 0.95rem; letter-spacing: 0.15em; color: var(--orange); text-transform: uppercase; }
+        .form-field input, .form-field textarea {
+            background: transparent; border: 1px solid var(--border); border-radius: 3px; padding: 10px 14px;
+            color: #fff; font-family: 'Courier New', Courier, monospace; font-size: 1rem; outline: none; transition: border-color 0.2s; width: 100%;
+        }
+        .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(200,200,192,0.3); }
+        .form-field input:focus, .form-field textarea:focus { border-color: var(--orange); }
+        .form-field textarea { resize: vertical; min-height: 110px; }
+
+        .send-btn {
+            padding: 13px; background: transparent; border: 1px solid var(--orange); color: var(--orange);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem; letter-spacing: 0.2em;
+            text-transform: uppercase; cursor: pointer; border-radius: 3px;
+            transition: background 0.2s, color 0.2s, transform 0.15s; margin-top: 4px;
+        }
+        .send-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
+        .send-btn:active { transform: translateY(0); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .form-success {
+            display: none; padding: 20px; border: 1px solid var(--orange); border-radius: 4px;
+            text-align: center; font-size: 1.014rem; color: var(--orange); letter-spacing: 0.1em;
+        }
+        .form-error {
+            display: none; padding: 12px 16px; border: 1px solid #cc3300; border-radius: 4px;
+            font-size: 0.95rem; color: #cc3300; letter-spacing: 0.05em; margin-top: 8px;
+        }
+
+        /* ── CV STRIP ── */
+        .cv-strip {
+            margin-top: 32px; padding: 18px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+        }
+        .cv-strip p { font-size: 1.014rem; color: var(--text); line-height: 1.6; }
+        .cv-strip p strong { color: #fff; font-weight: normal; }
+        .cv-link {
+            display: inline-block; padding: 8px 20px; border: 1px solid var(--orange); color: var(--orange);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem; letter-spacing: 0.12em;
+            text-transform: uppercase; text-decoration: none; border-radius: 3px; white-space: nowrap;
+            transition: background 0.2s, color 0.2s, transform 0.15s; flex-shrink: 0;
+        }
+        .cv-link:hover { background: var(--orange); color: #000; transform: translateY(-1px); }
+
+        /* ── MOBILE VIEW TOGGLE ── */
+        .mobile-view-footer {
+            margin-top: 80px; text-align: center; padding: 40px 0; border-top: 1px solid var(--border-dim);
+        }
+        .mobile-toggle {
+            font-size: 0.8rem; color: var(--dim); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .mobile-toggle:hover { color: var(--orange); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 700px) {
+            .bio-split { grid-template-columns: 1fr; }
+            .photo-frame { position: static; aspect-ratio: 4/3; max-width: 320px; }
+            .skills-grid { grid-template-columns: 1fr 1fr; }
+            .contact-split { grid-template-columns: 1fr; gap: 40px; }
+            nav { gap: 2px; padding: 0 16px; }
+            nav a { padding: 5px 8px; font-size: 1rem; }
+            .cv-strip { flex-direction: column; align-items: flex-start; }
+            .font-nudge { bottom: 16px; right: 16px; }
+        }
+        @media (max-width: 440px) { .skills-grid { grid-template-columns: 1fr; } }
+
+        .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)">A-</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss ×</button>
+</div>
+
+<nav>
+    <a href="design.html"    data-i18n="nav_design">design</a>
+    <a href="merch.html"     data-i18n="nav_merch">merch</a>
+    <a href="music.html"     data-i18n="nav_music">music</a>
+    <a href="synths.html"    data-i18n="nav_synths">synths</a>
+    <a href="tools.html"     data-i18n="nav_tools">tools</a>
+    <a href="video.html"     data-i18n="nav_video">video</a>
+    <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
+    <div class="spacer"></div>
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
+        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
+        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
+    </div>
+    <a href="about.html" class="active" data-i18n="nav_about">info</a>
+</nav>
+
+<div class="page">
+
+    <section class="hero reveal">
+        <div class="hero-label" data-i18n="about_hero_label">// dPaul Technologies — About</div>
+        <h1 data-i18n="about_hero_h1">30 years in IT.<br>Still <span>building things.</span></h1>
+
+        <div class="tts-player" id="ttsPlayer">
+            <span class="tts-label" data-i18n="tts_speak_label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>❚❚ Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>■ Stop</button>
+                <div class="tts-sep"></div>
+                <div class="tts-speed-wrap">
+                    <span class="tts-speed-label" data-i18n="tts_speed">Speed</span>
+                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label" data-i18n="tts_voice">Voice</span>
+                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                        <option value="">Loading voices...</option>
+                    </select>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label" data-i18n="tts_jump">Jump to</span>
+                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
+                        <option value="-1">-- section --</option>
+                    </select>
+                </div>
+            </div>
+            <span class="tts-progress" id="ttsProgress"></span>
+        </div>
+    </section>
+
+    <section class="section reveal"
+             id="about-background"
+             data-post-section
+             data-post-title="dPaul Studio — Background & Story">
+        <div class="section-label" data-i18n="about_bg_label">// 01 — Background</div>
+        <h2 data-i18n="about_bg_h2">David. Creative technologist.</h2>
+
+        <div class="bio-split">
+            <div class="bio-text">
+                <p data-i18n="about_bio_p1">My name is David. For over <strong>30 years</strong> I've worked in IT — a journey that began in the 1990s, operating mainframe computers like the IBM System 38 and As400 for banks in central London, and evolved through IT support into consultancy for VIP clients.</p>
+                <p data-i18n="about_bio_p2">Throughout that time, I've always had a creative life running alongside the technical one. Music has been a constant — producing original tracks using hardware synthesisers, drum machines and keys, with two of my productions available on iTunes and a back catalogue on SoundCloud.</p>
+                <p data-i18n="about_bio_p3">I believe we're at a remarkable moment. The tools available today — professional software, AI, accessible hardware — would have been unimaginable 20 years ago. I see AI the same way I saw the internet arriving in the mid-90s: a shift that ultimately opens doors. <strong>It's a tool, not a replacement for human creativity.</strong></p>
+                <p data-i18n="about_bio_p4">Today I'm moving deliberately towards <strong>web development</strong> — combining the technical precision I've built over a career with the creative instinct I've never stopped developing.</p>
+                <div class="tags">
+                    <div class="tag" data-i18n="tag_it">30 Years IT</div>
+                    <div class="tag" data-i18n="tag_dev">Full-Stack Dev</div>
+                    <div class="tag">Logic Pro</div>
+                    <div class="tag">Adobe Suite</div>
+                    <div class="tag">Blender</div>
+                    <div class="tag">Sony Camera</div>
+                    <div class="tag" data-i18n="tag_ai">AI Tools</div>
+                    <div class="tag" data-i18n="tag_vip">VIP Support</div>
+                </div>
+            </div>
+            <div>
+                <div class="photo-frame">
+                    <img src="../assets/me.png" alt="David">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal"
+             id="about-disciplines"
+             data-post-section
+             data-post-title="dPaul Studio — Skills & Disciplines">
+        <div class="section-label" data-i18n="about_disc_label">// 02 — Disciplines</div>
+        <h2 data-i18n="about_disc_h2">What I bring to a project</h2>
+
+        <div class="skills-grid">
+            <div class="skill-card">
+                <div class="card-label" data-i18n="card_infra_label">// Infrastructure</div>
+                <h3 data-i18n="card_infra_h3">IT & Systems</h3>
+                <p data-i18n="card_infra_p">30 years spanning mainframes, hardware builds, VIP support, and infrastructure. Built for reliability under pressure.</p>
+            </div>
+            <div class="skill-card">
+                <div class="card-label" data-i18n="card_dev_label">// Development</div>
+                <h3 data-i18n="card_dev_h3">Front-End & APIs</h3>
+                <p data-i18n="card_dev_p">HTML, CSS, JavaScript — building functional tools, synthesisers, audio players, and interactive web experiences from scratch.</p>
+            </div>
+            <div class="skill-card">
+                <div class="card-label" data-i18n="card_creative_label">// Creative</div>
+                <h3 data-i18n="card_creative_h3">Design & Motion</h3>
+                <p data-i18n="card_creative_p">Adobe Suite, Blender, logo design, animation, and brand identity work. Static through to cinematic motion graphics.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section reveal"
+             id="about-contact"
+             data-post-section
+             data-post-title="dPaul Studio — Get in Touch"
+             data-post-content="David Paul is available for creative technology projects in 2026 — web development, design, motion graphics, and brand work. Free 30-minute consultation. Based in the UK. Get in touch at dpaul.studio">
+        <div class="section-label" data-i18n="about_contact_label">// 03 — Get in Touch</div>
+        <div style="display: flex; align-items: flex-end; gap: 32px; margin-bottom: 40px;">
+            <img src="../assets/old-mobile-landscape.png" alt="Get in touch" style="width: 220px; opacity: 0.85; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6)); flex-shrink: 0;">
+            <h2 style="margin-bottom: 0;" data-i18n="about_contact_h2">Let's talk.</h2>
+        </div>
+
+        <div class="contact-split">
+            <div class="contact-info">
+                <p data-i18n="about_contact_p">For a <strong>free 30-minute consultation</strong> to find out how I can help you with your next project — fill in the form or reach out directly.</p>
+                <div class="cv-strip">
+                    <p data-i18n="cv_strip_p"><strong>Agencies</strong> can download a copy of my current CV.</p>
+                    <a href="../assets/cv/cv.html" target="_blank" class="cv-link" data-i18n="cv_link">Download CV</a>
+                </div>
+            </div>
+
+            <div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-field">
+                        <label for="name" data-i18n="form_name_label">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="email" data-i18n="form_email_label">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="message" data-i18n="form_message_label">Message</label>
+                        <textarea id="message" name="message" placeholder="Share your message here..." required></textarea>
+                    </div>
+                    <button type="submit" class="send-btn" id="sendBtn" data-i18n="form_send_btn">SEND</button>
+                    <div class="form-error" id="formError" data-i18n="form_error">// Something went wrong. Please try again.</div>
+                </form>
+                <div class="form-success" id="formSuccess" data-i18n="form_success">
+                    // Message received. I'll be in touch shortly.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="mobile-view-footer">
+        <a href="./m/about.html" class="mobile-toggle" data-i18n="mobile_toggle">→ View Mobile Version</a>
+    </div>
+
+</div>
+
+<script>
+    // ── FONT NUDGE ──
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    function dismissNudge() {
+        document.getElementById('fontNudge').style.opacity = '0';
+        document.getElementById('fontNudge').style.pointerEvents = 'none';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
+
+    // ── SCROLL REVEAL ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── FORMSPREE CONTACT FORM ──
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('sendBtn');
+        const errorEl = document.getElementById('formError');
+        errorEl.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'SENDING...';
+
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value
+        };
+
+        try {
+            const res = await fetch('https://formspree.io/f/xaqawnwv', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                document.getElementById('contactForm').style.display = 'none';
+                document.getElementById('formSuccess').style.display = 'block';
+            } else {
+                throw new Error('Server error');
+            }
+        } catch(err) {
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'SEND';
+        }
+    });
+
+    // ── TTS ENGINE ──
+    (function() {
+        const synth = window.speechSynthesis;
+        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
+        let selectedVoice = null;
+
+        const READ_SELECTORS = ['.hero h1', '.bio-text p', '.skill-card p', '.contact-info p'];
+        const SECTION_SELECTORS = ['.hero-label', '.section-label', '.section h2'];
+
+        function populateVoiceList() {
+            const voices = synth.getVoices();
+            if (!voices.length) return;
+            const sel = document.getElementById('ttsVoiceSel');
+            sel.innerHTML = '';
+            const enVoices = voices.filter(v => /^en/i.test(v.lang));
+            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+            function pickVoice(preferred) {
+                for (const name of preferred) {
+                    const match = enVoices.find(v => v.name.includes(name));
+                    if (match) return match;
+                }
+                return null;
+            }
+            const femaleVoice = pickVoice(preferredFemale);
+            const maleVoice   = pickVoice(preferredMale);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+            const options = [
+                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+            ].filter(o => o.voice !== null);
+            options.forEach(({ label, voice }) => {
+                const o = document.createElement('option');
+                o.value = voice.name;
+                o.textContent = label;
+                sel.appendChild(o);
+            });
+            if (!selectedVoice && options.length > 0) {
+                selectedVoice = options[0].voice;
+                sel.value = options[0].voice.name;
+            }
+        }
+
+        window.ttsSetVoice = function(name) {
+            const voices = synth.getVoices();
+            selectedVoice = voices.find(v => v.name === name) || null;
+            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
+        };
+
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
+                const txt = el.innerText.trim();
+                if (txt.length > 2) chunks.push({ el, text: txt });
+            });
+        }
+
+        function buildSectionMenu() {
+            const sel = document.getElementById('ttsSectionSel');
+            while (sel.options.length > 1) sel.remove(1);
+            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
+                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
+                if (!label || label.length < 2) return;
+                let matchIdx = -1;
+                for (let i = 0; i < chunks.length; i++) {
+                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
+                }
+                if (matchIdx >= 0) {
+                    const opt = document.createElement('option');
+                    opt.value = matchIdx;
+                    opt.textContent = label;
+                    sel.appendChild(opt);
+                }
+            });
+        }
+
+        function highlight(el) {
+            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
+            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            lastHighlighted = el;
+        }
+
+        function speakCurrent() {
+            if (idx >= chunks.length) { ttsStop(); return; }
+            const chunk = chunks[idx];
+            highlight(chunk.el);
+            const u = new SpeechSynthesisUtterance(chunk.text);
+            u.rate = parseFloat(document.getElementById('ttsSpeed').value);
+            if (selectedVoice) u.voice = selectedVoice;
+            u.onend = () => { if (!paused) { idx++; speakCurrent(); } };
+            currentUtterance = u;
+            synth.speak(u);
+        }
+
+        window.ttsPlay = function() {
+            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
+            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
+            else { synth.cancel(); paused = false; setButtons('playing'); speakCurrent(); }
+        };
+
+        function setButtons(state) {
+            const play = document.getElementById('ttsPlay');
+            const pause = document.getElementById('ttsPause');
+            const stop  = document.getElementById('ttsStop');
+            play.disabled = state === 'playing';
+            pause.disabled = state === 'idle';
+            stop.disabled = state === 'idle';
+        }
+
+        window.ttsPause = function() { synth.pause(); paused = true; setButtons('paused'); };
+        window.ttsStop = function() { synth.cancel(); idx = 0; highlight(null); setButtons('idle'); };
+        window.ttsUpdateSpeed = function() { document.getElementById('ttsSpeedVal').textContent = document.getElementById('ttsSpeed').value + 'x'; };
+        window.ttsJumpTo = function(v) { if (v >= 0) { idx = parseInt(v); ttsPlay(); } };
+
+        window.addEventListener('load', () => {
+            if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoiceList;
+            populateVoiceList();
+        });
+    })();
+</script>
+<script src="share.js"></script>
+<script src="post-generator.js"></script>
+
+<!-- i18n -->
+<script src="assets/translations.js"></script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
+
+</body>
+</html>

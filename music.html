@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+    // Find the current filename (e.g., 'design.html')
+    var path = window.location.pathname.split("/").pop();
+    // If we're at the root, default to index.html
+    if (path === "") path = "index.html";
+    // Send them to the exact same page but inside the /m/ folder
+    window.location.replace('m/' + path);
+  }
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music — dPaul Technologies</title>
     
     <style>
         :root {
-            --bg:         #131413;
-            --bg2:        #1a1c1a;
-            --orange:     #FF6600;
-            --cream:      #D4C4A8;
-            --text:       #c8c8c0;
-            --dim:        #7a7a70;
-            --border:     rgba(255,102,0,0.25);
+            --bg:          #131413;
+            --bg2:         #1a1c1a;
+            --orange:      #FF6600;
+            --cream:       #D4C4A8;
+            --text:        #c8c8c0;
+            --dim:         #7a7a70;
+            --border:      rgba(255,102,0,0.25);
             --border-dim: rgba(255,255,255,0.07);
             --font-scale: 1;
         }
@@ -36,7 +46,9 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
+
         /* Renaissance CD background image */
+<<<<<<< HEAD
           body::after {
           content: '';
     position: fixed;
@@ -52,6 +64,24 @@
     pointer-events: none;
     z-index: 0;
 }
+=======
+        body::after {
+            content: '';
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('../assets/renaissance-cd-cover.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: -1; /* Placed behind content */
+        }
+
+>>>>>>> 010ba8b67bab531f3e3d07345db8331a7ba2d391
         /* ── NAV ── */
         nav {
             position: sticky; top: 0; z-index: 100;
@@ -69,8 +99,29 @@
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
         nav .spacer { flex: 1; }
 
+        /* ── LANGUAGE SWITCHER ── */
+        #lang-switcher { display: flex; gap: 6px; align-items: center; margin: 0 15px; }
+        .lang-btn {
+            background: none; border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35); font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
+            cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+        }
+        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
+        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+
+        /* ── MINI EQ IN NAV ── */
+        #nav-eq-container {
+            display: flex; align-items: flex-end; gap: 2px;
+            height: 22px; margin: 0 24px; padding-bottom: 2px;
+        }
+        .nav-eq-bar {
+            width: 3px; background: var(--orange);
+            transition: height 0.1s ease; border-radius: 1px;
+        }
+
         /* ── PAGE ── */
-        .page { max-width: 1400px; margin: 0 auto; padding: 0 56px 80px; }
+        .page { max-width: 1400px; margin: 0 auto; padding: 0 56px 80px; position: relative; z-index: 1; }
 
         /* ── HERO ── */
         .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); }
@@ -91,9 +142,18 @@
         .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
         .tts-btn {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            padding: 7px 16px; cursor: pointer; border-radius: 3px; font-family: inherit;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
         }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
         .tts-btn.active { background: var(--orange); color: #000; font-weight: bold; }
+        .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none; max-width: 240px;
+        }
+        .tts-voice-sel:focus { border-color: var(--orange); }
         .tts-highlight { background: rgba(255,102,0,0.15); border-radius: 2px; }
 
         /* ── SECTIONS ── */
@@ -156,92 +216,138 @@
 <body>
 
 <div class="font-nudge" id="fontNudge">
-    <div style="font-size: 0.65rem; color: var(--orange); text-transform: uppercase; margin-bottom: 8px;">Text size</div>
+    <div style="font-size: 0.65rem; color: var(--orange); text-transform: uppercase; margin-bottom: 8px;" data-i18n="nudge_label">Text size</div>
     <button class="font-btn" onclick="adjustFont(-1)">-</button>
     <span id="fontIndicator" style="font-size: 0.7rem; margin: 0 8px;">100%</span>
     <button class="font-btn" onclick="adjustFont(1)">+</button>
 </div>
 
 <nav>
-    <a href="design.html">design</a>
-    <a href="merch.html">merch</a>
-    <a href="music.html" class="active">music</a>
-    <a href="synths.html">synths</a>
-    <a href="tools.html">tools</a>
-    <a href="video.html">video</a>
-    <a href="dev-tools.html">dev tools</a>
+    <a href="design.html" data-i18n="nav_design">design</a>
+    <a href="merch.html" data-i18n="nav_merch">merch</a>
+    <a href="music.html" class="active" data-i18n="nav_music">music</a>
+    <a href="synths.html" data-i18n="nav_synths">synths</a>
+    <a href="tools.html" data-i18n="nav_tools">tools</a>
+    <a href="video.html" data-i18n="nav_video">video</a>
+    <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
     <div class="spacer"></div>
-    <a href="about.html">info</a>
+
+    <div id="nav-eq-container"></div>
+
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
+        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
+        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
+    </div>
+
+    <a href="about.html" data-i18n="nav_about">about</a>
 </nav>
 
 <div class="page">
-    <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies — Music</div>
-        <h1>The Renaissance<br><span>"Trilogy Feed"</span> Archive</h1>
-        <p>An interactive archive built from three 70-minute master recordings — engineered in Logic Pro and presented as a zero-delay, high-fidelity experience.</p>
+    <section class="hero reveal"
+             id="music-intro"
+             data-post-section
+             data-post-title="dPaul Studio — Music">
+        <div class="hero-label" data-i18n="music_hero_label">// dPaul Technologies — Music</div>
+        <h1 data-i18n="music_hero_h1">The Renaissance<br><span>"Trilogy Feed"</span> Archive</h1>
+        <p data-i18n="music_hero_p">An interactive archive built from three 70-minute master recordings — engineered in Logic Pro and presented as a zero-delay, high-fidelity experience.</p>
 
         <div class="tts-player">
-            <span class="tts-label">// Speak page</span>
+            <span class="tts-label" data-i18n="tts_speak_label">// Speak page</span>
             <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
             <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
-            <select id="ttsVoiceSel" onchange="ttsSetVoice(this.value)" style="background: #111; color: #fff; border: 1px solid #333; padding: 5px;"></select>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
         </div>
     </section>
 
-    <section class="section reveal">
-        <div class="section-label">// 01 — The Release</div>
-        <h2>Sasha & John Digweed — Renaissance</h2>
+    <section class="section reveal"
+             id="music-release"
+             data-post-section
+             data-post-title="dPaul Studio — Renaissance Archive">
+        <div class="section-label" data-i18n="music_section_01_label">// 01 — The Release</div>
+        <h2 data-i18n="music_section_01_h2">Sasha & John Digweed — Renaissance</h2>
 
         <div class="split">
             <div style="display: flex; justify-content: center;">
                 <a href="https://aherndavid.github.io/dpaulstudio/renaissance-launcher.html" target="_blank" class="album-link">
                     <div class="album-cover" id="albumCover">
                         <img src="../assets/renaissance-cover.jpg" alt="Renaissance Cover">
-                        <div class="click-hint">// Click to enjoy</div>
+                        <div class="click-hint" data-i18n="music_click_hint">// Click to enjoy</div>
                     </div>
                 </a>
             </div>
 
             <div class="split-text">
-                <p>In 1994, Sasha & John Digweed changed electronic music with <strong>Renaissance: The Mix Collection</strong> — the first official nightclub "sampler."</p>
-                <p>The album was a masterclass in early 90s <strong>progressive house and trance</strong>. It wasn't just a hit — it was a cultural milestone.</p>
-                <p>From its iconic Sistine Chapel artwork to the triple-CD package, it defined the sound of a generation.</p>
+                <p data-i18n="music_sasha_p1">In 1994, Sasha & John Digweed changed electronic music with <strong>Renaissance: The Mix Collection</strong> — the first official nightclub "sampler."</p>
+                <p data-i18n="music_sasha_p2">The album was a masterclass in early 90s <strong>progressive house and trance</strong>. It wasn't just a hit — it was a cultural milestone.</p>
+                <p data-i18n="music_sasha_p3">From its iconic Sistine Chapel artwork to the triple-CD package, it defined the sound of a generation.</p>
             </div>
         </div>
     </section>
 
-    <section class="section reveal">
-        <div class="section-label">// 02 — The Build Process</div>
-        <h2>Engineering a web archive</h2>
-        <p class="section-intro">This project demonstrated how DAW expertise and web infrastructure can deliver professional-grade interactive audio.</p>
+    <section class="section reveal"
+             id="music-process"
+             data-post-section
+             data-post-title="dPaul Studio — Music Engineering">
+        <div class="section-label" data-i18n="music_section_02_label">// 02 — The Build Process</div>
+        <h2 data-i18n="music_section_02_h2">Engineering a web archive</h2>
+        <p class="section-intro" data-i18n="music_section_02_intro">This project demonstrated how DAW expertise and web infrastructure can deliver professional-grade interactive audio.</p>
 
         <div class="process-grid">
             <div class="process-card">
-                <div class="card-label">// Media Engineering</div>
-                <h3>Logic Pro Masters</h3>
-                <p>Three separate 70-minute masters mixed specifically for web streaming constraints.</p>
+                <div class="card-label" data-i18n="music_card_media_label">// Media Engineering</div>
+                <h3 data-i18n="music_card_media_h3">Logic Pro Masters</h3>
+                <p data-i18n="music_card_media_p">Three separate 70-minute masters mixed specifically for web streaming constraints.</p>
             </div>
             <div class="process-card">
-                <div class="card-label">// Infrastructure</div>
-                <h3>Latency control</h3>
-                <p>Extensive testing ensured the "Feed" remained stable without drop-outs or lag.</p>
+                <div class="card-label" data-i18n="music_card_infra_label">// Infrastructure</div>
+                <h3 data-i18n="music_card_infra_h3">Latency control</h3>
+                <p data-i18n="music_card_infra_p">Extensive testing ensured the "Feed" remained stable without drop-outs or lag.</p>
             </div>
         </div>
 
         <div class="outcome-strip">
-            <p><strong>The Outcome:</strong> A zero-delay, interactive archive taking a creative concept into a finished digital reality.</p>
+            <p data-i18n="music_outcome"><strong>The Outcome:</strong> A zero-delay, interactive archive taking a creative concept into a finished digital reality.</p>
         </div>
     </section>
 
     <div class="cta-block reveal">
-        <h2>Want something built?</h2>
-        <p>Custom audio players or interactive archives for your music project.</p>
-        <a href="about.html" class="cta-btn">Get in touch</a>
+        <h2 data-i18n="music_cta_h2">Want something built?</h2>
+        <p data-i18n="music_cta_p">Custom audio players or interactive archives for your music project.</p>
+        <a href="about.html" class="cta-btn" data-i18n="music_cta_btn">Get in touch</a>
     </div>
 </div>
 
 <script>
-    // FONT NUDGE logic
+    // ── NAV EQ ANIMATION ──
+    (function() {
+        const NUM_BARS = 8;
+        const MAX_H = 20;
+        const container = document.getElementById('nav-eq-container');
+        if (!container) return;
+        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
+        const targets = [...levels];
+        const bars = [];
+        for (let i = 0; i < NUM_BARS; i++) {
+            const b = document.createElement('div');
+            b.className = 'nav-eq-bar';
+            container.appendChild(b);
+            bars.push(b);
+        }
+        function animateEQ() {
+            for (let i = 0; i < NUM_BARS; i++) {
+                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
+                levels[i] += (targets[i] - levels[i]) * 0.15;
+                bars[i].style.height = levels[i] + 'px';
+            }
+            requestAnimationFrame(animateEQ);
+        }
+        animateEQ();
+    })();
+
+    // FONT NUDGE
     let fontIdx = 0;
     const scales = [1, 1.15, 1.3, 1.5];
     const labels = ['100%', '115%', '130%', '150%'];
@@ -251,67 +357,99 @@
         document.getElementById('fontIndicator').innerText = labels[fontIdx];
     }
 
-    // REVEAL logic
+    // REVEAL
     const obs = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-    // PARALLAX logic
+    // PARALLAX
     const cover = document.getElementById('albumCover');
     window.addEventListener('scroll', () => {
-        if(window.innerWidth > 760) {
+        if (window.innerWidth > 760 && cover) {
             cover.style.transform = `translateY(${window.scrollY * 0.15}px)`;
         }
     });
 
-    // TTS logic
+    // TTS
     const synth = window.speechSynthesis;
     let selectedVoice = null;
     let chunks = [];
     let cur = 0;
 
     function populateVoices() {
-        const v = synth.getVoices();
+        const voices = synth.getVoices();
+        if (!voices.length) return;
         const sel = document.getElementById('ttsVoiceSel');
+        if (!sel) return;
         sel.innerHTML = '';
-        const en = v.filter(x => x.lang.startsWith('en'));
-        en.forEach(x => {
+        const enVoices = voices.filter(v => /^en/i.test(v.lang));
+        const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+        const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+        function pickVoice(preferred) {
+            for (const name of preferred) {
+                const match = enVoices.find(v => v.name.includes(name));
+                if (match) return match;
+            }
+            return null;
+        }
+        const femaleVoice = pickVoice(preferredFemale);
+        const maleVoice   = pickVoice(preferredMale);
+        const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+        const options = [
+            { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+            { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+        ].filter(o => o.voice !== null);
+        options.forEach(({ label, voice }) => {
             const o = document.createElement('option');
-            o.value = x.name; o.textContent = x.name;
+            o.value = voice.name;
+            o.textContent = label;
             sel.appendChild(o);
         });
-        selectedVoice = en[0];
+        if (!selectedVoice && options.length > 0) {
+            selectedVoice = options[0].voice;
+            sel.value = options[0].voice.name;
+        }
     }
 
-    window.ttsSetVoice = (n) => { selectedVoice = synth.getVoices().find(x => x.name === n); };
-    
+    window.ttsSetVoice = (n) => {
+        selectedVoice = synth.getVoices().find(v => v.name === n) || null;
+    };
+
     function speak() {
-        if(cur >= chunks.length) { ttsStop(); return; }
+        if (cur >= chunks.length) { ttsStop(); return; }
         const u = new SpeechSynthesisUtterance(chunks[cur].text);
-        if(selectedVoice) u.voice = selectedVoice;
+        if (selectedVoice) u.voice = selectedVoice;
         chunks[cur].el.classList.add('tts-highlight');
         u.onend = () => { chunks[cur].el.classList.remove('tts-highlight'); cur++; speak(); };
         synth.speak(u);
     }
 
     window.ttsPlay = () => {
-        if(!chunks.length) {
-            document.querySelectorAll('h1, h2, p').forEach(el => chunks.push({el, text: el.innerText}));
+        if (!chunks.length) {
+            document.querySelectorAll('h1, h2, p').forEach(el => chunks.push({ el, text: el.innerText }));
         }
         synth.cancel(); cur = 0; speak();
-        document.getElementById('ttsPlay').classList.add('active');
+        const playBtn = document.getElementById('ttsPlay');
+        if (playBtn) playBtn.classList.add('active');
     };
 
     window.ttsStop = () => {
         synth.cancel();
-        if(chunks[cur]) chunks[cur].el.classList.remove('tts-highlight');
-        document.getElementById('ttsPlay').classList.remove('active');
+        if (chunks[cur]) chunks[cur].el.classList.remove('tts-highlight');
+        const playBtn = document.getElementById('ttsPlay');
+        if (playBtn) playBtn.classList.remove('active');
     };
 
     if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
-    window.onload = populateVoices;
+    window.addEventListener('load', populateVoices);
 </script>
+
+<script src="share.js"></script>
+<script src="post-generator.js"></script>
+
+<script src="assets/translations.js"></script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
 </body>
 </html>
