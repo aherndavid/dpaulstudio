@@ -1361,7 +1361,6 @@
       if (e.key === 'd') { e.preventDefault(); setDebugOpen(!debugOpen); }
       if (e.key === 'h') { e.preventDefault(); setFnrOpen(!fnrOpen); }
       if (e.key === 'q') { e.preventDefault(); setSelHlMode(!selHlMode); }
-      if (e.key === 's') { e.preventDefault(); if (editor.value.trim()) exportBtn.click(); }
     }
   });
 
@@ -1474,37 +1473,25 @@
   function updatePreview() {
     const html = editor.value;
     if (!html.trim()) { preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden'); return; }
-<<<<<<< HEAD
-    
-    // This looks for <head> regardless of case, and if it's missing, just adds the base tag at the start
+    // Inject base tag so relative paths resolve correctly
     const baseTag = '<base href="/">';
-    const baseFixedHtml = html.match(/<head>/i) 
-      ? html.replace(/<head>/i, '<head>' + baseTag) 
+    const baseFixedHtml = html.match(/<head>/i)
+      ? html.replace(/<head>/i, '<head>' + baseTag)
       : baseTag + html;
 
     previewEmpty.classList.add('hidden');
-    
-    // CRITICAL: Use the fixed version here!
-    preview.srcdoc = baseFixedHtml; 
+    preview.srcdoc = baseFixedHtml;
 
     const lines = html.split('\n').length;
     const bytes = new Blob([html]).size;
     status.textContent = lines + ' lines · ' + (bytes > 1024 ? (bytes/1024).toFixed(1) + ' kb' : bytes + ' b');
     if (borderMode) setTimeout(updateSizeBadges, 200);
   }
+
   preview.addEventListener('load', () => {
     injectInspectScript();
     if (borderMode) setTimeout(updateSizeBadges, 100);
   });
-=======
-    previewEmpty.classList.add('hidden'); preview.srcdoc = html;
-    const lines = html.split('\n').length; const bytes = new Blob([html]).size;
-    status.textContent = lines + ' lines · ' + (bytes > 1024 ? (bytes/1024).toFixed(1) + ' kb' : bytes + ' b');
-    if (borderMode) setTimeout(updateSizeBadges, 200);
-  }
-
-  preview.addEventListener('load', () => { injectInspectScript(); if (borderMode) setTimeout(updateSizeBadges, 100); });
->>>>>>> 010ba8b67bab531f3e3d07345db8331a7ba2d391
 
   // ── Inspect mode ──────────────────────────────────────────────────────────
   function setInspectMode(on) {
@@ -1634,11 +1621,8 @@
   // 2. Updated Import Logic (Using the Modern File System API)
   const importBtn = document.getElementById('import-btn');
   const importedFilename = document.getElementById('imported-filename');
-<<<<<<< HEAD
-
   importBtn.addEventListener('click', async () => {
     try {
-      // Open the picker and store the handle
       [fileHandle] = await window.showOpenFilePicker({
         types: [{ description: 'HTML Files', accept: { 'text/html': ['.html'] } }],
         multiple: false
@@ -1647,39 +1631,25 @@
       const file = await fileHandle.getFile();
       const content = await file.text();
 
-      // Standard updates to your editor
       takeSnapshot(editor.value);
       editor.value = content;
       importedFilename.textContent = file.name;
       exportFilename.value = file.name;
 
-      updatePreview(); 
-      updateLineNumbers(); 
-      hideHighlight(); 
+      updatePreview();
+      updateLineNumbers();
+      hideHighlight();
       runHint();
-      
-=======
-  importBtn.addEventListener('click', () => importFileInput.click());
-  importFileInput.addEventListener('change', () => {
-    const file = importFileInput.files[0]; if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      takeSnapshot(editor.value); editor.value = e.target.result;
-      importedFilename.textContent = file.name; exportFilename.value = file.name;
-      updatePreview(); updateLineNumbers(); hideHighlight(); runHint();
->>>>>>> 010ba8b67bab531f3e3d07345db8331a7ba2d391
       if (fnrOpen) runFnrSearch();
-      
-      editor.scrollTop = 0; 
-      syncGutterScroll(); 
+
+      editor.scrollTop = 0;
+      syncGutterScroll();
       editor.focus();
 
-      // Your nice green success flash
       const tb = document.getElementById('editor-toolbar');
-      tb.style.transition = 'background 0.1s'; 
+      tb.style.transition = 'background 0.1s';
       tb.style.background = 'rgba(40,160,80,0.25)';
       setTimeout(() => { tb.style.background = ''; }, 700);
-<<<<<<< HEAD
 
       showToast("File linked! You can now use 'Save' or Ctrl+S", "success");
     } catch (err) {
@@ -1687,7 +1657,7 @@
     }
   });
 
-  // 3. The New Save Logic (Writes directly back to the file you imported)
+  // Save Logic — writes directly back to the imported file
   const saveBtn = document.getElementById('save-btn');
   saveBtn.addEventListener('click', async () => {
     if (!fileHandle) {
@@ -1704,16 +1674,12 @@
     }
   });
 
-  // 4. Add Ctrl+S Support
+  // Ctrl+S support
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       e.preventDefault();
       saveBtn.click();
     }
-=======
-    };
-    reader.readAsText(file, 'UTF-8'); importFileInput.value = '';
->>>>>>> 010ba8b67bab531f3e3d07345db8331a7ba2d391
   });
 
   clearBtn.addEventListener('click', () => {
