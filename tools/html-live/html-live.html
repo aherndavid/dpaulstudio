@@ -32,6 +32,10 @@
   /* Export btn */
   #export-btn { color: #66dd88; border-color: #336644; transition: all 0.15s; }
   #export-btn:hover { background: #1a2a1e; color: #99ffaa; border-color: #66aa77; }
+/* Save btn */
+  #save-btn { color: #ff8800; border-color: #664400; transition: all 0.15s; }
+  #save-btn:hover { background: #2a1a00; color: #ffaa33; border-color: #aa7700; }
+  #save-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   /* Find & Replace btn */
   #fnr-btn { color: #ddbb66; border-color: #665533; transition: all 0.15s; }
@@ -568,7 +572,7 @@
     <span id="font-size-val">13px</span>
     <div class="sep"></div>
     <button class="tbtn" id="import-btn" title="Import an HTML file from disk">Import</button>
-    <input type="file" id="import-file-input" accept=".html,.htm" style="display:none;">
+    <button class="tbtn" id="save-btn" title="Save changes directly to file (Ctrl+S)">Save</button>
     <button class="tbtn" id="export-btn" title="Export / download the current HTML">Export</button>
     <button class="tbtn" id="fnr-btn" title="Find &amp; Replace (Ctrl+H)">Find &amp; Replace</button>
     <button class="tbtn" id="inspect-btn" title="Click elements in preview to highlight source (Ctrl+I)">Inspect</button>
@@ -1487,14 +1491,23 @@
   function updatePreview() {
     const html = editor.value;
     if (!html.trim()) { preview.srcdoc = ''; status.textContent = ''; previewEmpty.classList.remove('hidden'); return; }
+    
+    // This looks for <head> regardless of case, and if it's missing, just adds the base tag at the start
+    const baseTag = '<base href="/">';
+    const baseFixedHtml = html.match(/<head>/i) 
+      ? html.replace(/<head>/i, '<head>' + baseTag) 
+      : baseTag + html;
+
     previewEmpty.classList.add('hidden');
-    preview.srcdoc = html;
+    
+    // CRITICAL: Use the fixed version here!
+    preview.srcdoc = baseFixedHtml; 
+
     const lines = html.split('\n').length;
     const bytes = new Blob([html]).size;
     status.textContent = lines + ' lines · ' + (bytes > 1024 ? (bytes/1024).toFixed(1) + ' kb' : bytes + ' b');
     if (borderMode) setTimeout(updateSizeBadges, 200);
   }
-
   preview.addEventListener('load', () => {
     injectInspectScript();
     if (borderMode) setTimeout(updateSizeBadges, 100);
@@ -1646,28 +1659,76 @@
     }
   });
 
-  const importBtn        = document.getElementById('import-btn');
-  const importFileInput  = document.getElementById('import-file-input');
+// 1. We need this global variable to "remember" the file link
+  let fileHandle; 
+
+  // 2. Updated Import Logic (Using the Modern File System API)
+  const importBtn = document.getElementById('import-btn');
   const importedFilename = document.getElementById('imported-filename');
-  importBtn.addEventListener('click', () => importFileInput.click());
-  importFileInput.addEventListener('change', () => {
-    const file = importFileInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
+
+  importBtn.addEventListener('click', async () => {
+    try {
+      // Open the picker and store the handle
+      [fileHandle] = await window.showOpenFilePicker({
+        types: [{ description: 'HTML Files', accept: { 'text/html': ['.html'] } }],
+        multiple: false
+      });
+
+      const file = await fileHandle.getFile();
+      const content = await file.text();
+
+      // Standard updates to your editor
       takeSnapshot(editor.value);
-      editor.value = e.target.result;
+      editor.value = content;
       importedFilename.textContent = file.name;
       exportFilename.value = file.name;
-      updatePreview(); updateLineNumbers(); hideHighlight(); runHint();
+
+      updatePreview(); 
+      updateLineNumbers(); 
+      hideHighlight(); 
+      runHint();
+      
       if (fnrOpen) runFnrSearch();
-      editor.scrollTop = 0; syncGutterScroll(); editor.focus();
+      
+      editor.scrollTop = 0; 
+      syncGutterScroll(); 
+      editor.focus();
+
+      // Your nice green success flash
       const tb = document.getElementById('editor-toolbar');
-      tb.style.transition = 'background 0.1s'; tb.style.background = 'rgba(40,160,80,0.25)';
+      tb.style.transition = 'background 0.1s'; 
+      tb.style.background = 'rgba(40,160,80,0.25)';
       setTimeout(() => { tb.style.background = ''; }, 700);
-    };
-    reader.readAsText(file, 'UTF-8');
-    importFileInput.value = '';
+
+      showToast("File linked! You can now use 'Save' or Ctrl+S", "success");
+    } catch (err) {
+      console.log("Import cancelled or not supported");
+    }
+  });
+
+  // 3. The New Save Logic (Writes directly back to the file you imported)
+  const saveBtn = document.getElementById('save-btn');
+  saveBtn.addEventListener('click', async () => {
+    if (!fileHandle) {
+      showToast("No file linked! Import a file first.", "error");
+      return;
+    }
+    try {
+      const writable = await fileHandle.createWritable();
+      await writable.write(editor.value);
+      await writable.close();
+      showToast("✓ Saved directly to disk", "success");
+    } catch (err) {
+      showToast("Save failed: " + err.message, "error");
+    }
+  });
+
+  // 4. Add Ctrl+S Support
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      saveBtn.click();
+    }
   });
 
   clearBtn.addEventListener('click', () => {
