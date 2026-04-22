@@ -16,6 +16,28 @@
     <title>Music — dPaul Technologies</title>
     
     <style>
+/* ── CONTACT FORM STYLES ── */
+.contact-form { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin-top: 32px; }
+.form-field { display: flex; flex-direction: column; gap: 4px; }
+.form-field label { font-size: 0.95rem; letter-spacing: 0.15em; color: var(--orange); text-transform: uppercase; }
+.form-field input, .form-field textarea {
+    background: transparent; border: 1px solid var(--border); border-radius: 3px; padding: 10px 14px;
+    color: #fff; font-family: 'Courier New', Courier, monospace; font-size: 1rem; outline: none; transition: border-color 0.2s; width: 100%;
+}
+.form-field input:focus, .form-field textarea:focus { border-color: var(--orange); }
+.form-field textarea { resize: vertical; min-height: 110px; }
+
+.send-btn {
+    padding: 13px; background: transparent; border: 1px solid var(--orange); color: var(--orange);
+    font-family: 'Courier New', Courier, monospace; font-size: 1.014rem; letter-spacing: 0.2em;
+    text-transform: uppercase; cursor: pointer; border-radius: 3px;
+    transition: all 0.2s; margin-top: 4px;
+}
+.send-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
+.send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.form-success { display: none; padding: 20px; border: 1px solid var(--orange); border-radius: 4px; text-align: center; color: var(--orange); }
+.form-error { display: none; padding: 12px 16px; border: 1px solid #cc3300; border-radius: 4px; color: #cc3300; margin-top: 8px; }
         :root {
             --bg:          #131413;
             --bg2:         #1a1c1a;
@@ -295,12 +317,35 @@
         </div>
     </section>
 
-    <div class="cta-block reveal">
-        <h2 data-i18n="music_cta_h2">Want something built?</h2>
-        <p data-i18n="music_cta_p">Custom audio players or interactive archives for your music project.</p>
-        <a href="about.html" class="cta-btn" data-i18n="music_cta_btn">Get in touch</a>
+<section class="section reveal" id="music-contact">
+    <div class="section-label" data-i18n="music_contact_label">// 03 — Project Inquiry</div>
+    <h2 data-i18n="music_cta_h2">Want something built?</h2>
+    <p data-i18n="music_cta_p">Custom audio players or interactive archives for your music project.</p>
+
+    <form class="contact-form" id="contactForm">
+        <input type="hidden" name="_subject" value="New Music Project Inquiry">
+        <input type="text" name="_gotcha" style="display:none" />
+
+        <div class="form-field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+        <div class="form-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-field">
+            <label for="message">Project Details</label>
+            <textarea id="message" name="message" placeholder="Tell me about your music project..." required></textarea>
+        </div>
+        <button type="submit" class="send-btn" id="sendBtn">SEND INQUIRY</button>
+        <div class="form-error" id="formError">// Something went wrong. Please try again.</div>
+    </form>
+    
+    <div class="form-success" id="formSuccess">
+        // Inquiry received. I'll get back to you shortly.
     </div>
-</div>
+</section>
 
 <script>
     // ── NAV EQ ANIMATION ──
@@ -433,5 +478,46 @@
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
-</body>
+<script>
+    // ── FORMSPREE SUBMISSION ──
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Honeypot check
+        const honeypot = document.getElementsByName("_gotcha")[0];
+        if (honeypot && honeypot.value) return;
+
+        const btn = document.getElementById('sendBtn');
+        const errorEl = document.getElementById('formError');
+        errorEl.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'SENDING...';
+
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value,
+            _subject: "New Music Project Inquiry from dPaul Technologies"
+        };
+
+        try {
+            const res = await fetch('https://formspree.io/f/xaqawnwv', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                document.getElementById('contactForm').style.display = 'none';
+                document.getElementById('formSuccess').style.display = 'block';
+            } else {
+                throw new Error('Server error');
+            }
+        } catch(err) {
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'SEND INQUIRY';
+        }
+    });
+</script> </body>
 </html>
