@@ -626,40 +626,49 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     // ── FORMSPREE CONTACT FORM ──
-    document.getElementById('contactForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('sendBtn');
-        const errorEl = document.getElementById('formError');
-        errorEl.style.display = 'none';
-        btn.disabled = true;
-        btn.textContent = 'SENDING...';
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-        const data = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            message: document.getElementById('message').value
-        };
+    // 1. HONEYPOT CHECK: If a bot fills this hidden field, stop the script.
+    const honeypot = document.getElementsByName("_gotcha")[0];
+    if (honeypot && honeypot.value) {
+        console.warn("Spam detected.");
+        return;
+    }
 
-        try {
-            const res = await fetch('https://formspree.io/f/xaqawnwv', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify(data)
-            });
+    const btn = document.getElementById('sendBtn');
+    const errorEl = document.getElementById('formError');
+    errorEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'SENDING...';
 
-            if (res.ok) {
-                document.getElementById('contactForm').style.display = 'none';
-                document.getElementById('formSuccess').style.display = 'block';
-            } else {
-                throw new Error('Server error');
-            }
-        } catch(err) {
-            errorEl.style.display = 'block';
-            btn.disabled = false;
-            btn.textContent = 'SEND';
+    // 2. DATA OBJECT: Include your custom subject line here
+    const data = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value,
+        _subject: "New Inquiry from dPaul Technologies" // Helps prevent Formspree spam flagging
+    };
+
+    try {
+        const res = await fetch('https://formspree.io/f/xaqawnwv', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+            document.getElementById('contactForm').style.display = 'none';
+            document.getElementById('formSuccess').style.display = 'block';
+        } else {
+            throw new Error('Server error');
         }
-    });
-
+    } catch(err) {
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'SEND';
+    }
+});
     // ── TTS ENGINE ──
     (function() {
         const synth = window.speechSynthesis;
