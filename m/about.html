@@ -209,7 +209,7 @@
         </div>
     </section>
 
-    <section class="section reveal" data-post-section data-post-title="dPaul Studio — Background & Story">
+    <section class="section reveal">
         <div class="section-label">// 01 — Background</div>
         <h2>David. Creative technologist.</h2>
         
@@ -218,7 +218,7 @@
         </div>
 
         <div class="bio-text">
-            <p>My name is David. For over <strong>30 years</strong> I've worked in IT — a journey that began in the 1990s, operating mainframe computers like the IBM System 38 and As400 for banks in central London.</p>
+            <p>My name is David. For over <strong>30 years</strong> I've worked in IT — a journey that began in the 1990s, operating mainframe computers for banks in central London.</p>
             <p>I believe we're at a remarkable moment. AI is a shift that ultimately opens doors. <strong>It's a tool, not a replacement for human creativity.</strong></p>
             <p>Today I'm moving deliberately towards <strong>web development</strong> — combining technical precision with creative instinct.</p>
         </div>
@@ -231,29 +231,11 @@
         </div>
     </section>
 
-    <div class="reveal" style="
-        width: 100vw;
-        margin-left: calc(-50vw + 50%);
-        overflow: hidden;
-        border-top: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
-    ">
-        <img 
-            src="../assets/dpaul-lambo-front.png" 
-            alt="dPaul Technologies — Gatecrasher Black Lamborghini wrap"
-            style="
-                width: 100%;
-                display: block;
-                object-fit: cover;
-                filter: brightness(0.92);
-                transition: filter 0.4s;
-            "
-            onmouseover="this.style.filter='brightness(1)'"
-            onmouseout="this.style.filter='brightness(0.92)'"
-        >
+    <div class="reveal" style="width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <img src="../assets/dpaul-lambo-front.png" alt="dPaul Technologies Lambo" style="width: 100%; display: block; object-fit: cover; filter: brightness(0.92);">
     </div>
 
-    <section class="section reveal" data-post-section data-post-title="dPaul Studio — Skills & Disciplines">
+    <section class="section reveal">
         <div class="section-label">// 02 — Disciplines</div>
         <div class="skills-grid">
             <div class="skill-card">
@@ -274,7 +256,7 @@
         </div>
     </section>
 
-    <section class="section reveal" data-post-section data-post-title="dPaul Studio — Get in Touch">
+    <section class="section reveal" id="mobile-contact">
         <div class="section-label">// 03 — Contact</div>
         <div class="contact-header">
             <img src="../assets/old-mobile.png" alt="Contact">
@@ -282,7 +264,7 @@
         </div>
         
         <div class="bio-text">
-            <p>For a <strong>free 30-minute consultation</strong> to find out how I can help you with your next project — reach out below.</p>
+            <p>For a <strong>free 30-minute consultation</strong> to find out how I can help you — reach out below.</p>
         </div>
 
         <div class="cv-strip">
@@ -291,26 +273,29 @@
         </div>
 
         <form class="contact-form" id="contactForm">
+            <input type="hidden" name="_subject" value="Mobile Info Page Inquiry">
+            <input type="text" name="_gotcha" style="display:none" />
+
             <div class="form-field">
-                <label>Name</label>
+                <label for="name">Name</label>
                 <input type="text" id="name" name="name" required placeholder="Your name">
             </div>
             <div class="form-field">
-                <label>Email</label>
+                <label for="email">Email</label>
                 <input type="email" id="email" name="email" required placeholder="your@email.com">
             </div>
             <div class="form-field">
-                <label>Message</label>
+                <label for="message">Message</label>
                 <textarea id="message" name="message" required placeholder="How can I help?"></textarea>
             </div>
             <button type="submit" class="send-btn" id="sendBtn">Send Message</button>
             <div class="form-error" id="formError">// Something went wrong. Please try again.</div>
         </form>
+
         <div class="form-success" id="formSuccess">
             // Message received.<br>I'll be in touch shortly.
         </div>
     </section>
-    </div>
 </div>
 
 <script>
@@ -332,6 +317,10 @@
     // ── FORMSPREE CONTACT FORM ──
     document.getElementById('contactForm').addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        const honeypot = document.getElementsByName("_gotcha")[0];
+        if (honeypot && honeypot.value) return;
+
         const btn = document.getElementById('sendBtn');
         const errorEl = document.getElementById('formError');
         errorEl.style.display = 'none';
@@ -341,11 +330,12 @@
         const data = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
-            message: document.getElementById('message').value
+            message: document.getElementById('message').value,
+            _subject: "New Mobile Inquiry from dPaul Technologies"
         };
 
         try {
-            const res = await fetch('https://formspree.io/f/xeerqwvk', {
+            const res = await fetch('https://formspree.io/f/xaqawnwv', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify(data)
@@ -373,6 +363,7 @@
     function populateVoices() {
         const voices = synth.getVoices();
         const sel = document.getElementById('ttsVoiceSel');
+        if(!sel) return;
         sel.innerHTML = '';
         const enVoices = voices.filter(v => v.lang.startsWith('en'));
         enVoices.forEach(v => {
