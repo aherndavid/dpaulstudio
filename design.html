@@ -264,11 +264,10 @@
         }
         animateEQ();
     })();
-
 // ── VIDEO PLAYLIST ──
 const videos = [document.getElementById('vid1'), document.getElementById('vid2')];
 let currentVid = 0;
-let soundOn = true;
+let soundOn = false;
 
 function playNext() {
     if (!videos[0]) return;
@@ -280,10 +279,12 @@ function playNext() {
 }
 videos.forEach(v => { if (v) v.addEventListener('ended', playNext); });
 
-// Sound toggle — starts ON, but browser requires muted for autoplay.
-// On first user interaction with the toggle, we can unmute.
 const track = document.getElementById('toggle-track');
 const label = document.getElementById('toggle-label');
+
+// Start with toggle showing ON visually, but sound actually off until user clicks
+track.classList.remove('off');
+label.textContent = '🔊';
 
 document.getElementById('sound-toggle').addEventListener('click', function () {
     soundOn = !soundOn;
