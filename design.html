@@ -196,14 +196,27 @@
 
     <div class="billboard-wrap reveal">
         <div class="screen-chrome">
-            <div class="chrome-bar">
-                <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-            </div>
-            <div class="screen-video">
-                <video id="vid1" autoplay muted playsinline><source src="assets/video/traffic-narrator.mp4" type="video/mp4"></video>
-                <video id="vid2" muted playsinline style="display:none;"><source src="assets/video/orange-porsche.mp4" type="video/mp4"></video>
+    <div class="chrome-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div style="flex:1;"></div>
+        <div class="sound-toggle" id="sound-toggle" title="Sound on/off">
+            <span class="toggle-label" id="toggle-label">🔊</span>
+            <div class="toggle-track" id="toggle-track">
+                <div class="toggle-thumb" id="toggle-thumb"></div>
             </div>
         </div>
+    </div>
+    <div class="screen-video">
+        <video id="vid1" autoplay muted playsinline>
+            <source src="assets/video/traffic-narrator.mp4" type="video/mp4">
+        </video>
+        <video id="vid2" muted playsinline style="display:none;">
+            <source src="assets/video/orange-porsche.mp4" type="video/mp4">
+        </video>
+    </div>
+</div>
     </div>
 </div>
 
