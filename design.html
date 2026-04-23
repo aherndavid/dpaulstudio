@@ -13,7 +13,7 @@
     <title>Design — dPaul Technologies</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        :root {
+:root {
             --bg:      #131413;
             --bg2:     #1a1c1a;
             --orange:  #FF6600;
@@ -141,6 +141,14 @@
         .reveal.visible { opacity: 1; transform: none; }
         
         @media (max-width: 900px) { nav { padding: 0 24px; } .page { padding: 32px 24px; } }
+
+        /* ── SOUND TOGGLE ── */
+        .sound-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .toggle-label { font-size: 0.7rem; color: var(--dim); user-select: none; }
+        .toggle-track { width: 28px; height: 14px; background: var(--orange); border-radius: 7px; position: relative; transition: background 0.2s; cursor: pointer; }
+        .toggle-track.off { background: #444; }
+        .toggle-thumb { position: absolute; top: 2px; left: 14px; width: 10px; height: 10px; background: #fff; border-radius: 50%; transition: left 0.2s; }
+        .toggle-track.off .toggle-thumb { left: 2px; }
     </style>
 </head>
 <body>
@@ -257,17 +265,43 @@
         animateEQ();
     })();
 
-    // ── VIDEO PLAYLIST ──
-    const videos = [document.getElementById('vid1'), document.getElementById('vid2')];
-    let currentVid = 0;
-    function playNext() {
-        if(!videos[0]) return;
-        videos[currentVid].style.display = 'none';
-        currentVid = (currentVid + 1) % videos.length;
-        videos[currentVid].style.display = 'block';
-        videos[currentVid].play();
+// ── VIDEO PLAYLIST ──
+const videos = [document.getElementById('vid1'), document.getElementById('vid2')];
+let currentVid = 0;
+let soundOn = true;
+
+function playNext() {
+    if (!videos[0]) return;
+    videos[currentVid].style.display = 'none';
+    currentVid = (currentVid + 1) % videos.length;
+    videos[currentVid].style.display = 'block';
+    videos[currentVid].muted = !soundOn;
+    videos[currentVid].play();
+}
+videos.forEach(v => { if (v) v.addEventListener('ended', playNext); });
+
+// Sound toggle — starts ON, but browser requires muted for autoplay.
+// On first user interaction with the toggle, we can unmute.
+const track = document.getElementById('toggle-track');
+const label = document.getElementById('toggle-label');
+
+document.getElementById('sound-toggle').addEventListener('click', function () {
+    soundOn = !soundOn;
+    videos.forEach(v => v.muted = !soundOn);
+    track.classList.toggle('off', !soundOn);
+    label.textContent = soundOn ? '🔊' : '🔇';
+});
+
+// Attempt to unmute vid1 on any first user interaction with the page
+function tryUnmuteOnInteraction() {
+    if (soundOn) {
+        videos[0].muted = false;
     }
-    videos.forEach(v => { if(v) v.addEventListener('ended', playNext); });
+    document.removeEventListener('click', tryUnmuteOnInteraction);
+    document.removeEventListener('keydown', tryUnmuteOnInteraction);
+}
+document.addEventListener('click', tryUnmuteOnInteraction);
+document.addEventListener('keydown', tryUnmuteOnInteraction);
 
     // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
