@@ -21,6 +21,18 @@
   .tbtn { font-size: 19px; padding: 5px 12px; border: 1px solid #444; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; }
   .tbtn:hover { background: #2a2a2a; color: #ccc; }
   #right-cluster { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  #upgrade-btn {
+    font-size: 19px; padding: 5px 14px; border: 1px solid #aa7700;
+    background: rgba(255,187,0,0.07); color: #ffbb00; border-radius: 6px;
+    cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px;
+    transition: all 0.15s; animation: pro-pulse 3s ease-in-out infinite;
+  }
+  #upgrade-btn:hover { background: #2a1f00; color: #ffdd66; border-color: #ffdd00; animation: none; box-shadow: 0 0 10px rgba(255,187,0,0.3); }
+  @keyframes pro-pulse {
+    0%, 100% { box-shadow: 0 0 0px rgba(255,187,0,0); border-color: #aa7700; }
+    50% { box-shadow: 0 0 8px rgba(255,187,0,0.25); border-color: #ffbb00; }
+  }
+
   #home-btn { color: #aaaaff; border-color: #555577; }
   #home-btn:hover { background: #22223a; color: #ccccff; border-color: #aaaaff; }
   #share-btn { color: #88ccff; border-color: #336688; transition: all 0.15s; }
@@ -499,6 +511,14 @@
     font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
     color: #272727;
   }
+  #preview-upgrade {
+    font-family: 'Courier New', monospace;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: #aa7700; margin-top: 8px; pointer-events: all; cursor: pointer;
+    border: 1px solid #554400; border-radius: 5px; padding: 5px 14px;
+    background: rgba(255,187,0,0.05); transition: all 0.15s;
+  }
+  #preview-upgrade:hover { background: rgba(255,187,0,0.12); color: #ffbb00; border-color: #aa7700; }
 
   #zoom-wrapper {
     display: flex;
@@ -596,6 +616,7 @@
     <button class="tbtn" id="clear-btn">Clear</button>
     <button class="tbtn" id="about-btn">About</button>
     <div id="right-cluster">
+      <button id="upgrade-btn" title="Upgrade to HTML-Live Pro" onclick="window.open('https://davidpaul2.gumroad.com/l/yqwler','_blank')">&#9733; Upgrade to Pro</button>
       <button class="tbtn" id="share-btn" title="Copy link to this tool" onclick="navigator.clipboard.writeText('https://www.dpaul.studio').then(()=>showToast('Link copied to clipboard','success'))">&#128279; Share</button>
       <button class="tbtn" id="bmc-btn" title="Support this tool — Buy Me a Coffee" onclick="window.open('https://buymeacoffee.com/dpaulstudio','_blank')">&#9749; Donate</button>
       <button class="tbtn" id="bug-btn" title="Report a bug by email" onclick="window.open('mailto:davidpaulahern@gmail.com?subject=HTML-Live%20Bug%20Report&body=Version%3A%20v1.7%0A%0ADescribe%20the%20bug%3A%0A%0ASteps%20to%20reproduce%3A%0A%0ABrowser%2FOS%3A','_blank')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="display:inline-block;vertical-align:middle;margin-right:4px;margin-bottom:1px" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="13" rx="6" ry="7" fill="#cc2222"/><circle cx="9.5" cy="11" r="1" fill="#fff" opacity="0.6"/><circle cx="14.5" cy="11" r="0.7" fill="#fff" opacity="0.4"/><line x1="12" y1="6" x2="12" y2="4" stroke="#333" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="7" x2="7" y2="5" stroke="#333" stroke-width="1.2" stroke-linecap="round"/><line x1="15" y1="7" x2="17" y2="5" stroke="#333" stroke-width="1.2" stroke-linecap="round"/><line x1="6" y1="11" x2="3" y2="10" stroke="#333" stroke-width="1.2" stroke-linecap="round"/><line x1="18" y1="11" x2="21" y2="10" stroke="#333" stroke-width="1.2" stroke-linecap="round"/><line x1="6" y1="15" x2="3" y2="16" stroke="#333" stroke-width="1.2" stroke-linecap="round"/><line x1="18" y1="15" x2="21" y2="16" stroke="#333" stroke-width="1.2" stroke-linecap="round"/><circle cx="10" cy="13.5" r="1" fill="#881111"/><circle cx="14" cy="13.5" r="1" fill="#881111"/><circle cx="12" cy="17" r="1" fill="#881111"/></svg>Report Bug</button>
@@ -689,6 +710,7 @@
         <div id="preview-empty">
           <div id="preview-empty-title">Welcome to <span>HTML-LIVE!</span></div>
           <div id="preview-empty-sub">Paste or import your code to get started</div>
+          <div id="preview-upgrade" onclick="window.open('https://davidpaul2.gumroad.com/l/yqwler','_blank')">&#9733; Upgrade to Pro &mdash; folder browser &amp; more &mdash; &pound;9</div>
         </div>
         <div id="zoom-wrapper">
           <iframe id="preview" class="desktop" sandbox="allow-scripts allow-same-origin"></iframe>
