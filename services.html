@@ -302,6 +302,78 @@
             .font-nudge { bottom: 16px; right: 16px; }
             .tts-controls { gap: 6px; }
         }
+
+        /* ── COMPANY FOOTER ── */
+        .company-footer {
+            margin-top: 80px; padding: 32px 0;
+            border-top: 1px solid var(--border-dim);
+            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;
+        }
+        .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
+        .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
+        .company-footer-val { font-size: calc(0.91rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val a { color: var(--dim); text-decoration: none; }
+        .company-footer-val a:hover { color: var(--orange); }
+        .company-footer-note { font-size: calc(0.84rem * var(--font-scale)); color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
+
+        /* ── PRINT STYLES ── */
+        @media print {
+            /* Hide interactive chrome */
+            nav, .font-nudge, .tts-player, .cta-btn.secondary { display: none !important; }
+
+            /* White background, dark text */
+            body, .page, .pricing-card, .terms-block, .cta-block, .addon-table td, .addon-table th {
+                background: #fff !important;
+                color: #111 !important;
+            }
+
+            body::before { display: none; }
+
+            /* Orange accent stays legible on white */
+            .hero-label, .section-eyebrow, .card-label, .card-includes-label,
+            .terms-block-label, .cta-label, .company-footer-label,
+            .addon-table th, .include-list li::before, .terms-list li::before,
+            .featured-badge { color: #cc5200 !important; }
+
+            .hero h1, .section-title, .cta-heading { color: #000 !important; }
+            .hero h1 em { color: #cc5200 !important; }
+
+            .card-price, .cta-stat-num { color: #000 !important; }
+            .card-price span, .card-total, .company-footer-val,
+            .addon-table td, .terms-list li, .include-list li,
+            .hero-intro, .cta-text { color: #333 !important; }
+
+            /* Borders readable on white */
+            .pricing-card, .terms-block, .cta-block {
+                border: 1px solid #ccc !important;
+            }
+            .pricing-card.featured { border-color: #cc5200 !important; }
+            .featured-badge { background: #cc5200 !important; color: #fff !important; }
+
+            .include-list li, .terms-list li, .addon-table tr { border-bottom-color: #ddd !important; }
+            .card-divider { background: #ddd !important; }
+
+            .addon-table th { border-bottom-color: #bbb !important; }
+
+            /* CTA aside stats */
+            .cta-aside { border-left: 1px solid #ddd; padding-left: 32px; }
+            .cta-stat-label { color: #666 !important; }
+            .cta-divider { background: #ddd !important; }
+
+            /* Company footer */
+            .company-footer { border-top-color: #ddd !important; }
+            .company-footer-val, .company-footer-val a, .company-footer-note { color: #555 !important; }
+
+            /* Page layout */
+            .page { padding: 0 32px !important; }
+            .pricing-grid { grid-template-columns: 1fr 1fr !important; }
+            .terms-grid { grid-template-columns: 1fr 1fr !important; }
+            .cta-block { flex-direction: row !important; }
+
+            /* Page breaks */
+            .service-section { page-break-inside: avoid; }
+            .cta-block { page-break-inside: avoid; }
+        }
     </style>
 </head>
 <body>
@@ -324,6 +396,7 @@
     <a href="tools.html">tools</a>
     <a href="video.html">video</a>
     <a href="dev-tools.html">dev tools</a>
+    <a href="current.html">current</a>
     <a href="services.html" class="active">services</a>
     <div class="spacer"></div>
     <div id="nav-eq-container"></div>
@@ -533,6 +606,27 @@
             </div>
         </div>
     </div>
+
+    <!-- COMPANY FOOTER -->
+    <footer class="company-footer">
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company</div>
+            <div class="company-footer-val">CitiIT Limited</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as <strong style="color:var(--cream)">dpaul.studio</strong> for creative and digital work.</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company No.</div>
+            <div class="company-footer-val">15811174</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">VAT No.</div>
+            <div class="company-footer-val">473 5892 49</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Website</div>
+            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
+        </div>
+    </footer>
 
 </div><!-- /page -->
 
