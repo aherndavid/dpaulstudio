@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+    var path = window.location.pathname.split("/").pop();
+    if (path === "" || path === "index.html") path = "index.html";
+    window.location.replace('m/' + path);
+  }
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current — dPaul Technologies</title>
+
+    <script>
+        (function() {
+            if (window.innerWidth <= 760 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                window.location.href = './m/current.html';
+            }
+        })();
+    </script>
+
+    <style>
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 130%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* Font nudge */
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 12px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
+
+        /* Nav */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
+        }
+        nav a {
+            font-family: 'Courier New', Courier, monospace; font-size: 1.4rem;
+            color: var(--cream); text-decoration: none; padding: 10px 20px;
+            border: 1px solid transparent; border-radius: 3px;
+            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
+        }
+        nav a:hover { border-color: var(--orange); color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav .spacer { flex: 1; }
+
+        /* Mini EQ */
+        #nav-eq-container {
+            display: flex; align-items: flex-end; gap: 2px;
+            height: 22px; margin: 0 24px; padding-bottom: 2px;
+        }
+        .nav-eq-bar {
+            width: 3px; background: var(--orange);
+            transition: height 0.1s ease; border-radius: 1px;
+        }
+
+        /* Language switcher */
+        #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
+        .lang-btn {
+            background: none; border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35); font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
+            cursor: pointer; transition: all 0.2s; text-transform: uppercase;
+        }
+        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
+        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+
+        /* Page */
+        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 80px; position: relative; z-index: 1; }
+
+        .hero { padding: 80px 0 48px; border-bottom: 1px solid var(--border); }
+        .hero-label {
+            font-size: 1.04rem; color: var(--orange);
+            letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(3.12rem, 5.5vw, 5.46rem);
+            font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px;
+            letter-spacing: -0.02em;
+        }
+        .hero h1 span { color: var(--orange); }
+        .hero-desc {
+            font-size: calc(1.3rem * var(--font-scale));
+            line-height: 1.9; color: var(--text); max-width: 820px; margin-top: 24px;
+        }
+        .hero-desc strong { color: var(--orange); font-weight: normal; }
+
+        /* TTS */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
+        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
+        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-speed { -webkit-appearance: none; appearance: none; width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer; }
+        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
+        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
+        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-section-sel, .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+        }
+        .tts-section-sel { max-width: 200px; }
+        .tts-voice-sel  { max-width: 240px; }
+        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
+        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+
+        /* Sections */
+        .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 1.04rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
+        .section h2 { font-family: 'Courier New', Courier, monospace; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; margin-bottom: 40px; letter-spacing: -0.02em; }
+        .section-intro { font-size: calc(1.3rem * var(--font-scale)); line-height: 1.9; color: var(--text); max-width: 820px; margin-bottom: 48px; }
+        .section-intro strong { color: var(--orange); font-weight: normal; }
+
+        /* Project cards */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .project-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 28px 28px 24px;
+            transition: border-color 0.2s, transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .project-card:hover { border-color: var(--orange); transform: translateY(-2px); }
+
+        .project-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .project-card .card-label {
+            font-size: 0.84rem;
+            letter-spacing: 0.2em;
+            color: var(--orange);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .project-card h3 {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: calc(1.2rem * var(--font-scale));
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.35;
+        }
+
+        .project-card p {
+            font-size: calc(1.05rem * var(--font-scale));
+            line-height: 1.8;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .project-card p strong { color: var(--orange); font-weight: normal; }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 2px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .status-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-active {
+            background: rgba(255,102,0,0.1);
+            border: 1px solid rgba(255,102,0,0.4);
+            color: var(--orange);
+        }
+        .status-active::before { background: var(--orange); animation: pulse 1.6s ease-in-out infinite; }
+        .status-wip {
+            background: rgba(212,196,168,0.07);
+            border: 1px solid rgba(212,196,168,0.2);
+            color: var(--cream);
+        }
+        .status-wip::before { background: var(--cream); }
+        .status-planning {
+            background: rgba(122,122,112,0.1);
+            border: 1px solid rgba(122,122,112,0.25);
+            color: var(--dim);
+        }
+        .status-planning::before { background: var(--dim); }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.35; }
+        }
+
+        /* Tags row on card */
+        .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+        .card-tag {
+            font-size: 0.72rem; letter-spacing: 0.1em; padding: 3px 9px;
+            border: 1px solid var(--border-dim); border-radius: 2px;
+            color: var(--dim); text-transform: uppercase;
+        }
+
+        /* Featured / full-width card */
+        .project-card.featured {
+            grid-column: 1 / -1;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 40px;
+        }
+        .project-card.featured .card-main { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .project-card.featured .card-aside {
+            width: 260px; flex-shrink: 0;
+            background: rgba(255,102,0,0.04);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 20px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .card-aside-label { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 4px; }
+        .card-aside li { font-size: 0.9rem; color: var(--text); line-height: 1.75; list-style: none; padding-left: 14px; position: relative; }
+        .card-aside li::before { content: '—'; position: absolute; left: 0; color: var(--orange); }
+
+        /* Divider / key legend */
+        .legend-row {
+            display: flex; gap: 20px; align-items: center; flex-wrap: wrap;
+            margin-bottom: 32px; padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-dim);
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; letter-spacing: 0.1em; color: var(--dim); text-transform: uppercase; }
+
+        /* Mobile */
+        @media (max-width: 860px) {
+            .projects-grid { grid-template-columns: 1fr; }
+            .project-card.featured { flex-direction: column; }
+            .project-card.featured .card-aside { width: 100%; }
+        }
+        @media (max-width: 700px) {
+            nav { gap: 2px; padding: 0 16px; }
+            nav a { padding: 5px 8px; font-size: 1rem; }
+            .font-nudge { bottom: 16px; right: 16px; }
+            .page { padding: 0 20px 60px; }
+            .hero { padding: 48px 0 32px; }
+        }
+
+        .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        .mobile-view-footer { margin-top: 80px; text-align: center; padding: 40px 0; border-top: 1px solid var(--border-dim); }
+        .mobile-toggle { font-size: 0.8rem; color: var(--dim); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; }
+        .mobile-toggle:hover { color: var(--orange); }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A-</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss ×</button>
+</div>
+
+<nav>
+    <a href="design.html"   data-i18n="nav_design">design</a>
+    <a href="merch.html"    data-i18n="nav_merch">merch</a>
+    <a href="music.html"    data-i18n="nav_music">music</a>
+    <a href="synths.html"   data-i18n="nav_synths">synths</a>
+    <a href="tools.html"    data-i18n="nav_tools">tools</a>
+    <a href="video.html"    data-i18n="nav_video">video</a>
+    <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
+    <div class="spacer"></div>
+
+    <div id="nav-eq-container"></div>
+
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
+        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
+        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
+    </div>
+    <a href="current.html" class="active" data-i18n="nav_current">current</a>
+</nav>
+
+<div class="page">
+
+    <section class="hero reveal">
+        <div class="hero-label" data-i18n="current_hero_label">// dPaul Technologies — Current Work</div>
+        <h1 data-i18n="current_hero_h1">What's on the<br><span>bench right now.</span></h1>
+
+        <p class="hero-desc" data-i18n="current_hero_desc">
+            This page documents the projects currently in motion — work being built
+            for <strong>clients</strong>, personal experiments, tools under development, and long-running
+            creative endeavours. Nothing here is finished. Everything here is alive.
+        </p>
+
+        <div class="tts-player" id="ttsPlayer">
+            <span class="tts-label" data-i18n="tts_speak_label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>❚❚ Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>■ Stop</button>
+                <div class="tts-sep"></div>
+                <div class="tts-speed-wrap">
+                    <span class="tts-speed-label" data-i18n="tts_speed">Speed</span>
+                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label" data-i18n="tts_voice">Voice</span>
+                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                        <option value="">Loading voices...</option>
+                    </select>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label" data-i18n="tts_jump">Jump to</span>
+                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
+                        <option value="-1">-- section --</option>
+                    </select>
+                </div>
+            </div>
+            <span class="tts-progress" id="ttsProgress"></span>
+        </div>
+    </section>
+
+    <!-- ── 01 ACTIVE PROJECTS ── -->
+    <section class="section reveal" id="current-active">
+        <div class="section-label" data-i18n="current_active_label">// 01 — Active Projects</div>
+        <h2 data-i18n="current_active_h2">In build.</h2>
+
+        <p class="section-intro" data-i18n="current_active_intro">
+            These are the projects currently receiving the most active attention —
+            code being written, designs being iterated, or creative work in progress.
+            Some are <strong>personal</strong>, some are for <strong>clients</strong>, all are unfinished by design.
+        </p>
+
+        <div class="legend-row">
+            <div class="legend-item"><span class="status-badge status-active">Active</span> Currently in build</div>
+            <div class="legend-item"><span class="status-badge status-wip">WIP</span> Work in progress</div>
+            <div class="legend-item"><span class="status-badge status-planning">Planning</span> In early planning</div>
+        </div>
+
+        <div class="projects-grid">
+
+            <!-- Featured: dPaul Studio Portfolio -->
+            <div class="project-card featured reveal">
+                <div class="card-main">
+                    <div class="card-label" data-i18n="proj_portfolio_label">// Personal — Web Development</div>
+                    <div class="project-header">
+                        <h3 data-i18n="proj_portfolio_h3">dPaul Studio — Portfolio Site</h3>
+                        <span class="status-badge status-active" data-i18n="status_active">Active</span>
+                    </div>
+                    <p data-i18n="proj_portfolio_p">
+                        The site you're looking at. A browser-based portfolio built from scratch in
+                        <strong>HTML, CSS and JavaScript</strong> — no frameworks, no templates.
+                        Documenting the transition from 30 years of IT into creative web development,
+                        with each page built, broken, and rebuilt as a learning exercise.
+                        Current focus: polishing individual section pages, adding the bass-line generator tool,
+                        and migrating video assets to external hosting.
+                    </p>
+                    <div class="card-tags">
+                        <span class="card-tag">HTML</span>
+                        <span class="card-tag">CSS</span>
+                        <span class="card-tag">JavaScript</span>
+                        <span class="card-tag">Web Audio API</span>
+                        <span class="card-tag">GitHub Pages</span>
+                        <span class="card-tag">TTS</span>
+                    </div>
+                </div>
+                <div class="card-aside">
+                    <div class="card-aside-label" data-i18n="proj_next_label">// Next steps</div>
+                    <ul>
+                        <li data-i18n="proj_portfolio_next1">Bass line generator (Anthropic API)</li>
+                        <li data-i18n="proj_portfolio_next2">Buy Me a Coffee integration</li>
+                        <li data-i18n="proj_portfolio_next3">External video hosting (R2)</li>
+                        <li data-i18n="proj_portfolio_next4">Mobile page parity</li>
+                        <li data-i18n="proj_portfolio_next5">Current projects page (this)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- HTML-Live -->
+            <div class="project-card reveal">
+                <div class="card-label" data-i18n="proj_htmllive_label">// Personal Tool — Browser Dev</div>
+                <div class="project-header">
+                    <h3 data-i18n="proj_htmllive_h3">HTML-Live Editor v1.6+</h3>
+                    <span class="status-badge status-wip" data-i18n="status_wip">WIP</span>
+                </div>
+                <p data-i18n="proj_htmllive_p">
+                    A <strong>browser-based live HTML editor</strong> built entirely in-browser,
+                    designed for fast prototyping without a local dev environment.
+                    Used daily during this portfolio build and evolving with each use.
+                    Next version targets improved multi-file handling and a cleaner save flow.
+                </p>
+                <div class="card-tags">
+                    <span class="card-tag">JavaScript</span>
+                    <span class="card-tag">HTML</span>
+                    <span class="card-tag">CSS</span>
+                    <span class="card-tag">LocalStorage</span>
+                </div>
+            </div>
+
+            <!-- Bass Line Generator -->
+            <div class="project-card reveal">
+                <div class="card-label" data-i18n="proj_bass_label">// Personal Tool — AI + Audio</div>
+                <div class="project-header">
+                    <h3 data-i18n="proj_bass_h3">Bass Line Generator</h3>
+                    <span class="status-badge status-planning" data-i18n="status_planning">Planning</span>
+                </div>
+                <p data-i18n="proj_bass_p">
+                    A browser-based tool using the <strong>Anthropic Claude API</strong> to generate
+                    acid-style bass lines from key, scale, and pattern inputs.
+                    Output piped through the Web Audio API for instant playback.
+                    Planned as a live tool within the portfolio and a first
+                    public demonstration of AI-assisted music generation.
+                </p>
+                <div class="card-tags">
+                    <span class="card-tag">Claude API</span>
+                    <span class="card-tag">Web Audio API</span>
+                    <span class="card-tag">JavaScript</span>
+                    <span class="card-tag">MIDI</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── 02 CLIENT WORK ── -->
+    <section class="section reveal" id="current-client">
+        <div class="section-label" data-i18n="current_client_label">// 02 — Client Work</div>
+        <h2 data-i18n="current_client_h2">For others.</h2>
+
+        <p class="section-intro" data-i18n="current_client_intro">
+            Ongoing work undertaken for clients — covering web development, design, digital
+            strategy, and IT support. Details kept brief where <strong>confidentiality</strong> applies.
+        </p>
+
+        <div class="projects-grid">
+
+            <div class="project-card reveal">
+                <div class="card-label" data-i18n="proj_client1_label">// Client — Web / Design</div>
+                <div class="project-header">
+                    <h3 data-i18n="proj_client1_h3">Brand Identity & Web Presence</h3>
+                    <span class="status-badge status-active" data-i18n="status_active">Active</span>
+                </div>
+                <p data-i18n="proj_client1_p">
+                    Logo design, colour system, and a lightweight site build for a small business
+                    client. Covers <strong>brand mark creation in Photoshop</strong>, HTML/CSS site,
+                    and guidance on social media consistency. Delivery phased across several weeks.
+                </p>
+                <div class="card-tags">
+                    <span class="card-tag">Photoshop</span>
+                    <span class="card-tag">HTML/CSS</span>
+                    <span class="card-tag">Brand Design</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal">
+                <div class="card-label" data-i18n="proj_client2_label">// Client — IT Support</div>
+                <div class="project-header">
+                    <h3 data-i18n="proj_client2_h3">VIP IT Consultancy</h3>
+                    <span class="status-badge status-active" data-i18n="status_active">Active</span>
+                </div>
+                <p data-i18n="proj_client2_p">
+                    Ongoing <strong>IT support and consultancy</strong> for private clients —
+                    a continuation of 30 years of hands-on IT work that funds the creative
+                    transition underway. Covers hardware, network, and software troubleshooting
+                    at a discreet, responsive level.
+                </p>
+                <div class="card-tags">
+                    <span class="card-tag">IT Support</span>
+                    <span class="card-tag">Networking</span>
+                    <span class="card-tag">Consultancy</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ── 03 LONG GAME ── -->
+    <section class="section reveal" id="current-longterm">
+        <div class="section-label" data-i18n="current_long_label">// 03 — The Long Game</div>
+        <h2 data-i18n="current_long_h2">Always running.</h2>
+
+        <p class="section-intro" data-i18n="current_long_intro">
+            Projects that don't have a finish line — ongoing creative and preservation work
+            that runs in the background alongside everything else.
+        </p>
+
+        <div class="projects-grid">
+
+            <div class="project-card reveal">
+                <div class="card-label" data-i18n="proj_preservation_label">// Personal — Digital Preservation</div>
+                <div class="project-header">
+                    <h3 data-i18n="proj_preservation_h3">1990s Dance Compilation Archive</h3>
+                    <span class="status-badge status-wip" data-i18n="status_wip">WIP</span>
+                </div>
+                <p data-i18n="proj_preservation_p">
+                    Ongoing digitisation and restoration of classic <strong>1990s dance compilations</strong>
+                    — a preservation effort aimed at keeping a formative era of UK club culture accessible.
+                    Includes audio restoration, metadata curation, and archive documentation.
+                </p>
+                <div class="card-tags">
+                    <span class="card-tag">Audio Restoration</span>
+                    <span class="card-tag">Digital Archive</span>
+                    <span class="card-tag">Logic Pro</span>
+                </div>
+            </div>
+
+            <div class="project-card reveal">
+                <div class="card-label" data-i18n="proj_music_label">// Personal — Music Production</div>
+                <div class="project-header">
+                    <h3 data-i18n="proj_music_h3">Original Music — New Tracks</h3>
+                    <span class="status-badge status-wip" data-i18n="status_wip">WIP</span>
+                </div>
+                <p data-i18n="proj_music_p">
+                    New original productions in development using a combination of
+                    <strong>hardware synthesisers</strong>, Arturia plugins, Moog, Korg,
+                    and Serum. Continuation of a music production catalogue that already
+                    has releases on iTunes and SoundCloud. No deadline. Just the work.
+                </p>
+                <div class="card-tags">
+                    <span class="card-tag">Logic Pro</span>
+                    <span class="card-tag">Synthesis</span>
+                    <span class="card-tag">Arturia</span>
+                    <span class="card-tag">Serum</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</div><!-- /page -->
+
+<script>
+    // ── NAV EQ ANIMATION ──
+    (function() {
+        const NUM_BARS = 8, MAX_H = 20;
+        const container = document.getElementById('nav-eq-container');
+        if (!container) return;
+        const levels  = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
+        const targets = [...levels];
+        const bars    = [];
+        for (let i = 0; i < NUM_BARS; i++) {
+            const b = document.createElement('div');
+            b.className = 'nav-eq-bar';
+            container.appendChild(b);
+            bars.push(b);
+        }
+        function animateEQ() {
+            for (let i = 0; i < NUM_BARS; i++) {
+                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
+                levels[i] += (targets[i] - levels[i]) * 0.15;
+                bars[i].style.height = levels[i] + 'px';
+            }
+            requestAnimationFrame(animateEQ);
+        }
+        animateEQ();
+    })();
+
+    // ── FONT NUDGE ──
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    function dismissNudge() {
+        document.getElementById('fontNudge').style.opacity = '0';
+        document.getElementById('fontNudge').style.pointerEvents = 'none';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
+
+    // ── SCROLL REVEAL ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── TTS ENGINE ──
+    (function() {
+        const synth = window.speechSynthesis;
+        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
+        let selectedVoice = null;
+
+        const READ_SELECTORS = ['.hero h1', '.hero-desc', '.section-intro', '.project-card h3', '.project-card p'];
+        const SECTION_SELECTORS = ['.hero-label', '.section-label', '.section h2'];
+
+        function populateVoiceList() {
+            const voices = synth.getVoices();
+            if (!voices.length) return;
+            const sel = document.getElementById('ttsVoiceSel');
+            sel.innerHTML = '';
+            const enVoices = voices.filter(v => /^en/i.test(v.lang));
+            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+            function pickVoice(preferred) {
+                for (const name of preferred) {
+                    const match = enVoices.find(v => v.name.includes(name));
+                    if (match) return match;
+                }
+                return null;
+            }
+            const femaleVoice = pickVoice(preferredFemale);
+            const maleVoice   = pickVoice(preferredMale);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+            const options = [
+                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+            ].filter(o => o.voice !== null);
+            options.forEach(({ label, voice }) => {
+                const o = document.createElement('option');
+                o.value = voice.name;
+                o.textContent = label;
+                sel.appendChild(o);
+            });
+            if (!selectedVoice && options.length > 0) {
+                selectedVoice = options[0].voice;
+                sel.value = options[0].voice.name;
+            }
+        }
+
+        window.ttsSetVoice = function(name) {
+            const voices = synth.getVoices();
+            selectedVoice = voices.find(v => v.name === name) || null;
+            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
+        };
+
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
+                const txt = el.innerText.trim();
+                if (txt.length > 2) chunks.push({ el, text: txt });
+            });
+        }
+
+        function buildSectionMenu() {
+            const sel = document.getElementById('ttsSectionSel');
+            while (sel.options.length > 1) sel.remove(1);
+            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
+                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
+                if (!label || label.length < 2) return;
+                let matchIdx = -1;
+                for (let i = 0; i < chunks.length; i++) {
+                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
+                }
+                if (matchIdx >= 0) {
+                    const opt = document.createElement('option');
+                    opt.value = matchIdx;
+                    opt.textContent = label;
+                    sel.appendChild(opt);
+                }
+            });
+        }
+
+        function highlight(el) {
+            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
+            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            lastHighlighted = el;
+        }
+
+        function speakCurrent() {
+            if (idx >= chunks.length) { ttsStop(); return; }
+            const chunk = chunks[idx];
+            highlight(chunk.el);
+            const u = new SpeechSynthesisUtterance(chunk.text);
+            u.rate = parseFloat(document.getElementById('ttsSpeed').value);
+            if (selectedVoice) u.voice = selectedVoice;
+            u.onend = () => { if (!paused) { idx++; speakCurrent(); } };
+            currentUtterance = u;
+            synth.speak(u);
+        }
+
+        window.ttsPlay = function() {
+            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
+            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
+            else { synth.cancel(); paused = false; setButtons('playing'); speakCurrent(); }
+        };
+
+        function setButtons(state) {
+            const play  = document.getElementById('ttsPlay');
+            const pause = document.getElementById('ttsPause');
+            const stop  = document.getElementById('ttsStop');
+            if (!play || !pause || !stop) return;
+            play.disabled  = state === 'playing';
+            pause.disabled = state === 'idle';
+            stop.disabled  = state === 'idle';
+        }
+
+        window.ttsPause = function() { synth.pause(); paused = true; setButtons('paused'); };
+        window.ttsStop  = function() { synth.cancel(); idx = 0; highlight(null); setButtons('idle'); };
+        window.ttsUpdateSpeed = function() { document.getElementById('ttsSpeedVal').textContent = document.getElementById('ttsSpeed').value + 'x'; };
+        window.ttsJumpTo = function(v) { if (v >= 0) { idx = parseInt(v); ttsPlay(); } };
+
+        window.addEventListener('load', () => {
+            if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoiceList;
+            populateVoiceList();
+        });
+    })();
+</script>
+
+<script src="assets/translations.js"></script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
+
+</body>
+</html>

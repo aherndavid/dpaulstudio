@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+    var path = window.location.pathname.split("/").pop();
+    if (path === "") path = "index.html";
+    window.location.replace('m/' + path);
+  }
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services — CitiIT Limited</title>
+
+    <style>
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 130%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Grain Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* Font Nudge */
+        .font-nudge {
+            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 4px; padding: 12px 16px;
+            display: flex; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
+
+        /* Nav */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
+        }
+        nav a {
+            font-family: 'Courier New', Courier, monospace; font-size: 1.4rem; color: var(--cream);
+            text-decoration: none; padding: 10px 20px;
+            border: 1px solid transparent; border-radius: 3px;
+            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
+        }
+        nav a:hover { border-color: var(--orange); color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav .spacer { flex: 1; }
+
+        /* Mini EQ in nav */
+        #nav-eq-container {
+            display: flex; align-items: flex-end; gap: 2px;
+            height: 22px; margin: 0 24px; padding-bottom: 2px;
+        }
+        .nav-eq-bar {
+            width: 3px; background: var(--orange);
+            transition: height 0.1s ease; border-radius: 1px;
+        }
+
+        /* Language Switcher */
+        #lang-switcher { display: flex; gap: 6px; align-items: center; }
+        .lang-btn {
+            background: none; border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.35);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.12em; padding: 4px 8px;
+            cursor: pointer; transition: color 0.2s, border-color 0.2s;
+            text-transform: uppercase;
+        }
+        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
+        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+
+        /* Page */
+        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; }
+
+        /* Hero */
+        .hero { padding: 80px 0 72px; border-bottom: 1px solid var(--border); max-width: 1000px; }
+        .hero-label {
+            font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase;
+            margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+        }
+        .hero-label::after { content: ''; display: block; width: 48px; height: 1px; background: var(--orange); opacity: 0.5; }
+        .hero h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; letter-spacing: -0.02em; }
+        .hero h1 em { color: var(--orange); font-style: normal; }
+        .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); max-width: 660px; border-left: 2px solid var(--orange); padding-left: 20px; margin-top: 8px; }
+
+        /* TTS Player */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px 20px; margin: 32px 0 0;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+        }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
+        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
+        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-speed {
+            -webkit-appearance: none; appearance: none;
+            width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer;
+        }
+        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
+        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
+        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
+        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
+        .tts-section-sel, .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+        }
+        .tts-section-sel { max-width: 200px; }
+        .tts-voice-sel  { max-width: 240px; }
+        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
+        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+
+        /* Section structure */
+        .service-section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+        .section-eyebrow { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
+        .section-title { font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; letter-spacing: -0.02em; margin-bottom: 40px; }
+
+        /* Pricing card grid */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2px;
+            margin-bottom: 48px;
+        }
+
+        .pricing-card {
+            background: var(--bg2);
+            border: 1px solid var(--border-dim);
+            padding: 40px 36px;
+            transition: border-color 0.2s;
+        }
+        .pricing-card:hover { border-color: var(--border); }
+        .pricing-card.featured {
+            border-color: var(--orange);
+            position: relative;
+        }
+        .featured-badge {
+            position: absolute; top: -1px; left: 36px;
+            background: var(--orange); color: #000;
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+            padding: 4px 12px;
+        }
+
+        .card-label { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+        .card-price {
+            font-size: clamp(2.2rem, 3.5vw, 3.2rem); font-weight: 900; color: #fff;
+            letter-spacing: -0.02em; line-height: 1; margin-bottom: 6px;
+        }
+        .card-price span { font-size: 1rem; font-weight: 400; color: var(--dim); letter-spacing: 0.05em; }
+        .card-total { font-size: calc(0.91rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.12em; margin-bottom: 28px; }
+        .card-divider { width: 100%; height: 1px; background: var(--border-dim); margin-bottom: 28px; }
+
+        .card-includes-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
+
+        .include-list { list-style: none; }
+        .include-list li {
+            display: flex; align-items: flex-start; gap: 14px;
+            font-size: calc(1.04rem * var(--font-scale)); line-height: 1.65;
+            color: var(--text); padding: 10px 0;
+            border-bottom: 1px solid var(--border-dim);
+        }
+        .include-list li:last-child { border-bottom: none; }
+        .include-list li::before {
+            content: '//'; color: var(--orange); font-weight: 700;
+            font-size: 0.8rem; letter-spacing: 0.05em;
+            flex-shrink: 0; margin-top: 2px;
+        }
+        .include-list .included { color: var(--cream); }
+
+        /* Addon table */
+        .addon-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+        .addon-table th {
+            font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+            color: var(--orange); text-align: left; padding: 0 0 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .addon-table th:last-child { text-align: right; }
+        .addon-table td {
+            font-size: calc(1.04rem * var(--font-scale)); color: var(--text);
+            padding: 14px 0; border-bottom: 1px solid var(--border-dim);
+            vertical-align: top; line-height: 1.6;
+        }
+        .addon-table td:last-child { text-align: right; color: var(--cream); white-space: nowrap; padding-left: 24px; }
+        .addon-table td.addon-desc { color: var(--dim); font-size: calc(0.91rem * var(--font-scale)); display: block; margin-top: 3px; }
+        .addon-name { color: var(--cream); display: block; }
+
+        /* Terms blocks */
+        .terms-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 8px;
+        }
+        .terms-block {
+            background: var(--bg2); border: 1px solid var(--border-dim);
+            padding: 32px 28px;
+        }
+        .terms-block-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px; }
+        .terms-list { list-style: none; }
+        .terms-list li {
+            font-size: calc(1.04rem * var(--font-scale)); color: var(--text); line-height: 1.75;
+            padding: 8px 0; border-bottom: 1px solid var(--border-dim);
+            display: flex; gap: 12px; align-items: flex-start;
+        }
+        .terms-list li:last-child { border-bottom: none; }
+        .terms-list li::before { content: '—'; color: var(--orange); flex-shrink: 0; }
+
+        /* CTA block */
+        .cta-block {
+            margin-top: 80px; padding: 56px; border: 1px solid var(--border);
+            background: var(--bg2); display: flex; align-items: center; gap: 56px;
+        }
+        .cta-copy { flex: 1; }
+        .cta-label { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+        .cta-heading { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 16px; }
+        .cta-text { font-size: calc(1.17rem * var(--font-scale)); line-height: 1.85; color: var(--text); max-width: 520px; }
+        .cta-actions { display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
+        .cta-btn {
+            display: inline-block; padding: 14px 36px;
+            border: 1px solid var(--orange); color: var(--orange);
+            font-family: 'Courier New', Courier, monospace; font-size: 1.066rem;
+            letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+            border-radius: 3px; transition: all 0.2s; cursor: pointer; background: transparent;
+        }
+        .cta-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
+        .cta-btn.secondary { border-color: var(--border-dim); color: var(--dim); }
+        .cta-btn.secondary:hover { border-color: var(--cream); color: var(--cream); background: transparent; transform: none; }
+
+        .cta-aside {
+            display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0;
+        }
+        .cta-stat { text-align: center; }
+        .cta-stat-num { font-size: 3rem; font-weight: 900; color: var(--orange); line-height: 1; }
+        .cta-stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-top: 4px; }
+        .cta-divider { width: 1px; height: 40px; background: var(--border-dim); }
+
+        /* Reveal */
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        @media (max-width: 900px) {
+            nav { padding: 0 24px; }
+            .page { padding: 0 24px 80px; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .terms-grid { grid-template-columns: 1fr; }
+            .cta-block { flex-direction: column; gap: 32px; padding: 32px 24px; }
+            .cta-aside { flex-direction: row; }
+            .cta-divider { width: 40px; height: 1px; }
+        }
+        @media (max-width: 600px) {
+            .font-nudge { bottom: 16px; right: 16px; }
+            .tts-controls { gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A&#8722;</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
+</div>
+
+<nav>
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <a href="dev-tools.html">dev tools</a>
+    <a href="services.html" class="active">services</a>
+    <div class="spacer"></div>
+    <div id="nav-eq-container"></div>
+    <div id="lang-switcher">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn"        data-lang="fr">FR</button>
+        <button class="lang-btn"        data-lang="es">ES</button>
+    </div>
+    <a href="about.html">info</a>
+</nav>
+
+<div class="page">
+
+    <!-- HERO -->
+    <section class="hero reveal">
+        <div class="hero-label">// CitiIT Limited &#8212; Web &amp; Digital Services</div>
+        <h1>Web services.<br>Built to<br><em>last.</em></h1>
+        <p class="hero-intro">
+            Small businesses deserve websites that actually work. CitiIT Limited builds custom digital presences &#8212; designed from scratch, hosted properly, and supported after launch. No templates. No hidden costs. A fixed monthly rate that covers everything you need to go live and stay live.
+        </p>
+
+        <div class="tts-player" id="ttsPlayer">
+            <span class="tts-label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <div class="tts-sep"></div>
+                <div class="tts-speed-wrap">
+                    <span class="tts-speed-label">Speed</span>
+                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label">Voice</span>
+                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                        <option value="">Loading voices...</option>
+                    </select>
+                </div>
+                <div class="tts-sep"></div>
+                <div class="tts-section-wrap">
+                    <span class="tts-section-label">Jump to</span>
+                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
+                        <option value="-1">-- section --</option>
+                    </select>
+                </div>
+            </div>
+            <span class="tts-progress" id="ttsProgress"></span>
+        </div>
+    </section>
+
+    <!-- SETUP PACKAGE -->
+    <section class="service-section reveal">
+        <div class="section-eyebrow">// 01 &#8212; Getting started</div>
+        <div class="section-title">The setup package</div>
+
+        <div class="pricing-grid">
+
+            <!-- Main Package Card -->
+            <div class="pricing-card featured">
+                <div class="featured-badge">Most popular</div>
+                <div class="card-label">Initial Setup Package</div>
+                <div class="card-price">£49 <span>/ month</span></div>
+                <div class="card-total">12-month contract &mdash; £588 total</div>
+                <div class="card-divider"></div>
+                <div class="card-includes-label">Everything included:</div>
+                <ul class="include-list">
+                    <li><span class="included">Custom website design &amp; build</span><br>One-page site built to your brand &#8212; menu, specials, location, contact form and social links</li>
+                    <li><span class="included">Domain registration</span><br>Your chosen domain name secured and configured</li>
+                    <li><span class="included">Professional email address</span><br>Business email tied to your domain, e.g. hello@yourbusiness.co.uk</li>
+                    <li><span class="included">12 months hosting</span><br>Secure, fast web hosting keeps your site live for the full contract period</li>
+                    <li><span class="included">Branded invoice template</span><br>Matching your website design with your logo of choice</li>
+                    <li><span class="included">50 printed business cards</span><br>Same design language as your site, ready to hand out</li>
+                    <li><span class="included">3 months free revisions</span><br>Text, price, and content changes made free of charge after launch</li>
+                </ul>
+            </div>
+
+            <!-- What you get summary card -->
+            <div class="pricing-card">
+                <div class="card-label">How it works</div>
+                <div class="card-price" style="font-size:1.8rem; line-height:1.3;">
+                    One fixed rate.<br>Everything handled.
+                </div>
+                <div class="card-total" style="margin-bottom:28px;">No hidden extras during your contract</div>
+                <div class="card-divider"></div>
+                <div class="card-includes-label">Payment schedule:</div>
+                <ul class="include-list">
+                    <li>First payment due before any work commences</li>
+                    <li>Payments fall on the same date each month</li>
+                    <li>Accepted: Bank Transfer and other methods on request</li>
+                    <li>If a payment is missed, services are suspended after 7 days notice</li>
+                    <li>A £25 reactivation fee applies to restore suspended services</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ONGOING SERVICES -->
+    <section class="service-section reveal">
+        <div class="section-eyebrow">// 02 &#8212; After the contract</div>
+        <div class="section-title">Ongoing &amp; add&#8209;on services</div>
+
+        <p class="hero-intro" style="margin-bottom: 48px; border-left-color: var(--border-dim); color: var(--dim);">
+            Once your 12-month contract completes, the site is yours. These services are available to keep things running and growing.
+        </p>
+
+        <table class="addon-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span class="addon-name">Monthly Maintenance Plan</span>
+                        <span class="addon-desc">Continued hosting, security monitoring, backups and one content update per month &#8212; available after the 12-month contract ends</span>
+                    </td>
+                    <td>From £[TBC]/mo</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="addon-name">Additional Revisions</span>
+                        <span class="addon-desc">Per revision after the initial 3-month free revision period has expired</span>
+                    </td>
+                    <td>£30 each</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="addon-name">Additional Pages</span>
+                        <span class="addon-desc">New pages added to your site &#8212; dish pages, ingredient lists, gallery, booking</span>
+                    </td>
+                    <td>From £[TBC]</td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="addon-name">Annual Domain Renewal</span>
+                        <span class="addon-desc">Domain name renewal after year one</span>
+                    </td>
+                    <td>From £[TBC]/yr</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- TERMS -->
+    <section class="service-section reveal">
+        <div class="section-eyebrow">// 03 &#8212; Working together</div>
+        <div class="section-title">Terms &amp; what to bring</div>
+
+        <div class="terms-grid">
+            <div class="terms-block">
+                <div class="terms-block-label">Service conditions</div>
+                <ul class="terms-list">
+                    <li>Free revisions are available for 3 months from the website launch date</li>
+                    <li>Revisions after this period are charged at £30 per revision</li>
+                    <li>Missed payments result in service suspension after 7 days written notice</li>
+                    <li>Reactivation after suspension incurs a £25 fee</li>
+                    <li>CitiIT Limited reserves the right to update pricing with 30 days written notice</li>
+                    <li>A full service agreement is provided separately before work begins</li>
+                </ul>
+            </div>
+            <div class="terms-block">
+                <div class="terms-block-label">What the client provides</div>
+                <ul class="terms-list">
+                    <li>Logo or branding assets if available</li>
+                    <li>High-quality photos of the business, dishes, or products</li>
+                    <li>Accurate menu items, prices and allergen information</li>
+                    <li>Access to existing domain if transferring an existing address</li>
+                    <li>Written approval before the website goes live</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-block reveal">
+        <div class="cta-copy">
+            <div class="cta-label">// Ready to start?</div>
+            <div class="cta-heading">Get your business online. From £49 a month.</div>
+            <p class="cta-text">
+                Everything handled. One fixed monthly payment, no surprises, no template websites. 
+                Reach out and we'll put together a proposal around your business.
+            </p>
+            <div class="cta-actions">
+                <a href="about.html" class="cta-btn">Get in touch &#8594;</a>
+                <a href="#" class="cta-btn secondary" onclick="window.print(); return false;">Download as PDF</a>
+            </div>
+        </div>
+        <div class="cta-aside">
+            <div class="cta-stat">
+                <div class="cta-stat-num">£49</div>
+                <div class="cta-stat-label">per month</div>
+            </div>
+            <div class="cta-divider"></div>
+            <div class="cta-stat">
+                <div class="cta-stat-num">7</div>
+                <div class="cta-stat-label">items included</div>
+            </div>
+            <div class="cta-divider"></div>
+            <div class="cta-stat">
+                <div class="cta-stat-num">3</div>
+                <div class="cta-stat-label">months free edits</div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /page -->
+
+<script>
+    // ── NAV EQ ANIMATION ──
+    (function() {
+        const NUM_BARS = 8, MAX_H = 20;
+        const container = document.getElementById('nav-eq-container');
+        if (!container) return;
+        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
+        const targets = [...levels];
+        const bars = [];
+        for (let i = 0; i < NUM_BARS; i++) {
+            const b = document.createElement('div');
+            b.className = 'nav-eq-bar';
+            container.appendChild(b);
+            bars.push(b);
+        }
+        function animateEQ() {
+            for (let i = 0; i < NUM_BARS; i++) {
+                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
+                levels[i] += (targets[i] - levels[i]) * 0.15;
+                bars[i].style.height = levels[i] + 'px';
+            }
+            requestAnimationFrame(animateEQ);
+        }
+        animateEQ();
+    })();
+
+    // FONT NUDGE
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    function dismissNudge() {
+        document.getElementById('fontNudge').style.opacity = '0';
+        document.getElementById('fontNudge').style.pointerEvents = 'none';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
+
+    // SCROLL REVEAL
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.08 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // ─── TTS ENGINE ────────────────────────────────────────────────────
+    (function() {
+        const synth = window.speechSynthesis;
+        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
+        let selectedVoice = null;
+
+        const READ_SELECTORS = [
+            '.hero h1', '.hero-intro', '.include-list li',
+            '.addon-table td', '.terms-list li', '.cta-text', '.cta-heading'
+        ];
+        const SECTION_SELECTORS = [
+            '.hero-label', '.section-eyebrow', '.section-title', '.cta-label'
+        ];
+
+        function populateVoiceList() {
+            const voices = synth.getVoices();
+            if (!voices.length) return;
+            const sel = document.getElementById('ttsVoiceSel');
+            if (!sel) return;
+            sel.innerHTML = '';
+            const enVoices = voices.filter(v => /^en/i.test(v.lang));
+            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+            function pickVoice(preferred) {
+                for (const name of preferred) {
+                    const match = enVoices.find(v => v.name.includes(name));
+                    if (match) return match;
+                }
+                return null;
+            }
+            const femaleVoice = pickVoice(preferredFemale);
+            const maleVoice   = pickVoice(preferredMale);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+            const options = [
+                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+            ].filter(o => o.voice !== null);
+            options.forEach(({ label, voice }) => {
+                const o = document.createElement('option');
+                o.value = voice.name; o.textContent = label;
+                sel.appendChild(o);
+            });
+            if (!selectedVoice && options.length > 0) {
+                selectedVoice = options[0].voice;
+                sel.value = options[0].voice.name;
+            }
+        }
+
+        window.ttsSetVoice = function(name) {
+            const voices = synth.getVoices();
+            selectedVoice = voices.find(v => v.name === name) || null;
+            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
+        };
+
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
+                const txt = el.innerText.trim();
+                if (txt.length > 2) chunks.push({ el, text: txt });
+            });
+        }
+        function buildSectionMenu() {
+            const sel = document.getElementById('ttsSectionSel');
+            if (!sel) return;
+            while (sel.options.length > 1) sel.remove(1);
+            let map = [];
+            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
+                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
+                if (!label || label.length < 2) return;
+                let matchIdx = -1;
+                for (let i = 0; i < chunks.length; i++) {
+                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
+                }
+                if (matchIdx >= 0) map.push({ label, idx: matchIdx });
+            });
+            const seen = new Set();
+            map = map.filter(s => { if (seen.has(s.idx)) return false; seen.add(s.idx); return true; });
+            map.forEach(s => {
+                const o = document.createElement('option');
+                o.value = s.idx;
+                o.textContent = s.label.length > 38 ? s.label.slice(0, 36) + '...' : s.label;
+                sel.appendChild(o);
+            });
+        }
+
+        function highlight(el) {
+            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
+            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            lastHighlighted = el;
+        }
+        function setProgress() {
+            const prog = document.getElementById('ttsProgress');
+            if (prog) prog.textContent = chunks.length ? (idx + 1) + ' / ' + chunks.length : '';
+        }
+        function setButtons(state) {
+            const play = document.getElementById('ttsPlay');
+            const pause = document.getElementById('ttsPause');
+            const stop  = document.getElementById('ttsStop');
+            if (!play || !pause || !stop) return;
+            if (state === 'idle') {
+                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
+                pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
+            } else if (state === 'playing') {
+                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
+                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active');
+                stop.disabled = false;
+            } else if (state === 'paused') {
+                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
+                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
+            }
+        }
+        function speakAt(startIdx) {
+            synth.cancel();
+            if (startIdx >= chunks.length) { ttsStop(); return; }
+            idx = startIdx; paused = false; setButtons('playing'); speakCurrent();
+        }
+        function speakCurrent() {
+            if (idx >= chunks.length) { ttsStop(); return; }
+            const chunk = chunks[idx];
+            highlight(chunk.el); setProgress();
+            const rate = parseFloat(document.getElementById('ttsSpeed').value);
+            const u = new SpeechSynthesisUtterance(chunk.text);
+            u.rate = rate; u.lang = 'en-GB';
+            if (selectedVoice) u.voice = selectedVoice;
+            u.onend  = () => { if (!paused) { idx++; speakCurrent(); } };
+            u.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') { idx++; speakCurrent(); } };
+            currentUtterance = u;
+            synth.speak(u);
+        }
+
+        window.ttsPlay = function() {
+            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
+            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
+            else { speakAt(idx); }
+        };
+        window.ttsPause = function() {
+            if (synth.speaking && !synth.paused) { paused = true; synth.pause(); setButtons('paused'); }
+        };
+        window.ttsStop = function() {
+            paused = false; synth.cancel(); idx = 0;
+            if (lastHighlighted) { lastHighlighted.classList.remove('tts-highlight'); lastHighlighted = null; }
+            const prog = document.getElementById('ttsProgress');
+            if (prog) prog.textContent = '';
+            const sel = document.getElementById('ttsSectionSel');
+            if (sel) sel.value = '-1';
+            setButtons('idle');
+        };
+        window.ttsUpdateSpeed = function() {
+            const val = parseFloat(document.getElementById('ttsSpeed').value).toFixed(2);
+            document.getElementById('ttsSpeedVal').textContent = val + 'x';
+            if (currentUtterance) currentUtterance.rate = parseFloat(val);
+        };
+        window.ttsJumpTo = function(val) {
+            const i = parseInt(val);
+            if (isNaN(i) || i < 0) return;
+            speakAt(i);
+            document.getElementById('ttsSectionSel').value = '-1';
+        };
+
+        window.addEventListener('load', () => {
+            buildChunks(); buildSectionMenu();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = () => { selectedVoice = null; populateVoiceList(); };
+            }
+            populateVoiceList();
+        });
+        window.addEventListener('beforeunload', () => synth.cancel());
+    })();
+</script>
+
+</body>
+</html>
