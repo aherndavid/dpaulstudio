@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merch — dPaul Technologies (Mobile)</title>
-
+    <title>Merch — dPaul Technologies</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg:      #131413;
@@ -28,7 +28,6 @@
             overflow-x: hidden;
         }
 
-        /* Film Grain Overlay */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -36,10 +35,10 @@
             pointer-events: none; z-index: 9999; opacity: 0.3;
         }
 
-        /* ── NAVIGATION ── */
+        /* ── NAV ── */
         #mobile-nav-container {
             position: sticky; top: 0; z-index: 1000;
-            background: rgba(19, 20, 19, 0.9);
+            background: rgba(19,20,19,0.95);
             border-bottom: 1px solid var(--border);
             height: 64px;
         }
@@ -48,17 +47,13 @@
             padding: 0 20px; height: 100%;
         }
         .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
-
         .burger {
             background: none; border: none; cursor: pointer;
             width: 30px; height: 20px; position: relative;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 0; z-index: 1001;
         }
-        .burger span {
-            display: block; width: 100%; height: 2px;
-            background: var(--cream); transition: all 0.3s ease;
-        }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--cream); transition: all 0.3s ease; }
         .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
         .burger.active span:nth-child(2) { opacity: 0; }
         .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
@@ -66,7 +61,7 @@
         .mobile-menu {
             position: fixed; top: 64px; left: 0; width: 100%; height: 0;
             background: var(--bg); overflow: hidden;
-            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: height 0.4s cubic-bezier(0.4,0,0.2,1);
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
             z-index: 999;
         }
@@ -77,81 +72,278 @@
         }
         .mobile-menu a.active { color: var(--orange); font-weight: bold; }
 
-        /* ── BACKGROUND FULL-PAGE IMAGES ── */
-        .background-wrap {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: #0e0f0e;
+        /* ── TICKER ── */
+        .ticker-wrap {
+            position: relative; width: 100%; background: #000;
+            border-bottom: 2px solid #222; overflow: hidden;
+            padding: 10px 0;
         }
-        .background-wrap img {
-            position: absolute;
-            inset: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 1.2s ease-in-out;
+        .ticker-track {
+            display: flex; gap: 40px; width: max-content;
+            animation: ticker 60s linear infinite;
+            white-space: nowrap; align-items: center;
         }
-        .background-wrap img.active { opacity: 1; }
+        .ticker-track span {
+            font-family: 'VT323', monospace; font-size: 1.8rem;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            color: var(--orange); text-shadow: 0 0 8px rgba(255,102,0,0.7);
+        }
+        .ticker-track .tick-dot { color: #444; }
+        .ticker-bottom { border-bottom: none; border-top: 2px solid #222; }
+        .ticker-bottom span { color: var(--cream); text-shadow: 0 0 8px rgba(212,196,168,0.4); }
+        @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
-        .overlay-dim {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 0;
-        }
+        /* ── PAGE ── */
+        .page { padding: 0 16px 60px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
 
-        /* ── CONTENT PAGE ── */
-        .page { 
-            position: relative;
-            z-index: 1;
-            padding: 0 20px 80px; 
-            max-width: 600px; 
-            margin: 0 auto; 
-        }
-
-        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
-        .hero-label { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
-        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
+        /* ── HERO ── */
+        .hero { padding: 32px 0 28px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 18px; color: #fff; font-weight: 900; }
         .hero h1 em { color: var(--orange); font-style: normal; }
-        .hero-intro {
-            font-size: 1.1rem; line-height: 1.75; color: var(--text);
-            border-left: 2px solid var(--orange); padding-left: 16px;
+        .hero-intro { font-size: 1rem; line-height: 1.75; color: var(--text); border-left: 2px solid var(--orange); padding-left: 14px; }
+
+        /* ── SHIPPING BANNER ── */
+        .shipping-banner {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px 16px; border: 1px solid rgba(255,102,0,0.2);
+            background: rgba(255,102,0,0.04); margin: 20px 0 0;
+        }
+        .ship-icon { color: var(--orange); font-size: 0.72rem; letter-spacing: 0.1em; flex-shrink: 0; margin-top: 2px; }
+        .shipping-banner p { font-size: 0.72rem; letter-spacing: 0.1em; color: var(--cream); text-transform: uppercase; line-height: 1.6; }
+        .shipping-banner a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,102,0,0.4); }
+
+        /* ── COLLECTION ── */
+        .collection { padding: 32px 0 0; }
+        .collection-label { font-size: 0.75rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+
+        /* ── PRODUCT CARD ── */
+        .product-card {
+            border: 1px solid var(--border);
+            margin-bottom: 32px;
+            transition: border-color 0.3s;
+        }
+        .product-card:hover { border-color: rgba(255,102,0,0.5); }
+
+        .product-image-wrap {
+            position: relative; overflow: hidden;
+            background: #0d0e0d; width: 100%;
+            aspect-ratio: 1 / 1;
+        }
+        .product-image-wrap img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: block; transition: opacity 0.4s ease;
+        }
+        .product-num {
+            position: absolute; top: 12px; left: 12px;
+            font-family: 'VT323', monospace; font-size: 1.2rem;
+            color: rgba(255,102,0,0.5); letter-spacing: 0.1em; z-index: 2;
         }
 
-        .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
-        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
-
-        .below-copy {
-            font-size: 1.1rem; line-height: 1.75; color: var(--text);
-            border-left: 2px solid var(--orange); padding-left: 16px;
-            margin-bottom: 24px;
+        /* colour toggle */
+        .colour-toggle {
+            position: absolute; bottom: 12px; left: 12px;
+            display: flex; gap: 6px; z-index: 2;
         }
-
-        .badge {
-            display: inline-block;
-            padding: 8px 16px; border: 1px solid var(--orange);
-            color: var(--orange); font-size: 0.85rem;
-            letter-spacing: 0.2em; text-transform: uppercase;
-            animation: pulse 2.5s infinite;
+        .colour-btn {
+            width: 22px; height: 22px; border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer; transition: border-color 0.2s;
         }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+        .colour-btn.black { background: #111; }
+        .colour-btn.white { background: #f0f0f0; }
+        .colour-btn.active { border-color: var(--orange); }
 
-        .footer-line {
-            margin-top: 60px; padding-top: 24px;
+        /* view toggle */
+        .view-toggle {
+            position: absolute; top: 12px; right: 12px;
+            display: flex; gap: 4px; z-index: 2;
+        }
+        .view-btn {
+            padding: 3px 8px; font-family: 'Courier New', Courier, monospace;
+            font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.4);
+            background: rgba(0,0,0,0.5); cursor: pointer; transition: all 0.15s;
+        }
+        .view-btn.active { border-color: var(--orange); color: var(--orange); background: rgba(255,102,0,0.08); }
+
+        /* product info */
+        .product-info {
+            padding: 24px 20px 20px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+        .product-tag { font-size: 0.65rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
+        .product-name { font-size: 1.6rem; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 8px; }
+        .product-name em { color: var(--orange); font-style: normal; }
+        .product-price { font-size: 1.25rem; color: var(--cream); letter-spacing: 0.08em; margin-bottom: 20px; }
+        .product-price span { font-size: 0.65rem; color: var(--dim); letter-spacing: 0.15em; margin-left: 6px; text-transform: uppercase; }
+
+        /* limited badge */
+        .limited-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            border: 1px solid rgba(255,102,0,0.4); padding: 5px 10px;
+            font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+            color: var(--orange); margin-bottom: 16px;
+        }
+        .limited-badge::before { content: '◆'; font-size: 0.45rem; }
+
+        /* sizes */
+        .sizes-label { font-size: 0.62rem; letter-spacing: 0.22em; color: var(--dim); text-transform: uppercase; margin-bottom: 10px; }
+        .size-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
+        .size-pill {
+            padding: 5px 10px; border: 1px solid rgba(255,255,255,0.12);
+            font-size: 0.68rem; letter-spacing: 0.1em; color: var(--dim);
+            cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+        }
+        .size-pill:hover { border-color: var(--orange); color: var(--cream); }
+        .size-pill.selected { border-color: var(--orange); color: var(--orange); background: rgba(255,102,0,0.06); }
+
+        /* spec list */
+        .spec-list { list-style: none; margin-bottom: 20px; }
+        .spec-list li {
+            display: flex; align-items: baseline; gap: 10px;
+            padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.75rem; color: var(--text); letter-spacing: 0.05em;
+        }
+        .spec-list li:last-child { border-bottom: none; }
+        .spec-list li::before { content: '—'; color: var(--orange); flex-shrink: 0; }
+
+        /* actions */
+        .product-actions { display: flex; flex-direction: column; gap: 10px; }
+        .btn-buy {
+            display: block; text-align: center; text-decoration: none;
+            background: var(--orange); color: #000;
+            padding: 14px 20px; font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em;
+            text-transform: uppercase; transition: background 0.2s;
+            border: 1px solid var(--orange);
+        }
+        .btn-buy:active { background: #e55a00; }
+        .btn-size-guide {
+            background: none; border: 1px solid rgba(255,102,0,0.25);
+            color: var(--dim); font-family: 'Courier New', Courier, monospace;
+            font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+            padding: 9px 20px; cursor: pointer; transition: all 0.2s; text-align: center; width: 100%;
+        }
+        .btn-size-guide:hover { border-color: var(--orange); color: var(--orange); }
+
+        /* ── SIZE GUIDE MODAL ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.88); z-index: 2000;
+            align-items: flex-end; justify-content: center; padding: 0;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #131413; border: 1px solid rgba(255,102,0,0.35);
+            width: 100%; max-height: 85vh; overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .modal-header {
+            background: var(--orange); padding: 12px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0;
+        }
+        .modal-header span { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: #000; font-weight: 700; }
+        .modal-close {
+            background: none; border: none; cursor: pointer; color: #000;
+            font-size: 1rem; padding: 0 2px; font-family: 'Courier New', Courier, monospace;
+        }
+        .modal-body { padding: 20px; }
+        .modal-sub { font-size: 0.68rem; letter-spacing: 0.1em; color: rgba(122,122,112,0.8); text-transform: uppercase; margin-bottom: 16px; border-left: 2px solid rgba(255,102,0,0.4); padding-left: 8px; }
+        .size-table { width: 100%; border-collapse: collapse; }
+        .size-table th {
+            text-align: left; padding: 8px 10px; font-size: 0.62rem;
+            letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,102,0,0.3); font-weight: 700;
+        }
+        .size-table th:not(:first-child) { text-align: center; }
+        .size-table td { padding: 9px 10px; font-size: 0.82rem; color: var(--text); border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .size-table td:first-child { color: var(--cream); font-weight: 700; letter-spacing: 0.1em; }
+        .size-table td:not(:first-child) { text-align: center; }
+        .size-table tr:nth-child(even) td { background: rgba(255,102,0,0.03); }
+
+        /* ── COMPANY FOOTER ── */
+        .company-footer {
+            margin-top: 40px; padding: 24px 0;
             border-top: 1px solid var(--border-dim);
-            font-size: 0.75rem; letter-spacing: 0.15em;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .company-footer-block { display: flex; flex-direction: column; gap: 4px; }
+        .company-footer-label { font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); }
+        .company-footer-val { font-size: 0.82rem; color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val a { color: var(--dim); text-decoration: none; }
+        .company-footer-val a:hover { color: var(--orange); }
+        .company-footer-note { font-size: 0.75rem; color: var(--dim); opacity: 0.6; line-height: 1.6; }
+
+        /* ── FOOTER ── */
+        .footer-line {
+            margin-top: 32px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68rem; letter-spacing: 0.14em;
             color: var(--dim); text-transform: uppercase;
         }
 
-        /* ── REVEAL ── */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
+<!-- ── T-SHIRT SIZE GUIDE MODAL ── -->
+<div class="modal-overlay" id="sizeModal" onclick="if(event.target===this)closeSizeGuide()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>// Size Guide — Men's T-Shirt</span>
+            <button class="modal-close" onclick="closeSizeGuide()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p class="modal-sub">Measured in centimetres — accurate to within 2–3cm</p>
+            <table class="size-table">
+                <thead><tr><th>Size</th><th>Length</th><th>Width</th></tr></thead>
+                <tbody>
+                    <tr><td>XS</td><td>68</td><td>46</td></tr>
+                    <tr><td>S</td><td>71</td><td>49</td></tr>
+                    <tr><td>M</td><td>74</td><td>52</td></tr>
+                    <tr><td>L</td><td>76</td><td>55</td></tr>
+                    <tr><td>XL</td><td>79</td><td>58</td></tr>
+                    <tr><td>2XL</td><td>79</td><td>61</td></tr>
+                    <tr><td>3XL</td><td>82.5</td><td>66</td></tr>
+                    <tr><td>4XL</td><td>85</td><td>68.5</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── HOODIE SIZE GUIDE MODAL ── -->
+<div class="modal-overlay" id="hoodieModal" onclick="if(event.target===this)closeHoodieGuide()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>// Size Guide — Men's Hoodie</span>
+            <button class="modal-close" onclick="closeHoodieGuide()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p class="modal-sub">Gildan GD067 — To fit chest measurement</p>
+            <table class="size-table">
+                <thead><tr><th>Size</th><th>Chest (in)</th><th>Chest (cm)</th></tr></thead>
+                <tbody>
+                    <tr><td>S</td><td>34–36"</td><td>86–91</td></tr>
+                    <tr><td>M</td><td>38–40"</td><td>97–102</td></tr>
+                    <tr><td>L</td><td>42–44"</td><td>107–112</td></tr>
+                    <tr><td>XL</td><td>46–48"</td><td>117–122</td></tr>
+                    <tr><td>2XL</td><td>50–52"</td><td>127–132</td></tr>
+                    <tr><td>3XL</td><td>54–56"</td><td>137–142</td></tr>
+                    <tr><td>4XL</td><td>58–60"</td><td>147–152</td></tr>
+                    <tr><td>5XL</td><td>62–64"</td><td>157–163</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── NAV ── -->
 <div id="mobile-nav-container">
     <div class="nav-wrapper">
         <div class="nav-brand">dPaul Technologies</div>
@@ -172,35 +364,320 @@
     <a href="../about.html">info</a>
 </div>
 
-<div class="background-wrap">
-    <img id="img0" src="../assets/merch-trolley.png"   alt="Merch En Route — dPaul Technologies">
-    <img id="img1" src="../assets/merch-trolley-2.png" alt="Merch En Route — dPaul Technologies">
+<!-- ── TICKER ── -->
+<div class="ticker-wrap">
+    <div class="ticker-track">
+        <span>LIMITED RUN</span><span class="tick-dot"> - </span>
+        <span>STUDIO AESTHETIC</span><span class="tick-dot"> - </span>
+        <span>ONCE GONE, GONE</span><span class="tick-dot"> - </span>
+        <span>EXCLUSIVE PIECES</span><span class="tick-dot"> - </span>
+        <span>LIMITED RUN</span><span class="tick-dot"> - </span>
+        <span>STUDIO AESTHETIC</span><span class="tick-dot"> - </span>
+        <span>ONCE GONE, GONE</span><span class="tick-dot"> - </span>
+        <span>EXCLUSIVE PIECES</span><span class="tick-dot"> - </span>
+    </div>
 </div>
 
-<div class="overlay-dim"></div>
-
 <div class="page">
+
+    <!-- HERO -->
     <section class="hero reveal">
         <div class="hero-label">// dPaul Technologies — Merch</div>
         <h1>Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
         <p class="hero-intro">
             The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone.
         </p>
+        <div class="shipping-banner">
+            <span class="ship-icon">// FREE UK SHIPPING</span>
+            <p>Free shipping on all UK orders. International enquiries — <a href="mailto:david@dpaul.studio">david@dpaul.studio</a></p>
+        </div>
     </section>
 
-    <section class="section reveal">
-        <div class="section-label">// Debut collection</div>
-        <p class="below-copy">
-            Explore the intersection of functional utility and technical design.
-        </p>
-        <div class="badge">// En Route — available very soon</div>
-    </section>
+    <!-- COLLECTION -->
+    <div class="collection">
+        <div class="collection-label reveal">// Debut Collection — 2024</div>
+
+        <!-- ── 001 ── -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <span class="product-num">001</span>
+                <img id="img-001" src="../assets/merch/design-001.png" alt="DPAUL Head Right T-Shirt in Black">
+                <div class="colour-toggle">
+                    <div class="colour-btn black active" title="Black" onclick="switchColour('001','black',this)"></div>
+                    <div class="colour-btn white" title="White" onclick="switchColour('001','white',this)"></div>
+                </div>
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's T-Shirt — 001</p>
+                <h2 class="product-name">DPAUL<br><em>Head Right</em></h2>
+                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">XS</div>
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>100% Cotton</li>
+                    <li>Fine gauge knit, 141 GSM</li>
+                    <li>Shoulder-to-shoulder taping</li>
+                    <li>Rolled forward shoulders for a better fit</li>
+                    <li>Front coverseaming on collar</li>
+                    <li>Available in Black &amp; White</li>
+                </ul>
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/9B6fZifcleaafdDekXb3q07" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
+                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 002 ── -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <span class="product-num">002</span>
+                <img id="img-002" src="../assets/merch/design-002.png" alt="DPAUL Head Left T-Shirt in Black">
+                <div class="colour-toggle">
+                    <div class="colour-btn black active" title="Black" onclick="switchColour('002','black',this)"></div>
+                    <div class="colour-btn white" title="White" onclick="switchColour('002','white',this)"></div>
+                </div>
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's T-Shirt — 002</p>
+                <h2 class="product-name">DPAUL<br><em>Head Left</em></h2>
+                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">XS</div>
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>100% Cotton</li>
+                    <li>Fine gauge knit, 141 GSM</li>
+                    <li>Shoulder-to-shoulder taping</li>
+                    <li>Rolled forward shoulders for a better fit</li>
+                    <li>Front coverseaming on collar</li>
+                    <li>Available in Black &amp; White</li>
+                </ul>
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/5kQ8wQ2pz4zAfdDdgTb3q08" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
+                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 003 ── -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <span class="product-num">003</span>
+                <img id="img-003" src="../assets/merch/design-003.png" alt="Embrace AI T-Shirt in Black">
+                <div class="colour-toggle">
+                    <div class="colour-btn black active" title="Black" onclick="switchColour('003','black',this)"></div>
+                    <div class="colour-btn white" title="White" onclick="switchColour('003','white',this)"></div>
+                </div>
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's T-Shirt — 003</p>
+                <h2 class="product-name">DPAUL<br><em>Embrace AI</em></h2>
+                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">XS</div>
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>100% Cotton</li>
+                    <li>Fine gauge knit, 141 GSM</li>
+                    <li>Shoulder-to-shoulder taping</li>
+                    <li>Rolled forward shoulders for a better fit</li>
+                    <li>Front coverseaming on collar</li>
+                    <li>Available in Black &amp; White</li>
+                </ul>
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/9B6fZie8h5DE4yZ1ybb3q09" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
+                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 004 ── -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <span class="product-num">004</span>
+                <img id="img-004" src="../assets/merch/design-004.png" alt="Logic by Day T-Shirt in Black">
+                <div class="colour-toggle">
+                    <div class="colour-btn black active" title="Black" onclick="switchColour('004','black',this)"></div>
+                    <div class="colour-btn white" title="White" onclick="switchColour('004','white',this)"></div>
+                </div>
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's T-Shirt — 004</p>
+                <h2 class="product-name">DPAUL<br><em>Logic by Day</em></h2>
+                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">XS</div>
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>100% Cotton</li>
+                    <li>Fine gauge knit, 141 GSM</li>
+                    <li>Shoulder-to-shoulder taping</li>
+                    <li>Rolled forward shoulders for a better fit</li>
+                    <li>Front coverseaming on collar</li>
+                    <li>Available in Black &amp; White</li>
+                </ul>
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/fZuaEYfcl2rse9z3Gjb3q0a" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
+                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 005 HOODIE ── -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <span class="product-num">005</span>
+                <img id="img-005" src="../assets/merch/design-005.png" alt="DPAUL Studio Hoodie in Black — Front">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView('005','front',this)">Front</button>
+                    <button class="view-btn" onclick="switchView('005','rear',this)">Rear</button>
+                </div>
+                <div class="colour-toggle">
+                    <div class="colour-btn black active" title="Black" onclick="switchColourHoodie('005','black',this)"></div>
+                    <div class="colour-btn white" title="White" onclick="switchColourHoodie('005','white',this)"></div>
+                </div>
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's Hoodie — 005</p>
+                <h2 class="product-name">DPAUL<br><em>Studio Hoodie</em></h2>
+                <p class="product-price">£29.00 <span>GBP · Free UK shipping</span></p>
+                <div class="limited-badge">Limited Edition — Numbered 01–50 per colour</div>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">5XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>80% Cotton, 20% Polyester</li>
+                    <li>285gsm (White: 278gsm) — Gildan GD067</li>
+                    <li>Twin needle stitching throughout</li>
+                    <li>Kangaroo pouch pocket</li>
+                    <li>Drawcord double lined hood</li>
+                    <li>World-class print &amp; embroidery technology</li>
+                    <li>Available in Black &amp; White — once gone, gone</li>
+                </ul>
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/3cI8wQe8haXYd5v1ybb3q0b" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £29.00</a>
+                    <button class="btn-size-guide" onclick="openHoodieGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 007 APOLLO 11 ── -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <span class="product-num">007</span>
+                <img id="img-007" src="../assets/merch/design-007.png" alt="Apollo 11 Men's T-Shirt in Black">
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's T-Shirt — 007</p>
+                <h2 class="product-name">DPAUL<br><em>Apollo 11</em></h2>
+                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">XS</div>
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>100% Cotton</li>
+                    <li>Fine gauge knit, 141 GSM</li>
+                    <li>Shoulder-to-shoulder taping</li>
+                    <li>Rolled forward shoulders for a better fit</li>
+                    <li>Front coverseaming on collar</li>
+                    <li>Available in Black only</li>
+                </ul>
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/14AdRa8NX8PQ3uV2Cfb3q0c" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
+                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /collection -->
+
+    <footer class="company-footer">
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company</div>
+            <div class="company-footer-val">CitiIT Limited</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as <strong style="color:var(--cream)">dpaul.studio</strong> for creative and digital work.</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company No.</div>
+            <div class="company-footer-val">15811174</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">VAT No.</div>
+            <div class="company-footer-val">473 5892 49</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Website</div>
+            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
+        </div>
+    </footer>
 
     <div class="footer-line reveal">// dPaul Technologies — Limited run — once gone, gone</div>
+
+</div><!-- /page -->
+
+<div class="ticker-wrap ticker-bottom">
+    <div class="ticker-track">
+        <span>EST. 2024</span><span class="tick-dot"> - </span>
+        <span>LET'S BUILD SOMETHING</span><span class="tick-dot"> - </span>
+        <span>GET IN TOUCH</span><span class="tick-dot"> - </span>
+        <span>EST. 2024</span><span class="tick-dot"> - </span>
+        <span>LET'S BUILD SOMETHING</span><span class="tick-dot"> - </span>
+        <span>GET IN TOUCH</span><span class="tick-dot"> - </span>
+    </div>
 </div>
 
 <script>
-    // ── MENU ──
+    /* ── MENU ── */
     function toggleMenu() {
         const menu = document.getElementById('mobileMenu');
         const btn  = document.getElementById('burgerBtn');
@@ -209,36 +686,69 @@
         document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
     }
 
-    // ── BACKGROUND CROSSFADE ──
-    (function () {
-        const imgs = [
-            document.getElementById('img0'),
-            document.getElementById('img1')
-        ].filter(img => img !== null); 
+    /* ── SIZE GUIDE MODALS ── */
+    function openSizeGuide()   { document.getElementById('sizeModal').classList.add('open'); }
+    function closeSizeGuide()  { document.getElementById('sizeModal').classList.remove('open'); }
+    function openHoodieGuide() { document.getElementById('hoodieModal').classList.add('open'); }
+    function closeHoodieGuide(){ document.getElementById('hoodieModal').classList.remove('open'); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSizeGuide(); closeHoodieGuide(); } });
 
-        let current = 0;
+    /* ── SIZE PILL SELECTION ── */
+    function selectSize(el) {
+        const pills = el.closest('.size-pills').querySelectorAll('.size-pill');
+        pills.forEach(p => p.classList.remove('selected'));
+        el.classList.add('selected');
+    }
 
-        if (imgs.length > 0) {
-            imgs[0].classList.add('active');
+    /* ── COLOUR SWITCHER (T-shirts) ── */
+    function switchColour(productId, colour, btn) {
+        const img = document.getElementById('img-' + productId);
+        const suffix = colour === 'white' ? 'w' : '';
+        img.style.opacity = '0';
+        setTimeout(() => {
+            img.src = '../assets/merch/design-' + productId + suffix + '.png';
+            img.style.opacity = '1';
+        }, 300);
+        btn.closest('.colour-toggle').querySelectorAll('.colour-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
 
-            if (imgs.length > 1) {
-                setInterval(() => {
-                    imgs[current].classList.remove('active');
-                    current = (current + 1) % imgs.length;
-                    imgs[current].classList.add('active');
-                }, 8000); 
-            }
-        }
-    })();
+    /* ── FRONT / REAR VIEW TOGGLE ── */
+    function switchView(productId, view, btn) {
+        const img = document.getElementById('img-' + productId);
+        const colourBtns = btn.closest('.product-image-wrap').querySelectorAll('.colour-btn');
+        const isWhite = Array.from(colourBtns).find(b => b.classList.contains('active') && b.classList.contains('white'));
+        const colourSuffix = isWhite ? 'w' : '';
+        const viewSuffix = view === 'rear' ? 'r' : '';
+        img.style.opacity = '0';
+        setTimeout(() => {
+            img.src = '../assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
+            img.style.opacity = '1';
+        }, 300);
+        btn.closest('.view-toggle').querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
 
-    // ── REVEAL ──
+    /* ── HOODIE COLOUR SWITCHER ── */
+    function switchColourHoodie(productId, colour, btn) {
+        const img = document.getElementById('img-' + productId);
+        const viewBtns = btn.closest('.product-image-wrap').querySelectorAll('.view-btn');
+        const activeView = Array.from(viewBtns).find(b => b.classList.contains('active'));
+        const isRear = activeView && activeView.textContent.trim().toLowerCase() === 'rear';
+        const colourSuffix = colour === 'white' ? 'w' : '';
+        const viewSuffix = isRear ? 'r' : '';
+        img.style.opacity = '0';
+        setTimeout(() => {
+            img.src = '../assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
+            img.style.opacity = '1';
+        }, 300);
+        btn.closest('.colour-toggle').querySelectorAll('.colour-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    /* ── SCROLL REVEAL ── */
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('visible');
-                observer.unobserve(e.target);
-            }
-        });
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.05 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
