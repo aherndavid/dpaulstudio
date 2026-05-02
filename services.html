@@ -224,19 +224,22 @@
         /* Addon table */
         .addon-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
         .addon-table th {
-            font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+            font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase;
             color: var(--orange); text-align: left; padding: 0 0 12px;
             border-bottom: 1px solid var(--border);
         }
         .addon-table th:last-child { text-align: right; }
         .addon-table td {
-            font-size: calc(1.04rem * var(--font-scale)); color: var(--text);
-            padding: 14px 0; border-bottom: 1px solid var(--border-dim);
+            font-size: calc(1.17rem * var(--font-scale)); color: var(--text);
+            padding: 18px 0; border-bottom: 1px solid var(--border-dim);
             vertical-align: top; line-height: 1.6;
         }
-        .addon-table td:last-child { text-align: right; color: var(--cream); white-space: nowrap; padding-left: 24px; }
-        .addon-table td.addon-desc { color: var(--dim); font-size: calc(0.91rem * var(--font-scale)); display: block; margin-top: 3px; }
-        .addon-name { color: var(--cream); display: block; }
+        .addon-table td:last-child { 
+            text-align: right; color: var(--cream); white-space: nowrap; 
+            padding-left: 24px; vertical-align: middle; width: 160px;
+        }
+        .addon-table td.addon-desc { color: var(--dim); font-size: calc(1rem * var(--font-scale)); display: block; margin-top: 3px; }
+        .addon-name { color: var(--cream); display: block; font-size: calc(1.17rem * var(--font-scale)); }
 
         /* Terms blocks */
         .terms-grid {
@@ -284,6 +287,35 @@
         .cta-stat-num { font-size: 3rem; font-weight: 900; color: var(--orange); line-height: 1; }
         .cta-stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-top: 4px; }
         .cta-divider { width: 1px; height: 40px; background: var(--border-dim); }
+
+        /* Stripe Pay Button */
+        .stripe-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            margin-top: 28px; padding: 14px 28px;
+            background: var(--orange); color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem; font-weight: 700;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            text-decoration: none; border-radius: 3px;
+            transition: all 0.2s; border: none; cursor: pointer;
+        }
+        .stripe-btn:hover { background: #ff8533; transform: translateY(-2px); }
+        .stripe-btn svg { flex-shrink: 0; }
+        .addon-stripe-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; background: transparent;
+            border: 1px solid var(--orange); color: var(--orange);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.78rem; font-weight: 700;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            text-decoration: none; border-radius: 3px;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .addon-stripe-btn:hover { background: var(--orange); color: #000; }
+        .addon-td-wrap { 
+            display: flex; align-items: center; justify-content: flex-end; 
+            gap: 16px; flex-wrap: nowrap;
+        }
 
         /* Reveal */
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
@@ -459,19 +491,22 @@
             <!-- Main Package Card -->
             <div class="pricing-card featured">
                 <div class="featured-badge">Most popular</div>
-                <div class="card-label">Initial Setup Package</div>
+                <div class="card-label">Website Design / Build / Maintain</div>
                 <div class="card-price">£49 <span>/ month</span></div>
                 <div class="card-total">12-month contract &mdash; £588 total</div>
                 <div class="card-divider"></div>
                 <div class="card-includes-label">Everything included:</div>
                 <ul class="include-list">
-                    <li><span class="included">Custom website design &amp; build</span><br>One-page site built to your brand &#8212; menu, specials, location, contact form and social links</li>
-                    <li><span class="included">Domain registration</span><br>Your chosen domain name secured and configured</li>
-                    <li><span class="included">12 months hosting</span><br>Secure, fast web hosting keeps your site live for the full contract period</li>
-                    <li><span class="included">Branded invoice template</span><br>Matching your website design, supplied in print-ready digital format</li>
-                    <li><span class="included">Business card design</span><br>Same design language as your site, supplied print-ready &#8212; printing arranged separately</li>
-                    <li><span class="included">3 months free revisions</span><br>Text, price, and content changes made free of charge for the first three months after launch</li>
+                    <li><span class="included">Initial consultation</span><br>We scope your requirements, agree the design direction and set a launch timeline</li>
+                    <li><span class="included">Website design &amp; build</span><br>Custom site built to your brand &#8212; no templates, no compromise</li>
+                    <li><span class="included">Hosting &amp; maintenance</span><br>Monthly hosting with backups, security and periodic checks included</li>
+                    <li><span class="included">3 months free revisions</span><br>Text, price and content changes made free of charge for the first three months after launch</li>
+                    <li><span class="included">365-day support</span><br>Dedicated email and phone support, 09:00&#8211;17:00, every day of the year</li>
                 </ul>
+                <a href="https://buy.stripe.com/dRm14o5BL0jk0iJekXb3q04" target="_blank" rel="noopener" class="stripe-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    Subscribe — £49/mo
+                </a>
             </div>
 
             <!-- What you get summary card -->
@@ -514,38 +549,48 @@
             <tbody>
                 <tr>
                     <td>
-                        <span class="addon-name">Monthly Maintenance Plan</span>
-                        <span class="addon-desc">Continued hosting, security monitoring, backups and one content update per month &#8212; available after the 12-month contract ends</span>
+                        <span class="addon-name">Additional Maintenance</span>
+                        <span class="addon-desc">Extra development, fixes or updates billed at an hourly rate &#8212; available at any time during or after your contract</span>
                     </td>
-                    <td>From £[TBC]/mo</td>
+                    <td>
+                        <div class="addon-td-wrap">
+                            <span>£30/hr</span>
+                            <a href="https://buy.stripe.com/3cI3cw3tDd66fdD6Svb3q05" target="_blank" rel="noopener" class="addon-stripe-btn">Pay &#8594;</a>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>
-                        <span class="addon-name">Professional Email (Google Workspace)</span>
+                        <span class="addon-name">Professional Email Account</span>
                         <span class="addon-desc">Business email at your domain &#8212; e.g. hello@yourbusiness.co.uk. Includes Google Calendar, Drive, Docs, Sheets and Chat</span>
                     </td>
-                    <td>£9.99/mo</td>
+                    <td>
+                        <div class="addon-td-wrap">
+                            <span>£9/mo</span>
+                            <a href="https://buy.stripe.com/7sYeVe3tDaXY6H70u7b3q06" target="_blank" rel="noopener" class="addon-stripe-btn">Pay &#8594;</a>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td>
                         <span class="addon-name">Additional Revisions &amp; Development</span>
                         <span class="addon-desc">Billed per hour after the initial 3-month free revision period has expired</span>
                     </td>
-                    <td>£30/hr</td>
+                    <td><div class="addon-td-wrap"><span>£30/hr</span></div></td>
                 </tr>
                 <tr>
                     <td>
                         <span class="addon-name">Additional Pages</span>
                         <span class="addon-desc">New pages added to your site &#8212; dish pages, ingredient lists, gallery, booking</span>
                     </td>
-                    <td>From £[TBC]</td>
+                    <td><div class="addon-td-wrap"><span>From £[TBC]</span></div></td>
                 </tr>
                 <tr>
                     <td>
                         <span class="addon-name">Annual Domain Renewal</span>
                         <span class="addon-desc">Domain name renewal after year one</span>
                     </td>
-                    <td>From £[TBC]/yr</td>
+                    <td><div class="addon-td-wrap"><span>From £[TBC]/yr</span></div></td>
                 </tr>
             </tbody>
         </table>
