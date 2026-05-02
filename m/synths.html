@@ -332,12 +332,13 @@
         }
 
         .mki-embed-wrap {
-        margin-bottom: 32px;
-        background: transparent;
-        padding: 0;
-        border: none;
-        margin-left: -5px;
-        margin-right: -5px;
+            margin-bottom: 32px;
+            background: transparent;
+            padding: 0;
+            border: none;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
         }
 
         .mki-label {
@@ -349,11 +350,13 @@
         }
 
         .mki-iframe {
-            width: 100%;
+            width: 720px;
             height: 440px;
             border: none;
             overflow: hidden;
             background: transparent;
+            display: block;
+            transform-origin: top left;
         }
 
         .synth-3d-img {
@@ -612,7 +615,7 @@
             <p class="instrument-story">The first prototype. One oscillator, three waveforms, basic filter. It made sound, and that was enough to keep going.</p>
             <div class="mki-embed-wrap">
                 <span class="mki-label">// Live Prototype</span>
-                <iframe class="mki-iframe" src="../dpone/dpone-mki.html" scrolling="no"></iframe>
+                <iframe class="mki-iframe" id="mki-iframe" src="../dpone/dpone-mki.html" scrolling="no"></iframe>
             </div>
             <img src="../assets/dpone-mki-3d.png" alt="MKI Render" class="synth-3d-img">
             <p class="visual-caption">MKI — 3D Render from UI</p>
@@ -772,5 +775,20 @@
     <script src="share.js"></script>
     <script src="post-generator.js"></script>
 
+
+<script>
+    function scaleSynth() {
+        const iframe = document.getElementById('mki-iframe');
+        if (!iframe) return;
+        const wrap = iframe.closest('.mki-embed-wrap');
+        const availW = wrap.offsetWidth;
+        const synthW = 720;
+        const scale = Math.min(1, availW / synthW);
+        iframe.style.transform = 'scale(' + scale + ')';
+        wrap.style.height = (440 * scale) + 'px';
+    }
+    scaleSynth();
+    window.addEventListener('resize', scaleSynth);
+</script>
 </body>
 </html>
