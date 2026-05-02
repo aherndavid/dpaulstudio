@@ -57,7 +57,7 @@
         .wordmark {
             font-size: clamp(4rem, 12vw, 10rem); 
             font-weight: 700;
-            line-height: 0.8
+            line-height: 0.85;
             color: #FFFFFF;
             letter-spacing: -0.05em;
             text-transform: lowercase;
@@ -85,14 +85,14 @@
         .nav-link {
             text-decoration: none;
             color: rgba(212, 196, 168, 0.3);
-            font-size: 2.7rem;
-            font-weight: 900;
+            font-size: 2.2rem;
+            font-weight: 700;
             text-transform: lowercase;
             letter-spacing: 0.02em;
             transition: all 0.3s ease;
             display: block;
             padding: 0 10px;
-            line-height: 1.2;
+            line-height: 1.0;
             white-space: nowrap;
         }
 
@@ -114,9 +114,11 @@
                 right: 24px;
             }
             .nav-link {
-                font-size: 2.95rem;
+                font-size: 2.2rem;
                 line-height: 1.08;
                 padding: 2px 8px;
+            }
+            .mobile-hide { display: none;
             }
         }
     </style>
@@ -133,12 +135,13 @@
     <nav id="nav-sidebar">
         <ul class="nav-list">
             <li class="nav-item"><a href="about.html"    class="nav-link">about</a></li>
+            <li class="nav-item"><a href="current.html"  class="nav-link">current</a></li>
             <li class="nav-item"><a href="design.html"   class="nav-link">design</a></li>
             <li class="nav-item"><a href="dev-tools.html" class="nav-link">dev tools</a></li>
             <li class="nav-item"><a href="merch.html"    class="nav-link">merch</a></li>
-            <li class="nav-item"><a href="music.html"    class="nav-link">music</a></li>
+            <li class="nav-item mobile-hide"><a href="music.html" class="nav-link">music</a></li>
             <li class="nav-item"><a href="services.html" class="nav-link">services</a></li>
-            <li class="nav-item"><a href="synths.html"   class="nav-link">synths</a></li>
+            <li class="nav-item mobile-hide"><a href="synths.html" class="nav-link">synths</a></li>
             <li class="nav-item"><a href="tools.html"    class="nav-link">tools</a></li>
             <li class="nav-item"><a href="video.html"    class="nav-link">video</a></li>
          
