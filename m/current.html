@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Log — dPaul Technologies</title>
+    <style>
+        :root {
+            --bg:         #131413;
+            --bg2:        #1a1c1a;
+            --orange:     #FF6600;
+            --cream:      #D4C4A8;
+            --text:       #c8c8c0;
+            --dim:        #7a7a70;
+            --border:     rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 110%;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAV ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(19,20,19,0.95);
+            border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--cream); transition: all 0.3s ease; }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4,0,0.2,1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+
+        /* ── PAGE ── */
+        .page { padding: 0 16px 60px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        /* ── HERO ── */
+        .hero { padding: 32px 0 28px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.72rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 18px; color: #fff; font-weight: 900; letter-spacing: -0.02em; }
+        .hero h1 span { color: var(--orange); }
+        .hero-desc {
+            font-size: calc(1rem * var(--font-scale));
+            line-height: 1.8; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 14px;
+        }
+        .hero-desc strong { color: var(--orange); font-weight: normal; }
+
+        /* ── TTS ── */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border);
+            padding: 14px 16px; margin: 20px 0 0;
+        }
+        .tts-label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange); display: block; margin-bottom: 10px; }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.82rem;
+            letter-spacing: 0.08em; padding: 7px 12px; cursor: pointer; transition: all 0.15s;
+        }
+        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
+        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .tts-speed-wrap { display: flex; align-items: center; gap: 6px; width: 100%; margin-top: 4px; }
+        .tts-speed-label { font-size: 0.72rem; color: var(--dim); white-space: nowrap; }
+        .tts-speed {
+            -webkit-appearance: none; flex: 1; height: 4px;
+            background: var(--border-dim); outline: none; cursor: pointer;
+        }
+        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
+        .tts-speed-val { font-size: 0.72rem; color: var(--cream); min-width: 36px; }
+        .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family: 'Courier New', Courier, monospace; font-size: 0.72rem;
+            padding: 5px 8px; flex: 1;
+        }
+        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); }
+
+        /* ── LOG FEED ── */
+        .log-feed { padding: 32px 0 0; }
+        .log-feed-label {
+            font-size: 0.72rem; letter-spacing: 0.22em; color: var(--orange);
+            text-transform: uppercase; margin-bottom: 32px;
+            padding-bottom: 16px; border-bottom: 1px solid var(--border);
+        }
+
+        /* ── LOG ENTRY ── */
+        .log-entry {
+            border-bottom: 1px solid var(--border-dim);
+            padding: 32px 0;
+        }
+        .log-entry:first-of-type { padding-top: 0; }
+
+        .log-date-col {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-dim);
+            display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+        }
+        .log-date-left { display: flex; flex-direction: column; gap: 4px; }
+        .log-date {
+            font-size: 0.68rem; letter-spacing: 0.2em;
+            color: var(--orange); text-transform: uppercase;
+        }
+        .log-day-label {
+            font-size: 1.4rem; font-weight: 900; color: #fff; line-height: 1.1;
+        }
+        .log-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+        .log-tag {
+            font-size: 0.58rem; letter-spacing: 0.1em; padding: 2px 7px;
+            border: 1px solid var(--border-dim); color: var(--dim); text-transform: uppercase;
+        }
+
+        .log-body p {
+            font-size: calc(0.95rem * var(--font-scale));
+            line-height: 1.85; color: var(--text); margin-bottom: 16px;
+        }
+        .log-body p:last-child { margin-bottom: 0; }
+        .log-body strong { color: var(--cream); font-weight: normal; }
+        .log-body em { color: var(--orange); font-style: normal; }
+
+
+
+        .footer-line {
+            margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68rem; letter-spacing: 0.14em;
+            color: var(--dim); text-transform: uppercase;
+        }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="../design.html">design</a>
+    <a href="../merch.html">merch</a>
+    <a href="../music.html">music</a>
+    <a href="../synths.html">synths</a>
+    <a href="../tools.html">tools</a>
+    <a href="../video.html">video</a>
+    <a href="../dev-tools.html">dev tools</a>
+    <a href="../services.html">services</a>
+    <a href="current.html" class="active">current</a>
+    <a href="../about.html">info</a>
+</div>
+
+<div class="page">
+
+    <!-- HERO -->
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Studio Log</div>
+        <h1>What I've been<br><span>working on.</span></h1>
+        <p class="hero-desc">
+            A running log of what's happening in the studio — day by day. Design work, client outreach,
+            product launches, tools built. <strong>No polish, just progress.</strong>
+        </p>
+
+        <!-- TTS -->
+        <div class="tts-player">
+            <span class="tts-label">// Speak this page</span>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
+                <button class="tts-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <div class="tts-speed-wrap">
+                    <span class="tts-speed-label">Speed</span>
+                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
+                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;width:100%;margin-top:4px;">
+                    <span class="tts-speed-label">Voice</span>
+                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOG FEED -->
+    <div class="log-feed">
+        <div class="log-feed-label">// Studio Log — 2025</div>
+
+        <!-- ── ENTRY: TODAY ── -->
+        <div class="log-entry reveal">
+            <div class="log-date-col">
+                <div class="log-date-left">
+                    <span class="log-date">30 Apr 2025</span>
+                    <span class="log-day-label">Today</span>
+                </div>
+                <div class="log-tags">
+                    <span class="log-tag">Merch</span>
+                    <span class="log-tag">Design</span>
+                    <span class="log-tag">AI</span>
+                    <span class="log-tag">Photoshop</span>
+                </div>
+            </div>
+            <div class="log-body">
+                <p>
+                    Opened the <strong>merch store</strong> — several garments now live. The designs are all rooted in the
+                    <em>Kraftwerk Techno Pop</em> album cover aesthetic. I generated an image of myself in the same graphic style
+                    and used that as the central design feature across the T-shirts, rotating the head image at different
+                    angles using <strong>Photoshop's image rotation tool</strong>, currently available in beta.
+                </p>
+                <p>
+                    Also launched an <strong>Apollo 11</strong> T-shirt. The design uses one of the latest Artemis programme
+                    high-quality images as a base, and I generated an image of the <em>Lunar Module (LM)</em> docked to the
+                    <em>Command Module (CM)</em> floating above the Moon's surface — a nod to the 1969 historic mission and
+                    the first man on the Moon. There will be plenty more retro and technology-themed garments coming to the
+                    shop in due course.
+                </p>
+            </div>
+        </div>
+
+        <!-- ── ENTRY: TWO DAYS AGO ── -->
+        <div class="log-entry reveal">
+            <div class="log-date-col">
+                <div class="log-date-left">
+                    <span class="log-date">28 Apr 2025</span>
+                    <span class="log-day-label">Two days ago</span>
+                </div>
+                <div class="log-tags">
+                    <span class="log-tag">Client Work</span>
+                    <span class="log-tag">Business Dev</span>
+                    <span class="log-tag">Design</span>
+                    <span class="log-tag">Legal</span>
+                </div>
+            </div>
+            <div class="log-body">
+                <p>
+                    Took a walk around <strong>Maidenhead Town Centre</strong> and approached a couple of food van stall
+                    owners. Photographed their vans on the spot and created a <em>caricature-style image</em> of each
+                    while I was there — then walked up and showed the owners what I'd done. Both sounded genuinely
+                    interested in having a professional website built.
+                </p>
+                <p>
+                    Went home, designed <strong>two separate sites</strong> from scratch, wrote up the terms and conditions,
+                    and put together a pricing structure. Emailed both of them the same evening. The whole process has
+                    been a great learning curve — getting the legal bits right, understanding what a proper client
+                    engagement looks like from first contact to proposal.
+                </p>
+                <p>
+                    Also designed a <strong>business card</strong> which I'll be printing shortly — the design has been
+                    added to the site too.
+                </p>
+            </div>
+        </div>
+
+    </div><!-- /log-feed -->
+
+    <div class="footer-line reveal">// dPaul Technologies — Studio Log</div>
+
+</div><!-- /page -->
+
+<script>
+    /* ── MENU ── */
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn  = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
+
+    /* ── AUTO DATE LABELS ── */
+    (function() {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        document.querySelectorAll('.log-entry').forEach(entry => {
+            const dateEl  = entry.querySelector('.log-date');
+            const labelEl = entry.querySelector('.log-day-label');
+            if (!dateEl || !labelEl) return;
+            const entryDate = new Date(dateEl.textContent.trim());
+            entryDate.setHours(0, 0, 0, 0);
+            const diffDays  = Math.round((now - entryDate) / (1000 * 60 * 60 * 24));
+            const diffWeeks = Math.floor(diffDays / 7);
+            const diffMonths = Math.floor(diffDays / 30);
+            let label;
+            if (diffDays === 0)        label = 'Today';
+            else if (diffDays === 1)   label = 'Yesterday';
+            else if (diffDays < 7)     label = diffDays + ' days ago';
+            else if (diffWeeks === 1)  label = 'Last week';
+            else if (diffWeeks < 5)    label = diffWeeks + ' weeks ago';
+            else if (diffMonths === 1) label = 'Last month';
+            else if (diffMonths < 12)  label = diffMonths + ' months ago';
+            else                       label = 'Over a year ago';
+            labelEl.textContent = label;
+        });
+    })();
+
+    /* ── SCROLL REVEAL ── */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── TTS ENGINE ── */
+    (function() {
+        const synth = window.speechSynthesis;
+        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
+        let selectedVoice = null;
+        const READ_SELECTORS = ['.hero h1', '.hero-desc', '.log-body p'];
+
+        function populateVoiceList() {
+            const voices = synth.getVoices();
+            if (!voices.length) return;
+            const sel = document.getElementById('ttsVoiceSel');
+            if (!sel) return;
+            sel.innerHTML = '';
+            const enVoices = voices.filter(v => /^en/i.test(v.lang));
+            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female'];
+            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+            function pickVoice(preferred) {
+                for (const name of preferred) {
+                    const match = enVoices.find(v => v.name.includes(name));
+                    if (match) return match;
+                }
+                return null;
+            }
+            const femaleVoice = pickVoice(preferredFemale);
+            const maleVoice   = pickVoice(preferredMale);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+            const options = [
+                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+            ].filter(o => o.voice !== null);
+            options.forEach(({ label, voice }) => {
+                const o = document.createElement('option');
+                o.value = voice.name; o.textContent = label;
+                sel.appendChild(o);
+            });
+            if (!selectedVoice && options.length > 0) { selectedVoice = options[0].voice; sel.value = options[0].voice.name; }
+        }
+
+        window.ttsSetVoice = function(name) {
+            const voices = synth.getVoices();
+            selectedVoice = voices.find(v => v.name === name) || null;
+            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
+        };
+
+        function buildChunks() {
+            chunks = [];
+            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
+                const txt = el.innerText.trim();
+                if (txt.length > 2) chunks.push({ el, text: txt });
+            });
+        }
+        function highlight(el) {
+            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
+            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+            lastHighlighted = el;
+        }
+        function setButtons(state) {
+            const play  = document.getElementById('ttsPlay');
+            const pause = document.getElementById('ttsPause');
+            const stop  = document.getElementById('ttsStop');
+            if (!play || !pause || !stop) return;
+            if (state === 'idle') {
+                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
+                pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
+            } else if (state === 'playing') {
+                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
+                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active'); stop.disabled = false;
+            } else if (state === 'paused') {
+                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
+                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
+            }
+        }
+        function speakCurrent() {
+            if (idx >= chunks.length) { ttsStop(); return; }
+            const chunk = chunks[idx];
+            highlight(chunk.el);
+            const rate = parseFloat(document.getElementById('ttsSpeed').value);
+            const u = new SpeechSynthesisUtterance(chunk.text);
+            u.rate = rate; u.lang = 'en-GB';
+            if (selectedVoice) u.voice = selectedVoice;
+            u.onend  = () => { if (!paused) { idx++; speakCurrent(); } };
+            u.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') { idx++; speakCurrent(); } };
+            currentUtterance = u;
+            synth.speak(u);
+        }
+        window.ttsPlay = function() {
+            if (!chunks.length) buildChunks();
+            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
+            else { synth.cancel(); idx = 0; paused = false; setButtons('playing'); speakCurrent(); }
+        };
+        window.ttsPause = function() {
+            if (synth.speaking && !synth.paused) { paused = true; synth.pause(); setButtons('paused'); }
+        };
+        window.ttsStop = function() {
+            paused = false; synth.cancel(); idx = 0;
+            if (lastHighlighted) { lastHighlighted.classList.remove('tts-highlight'); lastHighlighted = null; }
+            setButtons('idle');
+        };
+        window.ttsUpdateSpeed = function() {
+            document.getElementById('ttsSpeedVal').textContent =
+                parseFloat(document.getElementById('ttsSpeed').value).toFixed(2) + 'x';
+        };
+        window.addEventListener('load', () => {
+            buildChunks();
+            if (synth.onvoiceschanged !== undefined) { synth.onvoiceschanged = () => { selectedVoice = null; populateVoiceList(); }; }
+            populateVoiceList();
+        });
+        window.addEventListener('beforeunload', () => synth.cancel());
+    })();
+</script>
+
+</body>
+</html>
