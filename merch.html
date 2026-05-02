@@ -280,6 +280,19 @@
         .size-table td:not(:first-child) { text-align: center; }
         .size-table tr:nth-child(even) td { background: rgba(255,102,0,0.03); }
 
+        /* ── COMPANY FOOTER ── */
+        .company-footer {
+            margin-top: 48px; padding: 32px 0;
+            border-top: 1px solid var(--border-dim);
+            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;
+        }
+        .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
+        .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
+        .company-footer-val { font-size: 0.91rem; color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val a { color: var(--dim); text-decoration: none; }
+        .company-footer-val a:hover { color: var(--orange); }
+        .company-footer-note { font-size: 0.84rem; color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
+
         /* ── FOOTER ── */
         .footer-line {
             margin-top: 80px; padding-top: 32px; padding-bottom: 0;
@@ -290,6 +303,30 @@
 
         .reveal { opacity: 0; transform: translateY(22px); transition: 0.6s ease; }
         .reveal.visible { opacity: 1; transform: none; }
+
+        /* ── VIEW TOGGLE (front/rear) ── */
+        .view-toggle {
+            position: absolute; top: 20px; right: 20px;
+            display: flex; gap: 6px; z-index: 2;
+        }
+        .view-btn {
+            padding: 4px 10px; font-family: 'Courier New', Courier, monospace;
+            font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.4);
+            background: rgba(0,0,0,0.5); cursor: pointer; transition: all 0.15s;
+        }
+        .view-btn.active { border-color: var(--orange); color: var(--orange); background: rgba(255,102,0,0.08); }
+        .view-btn:hover { border-color: rgba(255,255,255,0.4); color: var(--cream); }
+        .view-btn.active:hover { border-color: var(--orange); color: var(--orange); }
+
+        /* ── LIMITED EDITION BADGE ── */
+        .limited-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            border: 1px solid rgba(255,102,0,0.4); padding: 6px 14px;
+            font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--orange); margin-bottom: 20px;
+        }
+        .limited-badge::before { content: '◆'; font-size: 0.5rem; }
 
         @media (max-width: 1100px) {
             .product-row { grid-template-columns: 1fr; }
@@ -329,6 +366,34 @@
                     <tr><td>2XL</td><td>79</td><td>61</td></tr>
                     <tr><td>3XL</td><td>82.5</td><td>66</td></tr>
                     <tr><td>4XL</td><td>85</td><td>68.5</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── SIZE GUIDE MODAL — HOODIE ── -->
+<div class="modal-overlay" id="hoodieModal" onclick="if(event.target===this)closeHoodieGuide()">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>// Size Guide — Men's Hoodie</span>
+            <button class="modal-close" onclick="closeHoodieGuide()">✕</button>
+        </div>
+        <div class="modal-body">
+            <p class="modal-sub">Gildan GD067 — To fit chest measurement</p>
+            <table class="size-table">
+                <thead>
+                    <tr><th>Size</th><th>Chest (in)</th><th>Chest (cm)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>S</td><td>34–36"</td><td>86–91</td></tr>
+                    <tr><td>M</td><td>38–40"</td><td>97–102</td></tr>
+                    <tr><td>L</td><td>42–44"</td><td>107–112</td></tr>
+                    <tr><td>XL</td><td>46–48"</td><td>117–122</td></tr>
+                    <tr><td>2XL</td><td>50–52"</td><td>127–132</td></tr>
+                    <tr><td>3XL</td><td>54–56"</td><td>137–142</td></tr>
+                    <tr><td>4XL</td><td>58–60"</td><td>147–152</td></tr>
+                    <tr><td>5XL</td><td>62–64"</td><td>157–163</td></tr>
                 </tbody>
             </table>
         </div>
@@ -559,7 +624,77 @@
             </div>
         </div>
 
+        <!-- ── PRODUCT 005 — HOODIE ── -->
+        <div class="product-row reveal">
+            <div class="product-image-col">
+                <span class="product-num">005</span>
+                <img id="img-005" src="assets/merch/design-005.png" alt="DPAUL Hoodie in Black — Front">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView('005','front',this)">Front</button>
+                    <button class="view-btn" onclick="switchView('005','rear',this)">Rear</button>
+                </div>
+                <div class="colour-toggle">
+                    <div class="colour-btn black active" title="Black" onclick="switchColourHoodie('005','black',this)"></div>
+                    <div class="colour-btn white" title="White" onclick="switchColourHoodie('005','white',this)"></div>
+                </div>
+            </div>
+            <div class="product-info-col">
+                <p class="product-tag">// Men's Hoodie — 005</p>
+                <h2 class="product-name">DPAUL<br><em>Studio Hoodie</em></h2>
+                <p class="product-price">£29.00 <span>GBP · Free UK shipping</span></p>
+
+                <div class="limited-badge">Limited Edition — Numbered 01–50 per colour</div>
+
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">5XL</div>
+                </div>
+
+                <ul class="spec-list">
+                    <li>80% Cotton, 20% Polyester</li>
+                    <li>285gsm (White: 278gsm) — Gildan GD067</li>
+                    <li>Twin needle stitching throughout</li>
+                    <li>Kangaroo pouch pocket</li>
+                    <li>Drawcord double lined hood</li>
+                    <li>World-class print &amp; embroidery technology</li>
+                    <li>Available in Black &amp; White — once gone, gone</li>
+                </ul>
+
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/3cI8wQe8haXYd5v1ybb3q0b" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £29.00</a>
+                    <button class="btn-size-guide" onclick="openHoodieGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
     </div><!-- /collection -->
+
+    <footer class="company-footer">
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company</div>
+            <div class="company-footer-val">CitiIT Limited</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as <strong style="color:var(--cream)">dpaul.studio</strong> for creative and digital work.</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company No.</div>
+            <div class="company-footer-val">15811174</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">VAT No.</div>
+            <div class="company-footer-val">473 5892 49</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Website</div>
+            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
+        </div>
+    </footer>
 
     <div class="footer-line reveal">// dPaul Technologies — Limited run — once gone, gone</div>
 
@@ -622,7 +757,46 @@
     /* ── SIZE GUIDE MODAL ── */
     function openSizeGuide() { document.getElementById('sizeModal').classList.add('open'); }
     function closeSizeGuide() { document.getElementById('sizeModal').classList.remove('open'); }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSizeGuide(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSizeGuide(); closeHoodieGuide(); } });
+
+    /* ── HOODIE SIZE GUIDE ── */
+    function openHoodieGuide() { document.getElementById('hoodieModal').classList.add('open'); }
+    function closeHoodieGuide() { document.getElementById('hoodieModal').classList.remove('open'); }
+
+    /* ── FRONT / REAR VIEW TOGGLE ── */
+    function switchView(productId, view, btn) {
+        const img = document.getElementById('img-' + productId);
+        const colourBtns = btn.closest('.product-image-col').querySelectorAll('.colour-btn');
+        const isWhite = Array.from(colourBtns).find(b => b.classList.contains('active') && b.classList.contains('white'));
+        const colourSuffix = isWhite ? 'w' : '';
+        const viewSuffix = view === 'rear' ? 'r' : '';
+        img.style.opacity = '0';
+        setTimeout(() => {
+            img.src = 'assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
+            img.style.opacity = '1';
+        }, 300);
+        const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
+        viewBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    /* ── HOODIE COLOUR SWITCHER (respects front/rear view) ── */
+    function switchColourHoodie(productId, colour, btn) {
+        const img = document.getElementById('img-' + productId);
+        const viewBtns = btn.closest('.product-image-col').querySelectorAll('.view-btn');
+        const activeView = Array.from(viewBtns).find(b => b.classList.contains('active'));
+        const isRear = activeView && activeView.textContent.trim().toLowerCase() === 'rear';
+        const colourSuffix = colour === 'white' ? 'w' : '';
+        const viewSuffix = isRear ? 'r' : '';
+        img.style.opacity = '0';
+        setTimeout(() => {
+            img.src = 'assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
+            img.style.opacity = '1';
+        }, 300);
+        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
 
     /* ── SIZE PILL SELECTION ── */
     function selectSize(el) {
