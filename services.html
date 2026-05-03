@@ -169,6 +169,49 @@
         .section-eyebrow { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
         .section-title { font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; letter-spacing: -0.02em; margin-bottom: 40px; }
 
+        /* Single column pricing layout */
+        .pricing-single-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 48px;
+        }
+
+        /* Top row inside card: price info left, button right */
+        .card-row-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 32px;
+            margin-bottom: 0;
+            flex-wrap: wrap;
+        }
+        .card-row-top .stripe-btn { flex-shrink: 0; align-self: center; }
+
+        /* Stacked list: // marker left, label + description stacked right */
+        .include-list--inline li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .include-list--inline li::before {
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+        .inc-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .include-list--inline .included {
+            color: var(--cream);
+        }
+        .inc-desc {
+            color: var(--dim);
+            font-size: calc(0.96rem * var(--font-scale));
+            line-height: 1.55;
+        }
+
         /* Pricing card grid */
         .pricing-grid {
             display: grid;
@@ -447,7 +490,7 @@
         <div class="hero-label">// CitiIT Limited &#8212; Web &amp; Digital Services</div>
         <h1>Web services.<br>Built to<br><em>last.</em></h1>
         <p class="hero-intro">
-            Small businesses deserve websites that actually work. CitiIT Limited builds custom digital presences &#8212; designed from scratch, hosted properly, and supported after launch. No templates. No hidden costs. A fixed monthly rate that covers everything you need to go live and stay live.
+            Small businesses deserve websites that actually work. CitiIT Limited builds custom digital presences &#8212; designed from scratch, hosted properly, and supported after launch. No templates. No hidden costs. Your first year covers everything at £49/month. After that, you only pay for what keeps your site live &#8212; as low as £15/month.
         </p>
 
         <div class="tts-player" id="ttsPlayer">
@@ -486,44 +529,52 @@
         <div class="section-eyebrow">// 01 &#8212; Getting started</div>
         <div class="section-title">The setup package</div>
 
-        <div class="pricing-grid">
+        <div class="pricing-single-col">
 
             <!-- Main Package Card -->
             <div class="pricing-card featured">
                 <div class="featured-badge">Most popular</div>
-                <div class="card-label">Website Design / Build / Maintain</div>
-                <div class="card-price">£49 <span>/ month</span></div>
-                <div class="card-total">12-month contract &mdash; £588 total</div>
+                <div class="card-row-top">
+                    <div>
+                        <div class="card-label">Website Design / Build / Maintain</div>
+                        <div class="card-price">£49 <span>/ month</span></div>
+                        <div class="card-total">Interest-free instalments &mdash; £588 total &mdash; design, build &amp; year 1 fully covered</div>
+                    </div>
+                    <a href="https://buy.stripe.com/dRm14o5BL0jk0iJekXb3q04" target="_blank" rel="noopener" class="stripe-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        Subscribe — £49/mo
+                    </a>
+                </div>
                 <div class="card-divider"></div>
                 <div class="card-includes-label">Everything included:</div>
-                <ul class="include-list">
-                    <li><span class="included">Initial consultation</span><br>We scope your requirements, agree the design direction and set a launch timeline</li>
-                    <li><span class="included">Website design &amp; build</span><br>Custom site built to your brand &#8212; no templates, no compromise</li>
-                    <li><span class="included">Hosting &amp; maintenance</span><br>Monthly hosting with backups, security and periodic checks included</li>
-                    <li><span class="included">3 months free revisions</span><br>Text, price and content changes made free of charge for the first three months after launch</li>
-                    <li><span class="included">365-day support</span><br>Dedicated email and phone support, 09:00&#8211;17:00, every day of the year</li>
+                <ul class="include-list include-list--inline">
+                    <li><div class="inc-text"><span class="included">Initial consultation</span><span class="inc-desc">We scope your requirements, agree the design direction and set a launch timeline</span></div></li>
+                    <li><div class="inc-text"><span class="included">Website design &amp; build</span><span class="inc-desc">Custom site built to your brand &#8212; no templates, no compromise</span></div></li>
+                    <li><div class="inc-text"><span class="included">Domain registration</span><span class="inc-desc">Your chosen domain registered in your name &#8212; you own it, not CitiIT</span></div></li>
+                    <li><div class="inc-text"><span class="included">Hosting &amp; maintenance</span><span class="inc-desc">12 months of secure hosting with backups and security monitoring included</span></div></li>
+                    <li><div class="inc-text"><span class="included">Invoice template &amp; business card design</span><span class="inc-desc">Branded print-ready assets designed to match your website</span></div></li>
+                    <li><div class="inc-text"><span class="included">3 months free revisions</span><span class="inc-desc">Text, price and content changes made free of charge for the first three months after launch</span></div></li>
+                    <li><div class="inc-text"><span class="included">365-day support</span><span class="inc-desc">Dedicated email and phone support, 09:00&#8211;17:00, every day of the year</span></div></li>
                 </ul>
-                <a href="https://buy.stripe.com/dRm14o5BL0jk0iJekXb3q04" target="_blank" rel="noopener" class="stripe-btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    Subscribe — £49/mo
-                </a>
             </div>
 
-            <!-- What you get summary card -->
+            <!-- Year 2+ card -->
             <div class="pricing-card">
-                <div class="card-label">How it works</div>
-                <div class="card-price" style="font-size:1.8rem; line-height:1.3;">
-                    One fixed rate.<br>Everything handled.
+                <div class="card-row-top">
+                    <div>
+                        <div class="card-label">How it works after Year 1</div>
+                        <div class="card-price" style="font-size:1.8rem; line-height:1.3;">From £15 <span>/ month</span></div>
+                        <div class="card-total">Running costs only &mdash; design &amp; build fully settled</div>
+                    </div>
                 </div>
-                <div class="card-total" style="margin-bottom:28px;">No hidden extras during your contract</div>
                 <div class="card-divider"></div>
-                <div class="card-includes-label">Payment schedule:</div>
-                <ul class="include-list">
-                    <li>First payment due before any work commences</li>
-                    <li>Payments fall on the same date each month</li>
-                    <li>Accepted: Bank Transfer and other methods on request</li>
-                    <li>If a payment is missed, services are suspended after 7 days notice</li>
-                    <li>A £50 reactivation fee applies to restore suspended services</li>
+                <div class="card-includes-label">After your 12 months:</div>
+                <ul class="include-list include-list--inline">
+                    <li><div class="inc-text"><span class="included">£15/month hosting</span><span class="inc-desc">Secure hosting, security monitoring and backups</span></div></li>
+                    <li><div class="inc-text"><span class="included">Domain renewal at cost</span><span class="inc-desc">Passed through at exactly what the registrar charges &#8212; no markup</span></div></li>
+                    <li><div class="inc-text"><span class="included">Optional email add-on</span><span class="inc-desc">Professional email at your domain for £10/month</span></div></li>
+                    <li><div class="inc-text"><span class="included">No exit fee</span><span class="inc-desc">Cancel ongoing services with 30 days written notice after Year 1</span></div></li>
+                    <li><div class="inc-text"><span class="included">First payment</span><span class="inc-desc">Due before any work commences. Same date each month thereafter</span></div></li>
                 </ul>
             </div>
 
@@ -536,7 +587,7 @@
         <div class="section-title">Ongoing &amp; add&#8209;on services</div>
 
         <p class="hero-intro" style="margin-bottom: 48px; border-left-color: var(--border-dim); color: var(--dim);">
-            Once your 12-month contract completes, the site is yours. These services are available to keep things running and growing.
+            Once your 12-month contract completes, all design and build costs are fully settled. You move to simple running costs only &#8212; hosting, your domain renewal at cost, and optional extras if you need them.
         </p>
 
         <table class="addon-table">
@@ -549,8 +600,45 @@
             <tbody>
                 <tr>
                     <td>
-                        <span class="addon-name">Additional Maintenance</span>
-                        <span class="addon-desc">Extra development, fixes or updates billed at an hourly rate &#8212; available at any time during or after your contract</span>
+                        <span class="addon-name">Monthly Hosting</span>
+                        <span class="addon-desc">Continued secure hosting, security monitoring and backups &#8212; everything to keep your site live</span>
+                    </td>
+                    <td>
+                        <div class="addon-td-wrap">
+                            <span>£15/mo</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="addon-name">Annual Domain Renewal</span>
+                        <span class="addon-desc">Domain renewal passed through at exact cost &#8212; no markup. Registered in your name from day one</span>
+                    </td>
+                    <td><div class="addon-td-wrap"><span>At cost/yr</span></div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="addon-name">Professional Email Account</span>
+                        <span class="addon-desc">Business email at your domain &#8212; e.g. hello@yourbusiness.co.uk. Includes Google Calendar, Drive, Docs, Sheets and Chat</span>
+                    </td>
+                    <td>
+                        <div class="addon-td-wrap">
+                            <span>£10/mo</span>
+                            <a href="https://buy.stripe.com/7sYeVe3tDaXY6H70u7b3q06" target="_blank" rel="noopener" class="addon-stripe-btn">Pay &#8594;</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="addon-name">Additional Pages</span>
+                        <span class="addon-desc">New pages added to your site &#8212; dish pages, ingredient lists, gallery, booking</span>
+                    </td>
+                    <td><div class="addon-td-wrap"><span>£30/page</span></div></td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="addon-name">Revisions &amp; Development</span>
+                        <span class="addon-desc">Per revision after the 3-month free period, or any additional development work</span>
                     </td>
                     <td>
                         <div class="addon-td-wrap">
@@ -561,36 +649,10 @@
                 </tr>
                 <tr>
                     <td>
-                        <span class="addon-name">Professional Email Account</span>
-                        <span class="addon-desc">Business email at your domain &#8212; e.g. hello@yourbusiness.co.uk. Includes Google Calendar, Drive, Docs, Sheets and Chat</span>
-                    </td>
-                    <td>
-                        <div class="addon-td-wrap">
-                            <span>£9/mo</span>
-                            <a href="https://buy.stripe.com/7sYeVe3tDaXY6H70u7b3q06" target="_blank" rel="noopener" class="addon-stripe-btn">Pay &#8594;</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="addon-name">Additional Revisions &amp; Development</span>
-                        <span class="addon-desc">Billed per hour after the initial 3-month free revision period has expired</span>
+                        <span class="addon-name">Promotional Graphics &amp; Merchandise</span>
+                        <span class="addon-desc">Social media posts, posters, flyers, branded merchandise artwork &#8212; all matched to your brand</span>
                     </td>
                     <td><div class="addon-td-wrap"><span>£30/hr</span></div></td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="addon-name">Additional Pages</span>
-                        <span class="addon-desc">New pages added to your site &#8212; dish pages, ingredient lists, gallery, booking</span>
-                    </td>
-                    <td><div class="addon-td-wrap"><span>From £[TBC]</span></div></td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="addon-name">Annual Domain Renewal</span>
-                        <span class="addon-desc">Domain name renewal after year one</span>
-                    </td>
-                    <td><div class="addon-td-wrap"><span>From £[TBC]/yr</span></div></td>
                 </tr>
             </tbody>
         </table>
@@ -605,10 +667,12 @@
             <div class="terms-block">
                 <div class="terms-block-label">Service conditions</div>
                 <ul class="terms-list">
+                    <li>The £49/month is an interest-free instalment plan covering all design, build and Year 1 costs</li>
                     <li>Free revisions are available for 3 months from the website launch date</li>
                     <li>Revisions and additional work after this period are charged at £30 per hour</li>
                     <li>Missed payments result in service suspension after 7 days written notice</li>
-                    <li>Reactivation after suspension incurs a £50 fee</li>
+                    <li>Reactivation after suspension incurs a £25 fee</li>
+                    <li>After Year 1, either party may cancel with 30 days written notice &#8212; no exit fee</li>
                     <li>CitiIT Limited reserves the right to update pricing with 30 days written notice</li>
                     <li>A full service agreement is provided separately before work begins</li>
                 </ul>
@@ -632,8 +696,7 @@
             <div class="cta-label">// Ready to start?</div>
             <div class="cta-heading">Get your business online. From £49 a month.</div>
             <p class="cta-text">
-                Everything handled. One fixed monthly payment, no surprises, no template websites. 
-                Reach out and we'll put together a proposal around your business.
+                Everything included in Year 1. From Year 2, just £15/month to keep your site live &#8212; plus domain renewal at cost. No lock-in, no exit fees, and your domain is always yours. Reach out and we'll put together a proposal around your business.
             </p>
             <div class="cta-actions">
                 <a href="about.html" class="cta-btn">Get in touch &#8594;</a>
@@ -643,12 +706,12 @@
         <div class="cta-aside">
             <div class="cta-stat">
                 <div class="cta-stat-num">£49</div>
-                <div class="cta-stat-label">per month</div>
+                <div class="cta-stat-label">per month, year 1</div>
             </div>
             <div class="cta-divider"></div>
             <div class="cta-stat">
-                <div class="cta-stat-num">6</div>
-                <div class="cta-stat-label">items included</div>
+                <div class="cta-stat-num">£15</div>
+                <div class="cta-stat-label">per month, year 2+</div>
             </div>
             <div class="cta-divider"></div>
             <div class="cta-stat">
