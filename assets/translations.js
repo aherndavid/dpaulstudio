@@ -12,6 +12,8 @@ const TRANSLATIONS = {
     nav_video:    'video',
     nav_devtools: 'dev tools',
     nav_about:    'about',
+    nav_current:  'current',
+    nav_services: 'services',
 
     // ── Font nudge ──
     nudge_label:   'Text too small?',
@@ -282,6 +284,8 @@ const TRANSLATIONS = {
     nav_video:    'vidéo',
     nav_devtools: 'outils dev',
     nav_about:    'à propos',
+    nav_current:  'actuel',
+    nav_services: 'services',
 
     nudge_label:   'Texte trop petit ?',
     nudge_dismiss: 'fermer ×',
@@ -545,6 +549,8 @@ const TRANSLATIONS = {
     nav_video:    'vídeo',
     nav_devtools: 'herr. dev',
     nav_about:    'sobre mí',
+    nav_current:  'actual',
+    nav_services: 'servicios',
 
     nudge_label:   '¿Texto muy pequeño?',
     nudge_dismiss: 'cerrar ×',
