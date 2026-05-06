@@ -101,7 +101,7 @@
         }
         nav a:hover { border-color: var(--orange); color: var(--orange); }
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
-        nav .spacer { flex: 1; }
+        .nav-spacer { flex: 1; }
 
         /* ── MINI EQ IN NAV ── */
         #nav-eq-container {
@@ -270,25 +270,24 @@
 </div>
 
 <nav>
-    <a href="design.html"    data-i18n="nav_design">design</a>
-    <a href="merch.html"     data-i18n="nav_merch">merch</a>
-    <a href="music.html"     data-i18n="nav_music">music</a>
-    <a href="synths.html"    data-i18n="nav_synths">synths</a>
-    <a href="tools.html"     data-i18n="nav_tools" class="active">tools</a>
-    <a href="video.html"     data-i18n="nav_video">video</a>
+    <a href="about.html" data-i18n="nav_about">about</a>
+    <a href="current.html" data-i18n="nav_current">current</a>
+    <a href="design.html" data-i18n="nav_design">design</a>
     <a href="dev-tools.html" data-i18n="nav_devtools">dev tools</a>
-    <a href="current.html">current</a>
-    <a href="services.html">services</a>
-    <div class="spacer"></div>
-
+    <a href="merch.html" data-i18n="nav_merch">merch</a>
+    <a href="music.html" data-i18n="nav_music">music</a>
+    <a href="services.html" data-i18n="nav_services">services</a>
+    <a href="synths.html" data-i18n="nav_synths">synths</a>
+    <a href="tools.html" class="active" data-i18n="nav_tools">tools</a>
+    <a href="video.html" data-i18n="nav_video">video</a>
+    <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
-
     <div id="lang-switcher">
         <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
         <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
         <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
     </div>
-    <a href="about.html" data-i18n="nav_about">info</a>
+    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">

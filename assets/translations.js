@@ -264,12 +264,12 @@ const TRANSLATIONS = {
 
     // ── Video ──
     video_hero_label:   '// dPaul Technologies — Video Production',
-    video_hero_h1:      'Professional video for your marque.',
+    video_hero_h1:      'Professional video<br>for your <span>marque.</span>',
     video_hero_p:       'Cut for wherever your audience watches. Widescreen 16:9 4K delivers a cinematic finish perfect for YouTube, while portrait 9:16 is built for TikTok, Instagram Reels, and the social platforms that matter most to your brand.',
     video_section_label:'// 01 — Showreel',
     video_section_h2:   'Cinematic. 4K. Platform-ready.',
-    video_body_p1:      'Video content receives significantly higher engagement than static images across all platforms — social media, websites, and digital advertising.',
-    video_body_p2:      'A professional video presentation elevates your product above standard listings, captures attention in crowded marketplaces, and communicates information more effectively than text alone.',
+    video_body_p1:      'Video content receives <strong>significantly higher engagement</strong> than static images across all platforms — social media, websites, and digital advertising.',
+    video_body_p2:      'A professional video presentation elevates your product above standard listings, <strong>captures attention in crowded marketplaces</strong>, and communicates information more effectively than text alone.',
     video_cta_h2:       'Fancy a video for your marque?',
     video_cta_p:        'Automotive, property, product, or brand — let\'s talk about what you need.',
     video_cta_btn:      'Get in touch',
@@ -529,12 +529,12 @@ const TRANSLATIONS = {
 
     // ── Video ──
     video_hero_label:   '// dPaul Technologies — Production Vidéo',
-    video_hero_h1:      'Vidéo professionnelle pour votre marque.',
+    video_hero_h1:      'Vidéo professionnelle<br>pour votre <span>marque.</span>',
     video_hero_p:       'Conçu pour là où votre audience regarde. Le 16:9 4K grand écran offre un rendu cinématographique parfait pour YouTube, tandis que le 9:16 portrait est fait pour TikTok, Instagram Reels et les plateformes sociales qui comptent le plus pour votre marque.',
     video_section_label:'// 01 — Showreel',
     video_section_h2:   'Cinématographique. 4K. Prêt pour toutes les plateformes.',
-    video_body_p1:      'Le contenu vidéo génère un engagement nettement plus élevé que les images statiques sur toutes les plateformes — réseaux sociaux, sites web et publicité digitale.',
-    video_body_p2:      'Une présentation vidéo professionnelle élève votre produit au-dessus des annonces standard, capte l\'attention dans des marchés saturés et communique l\'information plus efficacement que le texte seul.',
+    video_body_p1:      'Le contenu vidéo génère un <strong>engagement nettement plus élevé</strong> que les images statiques sur toutes les plateformes — réseaux sociaux, sites web et publicité digitale.',
+    video_body_p2:      'Une présentation vidéo professionnelle élève votre produit au-dessus des annonces standard, <strong>capte l\'attention dans des marchés saturés</strong> et communique l\'information plus efficacement que le texte seul.',
     video_cta_h2:       'Une vidéo pour votre marque ?',
     video_cta_p:        'Automobile, immobilier, produit ou marque — parlons de ce dont vous avez besoin.',
     video_cta_btn:      'Me contacter',
@@ -794,12 +794,12 @@ const TRANSLATIONS = {
 
     // ── Video ──
     video_hero_label:   '// dPaul Technologies — Producción de Vídeo',
-    video_hero_h1:      'Vídeo profesional para tu marca.',
+    video_hero_h1:      'Vídeo profesional<br>para tu <span>marca.</span>',
     video_hero_p:       'Diseñado para donde sea que tu audiencia lo vea. El 16:9 4K panorámico ofrece un acabado cinematográfico perfecto para YouTube, mientras que el 9:16 vertical está hecho para TikTok, Instagram Reels y las plataformas sociales más importantes para tu marca.',
     video_section_label:'// 01 — Showreel',
     video_section_h2:   'Cinematográfico. 4K. Listo para todas las plataformas.',
-    video_body_p1:      'El contenido en vídeo genera un engagement significativamente mayor que las imágenes estáticas en todas las plataformas — redes sociales, sitios web y publicidad digital.',
-    video_body_p2:      'Una presentación de vídeo profesional eleva tu producto por encima de los listados estándar, capta la atención en mercados saturados y comunica información de forma más efectiva que el texto solo.',
+    video_body_p1:      'El contenido en vídeo genera un <strong>engagement significativamente mayor</strong> que las imágenes estáticas en todas las plataformas — redes sociales, sitios web y publicidad digital.',
+    video_body_p2:      'Una presentación de vídeo profesional eleva tu producto por encima de los listados estándar, <strong>capta la atención en mercados saturados</strong> y comunica información de forma más efectiva que el texto solo.',
     video_cta_h2:       '¿Un vídeo para tu marca?',
     video_cta_p:        'Automoción, inmobiliaria, producto o marca — hablemos de lo que necesitas.',
     video_cta_btn:      'Ponte en contacto',
@@ -816,6 +816,11 @@ const I18N = (() => {
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.dataset.i18n;
       if (strings[key] !== undefined) el.textContent = strings[key];
+    });
+
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.dataset.i18nHtml;
+      if (strings[key] !== undefined) el.innerHTML = strings[key];
     });
 
     document.querySelectorAll('.lang-btn').forEach(btn => {

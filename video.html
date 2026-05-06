@@ -101,7 +101,7 @@
         }
         nav a:hover { border-color: var(--orange); color: var(--orange); }
         nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
-        nav .spacer { flex: 1; }
+        .nav-spacer { flex: 1; }
 
         /* ── MINI EQ IN NAV ── */
         #nav-eq-container {
@@ -249,30 +249,30 @@
 <div class="page">
 
     <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies — Video Production</div>
-        <h1>Professional video<br>for your <span>marque.</span></h1>
-        <p>Cut for wherever your audience watches. Widescreen 16:9 4K delivers a cinematic finish perfect for YouTube, while portrait 9:16 is built for TikTok, Instagram Reels, and the social platforms that matter most to your brand.</p>
+        <div class="hero-label" data-i18n="video_hero_label">// dPaul Technologies — Video Production</div>
+        <h1 data-i18n-html="video_hero_h1">Professional video<br>for your <span>marque.</span></h1>
+        <p data-i18n="video_hero_p">Cut for wherever your audience watches. Widescreen 16:9 4K delivers a cinematic finish perfect for YouTube, while portrait 9:16 is built for TikTok, Instagram Reels, and the social platforms that matter most to your brand.</p>
 
         <div class="tts-player" id="ttsPlayer">
-            <span class="tts-label">// Speak this page</span>
+            <span class="tts-label" data-i18n="tts_speak_label">// Speak this page</span>
             <div class="tts-controls">
                 <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
                 <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
                 <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
                 <div class="tts-sep"></div>
                 <div class="tts-speed-wrap">
-                    <span class="tts-speed-label">Speed</span>
+                    <span class="tts-speed-label" data-i18n="tts_speed">Speed</span>
                     <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
                     <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
                 </div>
                 <div class="tts-sep"></div>
                 <div class="tts-section-wrap">
-                    <span class="tts-section-label">Voice</span>
+                    <span class="tts-section-label" data-i18n="tts_voice">Voice</span>
                     <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)"><option value="">Loading voices...</option></select>
                 </div>
                 <div class="tts-sep"></div>
                 <div class="tts-section-wrap">
-                    <span class="tts-section-label">Jump to</span>
+                    <span class="tts-section-label" data-i18n="tts_jump">Jump to</span>
                     <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)"><option value="-1">-- section --</option></select>
                 </div>
             </div>
@@ -285,12 +285,12 @@
              data-post-section
              data-post-title="Professional 4K Video Production — dPaul Technologies"
              data-post-content="Elevate your brand with cinematic 4K video. Optimized for 16:9 YouTube and 9:16 social platforms like TikTok and Reels.">
-        <div class="section-label">// 01 — Showreel</div>
-        <h2>Cinematic. 4K. Platform-ready.</h2>
+        <div class="section-label" data-i18n="video_section_label">// 01 — Showreel</div>
+        <h2 data-i18n="video_section_h2">Cinematic. 4K. Platform-ready.</h2>
 
         <div class="showreel-text">
-            <p>Video content receives <strong>significantly higher engagement</strong> than static images across all platforms — social media, websites, and digital advertising.</p>
-            <p>A professional video presentation elevates your product above standard listings, <strong>captures attention in crowded marketplaces</strong>, and communicates information more effectively than text alone.</p>
+            <p data-i18n-html="video_body_p1">Video content receives <strong>significantly higher engagement</strong> than static images across all platforms — social media, websites, and digital advertising.</p>
+            <p data-i18n-html="video_body_p2">A professional video presentation elevates your product above standard listings, <strong>captures attention in crowded marketplaces</strong>, and communicates information more effectively than text alone.</p>
             <div class="tags">
                 <div class="tag">4K Widescreen</div><div class="tag">YouTube Ready</div><div class="tag">Sony Camera</div><div class="tag">Cinematic Grade</div>
             </div>
@@ -312,9 +312,9 @@
          data-post-section
          data-post-title="Work with dPaul Studio — Video Production"
          data-post-content="Automotive, property, or product — let's capture your marque in stunning 4K. Contact dPaul Technologies for a consultation.">
-        <h2>Fancy a video for your marque?</h2>
-        <p>Automotive, property, product, or brand — let's talk about what you need.</p>
-        <a href="about.html" class="cta-btn">Get in touch</a>
+        <h2 data-i18n="video_cta_h2">Fancy a video for your marque?</h2>
+        <p data-i18n="video_cta_p">Automotive, property, product, or brand — let's talk about what you need.</p>
+        <a href="about.html" class="cta-btn" data-i18n="video_cta_btn">Get in touch</a>
     </div>
 
 </div>
