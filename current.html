@@ -389,6 +389,140 @@
         .mobile-view-footer { margin-top: 80px; text-align: center; padding: 40px 0; border-top: 1px solid var(--border-dim); }
         .mobile-toggle { font-size: 0.8rem; color: var(--dim); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; }
         .mobile-toggle:hover { color: var(--orange); }
+
+        /* ── DONT CLICK PROMO BLOCK ── */
+        .dont-click-block {
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border-dim);
+            padding: 72px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .dont-click-inner {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            background: #fff;
+            color: #000;
+            border-radius: 2px;
+            overflow: hidden;
+            min-height: 320px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        .dont-click-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 64px 72px;
+            border-right: 1px solid #000;
+        }
+        .dont-click-tag {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .dont-click-headline {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(4rem, 7vw, 7rem);
+            font-weight: 900;
+            line-height: 0.92;
+            color: #000;
+            letter-spacing: -0.04em;
+            margin-bottom: 0;
+        }
+        .dont-click-right {
+            width: 340px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px;
+            background: #000;
+            color: #fff;
+        }
+        .dont-click-product-label {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 12px;
+        }
+        .dont-click-product-name {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        .dont-click-product-sub {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.78rem;
+            color: #666;
+            letter-spacing: 0.1em;
+            margin-bottom: 32px;
+        }
+        .dont-click-specs {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 40px;
+            flex: 1;
+        }
+        .dont-click-specs li {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.78rem;
+            letter-spacing: 0.05em;
+            color: #aaa;
+            padding-left: 16px;
+            position: relative;
+        }
+        .dont-click-specs li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #444;
+        }
+        .dont-click-cta {
+            display: inline-block;
+            background: #fff;
+            color: #000;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 0.88rem;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 16px 28px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .dont-click-cta:hover {
+            background: #000;
+            color: #fff;
+            outline: 1px solid #fff;
+        }
+        .dont-click-footer-note {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #333;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #1a1a1a;
+        }
+        @media (max-width: 960px) {
+            .dont-click-inner { flex-direction: column; min-height: unset; }
+            .dont-click-left { padding: 48px 40px; border-right: none; border-bottom: 1px solid #000; }
+            .dont-click-right { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -469,6 +603,34 @@
     <!-- ── LOG FEED ── -->
     <div class="log-feed">
         <div class="log-feed-label">// Studio Log — 2025</div>
+
+        <!-- ── DONT CLICK PROMO ── -->
+        <div class="dont-click-block reveal">
+            <div class="dont-click-inner">
+                <div class="dont-click-left">
+                    <div class="dont-click-tag">// New — May 2026 — dPaul Technologies</div>
+                    <div class="dont-click-headline">DONT<br>CLICK.</div>
+                </div>
+                <div class="dont-click-right">
+                    <div>
+                        <div class="dont-click-product-label">// Flagship instrument</div>
+                        <div class="dont-click-product-name">DPAUL<br>MKV</div>
+                        <div class="dont-click-product-sub">DP-ONE MkV — Browser Synthesiser</div>
+                        <ul class="dont-click-specs">
+                            <li>Three synth engines</li>
+                            <li>7-mode filter bank</li>
+                            <li>LFO + effects chain</li>
+                            <li>XY joystick control</li>
+                            <li>Runs in your browser. No install.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <a class="dont-click-cta" href="dpone/dpone-mkv-beta.html" target="_blank">Play it now →</a>
+                        <div class="dont-click-footer-note">You clicked. Now play something.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- ── ENTRY: TODAY ── -->
         <div class="log-entry reveal">
