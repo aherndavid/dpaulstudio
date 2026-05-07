@@ -32,11 +32,13 @@
         .font-nudge-dismiss{background:none;border:none;color:var(--dim);font-family:'Courier New',Courier,monospace;font-size:.65rem;cursor:pointer;letter-spacing:.1em;text-align:right;padding:0;}
         .font-nudge-dismiss:hover{color:var(--orange);}
         
-        nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:4px;height:72px;flex-wrap:wrap;}
-        nav a{font-family:'Courier New',Courier,monospace;font-size:1.4rem;color:var(--cream);text-decoration:none;padding:10px 20px;border:1px solid transparent;border-radius:3px;letter-spacing:.05em;transition:all .15s;text-transform:lowercase;}
+        nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;gap:4px;height:72px;}
+        nav a{font-family:'Courier New',Courier,monospace;font-size:1.4rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:160px;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:3px;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 4px;}
         nav a:hover{border-color:var(--orange);color:var(--orange);}
-        nav a.active{background:var(--orange);color:#000;font-weight:bold;border-color:var(--orange);}
+        nav a.active{background:var(--orange);color:#000;border-color:var(--orange);}
         .nav-spacer { flex: 1; }
+
+        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
 
         /* ── MINI EQ IN NAV ── */
         #nav-eq-container { display: flex; align-items: flex-end; gap: 2px; height: 22px; margin: 0 24px; padding-bottom: 2px; }
@@ -146,8 +148,8 @@
             .tool-block.flip{direction:ltr;}
             .html-live-body{grid-template-columns:1fr;}
             .screenshot-gallery{position:relative;top:0;}
-            nav{height:auto;padding:8px 16px;gap:4px;}
-            nav a{padding:5px 8px;font-size:1rem;}
+            nav{height:72px;padding:0 16px;gap:4px;}
+            nav a{padding:5px 8px;font-size:1rem;min-width:unset;}
             .bmc-block{flex-direction:column;align-items:flex-start;}
             .font-nudge{bottom:16px;right:16px;}
             .tts-player{gap:8px;}

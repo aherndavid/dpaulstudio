@@ -77,12 +77,14 @@
         }
         nav a {
             font-family: 'Courier New', Courier, monospace; font-size: 1.4rem; color: var(--cream);
-            text-decoration: none; padding: 10px 20px;
+            font-weight: bold; text-decoration: none;
+            display: inline-block; min-width: 160px; white-space: nowrap; text-align: center;
             border: 1px solid transparent; border-radius: 3px;
-            letter-spacing: 0.05em; transition: all 0.15s; text-transform: lowercase;
+            letter-spacing: 0.05em; transition: none;
+            text-transform: lowercase; box-sizing: border-box; padding: 10px 4px;
         }
         nav a:hover { border-color: var(--orange); color: var(--orange); }
-        nav a.active { background: var(--orange); color: #000; font-weight: bold; border-color: var(--orange); }
+        nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
         .nav-spacer { flex: 1; }
 
         /* Mini EQ in nav */
@@ -95,8 +97,10 @@
             transition: height 0.1s ease; border-radius: 1px;
         }
 
+        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
+
         /* Language Switcher */
-        #lang-switcher { display: flex; gap: 6px; align-items: center; }
+        #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
         .lang-btn {
             background: none; border: 1px solid rgba(255,255,255,0.18);
             color: rgba(255,255,255,0.35);
@@ -365,7 +369,8 @@
         .reveal.visible { opacity: 1; transform: none; }
 
         @media (max-width: 900px) {
-            nav { padding: 0 24px; }
+            nav { padding: 0 16px; }
+            nav a { padding: 5px 8px; font-size: 1rem; min-width: unset; }
             .page { padding: 0 24px 80px; }
             .pricing-grid { grid-template-columns: 1fr; }
             .terms-grid { grid-template-columns: 1fr; }
@@ -978,7 +983,7 @@
 <script src="post-generator.js"></script>
 
 <script src="assets/translations.js"></script>
-<script>I18N.init();</script>
+<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
 </body>
 </html>
