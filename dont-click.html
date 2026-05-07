@@ -954,7 +954,62 @@ body {
   justify-content: center;
   align-items: flex-start;
 }
+
+/* ── ORIENTATION-AWARE SYNTH VISIBILITY ── */
+
+/* Portrait: hide synth, show rotate nudge */
+@media (orientation: portrait) {
+  #synth-wrap {
+    display: none !important;
+  }
+  #rotateNudge {
+    display: flex !important;
+  }
+}
+
+/* Landscape: show synth, hide rotate nudge */
+@media (orientation: landscape) {
+  #rotateNudge {
+    display: none !important;
+  }
+  #synth-wrap {
+    display: flex !important;
+    overflow: visible;
+    padding: 16px 0;
+  }
+  /* Scale chassis to fit landscape viewport width */
+  #synth-wrap .chassis {
+    transform-origin: top center;
+    transform: scale(var(--synth-scale, 1));
+    margin-bottom: calc((var(--synth-scale, 1) - 1) * 560px); /* compensate height after scale */
+  }
+}
 </style>
+<script>
+/* Dynamically compute scale so chassis fills landscape width */
+function updateSynthScale() {
+  if (window.innerWidth > window.innerHeight) {
+    const scale = Math.min(1, (window.innerWidth - 32) / 1120);
+    document.documentElement.style.setProperty('--synth-scale', scale);
+    /* Also correct the wrapper height so page doesn't leave a gap */
+    const chassis = document.querySelector('.chassis');
+    if (chassis) {
+      const naturalH = chassis.offsetHeight;
+      const wrap = document.getElementById('synth-wrap');
+      if (wrap) wrap.style.height = (naturalH * scale) + 'px';
+    }
+  } else {
+    document.documentElement.style.setProperty('--synth-scale', 1);
+    const wrap = document.getElementById('synth-wrap');
+    if (wrap) wrap.style.height = '';
+  }
+}
+window.addEventListener('resize', updateSynthScale);
+window.addEventListener('orientationchange', () => setTimeout(updateSynthScale, 350));
+/* Run after full paint so chassis dimensions are available */
+window.addEventListener('load', updateSynthScale);
+document.addEventListener('DOMContentLoaded', updateSynthScale);
+</script>
 
 <input type="file" id="midiFileInput" accept=".mid,.midi">
 <div class="chassis">
@@ -2272,13 +2327,7 @@ const obs = new IntersectionObserver(entries => {
 
 document.querySelectorAll('.r').forEach(el => obs.observe(el));
 
-function chkOrient() {
-  const n = document.getElementById('rotateNudge');
-  if (n) n.style.display = window.innerWidth > window.innerHeight ? 'none' : 'flex';
-}
-window.addEventListener('resize', chkOrient);
-window.addEventListener('orientationchange', () => setTimeout(chkOrient, 300));
-chkOrient();
+/* Orientation visibility now handled by CSS media queries + updateSynthScale() above */
 </script>
 
 </body>
