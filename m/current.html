@@ -171,6 +171,124 @@
 
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── DONT CLICK PROMO BLOCK ── */
+        .dont-click-block {
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border-dim);
+            padding: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .dont-click-inner {
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            color: #000;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+        }
+        .dont-click-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 36px 28px;
+            border-bottom: 1px solid #000;
+        }
+        .dont-click-tag {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 14px;
+        }
+        .dont-click-headline {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: clamp(3.2rem, 18vw, 5rem);
+            font-weight: 900;
+            line-height: 0.92;
+            color: #000;
+            letter-spacing: -0.04em;
+        }
+        .dont-click-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 32px 28px;
+            background: #000;
+            color: #fff;
+            gap: 24px;
+        }
+        .dont-click-product-label {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.62rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .dont-click-product-name {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        .dont-click-product-sub {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.7rem;
+            color: #666;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+        }
+        .dont-click-specs {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 24px;
+        }
+        .dont-click-specs li {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #aaa;
+            padding-left: 16px;
+            position: relative;
+        }
+        .dont-click-specs li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #444;
+        }
+        .dont-click-cta {
+            display: inline-block;
+            background: #fff;
+            color: #000;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 14px 24px;
+            text-align: center;
+        }
+        .dont-click-footer-note {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.58rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #333;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #1a1a1a;
+        }
     </style>
 </head>
 <body>
@@ -234,6 +352,91 @@
     <!-- LOG FEED -->
     <div class="log-feed">
         <div class="log-feed-label">// Studio Log — 2026</div>
+
+        <!-- ── DONT CLICK PROMO ── -->
+        <div class="dont-click-block reveal">
+            <div class="dont-click-inner">
+                <div class="dont-click-left">
+                    <div class="dont-click-tag"></div>
+                    <div class="dont-click-headline">DONT<br>CLICK.</div>
+                </div>
+                <div class="dont-click-right">
+                    <div>
+                        <div class="dont-click-product-label">// Flagship instrument</div>
+                        <div class="dont-click-product-name">DPAUL<br>MKV</div>
+                        <div class="dont-click-product-sub">DP-ONE MkV — Browser Synthesiser</div>
+                        <ul class="dont-click-specs">
+                            <li>Three synth engines</li>
+                            <li>7-mode filter bank</li>
+                            <li>LFO + effects chain</li>
+                            <li>XY joystick control</li>
+                            <li>Runs in your browser. No install.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <a class="dont-click-cta" href="../dpone/dpone-mkv-beta.html" target="_blank">Play it now →</a>
+                        <div class="dont-click-footer-note">You clicked. Now play something.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── ENTRY: LINKEDIN DONT CLICK POST ── -->
+        <div class="log-entry reveal">
+            <div class="log-date-col">
+                <div class="log-date-left">
+                    <span class="log-date">06 May 2025</span>
+                    <span class="log-day-label">Wednesday</span>
+                </div>
+                <div class="log-tags">
+                    <span class="log-tag">Marketing</span>
+                    <span class="log-tag">LinkedIn</span>
+                    <span class="log-tag">Synths</span>
+                </div>
+            </div>
+            <div class="log-body">
+                <p>
+                    Put together a <strong>LinkedIn post</strong> using a classic piece of reverse psychology —
+                    the <em>"DONT CLICK"</em> hook. The idea is simple: tell people not to do something and
+                    they immediately want to do it. The post points directly to the
+                    <strong>DP-ONE MkV</strong>, the flagship browser synthesiser. No install, no signup —
+                    just click and play.
+                </p>
+                <p>
+                    The promo block you can see above is the actual creative used in the post. It started life
+                    as a section on this page, and the visual worked well enough that it made sense to repurpose
+                    it as the LinkedIn asset. Curious to see how it performs — it's the kind of thing that
+                    either lands completely or gets scrolled past in silence.
+                </p>
+            </div>
+        </div>
+
+        <!-- ── ENTRY: CITIIT LAUNCH ── -->
+        <div class="log-entry reveal">
+            <div class="log-date-col">
+                <div class="log-date-left">
+                    <span class="log-date">05 May 2025</span>
+                    <span class="log-day-label">Tuesday</span>
+                </div>
+                <div class="log-tags">
+                    <span class="log-tag">Web Design</span>
+                    <span class="log-tag">Client Work</span>
+                    <span class="log-tag">Photography</span>
+                    <span class="log-tag">Animation</span>
+                </div>
+            </div>
+            <div class="log-body">
+                <p>
+                    Launched a new website for <strong>Citiit Limited</strong> — <em><a href="https://www.citiit.uk" target="_blank" style="color: var(--orange); text-decoration: none;">citiit.uk</a></em>.
+                    The site features a collection of <strong>London photography</strong> I've taken over the years —
+                    cityscapes, architecture, street scenes — woven into the design as a visual backdrop to the brand.
+                </p>
+                <p>
+                    One of the standout features is an <strong>animated computer screen</strong> displaying scrolling code —
+                    a nod to the technical roots of the business. Built entirely in-browser, no video files involved.
+                </p>
+            </div>
+        </div>
 
         <!-- ── ENTRY: TODAY ── -->
         <div class="log-entry reveal">
