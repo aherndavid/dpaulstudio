@@ -369,9 +369,6 @@ body {
 </head>
 <body>
 
-<!-- SYNTH MODE CLOSE BUTTON -->
-<a id="synthModeClose" href="javascript:history.back()">✕ CLOSE</a>
-
 <!-- 1. DONT CLICK -->
 <section id="screen1">
   <a href="#next">
@@ -465,7 +462,7 @@ body {
 
 <!-- MOBILE LAUNCH BUTTON (hidden on desktop) -->
 <div id="mobileLaunch">
-  <a id="mobileLaunchBtn" href="?synth=1">
+  <a id="mobileLaunchBtn" href="dpone-mkv-mobile.html">
     ▶ LAUNCH SYNTH
   </a>
 </div>
@@ -965,75 +962,74 @@ body {
   align-items: flex-start;
 }
 
-/* ── ORIENTATION-AWARE SYNTH VISIBILITY ── */
+/* ── MOBILE LAUNCH BUTTON ── */
+#mobileLaunch {
+  display: none;
+  padding: 40px 24px 32px;
+  text-align: center;
+  border-top: 2px solid #000;
+  background: #fff;
+}
+#mobileLaunchBtn {
+  display: inline-block;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: clamp(1rem, 5vw, 1.3rem);
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  background: #000;
+  border: 2px solid #000;
+  padding: 20px 36px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+#mobileLaunchBtn:active { background: #333; color: #fff; }
 
-/* Portrait: hide synth, show rotate nudge */
-@media (orientation: portrait) {
-  #synth-wrap {
-    display: none !important;
-  }
-  #rotateNudge {
-    display: flex !important;
-  }
+
+/* ── TOUCH DEVICES: always use overlay, never show inline synth ── */
+@media (hover: none) and (pointer: coarse) {
+  #synth-wrap    { display: none !important; }
+  #rotateNudge   { display: none !important; }
+  #mobileLaunch  { display: block !important; }
 }
 
-/* Landscape: show synth, hide rotate nudge */
-@media (orientation: landscape) {
-  #rotateNudge {
-    display: none !important;
-  }
+/* ── NON-TOUCH PORTRAIT: hide synth, show rotate nudge ── */
+@media (orientation: portrait) and (hover: hover) {
+  #synth-wrap   { display: none !important; }
+  #rotateNudge  { display: flex !important; }
+  #mobileLaunch { display: none !important; }
+}
+
+/* ── NON-TOUCH LANDSCAPE: show inline synth ── */
+@media (orientation: landscape) and (hover: hover) {
+  #rotateNudge  { display: none !important; }
+  #mobileLaunch { display: none !important; }
   #synth-wrap {
     display: flex !important;
     overflow: visible;
     padding: 16px 0;
   }
-  /* Scale chassis to fit landscape viewport width */
   #synth-wrap .chassis {
     transform-origin: top center;
     transform: scale(var(--synth-scale, 1));
-    margin-bottom: calc((var(--synth-scale, 1) - 1) * 560px); /* compensate height after scale */
+    margin-bottom: calc((var(--synth-scale, 1) - 1) * 560px);
   }
 }
 </style>
 <script>
-/* Synth-only mode: activated by ?synth=1 */
-(function() {
-  if (new URLSearchParams(window.location.search).get('synth') === '1') {
-    document.body.classList.add('synth-mode');
-    var tryLock = function() {
-      if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('landscape').catch(function(){});
-      }
-    };
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen().then(tryLock).catch(tryLock);
-    } else {
-      tryLock();
-    }
-  }
-})();
-
-/* Dynamically compute scale so chassis fills landscape width */
+/* Scale inline synth chassis to fit desktop landscape viewport */
 function updateSynthScale() {
-  if (window.innerWidth > window.innerHeight) {
-    var scale = Math.min(1, (window.innerWidth - 32) / 1120);
-    document.documentElement.style.setProperty('--synth-scale', scale);
-    var chassis = document.querySelector('.chassis');
-    if (chassis) {
-      var naturalH = chassis.offsetHeight;
-      var wrap = document.getElementById('synth-wrap');
-      if (wrap) wrap.style.height = (naturalH * scale) + 'px';
-    }
-  } else {
-    document.documentElement.style.setProperty('--synth-scale', 1);
-    var wrap = document.getElementById('synth-wrap');
-    if (wrap) wrap.style.height = '';
-  }
+  var wrap = document.getElementById('synth-wrap');
+  if (!wrap) return;
+  var scale = Math.min(1, (window.innerWidth - 32) / 1120);
+  document.documentElement.style.setProperty('--synth-scale', scale);
+  var chassis = wrap.querySelector('.chassis');
+  if (chassis) wrap.style.height = (chassis.offsetHeight * scale) + 'px';
 }
-window.addEventListener('resize', updateSynthScale);
-window.addEventListener('orientationchange', function(){ setTimeout(updateSynthScale, 350); });
 window.addEventListener('load', updateSynthScale);
-document.addEventListener('DOMContentLoaded', updateSynthScale);
+window.addEventListener('resize', updateSynthScale);
 </script>
 
 <input type="file" id="midiFileInput" accept=".mid,.midi">
