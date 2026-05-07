@@ -369,6 +369,9 @@ body {
 </head>
 <body>
 
+<!-- SYNTH MODE CLOSE BUTTON -->
+<a id="synthModeClose" href="javascript:history.back()">✕ CLOSE</a>
+
 <!-- 1. DONT CLICK -->
 <section id="screen1">
   <a href="#next">
@@ -459,6 +462,13 @@ body {
     <span class="pill">No Download</span>
   </div>
 </section>
+
+<!-- MOBILE LAUNCH BUTTON (hidden on desktop) -->
+<div id="mobileLaunch">
+  <a id="mobileLaunchBtn" href="?synth=1">
+    ▶ LAUNCH SYNTH
+  </a>
+</div>
 
 <!-- ROTATE NUDGE -->
 <div id="rotateNudge">
@@ -986,27 +996,42 @@ body {
 }
 </style>
 <script>
+/* Synth-only mode: activated by ?synth=1 */
+(function() {
+  if (new URLSearchParams(window.location.search).get('synth') === '1') {
+    document.body.classList.add('synth-mode');
+    var tryLock = function() {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(function(){});
+      }
+    };
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().then(tryLock).catch(tryLock);
+    } else {
+      tryLock();
+    }
+  }
+})();
+
 /* Dynamically compute scale so chassis fills landscape width */
 function updateSynthScale() {
   if (window.innerWidth > window.innerHeight) {
-    const scale = Math.min(1, (window.innerWidth - 32) / 1120);
+    var scale = Math.min(1, (window.innerWidth - 32) / 1120);
     document.documentElement.style.setProperty('--synth-scale', scale);
-    /* Also correct the wrapper height so page doesn't leave a gap */
-    const chassis = document.querySelector('.chassis');
+    var chassis = document.querySelector('.chassis');
     if (chassis) {
-      const naturalH = chassis.offsetHeight;
-      const wrap = document.getElementById('synth-wrap');
+      var naturalH = chassis.offsetHeight;
+      var wrap = document.getElementById('synth-wrap');
       if (wrap) wrap.style.height = (naturalH * scale) + 'px';
     }
   } else {
     document.documentElement.style.setProperty('--synth-scale', 1);
-    const wrap = document.getElementById('synth-wrap');
+    var wrap = document.getElementById('synth-wrap');
     if (wrap) wrap.style.height = '';
   }
 }
 window.addEventListener('resize', updateSynthScale);
-window.addEventListener('orientationchange', () => setTimeout(updateSynthScale, 350));
-/* Run after full paint so chassis dimensions are available */
+window.addEventListener('orientationchange', function(){ setTimeout(updateSynthScale, 350); });
 window.addEventListener('load', updateSynthScale);
 document.addEventListener('DOMContentLoaded', updateSynthScale);
 </script>
