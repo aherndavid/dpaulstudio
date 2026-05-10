@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DPAUL TOOLS // DUPE REMOVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main:    #F2F2F0;
+            --bg-side:    #FFFFFF;
+            --border:     #E5E5E5;
+            --border2:    #CCCCCC;
+            --text:       #000000;
+            --muted:      #888888;
+            --accent:     #000000;
+            --danger:     #D0021B;
+            --danger-dim: rgba(208,2,27,0.06);
+            --success:    #1A7A4A;
+            --success-dim:rgba(26,122,74,0.06);
+            --radius:     10px;
+            --shadow:     0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-side);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            height: 60px;
+            background: #FFFFFF;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 20px;
+        }
+        .topbar h1 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .topbar .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .topbar-spacer { flex: 1; }
+        .topbar-stats {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            gap: 24px;
+        }
+        .topbar-stats .v  { color: var(--text); font-weight: 600; }
+        .topbar-stats .vd { color: var(--danger); font-weight: 600; }
+        .topbar-stats .vk { color: var(--success); font-weight: 600; }
+
+        /* ── Shell ── */
+        .shell { display: flex; height: calc(100vh - 60px); }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: #FFFFFF;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-block {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-block h3 {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+        }
+
+        .drop-zone {
+            background: #FAFAFA;
+            border: 1px dashed var(--border2);
+            border-radius: var(--radius);
+            padding: 20px 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--muted);
+            transition: all 0.2s;
+            margin-bottom: 10px;
+        }
+        .drop-zone:hover, .drop-zone.drag-over {
+            background: #F5F5F5;
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .drop-zone .dz-icon { font-size: 20px; margin-bottom: 5px; }
+
+        .row2 { display: flex; gap: 8px; }
+
+        /* ── Buttons ── */
+        button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 10px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            border: 1px solid transparent;
+        }
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .btn-ghost {
+            background: transparent;
+            border-color: var(--border);
+            color: var(--text);
+            flex: 1;
+        }
+        .btn-ghost:hover:not(:disabled) { border-color: var(--accent); background: #FAFAFA; }
+
+        .btn-full { width: 100%; }
+
+        .btn-accent {
+            background: var(--accent);
+            color: #FFFFFF;
+            border-color: var(--accent);
+        }
+        .btn-accent:hover:not(:disabled) { opacity: 0.8; }
+
+        .btn-danger {
+            background: transparent;
+            border-color: var(--danger);
+            color: var(--danger);
+            flex: 1;
+        }
+        .btn-danger:hover:not(:disabled) { background: var(--danger); color: #FFFFFF; }
+
+        .btn-success {
+            background: transparent;
+            border-color: var(--success);
+            color: var(--success);
+            flex: 1;
+        }
+        .btn-success:hover:not(:disabled) { background: var(--success); color: #FFFFFF; }
+
+        /* ── Threshold ── */
+        .thresh-block { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .thresh-lbl {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .thresh-lbl span {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+            font-weight: 600;
+        }
+        .thresh-block input[type=range] {
+            width: 100%;
+            accent-color: var(--accent);
+        }
+        .thresh-hints {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 5px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── Progress ── */
+        #progress-wrap {
+            display: none;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            background: #FAFAFA;
+        }
+        #progress-wrap p {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        #progress-bar-outer {
+            height: 2px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        /* ── Actions ── */
+        .actions-block { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .actions-block label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .actions-block input {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            padding: 9px 12px;
+            background: #FAFAFA;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text);
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .actions-block input:focus { outline: none; border-color: var(--accent); }
+
+        /* ── Group nav ── */
+        .group-nav { flex: 1; overflow-y: auto; padding: 8px; }
+        .group-nav::-webkit-scrollbar { width: 3px; }
+        .group-nav::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 2px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background 0.12s;
+            color: var(--muted);
+        }
+        .nav-item:hover { background: #F5F5F5; color: var(--text); }
+        .nav-item.active { background: #F0F0EE; color: var(--text); }
+        .nav-item .nav-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            background: var(--border);
+            padding: 1px 6px;
+            border-radius: 4px;
+            margin-left: auto;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+        .nav-item.active .nav-count { background: var(--accent); color: #FFFFFF; }
+        .nav-item .nav-thumb {
+            width: 30px; height: 30px;
+            object-fit: cover;
+            border-radius: 5px;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+        }
+        .nav-item .nav-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ── Main panel ── */
+        .main {
+            flex: 1;
+            background: var(--bg-main);
+            overflow-y: auto;
+            padding: 32px 36px;
+        }
+        .main::-webkit-scrollbar { width: 5px; }
+        .main::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+        /* Welcome */
+        .welcome {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100%; color: var(--muted);
+            text-align: center; gap: 12px;
+        }
+        .welcome .big { font-size: 48px; }
+        .welcome h2 { font-size: 18px; color: var(--text); font-weight: 700; letter-spacing: -0.02em; }
+        .welcome p { font-size: 13px; max-width: 340px; line-height: 1.7; color: var(--muted); }
+
+        /* Group section */
+        .group-section { margin-bottom: 40px; }
+        .group-header {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .group-header .g-title {
+            font-size: 13px; font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .group-header .g-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+        .group-header .g-btns { margin-left: auto; display: flex; gap: 6px; }
+        .g-btn { font-size: 11px; padding: 6px 12px; }
+        .g-btn-keep {
+            background: var(--success-dim);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        .g-btn-keep:hover { background: var(--success); color: #FFFFFF; }
+        .g-btn-delete {
+            background: var(--danger-dim);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        .g-btn-delete:hover { background: var(--danger); color: #FFFFFF; }
+
+        /* Image grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        /* Card */
+        .card {
+            position: relative;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #FFFFFF;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+            user-select: none;
+            box-shadow: var(--shadow);
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .card.state-keep   { border: 2px solid var(--success); }
+        .card.state-delete { border: 2px solid var(--danger); }
+
+        .card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+
+        .card-tick {
+            position: absolute; top: 8px; right: 8px;
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700;
+            background: rgba(255,255,255,0.7);
+            border: 1px solid var(--border);
+            color: transparent;
+        }
+        .state-keep   .card-tick { background: var(--success); border-color: var(--success); color: #FFFFFF; }
+        .state-delete .card-tick { background: var(--danger);  border-color: var(--danger);  color: #FFFFFF; }
+
+        .card-role {
+            position: absolute; top: 8px; left: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px; padding: 2px 7px; border-radius: 4px;
+            font-weight: 500;
+        }
+        .role-original { background: rgba(26,122,74,0.9); color: #FFFFFF; }
+        .role-dup      { background: rgba(208,2,27,0.9);  color: #FFFFFF; }
+
+        .card-sim {
+            position: absolute; bottom: 38px; left: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 9px;
+            background: rgba(0,0,0,0.75); color: #FFFFFF;
+            padding: 2px 7px; border-radius: 4px;
+        }
+
+        .card-meta {
+            padding: 8px 10px;
+            font-size: 11px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            background: #FFFFFF;
+        }
+        .card-meta .cname {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 400;
+            color: var(--text);
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 1px;
+        }
+
+        /* All images view header */
+        .view-hdr { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+        .view-hdr h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+        .view-hdr .sub { font-size: 12px; color: var(--muted); }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <h1>DPAUL Tools // Dupe Remove</h1>
+    <span class="tag">perceptual-hash · group review</span>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-stats" id="topbar-stats" style="display:none">
+        <span>Total <span class="v" id="ts-total">0</span></span>
+        <span>Groups <span class="v" id="ts-groups">0</span></span>
+        <span>Delete <span class="vd" id="ts-delete">0</span></span>
+        <span>Keep <span class="vk" id="ts-keep">0</span></span>
+    </div>
+</div>
+
+<div class="shell">
+
+    <div class="sidebar">
+
+        <div class="sidebar-block">
+            <h3>Intake</h3>
+            <div class="drop-zone" id="drop-zone">
+                <div class="dz-icon">🖼️</div>
+                Select or Drop Images
+            </div>
+            <div class="row2">
+                <button class="btn-ghost" onclick="document.getElementById('file-input').click()">📁 Files</button>
+                <button class="btn-ghost" onclick="document.getElementById('folder-input').click()">📂 Folder</button>
+            </div>
+        </div>
+
+        <div class="thresh-block">
+            <div class="thresh-lbl">Sensitivity <span id="thresh-val">10</span></div>
+            <input type="range" id="threshold" min="1" max="20" value="10"
+                   oninput="document.getElementById('thresh-val').textContent=this.value">
+            <div class="thresh-hints"><span>stricter</span><span>looser</span></div>
+        </div>
+
+        <div class="sidebar-block">
+            <button class="btn-accent btn-full" id="btn-scan" onclick="scan()" disabled>Run Analysis</button>
+        </div>
+
+        <div id="progress-wrap">
+            <p id="progress-label">Hashing…</p>
+            <div id="progress-bar-outer"><div id="progress-bar"></div></div>
+        </div>
+
+        <div class="actions-block">
+            <label>Export Prefix</label>
+            <input type="text" id="prefix" placeholder="e.g. clean_">
+            <div class="row2">
+                <button class="btn-danger"  id="btn-delete" onclick="deleteMarked()"  disabled>🗑 Purge</button>
+                <button class="btn-success" id="btn-export" onclick="exportKept()"    disabled>⬇️ Export</button>
+            </div>
+        </div>
+
+        <div class="group-nav" id="group-nav"></div>
+    </div>
+
+    <div class="main" id="main">
+        <div class="welcome">
+            <div class="big">🗂️</div>
+            <h2>Add your images</h2>
+            <p>Drop images or choose files/folder, set your sensitivity, then hit <strong>Run Analysis</strong> to review duplicate groups.</p>
+        </div>
+    </div>
+
+</div>
+
+<input type="file" id="file-input"   multiple accept="image/*" style="display:none">
+<input type="file" id="folder-input" webkitdirectory directory multiple style="display:none">
+
+<script>
+// ── State ─────────────────────────────────────────────
+let registry = [];
+let groups   = [];
+let toDelete = new Set();
+let toKeep   = new Set();
+
+// ── Wiring ────────────────────────────────────────────
+document.getElementById('file-input').onchange   = e => loadFiles(e.target.files);
+document.getElementById('folder-input').onchange = e => loadFiles(e.target.files);
+const dz = document.getElementById('drop-zone');
+dz.onclick     = () => document.getElementById('file-input').click();
+dz.ondragover  = e => { e.preventDefault(); dz.classList.add('drag-over'); };
+dz.ondragleave = () => dz.classList.remove('drag-over');
+dz.ondrop      = e => { e.preventDefault(); dz.classList.remove('drag-over'); loadFiles(e.dataTransfer.files); };
+
+// ── Load ──────────────────────────────────────────────
+function loadFiles(files) {
+    const imgs = [...files].filter(f => f.type.startsWith('image/'));
+    if (!imgs.length) return;
+    let done = 0;
+    imgs.forEach(file => {
+        const r = new FileReader();
+        r.onload = e => {
+            registry.push({ id: crypto.randomUUID(), file, name: file.name, size: file.size, dataUrl: e.target.result, phash: null });
+            if (++done === imgs.length) { document.getElementById('btn-scan').disabled = false; showAllView(); updateTopbar(); }
+        };
+        r.readAsDataURL(file);
+    });
+}
+
+// ── pHash (dHash 8×8) ─────────────────────────────────
+function computePHash(dataUrl) {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+            const W = 9, H = 8;
+            const cv = document.createElement('canvas');
+            cv.width = W; cv.height = H;
+            const ctx = cv.getContext('2d');
+            ctx.drawImage(img, 0, 0, W, H);
+            const px = ctx.getImageData(0, 0, W, H).data;
+            const bits = [];
+            for (let row = 0; row < H; row++)
+                for (let col = 0; col < W - 1; col++) {
+                    const i = (row * W + col) * 4, j = i + 4;
+                    bits.push((0.299*px[i]+0.587*px[i+1]+0.114*px[i+2]) > (0.299*px[j]+0.587*px[j+1]+0.114*px[j+2]) ? 1 : 0);
+                }
+            resolve(bits);
+        };
+        img.src = dataUrl;
+    });
+}
+function hamming(a, b) { let d = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++; return d; }
+
+// ── Scan ──────────────────────────────────────────────
+async function scan() {
+    groups = []; toDelete.clear(); toKeep.clear();
+    const thresh = parseInt(document.getElementById('threshold').value);
+    const wrap = document.getElementById('progress-wrap');
+    const bar  = document.getElementById('progress-bar');
+    const lbl  = document.getElementById('progress-label');
+    wrap.style.display = 'block'; bar.style.width = '0%';
+
+    const needHash = registry.filter(i => i.phash === null);
+    for (let n = 0; n < needHash.length; n++) {
+        lbl.textContent = `Hashing ${n+1} / ${needHash.length}…`;
+        bar.style.width = `${((n+1)/needHash.length)*100}%`;
+        needHash[n].phash = await computePHash(needHash[n].dataUrl);
+        await new Promise(r => setTimeout(r, 0));
+    }
+    wrap.style.display = 'none';
+
+    const parent = Object.fromEntries(registry.map(i => [i.id, i.id]));
+    function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+    const scores = {};
+    for (let i = 0; i < registry.length; i++)
+        for (let j = i+1; j < registry.length; j++) {
+            const d = hamming(registry[i].phash, registry[j].phash);
+            if (d <= thresh) {
+                parent[find(registry[i].id)] = find(registry[j].id);
+                scores[`${registry[i].id}__${registry[j].id}`] = Math.round((1 - d/64)*100);
+            }
+        }
+
+    const clusters = {};
+    registry.forEach(i => {
+        const root = find(i.id);
+        (clusters[root] = clusters[root] || []).push(i.id);
+    });
+
+    let gi = 1;
+    Object.values(clusters).filter(ids => ids.length > 1).forEach(ids => {
+        const members = ids.map((id, idx) => {
+            let maxSim = null;
+            for (let k = 0; k < idx; k++) {
+                const s = scores[`${ids[k]}__${id}`] ?? scores[`${id}__${ids[k]}`] ?? null;
+                if (s !== null && (maxSim === null || s > maxSim)) maxSim = s;
+            }
+            return { itemId: id, role: idx === 0 ? 'original' : 'dup', sim: maxSim };
+        });
+        members.forEach(m => m.role === 'original' ? toKeep.add(m.itemId) : toDelete.add(m.itemId));
+        groups.push({ id: `g${gi}`, label: `Group ${gi++}`, members });
+    });
+
+    buildSidebar();
+    groups.length ? showGroupsView() : showAllView();
+    if (!groups.length) alert('No duplicates found. Try increasing the sensitivity.');
+    updateTopbar(); updateButtons();
+}
+
+// ── Card toggle ───────────────────────────────────────
+function toggleCard(itemId) {
+    if (toKeep.has(itemId))        { toKeep.delete(itemId); toDelete.add(itemId); }
+    else if (toDelete.has(itemId)) { toDelete.delete(itemId); }
+    else                           { toKeep.add(itemId); }
+    document.querySelectorAll(`.card[data-id="${itemId}"]`).forEach(c => paintCard(c, itemId));
+    updateTopbar(); updateButtons();
+}
+
+function paintCard(card, id) {
+    card.classList.remove('state-keep','state-delete');
+    const tick = card.querySelector('.card-tick');
+    if (toKeep.has(id))        { card.classList.add('state-keep');   tick.textContent='✓'; }
+    else if (toDelete.has(id)) { card.classList.add('state-delete'); tick.textContent='✕'; }
+    else                       { tick.textContent = ''; }
+}
+
+// ── Group bulk actions ────────────────────────────────
+function groupKeepAll(gid) {
+    groups.find(g=>g.id===gid)?.members.forEach(m => { toDelete.delete(m.itemId); toKeep.add(m.itemId); });
+    repaintAll(); updateTopbar(); updateButtons();
+}
+function groupDeleteDups(gid) {
+    groups.find(g=>g.id===gid)?.members.forEach(m => {
+        if (m.role==='original') { toDelete.delete(m.itemId); toKeep.add(m.itemId); }
+        else                     { toKeep.delete(m.itemId);   toDelete.add(m.itemId); }
+    });
+    repaintAll(); updateTopbar(); updateButtons();
+}
+function repaintAll() { document.querySelectorAll('.card[data-id]').forEach(c => paintCard(c, c.dataset.id)); }
+
+// ── Sidebar ───────────────────────────────────────────
+function buildSidebar() {
+    const nav = document.getElementById('group-nav');
+    nav.innerHTML = '';
+
+    const mkItem = (icon, label, count, onClick) => {
+        const el = document.createElement('div');
+        el.className = 'nav-item';
+        el.innerHTML = `<span style="font-size:15px">${icon}</span><span class="nav-label">${label}</span><span class="nav-count">${count}</span>`;
+        el.onclick = () => { document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); onClick(); };
+        return el;
+    };
+
+    nav.appendChild(mkItem('🗂️', 'All Images', registry.length, showAllView));
+
+    if (groups.length) {
+        const grpEl = mkItem('🔍', 'Duplicate Groups', groups.length, showGroupsView);
+        grpEl.classList.add('active');
+        nav.appendChild(grpEl);
+
+        groups.forEach(g => {
+            const first = registry.find(r => r.id === g.members[0].itemId);
+            const el = document.createElement('div');
+            el.className = 'nav-item';
+            el.dataset.gid = g.id;
+            el.innerHTML = `<img class="nav-thumb" src="${first.dataUrl}"><span class="nav-label">${g.label}</span><span class="nav-count">${g.members.length}</span>`;
+            el.onclick = () => { document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); scrollToGroup(g.id); };
+            nav.appendChild(el);
+        });
+    }
+}
+
+// ── Views ─────────────────────────────────────────────
+function showGroupsView() {
+    const main = document.getElementById('main');
+    main.innerHTML = '';
+    if (!groups.length) { showAllView(); return; }
+
+    groups.forEach(g => {
+        const sec = document.createElement('div');
+        sec.className = 'group-section';
+        sec.id = `sec-${g.id}`;
+        sec.innerHTML = `
+            <div class="group-header">
+                <div>
+                    <div class="g-title">${g.label}</div>
+                    <div class="g-sub">${g.members.length} images · click to toggle keep ✓ / delete ✕</div>
+                </div>
+                <div class="g-btns">
+                    <button class="g-btn g-btn-keep"   onclick="groupKeepAll('${g.id}')">✓ Keep all</button>
+                    <button class="g-btn g-btn-delete"  onclick="groupDeleteDups('${g.id}')">✕ Delete dups</button>
+                </div>
+            </div>
+            <div class="image-grid" id="grid-${g.id}"></div>
+        `;
+        main.appendChild(sec);
+        const grid = sec.querySelector(`#grid-${g.id}`);
+        g.members.forEach(m => grid.appendChild(makeCard(registry.find(r=>r.id===m.itemId), m.role, m.sim)));
+    });
+}
+
+function showAllView() {
+    const main = document.getElementById('main');
+    main.innerHTML = '';
+    if (!registry.length) {
+        main.innerHTML = '<div class="welcome"><div class="big">🗂️</div><h2>Add your images</h2><p>Drop images or use the buttons on the left to get started.</p></div>';
+        return;
+    }
+    const hdr = document.createElement('div');
+    hdr.className = 'view-hdr';
+    hdr.innerHTML = `<h2>All Images</h2><span class="sub">${registry.length} total</span>`;
+    main.appendChild(hdr);
+    const grid = document.createElement('div');
+    grid.className = 'image-grid';
+    registry.forEach(item => {
+        let role=null, sim=null;
+        for (const g of groups) { const m=g.members.find(m=>m.itemId===item.id); if(m){role=m.role;sim=m.sim;break;} }
+        grid.appendChild(makeCard(item, role, sim));
+    });
+    main.appendChild(grid);
+}
+
+function makeCard(item, role, sim) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = item.id;
+    card.innerHTML = `
+        ${role ? `<div class="card-role role-${role}">${role}</div>` : ''}
+        <div class="card-tick"></div>
+        ${(role==='dup'&&sim!==null) ? `<div class="card-sim">${sim}% match</div>` : ''}
+        <img src="${item.dataUrl}" loading="lazy" alt="${item.name}">
+        <div class="card-meta">
+            <div class="cname" title="${item.name}">${item.name}</div>
+            ${(item.size/1024).toFixed(1)} KB
+        </div>
+    `;
+    paintCard(card, item.id);
+    card.addEventListener('click', () => toggleCard(item.id));
+    return card;
+}
+
+function scrollToGroup(gid) {
+    showGroupsView();
+    setTimeout(() => document.getElementById(`sec-${gid}`)?.scrollIntoView({behavior:'smooth',block:'start'}), 40);
+}
+
+// ── Delete / Export ───────────────────────────────────
+function deleteMarked() {
+    if (!toDelete.size) return;
+    const n = toDelete.size;
+    if (!confirm(`Remove ${n} image${n>1?'s':''} marked for deletion from this session?\n\nYour original files are not affected.`)) return;
+    registry = registry.filter(i => !toDelete.has(i.id));
+    groups.forEach(g => g.members = g.members.filter(m => !toDelete.has(m.itemId)));
+    groups = groups.filter(g => g.members.length > 1);
+    toDelete.clear();
+    toKeep = new Set([...toKeep].filter(id => registry.find(r=>r.id===id)));
+    buildSidebar(); showGroupsView(); updateTopbar(); updateButtons();
+}
+
+async function exportKept() {
+    const pre = document.getElementById('prefix').value.trim();
+    const list = registry.filter(i => !toDelete.has(i.id));
+    if (!list.length) { alert('Nothing to export.'); return; }
+
+    const btn = document.getElementById('btn-export');
+    btn.disabled = true;
+
+    for (let n = 0; n < list.length; n++) {
+        const item = list[n];
+        btn.textContent = `⬇️ ${n + 1} / ${list.length}`;
+        const a = document.createElement('a');
+        a.href = item.dataUrl;
+        a.download = pre ? `${pre}${item.name}` : item.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        await new Promise(r => setTimeout(r, 300));
+    }
+
+    btn.textContent = '✅ Done!';
+    setTimeout(() => { btn.textContent = '⬇️ Export'; btn.disabled = false; }, 2000);
+}
+
+// ── UI helpers ────────────────────────────────────────
+function updateTopbar() {
+    const el = document.getElementById('topbar-stats');
+    if (!registry.length) { el.style.display='none'; return; }
+    el.style.display = 'flex';
+    document.getElementById('ts-total').textContent  = registry.length;
+    document.getElementById('ts-groups').textContent = groups.length;
+    document.getElementById('ts-delete').textContent = toDelete.size;
+    document.getElementById('ts-keep').textContent   = toKeep.size;
+}
+function updateButtons() {
+    document.getElementById('btn-delete').disabled = toDelete.size === 0;
+    document.getElementById('btn-export').disabled = registry.length === 0;
+}
+</script>
+</body>
+</html>
