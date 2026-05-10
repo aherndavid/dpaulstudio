@@ -357,7 +357,10 @@
             <div class="eq-bar"></div>
             <div class="eq-bar"></div>
         </div>
-        <div class="eq-wordmark">dPaul</div>
+        <div>
+            <div class="eq-wordmark">dPaul</div>
+            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-top:2px;">Technologies</div>
+        </div>
     </div>
     <div class="topbar-spacer"></div>
     <div id="topbar-stats" style="display:none; font-family:'JetBrains Mono'; font-size:11px; gap:24px; align-items:center;">
@@ -419,6 +422,28 @@
     </div>
 </div>
 
+<!-- Start Again Confirm Modal -->
+<div class="modal-backdrop" id="modal-restart" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" style="max-width:400px;text-align:center;">
+        <div class="modal-title" style="margin-bottom:12px;">⚠ End Session?</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:28px;">
+            This will clear all loaded images, groups, and selections.<br>
+            <strong style="color:var(--text);">The page will refresh and cannot be undone.</strong><br><br>
+            Make sure you've exported anything you want to keep first.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;">
+            <button onclick="document.getElementById('modal-restart').classList.remove('open')"
+                style="width:auto;padding:12px 24px;font-size:12px;color:var(--muted);">
+                CANCEL
+            </button>
+            <button onclick="location.reload()"
+                style="width:auto;padding:12px 24px;font-size:12px;background:#1a1a1a;color:white;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
+                YES, START AGAIN
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="shell">
     <div class="sidebar">
         <div class="module">
@@ -466,6 +491,9 @@
         <div class="module" style="margin-top: auto;">
             <span class="module-label">Terminate</span>
             <button class="btn-danger" id="btn-delete" onclick="deleteMarked()" disabled>PURGE SESSION</button>
+            <button onclick="startAgain()" style="margin-top:10px;font-size:11px;padding:10px;font-weight:700;
+                font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;color:var(--muted);
+                border:1px dashed #c0c0be;">↺ START AGAIN</button>
         </div>
 
         <!-- Group nav -->
@@ -794,7 +822,10 @@ async function exportKept() {
     setTimeout(() => { btn.textContent = '⬇ EXPORT KEPT'; btn.disabled = false; }, 2500);
 }
 
-// ── Stats ─────────────────────────────────────────────
+// ── Start Again ───────────────────────────────────────
+function startAgain() {
+    document.getElementById('modal-restart').classList.add('open');
+}
 function updateStats() {
     const el = document.getElementById('topbar-stats');
     if (!registry.length) { el.style.display='none'; return; }
