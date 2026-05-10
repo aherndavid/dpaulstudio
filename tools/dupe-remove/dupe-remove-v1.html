@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DPAUL TOOLS // DUPE REMOVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Lexus-inspired soft palette */
+            --bg-main:    #F2F2F0;
+            --soft-white: #ffffff;
+            --soft-shadow: #d1d1cf;
+            --text:       #1a1a1a;
+            --muted:      #8e8e93;
+            --danger:     #D0021B;
+            --success:    #1A7A4A;
+            --radius:     24px;
+            
+            /* Neumorphic 'Pillow' Shadows */
+            --pillow-raised: 8px 8px 16px var(--soft-shadow), -8px -8px 16px var(--soft-white);
+            --pillow-inset:  inset 6px 6px 12px var(--soft-shadow), inset -6px -6px 12px var(--soft-white);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            height: 70px;
+            background: var(--bg-main);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 100;
+        }
+        .topbar h1 {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+        .topbar-spacer { flex: 1; }
+
+        /* ── EQ Logo ── */
+        .eq-logo { display: flex; align-items: center; gap: 14px; }
+        .eq-bars { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .eq-bar {
+            width: 5px;
+            background: #000000;
+            border-radius: 2px 2px 0 0;
+            flex-shrink: 0;
+            animation: eq-bounce 0.6s ease-in-out infinite alternate;
+        }
+        .eq-bar:nth-child(1) { animation-duration: 0.60s; animation-delay: 0.00s; }
+        .eq-bar:nth-child(2) { animation-duration: 0.50s; animation-delay: 0.10s; }
+        .eq-bar:nth-child(3) { animation-duration: 0.70s; animation-delay: 0.05s; }
+        .eq-bar:nth-child(4) { animation-duration: 0.45s; animation-delay: 0.20s; }
+        .eq-bar:nth-child(5) { animation-duration: 0.65s; animation-delay: 0.15s; }
+        .eq-bar:nth-child(6) { animation-duration: 0.55s; animation-delay: 0.08s; }
+        .eq-bar:nth-child(7) { animation-duration: 0.50s; animation-delay: 0.25s; }
+        @keyframes eq-bounce {
+            0%   { height: 4px; }
+            100% { height: 28px; }
+        }
+        .eq-wordmark {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            font-weight: 900;
+            color: #000000;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        /* ── Instructions ── */
+        .btn-help {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            background: var(--bg-main);
+            box-shadow: var(--pillow-raised);
+            color: var(--muted);
+            cursor: pointer;
+            width: auto;
+            transition: all 0.2s;
+        }
+        .btn-help:hover { color: var(--text); }
+        .btn-help:active { box-shadow: var(--pillow-inset); }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(242,242,240,0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop.open { display: flex; }
+
+        .modal-box {
+            background: rgba(242,242,240,0.92);
+            border-radius: 28px;
+            box-shadow: 12px 12px 24px #c8c8c6, -12px -12px 24px #ffffff;
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 40px 44px;
+            max-width: 520px;
+            width: 90%;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 24px;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--muted);
+            background: none;
+            border: none;
+            width: auto;
+            box-shadow: none;
+            padding: 0;
+            line-height: 1;
+        }
+        .modal-close:hover { color: var(--text); }
+        .modal-close:active { box-shadow: none; transform: none; }
+
+        .modal-title {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+        .modal-step {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 18px;
+            align-items: flex-start;
+        }
+        .modal-step-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            background: #1a1a1a;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .modal-step-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .modal-step-text strong {
+            font-weight: 700;
+        }
+        .modal-step-text span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+        .modal-divider {
+            height: 1px;
+            background: rgba(0,0,0,0.08);
+            margin: 22px 0;
+        }
+        .modal-tip {
+            font-size: 11px;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+        }
+        
+        /* ── Shell ── */
+        .shell { display: flex; height: calc(100vh - 70px); padding: 0 20px 20px 20px; gap: 20px; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 300px;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .module {
+            background: var(--bg-main);
+            border-radius: var(--radius);
+            box-shadow: var(--pillow-raised);
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .module-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .drop-zone {
+            background: var(--bg-main);
+            box-shadow: var(--pillow-inset);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            color: var(--muted);
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        /* ── Buttons ── */
+        button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: var(--bg-main);
+            box-shadow: var(--pillow-raised);
+            color: var(--text);
+            width: 100%;
+        }
+        button:active { box-shadow: var(--pillow-inset); transform: scale(0.98); }
+        button:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; border: 1px solid var(--soft-shadow); }
+
+        .btn-accent { background: #1a1a1a; color: white; }
+        .btn-danger { color: var(--danger); }
+
+        /* ── Main Panel (Right Side) ── */
+        .main {
+            flex: 1;
+            background: var(--bg-main);
+            border-radius: 32px;
+            box-shadow: var(--pillow-inset);
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+            width: 100%;
+        }
+
+        /* ── Welcome Hero / Large Image ── */
+        .welcome-hero {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .welcome-logo {
+            max-width: 800px; /* Large scale for the right panel */
+            width: 85%;
+            height: auto;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.08));
+            transition: opacity 0.5s ease;
+        }
+
+        /* ── Image Cards ── */
+        .card {
+            background: var(--bg-main);
+            border-radius: var(--radius);
+            padding: 12px;
+            box-shadow: var(--pillow-raised);
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .card img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 16px;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .card.state-delete { box-shadow: inset 0 0 0 3px var(--danger), var(--pillow-raised); }
+
+        .card-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-main);
+            box-shadow: var(--pillow-inset);
+            border-radius: 10px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px; width: 24px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            margin-top: -8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="eq-logo">
+        <div class="eq-bars">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+        </div>
+        <div class="eq-wordmark">dPaul</div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div id="topbar-stats" style="display:none; font-family:'JetBrains Mono'; font-size:11px; gap:24px; align-items:center;">
+        <span>REGISTRY <b id="ts-total">0</b></span>
+        <span>GROUPS <b id="ts-groups">0</b></span>
+        <span style="color:var(--success)">KEEP <b id="ts-keep">0</b></span>
+        <span style="color:var(--danger)">PURGE <b id="ts-delete">0</b></span>
+    </div>
+    <button class="btn-help" onclick="document.getElementById('modal').classList.add('open')" style="margin-left:20px;">? HOW TO USE</button>
+</div>
+
+<!-- Instructions Modal -->
+<div class="modal-backdrop" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box">
+        <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open')">✕</button>
+        <div class="modal-title">How to Use // Dupe Remove</div>
+
+        <div class="modal-step">
+            <div class="modal-step-num">1</div>
+            <div class="modal-step-text">
+                <strong>Import your images</strong><br>
+                <span>Drag images into the drop zone, or use the FILES / FOLDER buttons to select from your computer.</span>
+            </div>
+        </div>
+        <div class="modal-step">
+            <div class="modal-step-num">2</div>
+            <div class="modal-step-text">
+                <strong>Set sensitivity</strong><br>
+                <span>Slide left for stricter matching (exact dupes only). Slide right to catch visually similar images too.</span>
+            </div>
+        </div>
+        <div class="modal-step">
+            <div class="modal-step-num">3</div>
+            <div class="modal-step-text">
+                <strong>Run Analysis</strong><br>
+                <span>Perceptual hashing compares every image. Results appear as groups — originals are marked green, duplicates red.</span>
+            </div>
+        </div>
+        <div class="modal-step">
+            <div class="modal-step-num">4</div>
+            <div class="modal-step-text">
+                <strong>Review each group</strong><br>
+                <span>Use KEEP ALL or DELETE DUPS per group, or click individual images to toggle their status. ✓ = keep · ✕ = delete.</span>
+            </div>
+        </div>
+        <div class="modal-step">
+            <div class="modal-step-num">5</div>
+            <div class="modal-step-text">
+                <strong>Export or Purge</strong><br>
+                <span>Add an optional prefix then hit EXPORT KEPT to download clean images. PURGE SESSION removes marked images from the current view.</span>
+            </div>
+        </div>
+
+        <div class="modal-divider"></div>
+        <div class="modal-tip">
+            ⚠ No files are ever deleted from your disk — purge only removes from this session.<br>
+            ⚠ Exports go to your Downloads folder one file at a time to avoid browser limits.
+        </div>
+    </div>
+</div>
+
+<div class="shell">
+    <div class="sidebar">
+        <div class="module">
+            <span class="module-label">Intake</span>
+            <div class="drop-zone" id="drop-zone" style="white-space:nowrap;font-size:11px;font-weight:600;letter-spacing:0.04em;">
+                SELECT OR DRAG IMAGES HERE
+            </div>
+            <div style="display:flex;gap:10px;margin-top:14px;">
+                <button style="width:50%;font-size:11px;padding:10px;" onclick="document.getElementById('file-input').click()">📁 FILES</button>
+                <button style="width:50%;font-size:11px;padding:10px;" onclick="document.getElementById('folder-input').click()">📂 FOLDER</button>
+            </div>
+        </div>
+
+        <div class="module">
+            <span class="module-label">Sensitivity</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:12px; font-weight:600;">
+                <span>MATCH LEVEL</span>
+                <span id="thresh-val">10</span>
+            </div>
+            <input type="range" id="threshold" min="1" max="20" value="10"
+                   oninput="document.getElementById('thresh-val').textContent=this.value">
+        </div>
+
+        <div class="module">
+            <button class="btn-accent" id="btn-scan" onclick="scan()" disabled>RUN ANALYSIS</button>
+        </div>
+
+        <div id="progress-wrap" style="display:none;" class="module">
+            <span class="module-label">Processing</span>
+            <p id="progress-label" style="font-size:11px;font-family:'JetBrains Mono';color:var(--muted);margin-bottom:10px;">Hashing…</p>
+            <div style="height:6px;background:var(--bg-main);border-radius:10px;box-shadow:var(--pillow-inset);overflow:hidden;">
+                <div id="progress-bar" style="height:100%;background:#1a1a1a;width:0%;transition:width 0.1s;border-radius:10px;"></div>
+            </div>
+        </div>
+
+        <div class="module">
+            <span class="module-label">Export</span>
+            <input type="text" id="prefix" placeholder="PREFIX e.g. clean_"
+                   style="font-family:'JetBrains Mono';font-size:11px;padding:12px 14px;background:var(--bg-main);
+                          box-shadow:var(--pillow-inset);border:none;border-radius:14px;color:var(--text);
+                          width:100%;margin-bottom:14px;outline:none;">
+            <button class="btn-accent" id="btn-export" onclick="exportKept()" disabled>⬇ EXPORT KEPT</button>
+        </div>
+
+        <div class="module" style="margin-top: auto;">
+            <span class="module-label">Terminate</span>
+            <button class="btn-danger" id="btn-delete" onclick="deleteMarked()" disabled>PURGE SESSION</button>
+        </div>
+
+        <!-- Group nav -->
+        <div id="group-nav" style="display:flex;flex-direction:column;gap:8px;padding:4px 2px;"></div>
+
+        <!-- Version -->
+        <div style="padding:16px 10px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;">
+            v1.0
+        </div>
+    </div>
+
+    <div class="main" id="main">
+        <div class="welcome-hero">
+<img src="https://dpaul.studio/assets/dupe-remove.png" alt="DUPE REMOVE" class="welcome-logo">        </div>
+    </div>
+</div>
+
+<input type="file" id="file-input" multiple accept="image/*" style="display:none">
+<input type="file" id="folder-input" webkitdirectory directory multiple style="display:none">
+
+<script>
+// ── State ─────────────────────────────────────────────
+let registry = [];
+let groups   = [];
+let toDelete = new Set();
+let toKeep   = new Set();
+
+// ── Wiring ────────────────────────────────────────────
+document.getElementById('file-input').onchange   = e => loadFiles(e.target.files);
+document.getElementById('folder-input').onchange = e => loadFiles(e.target.files);
+const dz = document.getElementById('drop-zone');
+dz.onclick     = () => document.getElementById('file-input').click();
+dz.ondragover  = e => { e.preventDefault(); dz.style.boxShadow = 'var(--pillow-inset)'; };
+dz.ondragleave = () => { dz.style.boxShadow = ''; };
+dz.ondrop      = e => { e.preventDefault(); dz.style.boxShadow = ''; loadFiles(e.dataTransfer.files); };
+
+// ── Load files ────────────────────────────────────────
+function loadFiles(files) {
+    const imgs = [...files].filter(f => f.type.startsWith('image/'));
+    if (!imgs.length) return;
+    let done = 0;
+    imgs.forEach(file => {
+        const r = new FileReader();
+        r.onload = e => {
+            registry.push({ id: crypto.randomUUID(), file, name: file.name, size: file.size, dataUrl: e.target.result, phash: null });
+            if (++done === imgs.length) {
+                document.getElementById('btn-scan').disabled = false;
+                showAllView();
+                updateStats();
+            }
+        };
+        r.readAsDataURL(file);
+    });
+}
+
+// ── pHash (dHash 8×8) ─────────────────────────────────
+function computePHash(dataUrl) {
+    return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+            const W = 9, H = 8;
+            const cv = document.createElement('canvas');
+            cv.width = W; cv.height = H;
+            const ctx = cv.getContext('2d');
+            ctx.drawImage(img, 0, 0, W, H);
+            const px = ctx.getImageData(0, 0, W, H).data;
+            const bits = [];
+            for (let row = 0; row < H; row++)
+                for (let col = 0; col < W - 1; col++) {
+                    const i = (row * W + col) * 4, j = i + 4;
+                    bits.push((0.299*px[i]+0.587*px[i+1]+0.114*px[i+2]) > (0.299*px[j]+0.587*px[j+1]+0.114*px[j+2]) ? 1 : 0);
+                }
+            resolve(bits);
+        };
+        img.src = dataUrl;
+    });
+}
+function hamming(a, b) { let d = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++; return d; }
+
+// ── Scan ──────────────────────────────────────────────
+async function scan() {
+    groups = []; toDelete.clear(); toKeep.clear();
+    const thresh = parseInt(document.getElementById('threshold').value);
+    const wrap = document.getElementById('progress-wrap');
+    const bar  = document.getElementById('progress-bar');
+    const lbl  = document.getElementById('progress-label');
+    wrap.style.display = 'block'; bar.style.width = '0%';
+
+    const needHash = registry.filter(i => i.phash === null);
+    for (let n = 0; n < needHash.length; n++) {
+        lbl.textContent = `HASHING ${n+1} / ${needHash.length}`;
+        bar.style.width = `${((n+1)/needHash.length)*100}%`;
+        needHash[n].phash = await computePHash(needHash[n].dataUrl);
+        await new Promise(r => setTimeout(r, 0));
+    }
+    wrap.style.display = 'none';
+
+    // Union-Find clustering
+    const parent = Object.fromEntries(registry.map(i => [i.id, i.id]));
+    function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+    const scores = {};
+    for (let i = 0; i < registry.length; i++)
+        for (let j = i+1; j < registry.length; j++) {
+            const d = hamming(registry[i].phash, registry[j].phash);
+            if (d <= thresh) {
+                parent[find(registry[i].id)] = find(registry[j].id);
+                scores[`${registry[i].id}__${registry[j].id}`] = Math.round((1 - d/64)*100);
+            }
+        }
+
+    const clusters = {};
+    registry.forEach(i => { const root = find(i.id); (clusters[root] = clusters[root]||[]).push(i.id); });
+
+    let gi = 1;
+    Object.values(clusters).filter(ids => ids.length > 1).forEach(ids => {
+        const members = ids.map((id, idx) => {
+            let maxSim = null;
+            for (let k = 0; k < idx; k++) {
+                const s = scores[`${ids[k]}__${id}`] ?? scores[`${id}__${ids[k]}`] ?? null;
+                if (s !== null && (maxSim === null || s > maxSim)) maxSim = s;
+            }
+            return { itemId: id, role: idx === 0 ? 'original' : 'dup', sim: maxSim };
+        });
+        members.forEach(m => m.role === 'original' ? toKeep.add(m.itemId) : toDelete.add(m.itemId));
+        groups.push({ id: `g${gi}`, label: `Group ${gi++}`, members });
+    });
+
+    buildGroupNav();
+    groups.length ? showGroupsView() : showAllView();
+    if (!groups.length) alert('NO DUPLICATES FOUND. TRY INCREASING SENSITIVITY.');
+    updateStats();
+}
+
+// ── Card toggle ───────────────────────────────────────
+function toggleCard(itemId) {
+    if (toKeep.has(itemId))        { toKeep.delete(itemId); toDelete.add(itemId); }
+    else if (toDelete.has(itemId)) { toDelete.delete(itemId); }
+    else                           { toKeep.add(itemId); }
+    document.querySelectorAll(`.card[data-id="${itemId}"]`).forEach(c => paintCard(c, itemId));
+    updateStats();
+}
+
+function paintCard(card, id) {
+    card.classList.remove('state-keep','state-delete');
+    const tick = card.querySelector('.card-tick');
+    if (toKeep.has(id))        { card.classList.add('state-keep');   if(tick) tick.textContent='✓'; }
+    else if (toDelete.has(id)) { card.classList.add('state-delete'); if(tick) tick.textContent='✕'; }
+    else                       { if(tick) tick.textContent=''; }
+}
+
+// ── Group bulk actions ────────────────────────────────
+function groupKeepAll(gid) {
+    groups.find(g=>g.id===gid)?.members.forEach(m => { toDelete.delete(m.itemId); toKeep.add(m.itemId); });
+    document.querySelectorAll('.card[data-id]').forEach(c => paintCard(c, c.dataset.id));
+    updateStats();
+}
+function groupDeleteDups(gid) {
+    groups.find(g=>g.id===gid)?.members.forEach(m => {
+        if (m.role==='original') { toDelete.delete(m.itemId); toKeep.add(m.itemId); }
+        else                     { toKeep.delete(m.itemId);   toDelete.add(m.itemId); }
+    });
+    document.querySelectorAll('.card[data-id]').forEach(c => paintCard(c, c.dataset.id));
+    updateStats();
+}
+
+// ── Group nav ─────────────────────────────────────────
+function buildGroupNav() {
+    const nav = document.getElementById('group-nav');
+    nav.innerHTML = '';
+    if (!groups.length) return;
+
+    const mkBtn = (label, onClick) => {
+        const el = document.createElement('div');
+        el.style.cssText = `background:var(--bg-main);border-radius:16px;box-shadow:var(--pillow-raised);
+            padding:12px 16px;cursor:pointer;font-size:11px;font-weight:700;font-family:'JetBrains Mono';
+            color:var(--muted);display:flex;align-items:center;gap:10px;transition:0.15s;border:1px solid rgba(255,255,255,0.4);`;
+        el.innerHTML = label;
+        el.onclick = onClick;
+        el.onmouseenter = () => el.style.color = 'var(--text)';
+        el.onmouseleave = () => el.style.color = 'var(--muted)';
+        return el;
+    };
+
+    nav.appendChild(mkBtn('🗂 ALL IMAGES <span style="margin-left:auto">' + registry.length + '</span>', showAllView));
+    nav.appendChild(mkBtn('🔍 GROUPS <span style="margin-left:auto">' + groups.length + '</span>', showGroupsView));
+
+    groups.forEach(g => {
+        const first = registry.find(r => r.id === g.members[0].itemId);
+        const el = mkBtn(`<img src="${first.dataUrl}" style="width:28px;height:28px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.label}</span>
+            <span style="margin-left:auto">${g.members.length}</span>`, () => scrollToGroup(g.id));
+        nav.appendChild(el);
+    });
+}
+
+// ── Views ─────────────────────────────────────────────
+function showGroupsView() {
+    const main = document.getElementById('main');
+    main.innerHTML = '';
+    if (!groups.length) { showAllView(); return; }
+
+    groups.forEach(g => {
+        const sec = document.createElement('div');
+        sec.id = `sec-${g.id}`;
+        sec.style.marginBottom = '40px';
+
+        // Group header
+        const hdr = document.createElement('div');
+        hdr.style.cssText = 'display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,0.06);';
+        hdr.innerHTML = `
+            <div>
+                <div style="font-size:13px;font-weight:700;letter-spacing:-0.01em;">${g.label}</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px;">${g.members.length} images · click to toggle</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px;">
+                <button onclick="groupKeepAll('${g.id}')"
+                    style="width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--success);">
+                    ✓ KEEP ALL
+                </button>
+                <button onclick="groupDeleteDups('${g.id}')"
+                    style="width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--danger);">
+                    ✕ DELETE DUPS
+                </button>
+            </div>
+        `;
+        sec.appendChild(hdr);
+
+        const grid = document.createElement('div');
+        grid.className = 'image-grid';
+        g.members.forEach(m => grid.appendChild(makeCard(registry.find(r=>r.id===m.itemId), m.role, m.sim)));
+        sec.appendChild(grid);
+        main.appendChild(sec);
+    });
+}
+
+function showAllView() {
+    const main = document.getElementById('main');
+    main.innerHTML = '';
+    if (!registry.length) {
+        main.innerHTML = `<div class="welcome-hero">
+            <img src="https://dpaul.studio/assets/dupe-remove.png" alt="DUPE REMOVE" class="welcome-logo">
+        </div>`;
+        return;
+    }
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:baseline;gap:12px;margin-bottom:24px;';
+    hdr.innerHTML = `<span style="font-size:13px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;">All Images</span>
+                     <span style="font-size:11px;color:var(--muted);font-family:\'JetBrains Mono\'">${registry.length} total</span>`;
+    main.appendChild(hdr);
+    const grid = document.createElement('div');
+    grid.className = 'image-grid';
+    registry.forEach(item => {
+        let role=null, sim=null;
+        for (const g of groups) { const m=g.members.find(m=>m.itemId===item.id); if(m){role=m.role;sim=m.sim;break;} }
+        grid.appendChild(makeCard(item, role, sim));
+    });
+    main.appendChild(grid);
+}
+
+function makeCard(item, role, sim) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = item.id;
+
+    const roleHtml = role ? `<div style="position:absolute;top:20px;left:20px;font-family:'JetBrains Mono';
+        font-size:9px;padding:3px 8px;border-radius:6px;font-weight:600;
+        background:${role==='original'?'rgba(26,122,74,0.85)':'rgba(208,2,27,0.85)'};color:white;">
+        ${role.toUpperCase()}</div>` : '';
+
+    const simHtml = (role==='dup'&&sim!==null) ? `<div style="position:absolute;bottom:52px;left:20px;
+        font-family:'JetBrains Mono';font-size:9px;padding:3px 8px;border-radius:6px;
+        background:rgba(0,0,0,0.7);color:white;">${sim}% MATCH</div>` : '';
+
+    const tickHtml = `<div class="card-tick" style="position:absolute;top:20px;right:20px;width:22px;height:22px;
+        border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+        background:rgba(255,255,255,0.7);"></div>`;
+
+    card.style.position = 'relative';
+    card.innerHTML = `
+        ${roleHtml}
+        ${tickHtml}
+        ${simHtml}
+        <img src="${item.dataUrl}" loading="lazy" style="width:100%;height:160px;object-fit:cover;border-radius:16px;display:block;margin-bottom:12px;">
+        <div class="card-name">${item.name}</div>
+        <div style="font-family:'JetBrains Mono';font-size:9px;color:var(--muted);margin-top:3px;">${(item.size/1024).toFixed(1)} KB</div>
+    `;
+    paintCard(card, item.id);
+    card.addEventListener('click', () => toggleCard(item.id));
+    return card;
+}
+
+function scrollToGroup(gid) {
+    showGroupsView();
+    setTimeout(() => document.getElementById(`sec-${gid}`)?.scrollIntoView({behavior:'smooth',block:'start'}), 40);
+}
+
+// ── Delete ────────────────────────────────────────────
+function deleteMarked() {
+    if (!toDelete.size) return;
+    const n = toDelete.size;
+    if (!confirm(`CONFIRM REMOVAL OF ${n} IMAGE${n>1?'S':''} FROM SESSION?\n\nOriginal files are not affected.`)) return;
+    registry = registry.filter(i => !toDelete.has(i.id));
+    groups.forEach(g => g.members = g.members.filter(m => !toDelete.has(m.itemId)));
+    groups = groups.filter(g => g.members.length > 1);
+    toDelete.clear();
+    toKeep = new Set([...toKeep].filter(id => registry.find(r=>r.id===id)));
+    buildGroupNav(); showGroupsView(); updateStats();
+}
+
+// ── Export ────────────────────────────────────────────
+async function exportKept() {
+    const pre = document.getElementById('prefix').value.trim();
+    const list = registry.filter(i => !toDelete.has(i.id));
+    if (!list.length) { alert('NOTHING TO EXPORT.'); return; }
+    const btn = document.getElementById('btn-export');
+    btn.disabled = true;
+    for (let n = 0; n < list.length; n++) {
+        btn.textContent = `⬇ EXPORTING ${n+1} / ${list.length}`;
+        const a = document.createElement('a');
+        a.href = list[n].dataUrl;
+        a.download = pre ? `${pre}${list[n].name}` : list[n].name;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        await new Promise(r => setTimeout(r, 300));
+    }
+    btn.textContent = '✓ COMPLETE';
+    setTimeout(() => { btn.textContent = '⬇ EXPORT KEPT'; btn.disabled = false; }, 2500);
+}
+
+// ── Stats ─────────────────────────────────────────────
+function updateStats() {
+    const el = document.getElementById('topbar-stats');
+    if (!registry.length) { el.style.display='none'; return; }
+    el.style.display = 'flex';
+    document.getElementById('ts-total').textContent  = registry.length;
+    document.getElementById('ts-groups').textContent = groups.length;
+    document.getElementById('ts-keep').textContent   = toKeep.size;
+    document.getElementById('ts-delete').textContent = toDelete.size;
+    document.getElementById('btn-delete').disabled = toDelete.size === 0;
+    document.getElementById('btn-export').disabled = registry.length === 0;
+}
+
+// Card state classes for keep
+const _style = document.createElement('style');
+_style.textContent = `.card.state-keep { box-shadow: inset 0 0 0 3px var(--success), var(--pillow-raised) !important; }
+.card.state-keep .card-tick { background: var(--success) !important; color: white; }
+.card.state-delete .card-tick { background: var(--danger) !important; color: white; }`;
+document.head.appendChild(_style);
+</script>
+</body>
+</html>
