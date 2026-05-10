@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dupe Remove — dPaul Technologies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --black: #1d1d1f;
+            --mid:   #6e6e73;
+            --light: #f5f5f7;
+            --white: #ffffff;
+            --line:  #d2d2d7;
+            --blue:  #0066cc;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--black);
+            background: var(--white);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Nav ── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid var(--line);
+        }
+        .nav-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 22px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .nav-logo {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--black);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .nav-spacer { flex: 1; }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            list-style: none;
+        }
+        .nav-links a {
+            font-size: 12px;
+            color: var(--black);
+            text-decoration: none;
+            opacity: 0.8;
+        }
+        .nav-links a:hover { opacity: 1; }
+        .nav-cta {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--blue);
+            text-decoration: none;
+        }
+        .nav-cta:hover { text-decoration: underline; }
+
+        /* ── Sections ── */
+        .section {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 80px 22px;
+        }
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--line);
+            margin: 0;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            background: var(--light);
+        }
+        .hero-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 100px 22px 80px;
+            text-align: center;
+        }
+        .hero-eyebrow {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--mid);
+            letter-spacing: 0.02em;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+        .hero-logo {
+            width: min(560px, 80vw);
+            height: auto;
+            margin-bottom: 28px;
+            filter: invert(1);
+        }
+        .hero-tagline {
+            font-size: 19px;
+            font-weight: 300;
+            color: var(--mid);
+            max-width: 520px;
+            margin: 0 auto 36px;
+            line-height: 1.5;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 24px;
+            border-radius: 980px;
+            text-decoration: none;
+            transition: opacity 0.15s;
+        }
+        .btn:hover { opacity: 0.8; }
+        .btn-primary { background: var(--black); color: var(--white); }
+        .btn-secondary { background: transparent; color: var(--blue); border: 1px solid var(--blue); }
+
+        /* ── Feature headline ── */
+        .headline {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 600;
+            line-height: 1.08;
+            letter-spacing: -0.02em;
+            color: var(--black);
+            margin-bottom: 12px;
+        }
+        .subhead {
+            font-size: 17px;
+            font-weight: 300;
+            color: var(--mid);
+            line-height: 1.6;
+            max-width: 560px;
+        }
+
+        /* ── Three-up grid ── */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--line);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            overflow: hidden;
+            margin-top: 48px;
+        }
+        .grid-cell {
+            background: var(--white);
+            padding: 36px 28px;
+        }
+        .cell-num {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--mid);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .cell-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .cell-body {
+            font-size: 13px;
+            color: var(--mid);
+            line-height: 1.6;
+        }
+
+        /* ── Feature rows ── */
+        .feature-list { margin-top: 48px; }
+        .feature-row {
+            display: flex;
+            align-items: baseline;
+            gap: 48px;
+            padding: 28px 0;
+            border-top: 1px solid var(--line);
+        }
+        .feature-row:last-child { border-bottom: 1px solid var(--line); }
+        .feature-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--black);
+            min-width: 200px;
+            flex-shrink: 0;
+        }
+        .feature-desc {
+            font-size: 13px;
+            color: var(--mid);
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        /* ── Privacy band ── */
+        .privacy-band {
+            background: var(--light);
+        }
+        .privacy-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 80px 22px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 36px;
+        }
+        .stat-num {
+            font-size: 40px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--black);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--mid);
+        }
+        .privacy-bullets {
+            list-style: none;
+            margin-top: 16px;
+        }
+        .privacy-bullets li {
+            font-size: 13px;
+            color: var(--mid);
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+            line-height: 1.5;
+        }
+        .privacy-bullets li:first-child { border-top: 1px solid var(--line); }
+        .privacy-bullets li strong { color: var(--black); display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+
+        /* ── CTA band ── */
+        .cta-band {
+            text-align: center;
+        }
+
+        /* ── Footer ── */
+        footer {
+            border-top: 1px solid var(--line);
+            background: var(--light);
+        }
+        .footer-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .footer-copy {
+            font-size: 12px;
+            color: var(--mid);
+        }
+        .footer-spacer { flex: 1; }
+        .footer-ver {
+            font-size: 12px;
+            color: var(--mid);
+        }
+
+        @media (max-width: 700px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .feature-row { flex-direction: column; gap: 6px; }
+            .feature-label { min-width: unset; }
+            .privacy-inner { grid-template-columns: 1fr; gap: 48px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-inner">
+        <a href="#" class="nav-logo">dPaul Technologies</a>
+        <div class="nav-spacer"></div>
+        <ul class="nav-links">
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#privacy">Privacy</a></li>
+        </ul>
+        <a href="dupe-remove-v2.html" class="nav-cta">Launch App ›</a>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-inner">
+        <p class="hero-eyebrow">dPaul Technologies</p>
+        <img src="dupe-remove.png" alt="Dupe Remove" class="hero-logo">
+        <p class="hero-tagline">Find and remove duplicate images. Entirely on your device. Nothing uploaded. Ever.</p>
+        <div class="hero-actions">
+            <a href="dupe-remove-v2.html" class="btn btn-primary">Launch Free</a>
+            <a href="#how" class="btn btn-secondary">How It Works</a>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- How It Works -->
+<div id="how">
+    <div class="section">
+        <p class="headline">Simple.<br>Intelligent.<br>Private.</p>
+        <p class="subhead">Perceptual hashing compares how images actually look — catching duplicates across different compressions, crops and exports that filename matching misses entirely.</p>
+
+        <div class="grid-3">
+            <div class="grid-cell">
+                <p class="cell-num">01 — Import</p>
+                <p class="cell-title">Add your images</p>
+                <p class="cell-body">Drag and drop or choose a folder. All processing happens locally — nothing leaves your machine.</p>
+            </div>
+            <div class="grid-cell">
+                <p class="cell-num">02 — Analyse</p>
+                <p class="cell-title">Visual fingerprinting</p>
+                <p class="cell-body">Every image is hashed by visual content. Similar images are clustered into groups for review.</p>
+            </div>
+            <div class="grid-cell">
+                <p class="cell-num">03 — Review</p>
+                <p class="cell-title">You decide</p>
+                <p class="cell-body">Keep, delete or compare images side by side. Bulk actions or image by image — your choice.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- Features -->
+<div id="features">
+    <div class="section">
+        <p class="headline">Everything you need.<br>Nothing you don't.</p>
+
+        <div class="feature-list">
+            <div class="feature-row">
+                <span class="feature-label">Perceptual Hashing</span>
+                <span class="feature-desc">Uses dHash to compare visual structure — not bytes. Catches duplicates across different compressions, sizes and export settings.</span>
+            </div>
+            <div class="feature-row">
+                <span class="feature-label">Group Review</span>
+                <span class="feature-desc">Similar images cluster automatically. Review each group with bulk Keep All or Delete Dups, or fine-tune image by image.</span>
+            </div>
+            <div class="feature-row">
+                <span class="feature-label">Drag to Compare</span>
+                <span class="feature-desc">Drag any two images into the compare panel to see them side by side at full resolution before deciding.</span>
+            </div>
+            <div class="feature-row">
+                <span class="feature-label">Adjustable Sensitivity</span>
+                <span class="feature-desc">Slide the threshold to control how aggressive matching is — from exact duplicates to visually similar shots from the same scene.</span>
+            </div>
+            <div class="feature-row">
+                <span class="feature-label">Prefix Export</span>
+                <span class="feature-desc">Export your clean set with an optional filename prefix. Staggered downloads prevent browser throttling so every file gets through.</span>
+            </div>
+            <div class="feature-row">
+                <span class="feature-label">Zero Data Retention</span>
+                <span class="feature-desc">Runs entirely in your browser. No server, no account, no analytics. Your images never leave your device.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- Privacy -->
+<div id="privacy">
+    <div class="privacy-band">
+        <div class="privacy-inner">
+            <div>
+                <p class="headline">Your images stay<br>on your machine.</p>
+                <p class="subhead" style="margin-top:12px;">Most tools upload your files to process them. Dupe Remove uses the Web Crypto API and Canvas — everything runs locally, in your browser.</p>
+                <div class="stat-grid">
+                    <div><div class="stat-num">0</div><div class="stat-label">Bytes uploaded</div></div>
+                    <div><div class="stat-num">0</div><div class="stat-label">Accounts required</div></div>
+                    <div><div class="stat-num">0</div><div class="stat-label">Files stored</div></div>
+                    <div><div class="stat-num">∞</div><div class="stat-label">Images supported</div></div>
+                </div>
+            </div>
+            <div>
+                <ul class="privacy-bullets">
+                    <li><strong>No server processing</strong>All hashing and comparison runs in your browser via Canvas API.</li>
+                    <li><strong>No account required</strong>Open the app, load images, done. No sign-up, no email, no tracking.</li>
+                    <li><strong>Session-only memory</strong>All data clears when you close or refresh. Nothing persists.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- CTA -->
+<div class="section cta-band">
+    <p class="headline">Try it now.<br>It's free.</p>
+    <p class="subhead" style="margin: 12px auto 32px;">No download. No install. Just open the app and drop your images in.</p>
+    <a href="dupe-remove-v2.html" class="btn btn-primary">Launch Dupe Remove</a>
+</div>
+
+<hr class="section-divider">
+
+<footer>
+    <div class="footer-inner">
+        <span class="footer-copy">Copyright © 2025 dPaul Technologies. All rights reserved.</span>
+        <div class="footer-spacer"></div>
+        <span class="footer-ver">v1.0</span>
+    </div>
+</footer>
+
+</body>
+</html>

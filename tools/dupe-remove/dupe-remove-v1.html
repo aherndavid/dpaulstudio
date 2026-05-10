@@ -342,6 +342,144 @@
             cursor: pointer;
             margin-top: -8px;
         }
+
+        /* ── Compare Modal ── */
+        .compare-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .compare-backdrop.open { display: flex; }
+
+        .compare-box {
+            background: var(--bg-main);
+            border-radius: 28px;
+            box-shadow: 12px 12px 32px rgba(0,0,0,0.3);
+            padding: 32px;
+            width: min(960px, 94vw);
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .compare-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .compare-title {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .compare-sub {
+            font-size: 11px;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .compare-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--muted);
+            width: auto;
+            box-shadow: none;
+            padding: 0;
+        }
+        .compare-close:hover { color: var(--text); }
+        .compare-close:active { box-shadow: none; transform: none; }
+
+        .compare-panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            flex: 1;
+        }
+        .compare-panel {
+            border-radius: 16px;
+            background: var(--bg-main);
+            box-shadow: var(--pillow-inset);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .compare-panel.drag-over {
+            box-shadow: inset 0 0 0 3px #1a1a1a, var(--pillow-inset);
+        }
+        .compare-panel img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-height: 380px;
+        }
+        .compare-panel-empty {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            text-align: center;
+            padding: 20px;
+            pointer-events: none;
+        }
+        .compare-panel-label {
+            position: absolute;
+            top: 10px; left: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.06em;
+        }
+        .compare-panel-actions {
+            position: absolute;
+            bottom: 10px;
+            display: flex;
+            gap: 6px;
+        }
+        .compare-action {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            width: auto;
+            box-shadow: 4px 4px 8px var(--soft-shadow), -4px -4px 8px var(--soft-white);
+        }
+        .compare-action:active { box-shadow: var(--pillow-inset); }
+        .compare-action.keep  { color: var(--success); }
+        .compare-action.del   { color: var(--danger); }
+
+        .compare-hint {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            text-align: center;
+            letter-spacing: 0.06em;
+        }
+
+        /* Draggable card glow */
+        .card[draggable=true] { cursor: grab; }
+        .card[draggable=true]:active { cursor: grabbing; }
+        .card.dragging { opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -370,6 +508,7 @@
         <span style="color:var(--danger)">PURGE <b id="ts-delete">0</b></span>
     </div>
     <button class="btn-help" onclick="document.getElementById('modal').classList.add('open')" style="margin-left:20px;">? HOW TO USE</button>
+    <button class="btn-help" onclick="document.getElementById('modal-compare').classList.add('open')" style="margin-left:8px;">⇄ COMPARE</button>
 </div>
 
 <!-- Instructions Modal -->
@@ -441,6 +580,34 @@
                 YES, START AGAIN
             </button>
         </div>
+    </div>
+</div>
+
+<!-- Compare Modal -->
+<div class="compare-backdrop" id="modal-compare" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="compare-box">
+        <div class="compare-header">
+            <div>
+                <div class="compare-title">⇄ Drag to Compare</div>
+                <div class="compare-sub">Drag any two images from the grid into the panels below</div>
+            </div>
+            <button class="compare-close" onclick="document.getElementById('modal-compare').classList.remove('open')">✕</button>
+        </div>
+        <div class="compare-panels">
+            <div class="compare-panel" id="compare-a"
+                 ondragover="e=>{e.preventDefault();this.classList.add('drag-over')}"
+                 ondragleave="this.classList.remove('drag-over')"
+                 ondrop="dropToPanel(event,'a')">
+                <div class="compare-panel-empty">Drop image A here</div>
+            </div>
+            <div class="compare-panel" id="compare-b"
+                 ondragover="e=>{e.preventDefault();this.classList.add('drag-over')}"
+                 ondragleave="this.classList.remove('drag-over')"
+                 ondrop="dropToPanel(event,'b')">
+                <div class="compare-panel-empty">Drop image B here</div>
+            </div>
+        </div>
+        <div class="compare-hint">TIP — Drag images from the main grid directly into a panel · Click Keep or Delete to mark without closing</div>
     </div>
 </div>
 
@@ -781,6 +948,9 @@ function makeCard(item, role, sim) {
         <div style="font-family:'JetBrains Mono';font-size:9px;color:var(--muted);margin-top:3px;">${(item.size/1024).toFixed(1)} KB</div>
     `;
     paintCard(card, item.id);
+    card.setAttribute('draggable', 'true');
+    card.addEventListener('dragstart', e => { dragItemId = item.id; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'copy'; });
+    card.addEventListener('dragend',   () => card.classList.remove('dragging'));
     card.addEventListener('click', () => toggleCard(item.id));
     return card;
 }
@@ -826,6 +996,44 @@ async function exportKept() {
 function startAgain() {
     document.getElementById('modal-restart').classList.add('open');
 }
+
+// ── Drag-to-Compare ───────────────────────────────────
+let dragItemId = null;
+
+function dropToPanel(e, side) {
+    e.preventDefault();
+    const panel = document.getElementById(`compare-${side}`);
+    panel.classList.remove('drag-over');
+    if (!dragItemId) return;
+    const item = registry.find(r => r.id === dragItemId);
+    if (!item) return;
+    panel.innerHTML = `
+        <div class="compare-panel-label">${item.name} · ${(item.size/1024).toFixed(1)} KB</div>
+        <img src="${item.dataUrl}" alt="${item.name}">
+        <div class="compare-panel-actions">
+            <button class="compare-action keep" onclick="toggleCardFromCompare('${item.id}','keep')">✓ KEEP</button>
+            <button class="compare-action del"  onclick="toggleCardFromCompare('${item.id}','delete')">✕ DELETE</button>
+        </div>
+    `;
+}
+
+function toggleCardFromCompare(itemId, action) {
+    if (action === 'keep')   { toDelete.delete(itemId); toKeep.add(itemId); }
+    if (action === 'delete') { toKeep.delete(itemId);   toDelete.add(itemId); }
+    document.querySelectorAll(`.card[data-id="${itemId}"]`).forEach(c => paintCard(c, itemId));
+    updateStats();
+}
+
+// Wire compare panel drag events via JS (avoids inline handler scope issues)
+document.addEventListener('DOMContentLoaded', () => {
+    ['a','b'].forEach(side => {
+        const panel = document.getElementById(`compare-${side}`);
+        panel.addEventListener('dragover',  e => { e.preventDefault(); panel.classList.add('drag-over'); });
+        panel.addEventListener('dragleave', () => panel.classList.remove('drag-over'));
+        panel.addEventListener('drop',      e => dropToPanel(e, side));
+    });
+});
+
 function updateStats() {
     const el = document.getElementById('topbar-stats');
     if (!registry.length) { el.style.display='none'; return; }
