@@ -818,15 +818,16 @@ function deleteMarked() {
 
 // ── Export helpers ────────────────────────────────────
 function getExportExt(item) {
-    const m = item.name.match(/\.([a-zA-Z0-9]+)$/);
-    if (m) return m[1].toLowerCase();
-    if (item.file && item.file.type === 'image/png') return 'png';
+    const t = item.file ? item.file.type : '';
+    if (t === 'image/png')  return 'png';
+    if (t === 'image/webp') return 'webp';
+    if (t === 'image/gif')  return 'gif';
     return 'jpg';
 }
 
 function buildExportName(baseName, index, item) {
-    const ext = getExportExt(item);
-    const base = (baseName || 'cleaned').replace(/[^a-zA-Z0-9_-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    const ext  = getExportExt(item);
+    const base = (baseName || 'cleaned').trim();
     return `${base}-${index + 1}.${ext}`;
 }
 
