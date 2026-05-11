@@ -542,7 +542,7 @@
             <div class="modal-step-num">4</div>
             <div class="modal-step-text">
                 <strong>Review each group</strong><br>
-                <span>Use KEEP ALL or DELETE DUPS per group, or click individual images to toggle their status. ✓ = keep · ✕ = delete.</span>
+                <span>Use KEEP ALL or DELETE DUPES per group, or click individual images to toggle their status. ✓ = keep · ✕ = delete.</span>
             </div>
         </div>
         <div class="modal-step">
@@ -782,7 +782,7 @@ async function scan() {
                 const s = scores[`${ids[k]}__${id}`] ?? scores[`${id}__${ids[k]}`] ?? null;
                 if (s !== null && (maxSim === null || s > maxSim)) maxSim = s;
             }
-            return { itemId: id, role: idx === 0 ? 'original' : 'dup', sim: maxSim };
+            return { itemId: id, role: idx === 0 ? 'original' : 'dupe', sim: maxSim };
         });
         members.forEach(m => m.role === 'original' ? toKeep.add(m.itemId) : toDelete.add(m.itemId));
         groups.push({ id: `g${gi}`, label: `Group ${gi++}`, members });
@@ -824,6 +824,7 @@ function groupDeleteDups(gid) {
     });
     document.querySelectorAll('.card[data-id]').forEach(c => paintCard(c, c.dataset.id));
     updateStats();
+    deleteMarked();
 }
 
 // ── Group nav ─────────────────────────────────────────
@@ -882,7 +883,7 @@ function showGroupsView() {
                 </button>
                 <button onclick="groupDeleteDups('${g.id}')"
                     style="width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--danger);">
-                    ✕ DELETE DUPS
+                    ✕ DELETE DUPES
                 </button>
             </div>
         `;
@@ -930,7 +931,7 @@ function makeCard(item, role, sim) {
         background:${role==='original'?'rgba(26,122,74,0.85)':'rgba(208,2,27,0.85)'};color:white;">
         ${role.toUpperCase()}</div>` : '';
 
-    const simHtml = (role==='dup'&&sim!==null) ? `<div style="position:absolute;bottom:52px;left:20px;
+    const simHtml = (role==='dupe'&&sim!==null) ? `<div style="position:absolute;bottom:52px;left:20px;
         font-family:'JetBrains Mono';font-size:9px;padding:3px 8px;border-radius:6px;
         background:rgba(0,0,0,0.7);color:white;">${sim}% MATCH</div>` : '';
 
