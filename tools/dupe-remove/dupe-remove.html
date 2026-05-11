@@ -981,6 +981,46 @@ async function exportKept() {
     if (!list.length) { alert('NOTHING TO EXPORT.'); return; }
     const btn = document.getElementById('btn-export');
     btn.disabled = true;
+
+    // Try File System Access API (Chrome/Edge) → saves into a Dupe-Cleaned folder
+    if (window.showDirectoryPicker) {
+        try {
+            btn.textContent = '📁 CHOOSE FOLDER…';
+            const rootDir = await window.showDirectoryPicker({ mode: 'readwrite' });
+            // Create / open the Dupe-Cleaned sub-folder
+            const dir = await rootDir.getDirectoryHandle('Dupe-Cleaned', { create: true });
+
+            for (let n = 0; n < list.length; n++) {
+                btn.textContent = `⬇ SAVING ${n+1} / ${list.length}`;
+                const item = list[n];
+                const filename = pre ? `${pre}${item.name}` : item.name;
+
+                // Convert dataUrl → Blob
+                const res = await fetch(item.dataUrl);
+                const blob = await res.blob();
+
+                const fileHandle = await dir.getFileHandle(filename, { create: true });
+                const writable = await fileHandle.createWritable();
+                await writable.write(blob);
+                await writable.close();
+            }
+
+            btn.textContent = '✓ SAVED TO DUPE-CLEANED';
+            setTimeout(() => { btn.textContent = '⬇ EXPORT KEPT'; btn.disabled = false; }, 3000);
+            return;
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                // User cancelled the picker — just reset
+                btn.textContent = '⬇ EXPORT KEPT';
+                btn.disabled = false;
+                return;
+            }
+            // Unexpected error → fall through to legacy download
+            console.warn('Directory export failed, falling back:', err);
+        }
+    }
+
+    // Fallback: legacy <a> downloads (Firefox / Safari)
     for (let n = 0; n < list.length; n++) {
         btn.textContent = `⬇ EXPORTING ${n+1} / ${list.length}`;
         const a = document.createElement('a');
