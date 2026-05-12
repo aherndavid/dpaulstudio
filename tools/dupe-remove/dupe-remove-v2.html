@@ -23,6 +23,7 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -261,23 +262,24 @@
   #tb-threshold-val { font-size: 11px; color: var(--orange); min-width: 24px; }
   #export-prefix {
     font-family: 'Courier New', Courier, monospace;
-    font-size: 11px;
+    font-size: 13px;
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--text);
-    padding: 5px 12px;
-    width: 120px;
+    padding: 8px 12px;
+    width: 100%;
     letter-spacing: 0.06em;
   }
   #export-prefix:focus { outline: none; border-color: var(--orange); }
   .tb-spacer { flex: 1; }
   #scan-btn {
     font-family: 'Courier New', Courier, monospace;
-    font-size: 13px;
+    font-size: 14px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    padding: 9px 24px;
+    padding: 11px;
+    width: 100%;
     background: var(--orange);
     color: #000;
     border: none;
@@ -540,7 +542,20 @@
       ✦ Manual Select <span class="badge" id="nav-manual-count">0</span>
     </button>
 
-    <div class="sidebar-section" style="margin-top:auto">&nbsp;</div>
+    <div class="sidebar-section">// Scan</div>
+    <div id="sidebar-scan" style="padding:14px 16px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Threshold</span>
+        <span id="tb-threshold-val" style="font-size:14px;color:var(--orange);font-weight:700;">8</span>
+      </div>
+      <input type="range" id="tb-threshold" min="1" max="20" value="8" style="width:100%;accent-color:var(--orange);cursor:pointer;" oninput="document.getElementById('tb-threshold-val').textContent=this.value">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:2px;">
+        <span style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);">Prefix</span>
+      </div>
+      <input id="export-prefix" type="text" placeholder="optional_">
+      <button id="scan-btn" onclick="scan()">▶ Scan</button>
+    </div>
+
     <div id="sidebar-groups-list"></div>
 
     <div class="sidebar-actions">
@@ -568,19 +583,6 @@
       </div>
       <input id="file-input"   type="file" multiple accept="image/*" onchange="loadFiles(this.files)">
       <input id="folder-input" type="file" multiple accept="image/*" webkitdirectory onchange="loadFiles(this.files)">
-    </div>
-
-    <!-- TOOLBAR -->
-    <div id="toolbar">
-      <span class="tb-label">Threshold</span>
-      <div id="tb-threshold-wrap">
-        <input type="range" id="tb-threshold" min="1" max="20" value="8" oninput="document.getElementById('tb-threshold-val').textContent=this.value">
-        <span id="tb-threshold-val">8</span>
-      </div>
-      <div class="tb-spacer"></div>
-      <span class="tb-label">Prefix</span>
-      <input id="export-prefix" type="text" placeholder="optional_">
-      <button id="scan-btn" onclick="scan()">▶ Scan</button>
     </div>
 
     <!-- MANUAL MODE BANNER -->
@@ -687,7 +689,6 @@ function loadFiles(files) {
   });
 
   document.getElementById('dropzone').style.display  = 'none';
-  document.getElementById('toolbar').style.display   = 'flex';
   document.getElementById('topbar-stats').style.display = 'flex';
 
   updateStats();
@@ -1100,7 +1101,6 @@ function confirmReset() {
   toKeep.clear(); toDelete.clear(); groups = []; scanned = false;
   document.getElementById('modal-restart').classList.remove('open');
   document.getElementById('dropzone').style.display = 'flex';
-  document.getElementById('toolbar').style.display  = 'none';
   document.getElementById('topbar-stats').style.display = 'none';
   document.getElementById('grid-area').style.display = 'none';
   document.getElementById('empty-state').style.display = 'none';
