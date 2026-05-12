@@ -421,7 +421,8 @@
         <div class="modal-divider"></div>
         <div class="modal-tip">
             ⚠ No files are ever deleted from your disk — purge only removes from this session.<br>
-            ⚠ Exports go to your Downloads folder one file at a time to avoid browser limits.
+            ⚠ Exports go to your Downloads folder one file at a time to avoid browser limits.<br>
+            ⚠ TIFF files are not supported — browsers cannot decode them. Convert to JPG or PNG first.
         </div>
     </div>
 </div>
@@ -544,7 +545,13 @@ dz.ondrop      = e => { e.preventDefault(); dz.style.boxShadow = ''; loadFiles(e
 
 // ── Load files ────────────────────────────────────────
 function loadFiles(files) {
-    const imgs = [...files].filter(f => f.type.startsWith('image/'));
+    const all = [...files].filter(f => f.type.startsWith('image/') || /\.(tiff?|tif)$/i.test(f.name));
+    const tiffs = all.filter(f => f.type === 'image/tiff' || /\.(tiff?|tif)$/i.test(f.name));
+    const imgs  = all.filter(f => f.type !== 'image/tiff' && !/\.(tiff?|tif)$/i.test(f.name));
+    if (tiffs.length) {
+        const names = tiffs.map(f => f.name).join(', ');
+        alert(`TIFF FILES NOT SUPPORTED\n\nBrowsers cannot decode TIFF images.\nSkipped ${tiffs.length} file${tiffs.length > 1 ? 's' : ''}: ${names}\n\nConvert to JPG or PNG first.`);
+    }
     if (!imgs.length) return;
     let done = 0;
     imgs.forEach(file => {
