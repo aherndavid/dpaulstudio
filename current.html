@@ -44,6 +44,20 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
+        /* Background image forced to -1 to stay behind content */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 72px; left: 0; right: 0; bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/cafe.png');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: -1; 
+        }
+
         /* Font nudge */
         .font-nudge {
             position: fixed; bottom: 24px; right: 24px; z-index: 500;
