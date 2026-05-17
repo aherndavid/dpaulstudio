@@ -28,12 +28,21 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: var(--bg);
+            background: url('https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/desk.png') no-repeat center center fixed;
+            background-size: cover;
             color: var(--text);
             font-family: 'Courier New', Courier, monospace;
             font-size: 130%;
             min-height: 100vh;
             overflow-x: hidden;
+        }
+
+        /* Dark tint over background image */
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background: rgba(19, 20, 19, 0.65);
+            pointer-events: none; z-index: 0;
         }
 
         /* Grain Overlay */
@@ -72,7 +81,7 @@
         /* Nav */
         nav {
             position: sticky; top: 0; z-index: 100;
-            background: var(--bg); border-bottom: 1px solid var(--border);
+            background: rgba(19, 20, 19, 0.75); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border);
             padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
         }
         nav a {
