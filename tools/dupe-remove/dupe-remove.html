@@ -498,6 +498,49 @@
                  box-shadow:var(--pillow-inset);border-radius:10px;letter-spacing:0.02em;line-height:1.8;">
                 <span id="preview-line">cleaned-1.jpg · cleaned-2.jpg …</span>
             </div>
+
+            <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:0.04em;">FORMAT</div>
+            <div style="display:flex;gap:6px;margin-bottom:14px;" id="fmt-pills">
+                <button onclick="setFormat('original')" data-fmt="original"
+                    style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
+                           letter-spacing:0.04em;border-radius:12px;background:#1a1a1a;color:white;width:auto;">
+                    ORIGINAL
+                </button>
+                <button onclick="setFormat('webp')" data-fmt="webp"
+                    style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
+                           letter-spacing:0.04em;border-radius:12px;width:auto;">
+                    WEBP
+                </button>
+                <button onclick="setFormat('jpeg')" data-fmt="jpeg"
+                    style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
+                           letter-spacing:0.04em;border-radius:12px;width:auto;">
+                    JPEG
+                </button>
+                <button onclick="setFormat('png')" data-fmt="png"
+                    style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
+                           letter-spacing:0.04em;border-radius:12px;width:auto;">
+                    PNG
+                </button>
+            </div>
+
+            <div id="quality-wrap" style="display:none;margin-bottom:14px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:0.04em;">
+                    <span>QUALITY</span><span id="quality-val">82%</span>
+                </div>
+                <input type="range" id="quality-slider" min="10" max="100" value="82"
+                       oninput="document.getElementById('quality-val').textContent=this.value+'%';updateExportPreview()">
+            </div>
+
+            <div id="resize-wrap" style="display:none;margin-bottom:14px;">
+                <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:0.04em;">MAX WIDTH (px)</div>
+                <div style="display:flex;gap:6px;" id="resize-pills">
+                    <button onclick="setMaxWidth(0)"   data-mw="0"    style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;background:#1a1a1a;color:white;width:auto;">ORIG</button>
+                    <button onclick="setMaxWidth(1920)" data-mw="1920" style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;width:auto;">1920</button>
+                    <button onclick="setMaxWidth(1280)" data-mw="1280" style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;width:auto;">1280</button>
+                    <button onclick="setMaxWidth(800)"  data-mw="800"  style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;width:auto;">800</button>
+                </div>
+            </div>
+
             <button class="btn-accent" id="btn-export" onclick="exportKept()" disabled>⬇ EXPORT KEPT</button>
         </div>
 
@@ -533,6 +576,8 @@ let registry = [];
 let groups   = [];
 let toDelete = new Set();
 let toKeep   = new Set();
+let exportFormat = 'original'; // 'original' | 'webp' | 'jpeg' | 'png'
+let exportMaxWidth = 0;        // 0 = no resize
 
 // ── Wiring ────────────────────────────────────────────
 document.getElementById('file-input').onchange   = e => loadFiles(e.target.files);
@@ -823,8 +868,60 @@ function deleteMarked() {
     buildGroupNav(); showGroupsView(); updateStats();
 }
 
+// ── Format & Resize controls ──────────────────────────
+function setFormat(fmt) {
+    exportFormat = fmt;
+    document.querySelectorAll('#fmt-pills button').forEach(b => {
+        const active = b.dataset.fmt === fmt;
+        b.style.background = active ? '#1a1a1a' : 'var(--bg-main)';
+        b.style.color = active ? 'white' : 'var(--text)';
+        b.style.boxShadow = active ? 'none' : 'var(--pillow-raised)';
+    });
+    const needsQuality = fmt === 'webp' || fmt === 'jpeg';
+    const needsResize  = fmt !== 'original';
+    document.getElementById('quality-wrap').style.display = needsQuality ? 'block' : 'none';
+    document.getElementById('resize-wrap').style.display  = needsResize  ? 'block' : 'none';
+    updateExportPreview();
+}
+
+function setMaxWidth(w) {
+    exportMaxWidth = w;
+    document.querySelectorAll('#resize-pills button').forEach(b => {
+        const active = parseInt(b.dataset.mw) === w;
+        b.style.background = active ? '#1a1a1a' : 'var(--bg-main)';
+        b.style.color = active ? 'white' : 'var(--text)';
+        b.style.boxShadow = active ? 'none' : 'var(--pillow-raised)';
+    });
+}
+
+// Convert a dataUrl to target format via canvas
+async function convertDataUrl(dataUrl, format, quality, maxWidth) {
+    if (format === 'original' && maxWidth === 0) return dataUrl; // passthrough
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            let w = img.naturalWidth, h = img.naturalHeight;
+            if (maxWidth > 0 && w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+            const cv = document.createElement('canvas');
+            cv.width = w; cv.height = h;
+            const ctx = cv.getContext('2d');
+            if (format === 'jpeg') { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); }
+            ctx.drawImage(img, 0, 0, w, h);
+            const mime = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
+            const q = (format === 'png') ? undefined : quality / 100;
+            resolve(cv.toDataURL(mime, q));
+        };
+        img.onerror = reject;
+        img.src = dataUrl;
+    });
+}
+
 // ── Export helpers ────────────────────────────────────
 function getExportExt(item) {
+    if (exportFormat === 'webp') return 'webp';
+    if (exportFormat === 'jpeg') return 'jpg';
+    if (exportFormat === 'png')  return 'png';
+    // original: infer from file
     const t = item.file ? item.file.type : '';
     if (t === 'image/png')  return 'png';
     if (t === 'image/webp') return 'webp';
@@ -876,6 +973,10 @@ async function exportKept() {
     const btn = document.getElementById('btn-export');
     btn.disabled = true;
 
+    const quality  = parseInt(document.getElementById('quality-slider').value);
+    const maxWidth = exportMaxWidth;
+    const fmt      = exportFormat;
+
     if (window.showDirectoryPicker) {
         try {
             btn.textContent = '📁 CHOOSE FOLDER…';
@@ -886,7 +987,8 @@ async function exportKept() {
                 btn.textContent = `⬇ SAVING ${n+1} / ${list.length}`;
                 const item = list[n];
                 const filename = buildExportName(baseName, n, item);
-                const res = await fetch(item.dataUrl);
+                const converted = await convertDataUrl(item.dataUrl, fmt, quality, maxWidth);
+                const res = await fetch(converted);
                 const blob = await res.blob();
                 const fileHandle = await dir.getFileHandle(filename, { create: true });
                 const writable = await fileHandle.createWritable();
@@ -910,8 +1012,9 @@ async function exportKept() {
     for (let n = 0; n < list.length; n++) {
         btn.textContent = `⬇ EXPORTING ${n+1} / ${list.length}`;
         const item = list[n];
+        const converted = await convertDataUrl(item.dataUrl, fmt, quality, maxWidth);
         const a = document.createElement('a');
-        a.href = item.dataUrl;
+        a.href = converted;
         a.download = buildExportName(baseName, n, item);
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         await new Promise(r => setTimeout(r, 300));
