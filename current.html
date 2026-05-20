@@ -533,6 +533,27 @@
             .dont-click-left { padding: 48px 40px; border-right: none; border-bottom: 1px solid #000; }
             .dont-click-right { width: 100%; }
         }
+
+        /* ── COMPANY FOOTER ── */
+        .company-footer {
+            margin-top: 48px; padding: 32px 0;
+            border-top: 1px solid var(--border-dim);
+            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;
+        }
+        .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
+        .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
+        .company-footer-val { font-size: 0.91rem; color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val a { color: var(--dim); text-decoration: none; }
+        .company-footer-val a:hover { color: var(--orange); }
+        .company-footer-note { font-size: 0.84rem; color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
+
+        /* ── FOOTER ── */
+        .footer-line {
+            margin-top: 80px; padding-top: 32px; padding-bottom: 0;
+            font-size: 0.85rem; letter-spacing: 0.15em;
+            color: var(--dim); text-transform: uppercase;
+            border-top: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -743,6 +764,28 @@
         </div>
 
     </div><!-- /log-feed -->
+
+    <footer class="company-footer reveal">
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company</div>
+            <div class="company-footer-val">CitiIT Limited</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company No.</div>
+            <div class="company-footer-val">15811174</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">VAT No.</div>
+            <div class="company-footer-val">473 5892 49</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Website</div>
+            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
+        </div>
+    </footer>
+
+    <div class="footer-line reveal">// dPaul Technologies — Current</div>
 
 </div><!-- /page -->
 
