@@ -1270,6 +1270,7 @@ function showOrientModule() {
 }
 
 // ── Stats ─────────────────────────────────────────────
+function updateStats() {
     const el = document.getElementById('topbar-stats');
     if (!registry.length) { el.style.display='none'; return; }
     el.style.display = 'flex';
