@@ -332,10 +332,9 @@
 
         /* Rotate overlay buttons on cards */
         .card-rotate-bar {
-            position:absolute; bottom:52px; right:8px;
-            display:none; gap:4px;
+            position:absolute; bottom:38px; right:8px;
+            display:flex; gap:4px; z-index:10;
         }
-        .card:hover .card-rotate-bar { display:flex; }
         .card-rotate-btn {
             width:28px; height:28px; border-radius:50%;
             background:rgba(255,255,255,0.85); box-shadow:0 2px 8px rgba(0,0,0,0.15);
@@ -348,7 +347,7 @@
 
         /* Orientation badge */
         .orient-badge {
-            position:absolute; bottom:52px; left:8px;
+            position:absolute; bottom:38px; left:8px;
             font-family:'JetBrains Mono'; font-size:8px; font-weight:700;
             padding:3px 7px; border-radius:6px; letter-spacing:0.06em;
             background:rgba(0,0,0,0.55); color:rgba(255,255,255,0.9);
@@ -617,7 +616,7 @@
 
         <!-- Version -->
         <div style="padding:16px 10px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;">
-            v1.0
+            v1.1
         </div>
     </div>
 
