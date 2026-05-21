@@ -529,6 +529,8 @@
 
             <button class="btn-accent" id="btn-orient" onclick="applyOrient()" disabled
                 style="margin-bottom:8px;">⟳ CONVERT</button>
+            <button id="btn-orient-reset" onclick="resetOrient()"
+                style="margin-bottom:8px;font-size:11px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.04em;color:var(--muted);">↩ RESET TO ORIGINAL</button>
             <div id="orient-status" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);text-align:center;min-height:16px;"></div>
         </div>
 
@@ -661,7 +663,7 @@ function loadFiles(files) {
     imgs.forEach(file => {
         const r = new FileReader();
         r.onload = e => {
-            registry.push({ id: crypto.randomUUID(), file, name: file.name, size: file.size, dataUrl: e.target.result, phash: null });
+            registry.push({ id: crypto.randomUUID(), file, name: file.name, size: file.size, dataUrl: e.target.result, originalDataUrl: e.target.result, phash: null });
             if (++done === imgs.length) {
                 document.getElementById('btn-scan').disabled = false;
                 showAllView();
@@ -1130,7 +1132,11 @@ function detectDimensions(item) {
     return new Promise(resolve => {
         if (item._w) return resolve();
         const img = new Image();
-        img.onload = () => { item._w = img.naturalWidth; item._h = img.naturalHeight; resolve(); };
+        img.onload = () => { 
+            item._w = img.naturalWidth; item._h = img.naturalHeight; 
+            if (!item._origW) { item._origW = item._w; item._origH = item._h; }
+            resolve(); 
+        };
         img.src = item.dataUrl;
     });
 }
@@ -1259,6 +1265,27 @@ async function applyOrient() {
     // Re-render current view
     if (document.querySelectorAll('.card').length) {
         groups.length ? showGroupsView() : showAllView();
+    }
+    setTimeout(() => { status.textContent = ''; }, 3000);
+}
+
+async function resetOrient() {
+    const status = document.getElementById('orient-status');
+    let count = 0;
+    for (const item of registry) {
+        if (item.dataUrl !== item.originalDataUrl) {
+            item.dataUrl = item.originalDataUrl;
+            item._w = null; item._h = null; // clear cached dims so they re-detect
+            item.phash = null; // invalidate hash since image changed
+            count++;
+        }
+    }
+    if (!count) { status.textContent = 'NOTHING TO RESET'; }
+    else {
+        // Re-detect dims for badges
+        await ensureAllDimensions();
+        groups.length ? showGroupsView() : showAllView();
+        status.textContent = `↩ ${count} IMAGE${count!==1?'S':''} RESTORED`;
     }
     setTimeout(() => { status.textContent = ''; }, 3000);
 }
