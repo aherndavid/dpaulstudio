@@ -538,13 +538,7 @@
             <button class="btn-accent" id="btn-scan" onclick="scan()" disabled>RUN ANALYSIS</button>
         </div>
 
-        <div id="progress-wrap" style="display:none;" class="module">
-            <span class="module-label">Processing</span>
-            <p id="progress-label" style="font-size:11px;font-family:'JetBrains Mono';color:var(--muted);margin-bottom:10px;">Hashing…</p>
-            <div style="height:6px;background:var(--bg-main);border-radius:10px;box-shadow:var(--pillow-inset);overflow:hidden;">
-                <div id="progress-bar" style="height:100%;background:#1a1a1a;width:0%;transition:width 0.1s;border-radius:10px;"></div>
-            </div>
-        </div>
+        
 
         <div class="module">
             <span class="module-label">Export</span>
@@ -631,6 +625,47 @@
 <input type="file" id="file-input" multiple accept="image/*" style="display:none">
 <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none">
 
+<!-- Progress Modal -->
+<div id="progress-modal" style="display:none;position:fixed;inset:0;z-index:1000;
+    background:rgba(242,242,240,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    align-items:center;justify-content:center;">
+    <div style="background:var(--bg-main);border-radius:28px;
+        box-shadow:12px 12px 32px #c8c8c6,-12px -12px 32px #ffffff;
+        border:1px solid rgba(255,255,255,0.6);
+        padding:44px 48px;width:420px;max-width:90vw;text-align:center;">
+
+        <!-- Animated EQ bars -->
+        <div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:32px;margin-bottom:28px;">
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+        </div>
+
+        <div id="pm-phase" style="font-family:'Courier New',Courier,monospace;font-size:13px;
+            font-weight:900;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">
+            ANALYSING
+        </div>
+        <div id="pm-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;
+            color:var(--muted);margin-bottom:24px;letter-spacing:0.04em;">
+            Preparing…
+        </div>
+
+        <!-- Track -->
+        <div style="height:8px;background:var(--bg-main);border-radius:10px;
+            box-shadow:var(--pillow-inset);overflow:hidden;margin-bottom:12px;">
+            <div id="pm-bar" style="height:100%;background:#1a1a1a;width:0%;
+                border-radius:10px;transition:width 0.25s ease;"></div>
+        </div>
+
+        <div id="pm-pct" style="font-family:'JetBrains Mono',monospace;font-size:10px;
+            color:var(--muted);letter-spacing:0.08em;">0%</div>
+    </div>
+</div>
+
 <script>
 // ── State ─────────────────────────────────────────────
 let registry = [];
@@ -715,36 +750,66 @@ function computePHash(dataUrl) {
 }
 function hamming(a, b) { let d = 0; for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++; return d; }
 
+// ── Progress modal helpers ─────────────────────────────
+function pmShow()          { const m = document.getElementById('progress-modal'); m.style.display='flex'; }
+function pmHide()          { document.getElementById('progress-modal').style.display='none'; }
+function pmSet(pct, label, phase) {
+    document.getElementById('pm-bar').style.width   = pct + '%';
+    document.getElementById('pm-pct').textContent   = Math.round(pct) + '%';
+    if (label) document.getElementById('pm-label').textContent = label;
+    if (phase) document.getElementById('pm-phase').textContent = phase;
+}
+
 // ── Scan ──────────────────────────────────────────────
 async function scan() {
     groups = []; toDelete.clear(); toKeep.clear();
     const thresh = parseInt(document.getElementById('threshold').value);
-    const wrap = document.getElementById('progress-wrap');
-    const bar  = document.getElementById('progress-bar');
-    const lbl  = document.getElementById('progress-label');
-    wrap.style.display = 'block'; bar.style.width = '0%';
 
+    pmShow();
+    pmSet(0, 'Preparing…', 'ANALYSING');
+    await new Promise(r => setTimeout(r, 30)); // let modal paint
+
+    // Phase 1: hashing (0–70% of bar)
     const needHash = registry.filter(i => i.phash === null);
+    const hashWeight = 0.7;
     for (let n = 0; n < needHash.length; n++) {
-        lbl.textContent = `HASHING ${n+1} / ${needHash.length}`;
-        bar.style.width = `${((n+1)/needHash.length)*100}%`;
+        const pct = ((n + 1) / Math.max(needHash.length, 1)) * 100 * hashWeight;
+        pmSet(pct, `HASHING ${n+1} / ${needHash.length}`, 'ANALYSING');
         needHash[n].phash = await computePHash(needHash[n].dataUrl);
         await new Promise(r => setTimeout(r, 0));
     }
-    wrap.style.display = 'none';
 
-    // Union-Find clustering
+    // Phase 2: comparing pairs (70–95%)
+    pmSet(70, 'COMPARING PAIRS…', 'ANALYSING');
+    await new Promise(r => setTimeout(r, 30));
+
     const parent = Object.fromEntries(registry.map(i => [i.id, i.id]));
     function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
     const scores = {};
-    for (let i = 0; i < registry.length; i++)
-        for (let j = i+1; j < registry.length; j++) {
+    const total = registry.length;
+    const totalPairs = (total * (total - 1)) / 2;
+    let pairsDone = 0;
+    const batchSize = 200; // yield to UI every N pairs
+
+    for (let i = 0; i < total; i++) {
+        for (let j = i + 1; j < total; j++) {
             const d = hamming(registry[i].phash, registry[j].phash);
             if (d <= thresh) {
                 parent[find(registry[i].id)] = find(registry[j].id);
                 scores[`${registry[i].id}__${registry[j].id}`] = Math.round((1 - d/64)*100);
             }
+            pairsDone++;
+            if (pairsDone % batchSize === 0) {
+                const pct = 70 + (pairsDone / Math.max(totalPairs, 1)) * 25;
+                pmSet(pct, `COMPARING ${pairsDone.toLocaleString()} / ${totalPairs.toLocaleString()} PAIRS`);
+                await new Promise(r => setTimeout(r, 0));
+            }
         }
+    }
+
+    // Phase 3: building groups (95–100%)
+    pmSet(95, 'BUILDING GROUPS…', 'ANALYSING');
+    await new Promise(r => setTimeout(r, 30));
 
     const clusters = {};
     registry.forEach(i => { const root = find(i.id); (clusters[root] = clusters[root]||[]).push(i.id); });
@@ -762,6 +827,10 @@ async function scan() {
         members.forEach(m => m.role === 'original' ? toKeep.add(m.itemId) : toDelete.add(m.itemId));
         groups.push({ id: `g${gi}`, label: `Group ${gi++}`, members });
     });
+
+    pmSet(100, 'COMPLETE');
+    await new Promise(r => setTimeout(r, 400));
+    pmHide();
 
     buildGroupNav();
     groups.length ? showGroupsView() : showAllView();
