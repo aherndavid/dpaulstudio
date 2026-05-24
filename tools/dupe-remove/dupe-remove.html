@@ -685,7 +685,7 @@
 
         <!-- Version -->
         <div style="padding:16px 10px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;">
-            v1.5
+            v1.6
         </div>
     </div>
 
@@ -939,12 +939,15 @@ function groupKeepAll(gid) {
     updateStats();
 }
 function groupDeleteDups(gid) {
-    groups.find(g=>g.id===gid)?.members.forEach(m => {
-        if (m.role==='original') { toDelete.delete(m.itemId); toKeep.add(m.itemId); }
-        else                     { toKeep.delete(m.itemId);   toDelete.add(m.itemId); }
-    });
-    document.querySelectorAll('.card[data-id]').forEach(c => paintCard(c, c.dataset.id));
-    updateStats();
+    const group = groups.find(g => g.id === gid);
+    if (!group) return;
+    const dupeIds = group.members.filter(m => m.role !== 'original').map(m => m.itemId);
+    if (!dupeIds.length) return;
+    const n = dupeIds.length;
+    document.getElementById('modal-delete-msg').textContent =
+        `Remove ${n} duplicate${n !== 1 ? 's' : ''} from this session? Original files are not affected.`;
+    document.getElementById('modal-delete-confirm').dataset.pendingIds = JSON.stringify(dupeIds);
+    document.getElementById('modal-delete-confirm').classList.add('open');
 }
 
 // ── Group nav ─────────────────────────────────────────
@@ -1102,27 +1105,40 @@ function deleteMarked() {
     console.log('[deleteMarked] toDelete.size:', toDelete.size, 'registry:', registry.length);
     if (!toDelete.size) return;
     const n = toDelete.size;
+    const modal = document.getElementById('modal-delete-confirm');
+    delete modal.dataset.pendingIds; // full purge, not group-specific
     document.getElementById('modal-delete-msg').textContent =
         `This will remove ${n} image${n>1?'s':''} from this session.`;
-    document.getElementById('modal-delete-confirm').classList.add('open');
+    modal.classList.add('open');
 }
 
 async function confirmDelete() {
-    document.getElementById('modal-delete-confirm').classList.remove('open');
-    const n = toDelete.size;
+    const modal = document.getElementById('modal-delete-confirm');
+    modal.classList.remove('open');
+
+    // Determine what to purge — group-specific ids or full toDelete set
+    let idsToRemove;
+    if (modal.dataset.pendingIds) {
+        idsToRemove = new Set(JSON.parse(modal.dataset.pendingIds));
+        delete modal.dataset.pendingIds;
+    } else {
+        idsToRemove = new Set(toDelete);
+    }
+
+    if (!idsToRemove.size) return;
 
     // Show purge progress modal
     const purgeModal = document.getElementById('modal-purging');
     const purgeLabel = document.getElementById('purge-label');
     purgeModal.style.display = 'flex';
-    purgeLabel.textContent = `Removing ${n} image${n>1?'s':''}…`;
-    await new Promise(r => setTimeout(r, 30)); // let modal paint
+    purgeLabel.textContent = `Removing ${idsToRemove.size} image${idsToRemove.size !== 1 ? 's' : ''}…`;
+    await new Promise(r => setTimeout(r, 30));
 
-    registry = registry.filter(i => !toDelete.has(i.id));
-    groups.forEach(g => g.members = g.members.filter(m => !toDelete.has(m.itemId)));
+    registry = registry.filter(i => !idsToRemove.has(i.id));
+    groups.forEach(g => g.members = g.members.filter(m => !idsToRemove.has(m.itemId)));
     groups = groups.filter(g => g.members.length > 1);
-    toDelete.clear();
-    toKeep = new Set([...toKeep].filter(id => registry.find(r=>r.id===id)));
+    toDelete = new Set([...toDelete].filter(id => !idsToRemove.has(id)));
+    toKeep = new Set([...toKeep].filter(id => registry.find(r => r.id === id)));
 
     purgeLabel.textContent = '✓ Done';
     await new Promise(r => setTimeout(r, 600));
