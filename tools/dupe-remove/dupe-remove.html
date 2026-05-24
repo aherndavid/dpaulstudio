@@ -460,6 +460,53 @@
     </div>
 </div>
 
+<!-- Delete Confirm Modal -->
+<div class="modal-backdrop" id="modal-delete-confirm" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" style="max-width:400px;text-align:center;">
+        <div class="modal-title" style="margin-bottom:12px;">⚠ Confirm Purge</div>
+        <p id="modal-delete-msg" style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:8px;"></p>
+        <p style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:28px;letter-spacing:0.03em;">Original files on disk are not affected.</p>
+        <div style="display:flex;gap:12px;justify-content:center;">
+            <button onclick="document.getElementById('modal-delete-confirm').classList.remove('open')"
+                style="width:auto;padding:12px 24px;font-size:12px;color:var(--muted);">
+                CANCEL
+            </button>
+            <button onclick="confirmDelete()"
+                style="width:auto;padding:12px 24px;font-size:12px;background:#D0021B;color:white;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
+                YES, PURGE
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Purge Progress Modal -->
+<div id="modal-purging" style="display:none;position:fixed;inset:0;z-index:1000;
+    background:rgba(242,242,240,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    align-items:center;justify-content:center;">
+    <div style="background:var(--bg-main);border-radius:28px;
+        box-shadow:12px 12px 32px #c8c8c6,-12px -12px 32px #ffffff;
+        border:1px solid rgba(255,255,255,0.6);
+        padding:44px 48px;width:380px;max-width:90vw;text-align:center;">
+        <div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:32px;margin-bottom:28px;">
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+        </div>
+        <div style="font-family:'Courier New',Courier,monospace;font-size:13px;
+            font-weight:900;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;color:#D0021B;">
+            PURGING
+        </div>
+        <div id="purge-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;
+            color:var(--muted);letter-spacing:0.04em;">
+            Removing duplicates…
+        </div>
+    </div>
+</div>
+
 <!-- Start Again Confirm Modal -->
 <div class="modal-backdrop" id="modal-restart" onclick="if(event.target===this)this.classList.remove('open')">
     <div class="modal-box" style="max-width:400px;text-align:center;">
@@ -1015,12 +1062,32 @@ function scrollToGroup(gid) {
 function deleteMarked() {
     if (!toDelete.size) return;
     const n = toDelete.size;
-    if (!confirm(`CONFIRM REMOVAL OF ${n} IMAGE${n>1?'S':''} FROM SESSION?\n\nOriginal files are not affected.`)) return;
+    document.getElementById('modal-delete-msg').textContent =
+        `This will remove ${n} image${n>1?'s':''} from this session.`;
+    document.getElementById('modal-delete-confirm').classList.add('open');
+}
+
+async function confirmDelete() {
+    document.getElementById('modal-delete-confirm').classList.remove('open');
+    const n = toDelete.size;
+
+    // Show purge progress modal
+    const purgeModal = document.getElementById('modal-purging');
+    const purgeLabel = document.getElementById('purge-label');
+    purgeModal.style.display = 'flex';
+    purgeLabel.textContent = `Removing ${n} image${n>1?'s':''}…`;
+    await new Promise(r => setTimeout(r, 30)); // let modal paint
+
     registry = registry.filter(i => !toDelete.has(i.id));
     groups.forEach(g => g.members = g.members.filter(m => !toDelete.has(m.itemId)));
     groups = groups.filter(g => g.members.length > 1);
     toDelete.clear();
     toKeep = new Set([...toKeep].filter(id => registry.find(r=>r.id===id)));
+
+    purgeLabel.textContent = '✓ Done';
+    await new Promise(r => setTimeout(r, 600));
+    purgeModal.style.display = 'none';
+
     buildGroupNav(); showGroupsView(); updateStats();
 }
 
