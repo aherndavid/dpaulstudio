@@ -375,6 +375,9 @@
             cursor: pointer;
             margin-top: -8px;
         }
+
+
+
     </style>
 </head>
 <body>
@@ -403,6 +406,7 @@
         <span style="color:var(--danger)">PURGE <b id="ts-delete">0</b></span>
     </div>
     <button class="btn-help" onclick="document.getElementById('modal').classList.add('open')" style="margin-left:20px;">? HOW TO USE</button>
+
 </div>
 
 <!-- Instructions Modal -->
@@ -551,6 +555,7 @@
     </div>
 </div>
 
+
 <div class="shell">
     <div class="sidebar">
         <div class="module">
@@ -605,6 +610,8 @@
         <div class="module">
             <button class="btn-accent" id="btn-scan" onclick="scan()" disabled>RUN ANALYSIS</button>
         </div>
+
+        
 
         <div class="module">
             <span class="module-label">Export</span>
@@ -678,14 +685,13 @@
 
         <!-- Version -->
         <div style="padding:16px 10px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;">
-            v1.3
+            v1.4
         </div>
     </div>
 
     <div class="main" id="main">
         <div class="welcome-hero">
-            <img src="https://dpaul.studio/assets/dupe-remove-white.png" alt="DUPE REMOVE" class="welcome-logo">
-        </div>
+<img src="https://dpaul.studio/assets/dupe-remove-white.png" alt="DUPE REMOVE" class="welcome-logo">        </div>
     </div>
 </div>
 
@@ -983,22 +989,28 @@ function showGroupsView() {
         // Group header
         const hdr = document.createElement('div');
         hdr.style.cssText = 'display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(0,0,0,0.06);';
-        hdr.innerHTML = `
-            <div>
-                <div style="font-size:13px;font-weight:700;letter-spacing:-0.01em;">${g.label}</div>
-                <div style="font-size:11px;color:var(--muted);margin-top:2px;">${g.members.length} images · click to toggle</div>
-            </div>
-            <div style="margin-left:auto;display:flex;gap:8px;">
-                <button onclick="groupKeepAll('${g.id}')"
-                    style="width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--success);">
-                    ✓ KEEP ALL
-                </button>
-                <button onclick="groupDeleteDups('${g.id}')"
-                    style="width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--danger);">
-                    ✕ DELETE DUPES
-                </button>
-            </div>
-        `;
+
+        const info = document.createElement('div');
+        info.innerHTML = `<div style="font-size:13px;font-weight:700;letter-spacing:-0.01em;">${g.label}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">${g.members.length} images · click to toggle</div>`;
+
+        const btnWrap = document.createElement('div');
+        btnWrap.style.cssText = 'margin-left:auto;display:flex;gap:8px;';
+
+        const btnKeep = document.createElement('button');
+        btnKeep.textContent = '✓ KEEP ALL';
+        btnKeep.style.cssText = 'width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--success);';
+        btnKeep.addEventListener('click', () => groupKeepAll(g.id));
+
+        const btnDel = document.createElement('button');
+        btnDel.textContent = '✕ DELETE DUPES';
+        btnDel.style.cssText = 'width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--danger);';
+        btnDel.addEventListener('click', () => groupDeleteDups(g.id));
+
+        btnWrap.appendChild(btnKeep);
+        btnWrap.appendChild(btnDel);
+        hdr.appendChild(info);
+        hdr.appendChild(btnWrap);
         sec.appendChild(hdr);
 
         const grid = document.createElement('div');
@@ -1055,8 +1067,8 @@ function makeCard(item, role, sim) {
     const orientBadgeHtml = `<div class="orient-badge">${orientLabel}</div>`;
 
     const rotateBarHtml = `<div class="card-rotate-bar">
-        <div class="card-rotate-btn" title="Rotate CCW" onclick="event.stopPropagation();rotateCard('${item.id}',-90)">↺</div>
-        <div class="card-rotate-btn" title="Rotate CW"  onclick="event.stopPropagation();rotateCard('${item.id}',90)">↻</div>
+        <div class="card-rotate-btn" title="Rotate CCW" data-rotate="-90">↺</div>
+        <div class="card-rotate-btn" title="Rotate CW"  data-rotate="90">↻</div>
     </div>`;
 
     card.style.position = 'relative';
@@ -1070,6 +1082,9 @@ function makeCard(item, role, sim) {
         <div class="card-name">${getDisplayName(item)}</div>
         <div style="font-family:'JetBrains Mono';font-size:9px;color:var(--muted);margin-top:3px;">${(item.size/1024).toFixed(1)} KB</div>
     `;
+    card.querySelectorAll('.card-rotate-btn').forEach(btn => {
+        btn.addEventListener('click', e => { e.stopPropagation(); rotateCard(item.id, parseInt(btn.dataset.rotate)); });
+    });
     paintCard(card, item.id);
     card.addEventListener('click', () => toggleCard(item.id));
     return card;
@@ -1100,27 +1115,17 @@ async function confirmDelete() {
     purgeLabel.textContent = `Removing ${n} image${n>1?'s':''}…`;
     await new Promise(r => setTimeout(r, 30)); // let modal paint
 
-    // 1. Remove files from the main session database
     registry = registry.filter(i => !toDelete.has(i.id));
-    
-    // 2. Unlink deleted items from active duplicate structures
     groups.forEach(g => g.members = g.members.filter(m => !toDelete.has(m.itemId)));
-    
-    // 3. Drop matching clusters that no longer contain at least 2 remaining tracks
     groups = groups.filter(g => g.members.length > 1);
-    
-    // 4. Invalidate structural references and sync local state trackers
     toDelete.clear();
-    toKeep = new Set([...toKeep].filter(id => registry.some(r => r.id === id)));
+    toKeep = new Set([...toKeep].filter(id => registry.find(r=>r.id===id)));
 
     purgeLabel.textContent = '✓ Done';
     await new Promise(r => setTimeout(r, 600));
     purgeModal.style.display = 'none';
 
-    // 5. Update panel navigation indicators and recalculate window layout
-    buildGroupNav(); 
-    groups.length ? showGroupsView() : showAllView();
-    updateStats();
+    buildGroupNav(); showGroupsView(); updateStats();
 }
 
 // ── Format & Resize controls ──────────────────────────
@@ -1287,16 +1292,22 @@ function startAgain() {
     document.getElementById('modal-restart').classList.add('open');
 }
 
+
+
+
 // ── Orient ────────────────────────────────────────────
 let orientRatio = null;  // e.g. '16:9' | '9:16' | '1:1' | 'free'
 let orientScope = 'all'; // 'all' | 'landscape' | 'portrait'
 
 function getOrientLabel(item) {
+    // Try to read cached dims, else parse from dataUrl lazily
     if (item._w && item._h) {
         if (item._w > item._h) return 'LANDSCAPE';
         if (item._h > item._w) return 'PORTRAIT';
         return 'SQUARE';
     }
+    // Read synchronously from already-loaded dataUrl via Image (cached by browser)
+    // We'll compute async on load; default to blank until known
     return '';
 }
 
@@ -1349,11 +1360,13 @@ function cropToRatio(dataUrl, targetW, targetH) {
             const srcAR = sw / sh;
             let cropW, cropH, cropX, cropY;
             if (srcAR > targetAR) {
+                // source is wider — crop sides
                 cropH = sh;
                 cropW = Math.round(sh * targetAR);
                 cropX = Math.round((sw - cropW) / 2);
                 cropY = 0;
             } else {
+                // source is taller — crop top/bottom
                 cropW = sw;
                 cropH = Math.round(sw / targetAR);
                 cropX = 0;
@@ -1395,7 +1408,9 @@ async function rotateCard(itemId, deg) {
     const item = registry.find(i => i.id === itemId);
     if (!item) return;
     item.dataUrl = await rotateDataUrl(item.dataUrl, deg);
+    // swap cached dims
     if (item._w && item._h) { const tmp = item._w; item._w = item._h; item._h = tmp; }
+    // refresh all card images for this item
     document.querySelectorAll(`.card[data-id="${itemId}"]`).forEach(card => {
         const img = card.querySelector('img');
         if (img) img.src = item.dataUrl;
@@ -1423,13 +1438,14 @@ async function applyOrient() {
     for (const item of targets) {
         status.textContent = `CONVERTING ${++done} / ${targets.length}…`;
         item.dataUrl = await cropToRatio(item.dataUrl, rw, rh);
-        item._w = rw; item._h = rh;
+        item._w = rw; item._h = rh; // update cached dims (proportional)
         await new Promise(r => setTimeout(r, 0));
     }
 
     status.textContent = `✓ ${targets.length} IMAGE${targets.length!==1?'S':''} CONVERTED`;
     btn.disabled = false;
 
+    // Re-render current view
     if (document.querySelectorAll('.card').length) {
         groups.length ? showGroupsView() : showAllView();
     }
@@ -1442,13 +1458,14 @@ async function resetOrient() {
     for (const item of registry) {
         if (item.dataUrl !== item.originalDataUrl) {
             item.dataUrl = item.originalDataUrl;
-            item._w = null; item._h = null;
-            item.phash = null;
+            item._w = null; item._h = null; // clear cached dims so they re-detect
+            item.phash = null; // invalidate hash since image changed
             count++;
         }
     }
     if (!count) { status.textContent = 'NOTHING TO RESET'; }
     else {
+        // Re-detect dims for badges
         await ensureAllDimensions();
         groups.length ? showGroupsView() : showAllView();
         status.textContent = `↩ ${count} IMAGE${count!==1?'S':''} RESTORED`;
@@ -1456,6 +1473,7 @@ async function resetOrient() {
     setTimeout(() => { status.textContent = ''; }, 3000);
 }
 
+// Show orient module once images are loaded
 function showOrientModule() {
     document.getElementById('orient-module').style.display = 'block';
     document.getElementById('btn-orient').disabled = !orientRatio || orientRatio === 'free';
