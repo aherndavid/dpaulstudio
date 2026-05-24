@@ -479,6 +479,32 @@
     </div>
 </div>
 
+<!-- Generic Alert Modal -->
+<div class="modal-backdrop" id="modal-alert" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" style="max-width:400px;text-align:center;">
+        <p id="modal-alert-msg" style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:28px;"></p>
+        <button onclick="document.getElementById('modal-alert').classList.remove('open')"
+            style="width:auto;padding:12px 28px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
+            OK
+        </button>
+    </div>
+</div>
+
+<!-- No Duplicates Found Modal -->
+<div class="modal-backdrop" id="modal-no-dupes" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" style="max-width:380px;text-align:center;">
+        <div class="modal-title" style="margin-bottom:12px;">No Duplicates Found</div>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:28px;">
+            No similar images were detected at this sensitivity level.<br>
+            <strong style="color:var(--text);">Try increasing the sensitivity slider and running again.</strong>
+        </p>
+        <button onclick="document.getElementById('modal-no-dupes').classList.remove('open')"
+            style="width:auto;padding:12px 28px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
+            OK
+        </button>
+    </div>
+</div>
+
 <!-- Purge Progress Modal -->
 <div id="modal-purging" style="display:none;position:fixed;inset:0;z-index:1000;
     background:rgba(242,242,240,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -738,7 +764,9 @@ function loadFiles(files) {
     const imgs  = all.filter(f => f.type !== 'image/tiff' && !/\.(tiff?|tif)$/i.test(f.name));
     if (tiffs.length) {
         const names = tiffs.map(f => f.name).join(', ');
-        alert(`TIFF FILES NOT SUPPORTED\n\nBrowsers cannot decode TIFF images.\nSkipped ${tiffs.length} file${tiffs.length > 1 ? 's' : ''}: ${names}\n\nConvert to JPG or PNG first.`);
+        document.getElementById('modal-alert-msg').innerHTML =
+            `<strong>TIFF files are not supported.</strong><br><br>Browsers cannot decode TIFF images. Skipped ${tiffs.length} file${tiffs.length > 1 ? 's' : ''}: <span style="font-family:'JetBrains Mono',monospace;font-size:11px;">${names}</span><br><br>Convert to JPG or PNG first.`;
+        document.getElementById('modal-alert').classList.add('open');
     }
     if (!imgs.length) return;
     let done = 0;
@@ -881,7 +909,7 @@ async function scan() {
 
     buildGroupNav();
     groups.length ? showGroupsView() : showAllView();
-    if (!groups.length) alert('NO DUPLICATES FOUND. TRY INCREASING SENSITIVITY.');
+    if (!groups.length) document.getElementById('modal-no-dupes').classList.add('open');
     updateStats();
 }
 
@@ -1192,7 +1220,11 @@ function updateExportPreview() {
 async function exportKept() {
     const baseName = document.getElementById('export-name').value.trim();
     const list = registry.filter(i => !toDelete.has(i.id));
-    if (!list.length) { alert('NOTHING TO EXPORT.'); return; }
+    if (!list.length) {
+        document.getElementById('modal-alert-msg').textContent = 'Nothing to export — mark some images to keep first.';
+        document.getElementById('modal-alert').classList.add('open');
+        return;
+    }
     const btn = document.getElementById('btn-export');
     btn.disabled = true;
 
