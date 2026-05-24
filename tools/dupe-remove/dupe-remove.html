@@ -685,7 +685,7 @@
 
         <!-- Version -->
         <div style="padding:16px 10px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;">
-            v1.4
+            v1.5
         </div>
     </div>
 
@@ -838,6 +838,7 @@ function pmSet(pct, label, phase) {
 // ── Scan ──────────────────────────────────────────────
 async function scan() {
     groups = []; toDelete.clear(); toKeep.clear();
+    console.log('[scan] cleared toDelete');
     const thresh = parseInt(document.getElementById('threshold').value);
 
     pmShow();
@@ -902,6 +903,7 @@ async function scan() {
         members.forEach(m => m.role === 'original' ? toKeep.add(m.itemId) : toDelete.add(m.itemId));
         groups.push({ id: `g${gi}`, label: `Group ${gi++}`, members });
     });
+    console.log('[scan] complete — toDelete.size:', toDelete.size);
 
     pmSet(100, 'COMPLETE');
     await new Promise(r => setTimeout(r, 400));
@@ -1097,6 +1099,7 @@ function scrollToGroup(gid) {
 
 // ── Delete ────────────────────────────────────────────
 function deleteMarked() {
+    console.log('[deleteMarked] toDelete.size:', toDelete.size, 'registry:', registry.length);
     if (!toDelete.size) return;
     const n = toDelete.size;
     document.getElementById('modal-delete-msg').textContent =
