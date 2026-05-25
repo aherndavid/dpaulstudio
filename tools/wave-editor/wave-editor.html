@@ -1,3 +1,5 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
@@ -23,7 +25,6 @@
     background: var(--bg-main);
     color: var(--text);
     height: 100vh;
-    overflow: hidden;
     min-height: 580px;
   }
 
@@ -114,7 +115,7 @@
   }
 
   /* ── Shell ── */
-  .shell { display: flex; height: calc(100vh - 64px); padding: 16px; gap: 16px; }
+  .shell { display: flex; height: calc(100vh - 64px); padding: 16px; gap: 16px; overflow: hidden; }
 
   /* ── Sidebar ── */
   .sidebar {
@@ -278,8 +279,8 @@
   .infobar b { color: var(--text); font-weight: 700; }
 
   /* ── Ruler ── */
-  .ruler-wrap { height: 22px; background: var(--soft-dark); position: relative; overflow: hidden; flex-shrink: 0; }
-  #rulerCanvas { position: absolute; top: 0; left: 0; }
+  .ruler-wrap { height: 32px; background: var(--soft-dark); position: relative; overflow: hidden; flex-shrink: 0; }
+  #rulerCanvas { position: absolute; top: 0; left: 0; cursor: default; user-select: none; }
 
   /* ── Wave scroll ── */
   .wave-scroll {
@@ -345,6 +346,93 @@
   /* slider val row */
   .slider-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
   .slider-row span:last-child { color: var(--text); }
+
+  /* ── Floating Transport ── */
+  .float-transport {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    background: var(--bg-main);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.7), var(--pillow-raised);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    backdrop-filter: blur(12px);
+    user-select: none;
+    opacity: 1;
+    transition: opacity 0.25s;
+  }
+  .float-transport:hover { opacity: 1 !important; }
+  .float-transport { cursor: grab; }
+  .float-transport:active { cursor: grabbing; }
+  .ft-btn {
+    background: var(--bg-main);
+    border: none;
+    border-radius: 50%;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--pillow-raised);
+    color: var(--text);
+    font-size: 15px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .ft-btn:hover  { box-shadow: 4px 4px 10px #0D0D0C, -4px -4px 10px #282624; }
+  .ft-btn:active { box-shadow: var(--pillow-inset); transform: scale(0.93); }
+  .ft-btn.big    { width: 46px; height: 46px; font-size: 18px; }
+  .ft-btn.accent { background: var(--text); color: var(--bg-main); box-shadow: none; }
+  .ft-btn.accent:hover { background: #E0DDD4; box-shadow: none; }
+  .ft-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.07em;
+    min-width: 88px;
+    text-align: center;
+    background: var(--soft-dark);
+    box-shadow: var(--pillow-inset);
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  .ft-divider {
+    width: 1px; height: 28px;
+    background: rgba(255,255,255,0.06);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+  .ft-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .ft-btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+  @keyframes recblink { 0%,49%{opacity:1;} 50%,100%{opacity:0;} }
+
+  /* ── Loop button states ── */
+  .ft-loop-btn { transition: all 0.2s; }
+  .ft-loop-btn .ft-loop-icon { font-size: 16px; line-height: 1; }
+  .ft-loop-btn.loop-off { color: var(--muted); }
+  .ft-loop-btn.loop-on {
+    background: #1a3a2a;
+    color: #4ade80;
+    box-shadow: 0 0 0 1.5px #2E7D52, inset 2px 2px 6px rgba(0,0,0,0.4);
+  }
+  .ft-loop-btn.loop-on:hover { background: #1f4530; box-shadow: 0 0 0 1.5px #3a9966, inset 2px 2px 6px rgba(0,0,0,0.4); }
+  .ft-loop-label { transition: color 0.2s; }
+  .ft-loop-label.loop-on { color: #4ade80; }
 </style>
 
 <body>
@@ -367,6 +455,129 @@
     <div class="ts-item"><span class="ts-val" id="ts-ch">—</span><span class="ts-lbl">Ch</span></div>
     <div class="ts-item"><span class="ts-val" id="ts-dur">—</span><span class="ts-lbl">Dur</span></div>
   </div>
+  <div id="versionBadge" onclick="document.getElementById('changelogModal').style.display='flex'" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--hint);letter-spacing:0.10em;padding-left:18px;border-left:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:color 0.15s;" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--hint)'" title="View changelog">v1.8</div>
+</div>
+
+<!-- Changelog Modal -->
+<div id="changelogModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div style="background:var(--bg-main);border:1px solid rgba(255,255,255,0.08);border-radius:24px;box-shadow:0 24px 64px rgba(0,0,0,0.8);width:480px;max-width:90vw;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+    <!-- Header -->
+    <div style="padding:22px 28px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;">Changelog</div>
+        <div style="font-size:18px;font-weight:700;color:var(--text);margin-top:3px;">Wave Editor</div>
+      </div>
+      <button onclick="document.getElementById('changelogModal').style.display='none'" style="width:32px;height:32px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;padding:0;color:var(--muted);">✕</button>
+    </div>
+    <!-- Entries -->
+    <div style="overflow-y:auto;padding:20px 28px;display:flex;flex-direction:column;gap:20px;">
+
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--text);">v1.8</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;background:var(--soft-lift);padding:3px 8px;border-radius:6px;">Current</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--text);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>FIT SEL — zooms the view to fill the window with the current selection (with 5% padding)</li>
+          <li style="font-size:12px;color:var(--text);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>← BACK — one click returns to the previous zoom level and scroll position</li>
+          <li style="font-size:12px;color:var(--text);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>FIT SEL button added to floating transport bar for quick access</li>
+          <li style="font-size:12px;color:var(--text);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Manual zoom or slider clears the fit state so back-zoom stays clean</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.7</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed handle dragging — markers now actually moveable by grabbing them in the ruler</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Drag events tracked at document level so leaving canvas mid-drag no longer breaks it</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Ruler canvas is now interactive — hover shows ↔ cursor near handles</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.6</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Selection handles draggable (first attempt — superseded by v1.7)</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.5</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Selection markers — 9×16 triangles appear above the waveform at selection start/end</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Selection tint shown in ruler strip for at-a-glance region view</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed: clicking canvas no longer wipes selection when loop is ON</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed: clicking outside loop region seeks playhead without breaking the loop selection</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.4</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed playhead running off-screen during loop — now wraps correctly within the selection</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Selection highlight now stays visible throughout looped playback</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.3</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Loop playback now always starts from the selection start, ignoring playhead position</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Loop button now clearly shows ON (green glow) / OFF (muted) state</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Loop label turns green when active</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.2</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Subtle click sounds on all transport bar buttons</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Three sound types: play, stop, and soft nav tick</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed AudioContext suspended state — WAV/AIFF audio now plays correctly</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>AudioContext pre-warmed on first user gesture</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.1</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed floating transport bar not appearing (DOM order bug)</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed transport bar clipped by body overflow:hidden</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Raised z-index to 99999, always visible on load</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">✓</span>Fixed AIFF fallback parser receiving detached ArrayBuffer</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--muted);">v1.0</span>
+        </div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;">
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Initial release</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>WAV & AIFF loading, waveform display, selection editing</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Floating draggable transport bar</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Fade in/out, normalize, crop, delete, undo</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Mic & system audio recording</li>
+          <li style="font-size:12px;color:var(--muted);display:flex;gap:8px;"><span style="color:var(--success);flex-shrink:0;">+</span>Export to WAV</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <div class="shell">
@@ -378,8 +589,22 @@
       <div class="drop-zone" id="uploadBox">
         DROP WAV / AIFF<br>or click to browse
       </div>
-      <input type="file" id="fileInput" accept=".wav,.aif,.aiff">
-      <button id="saveBtn" class="btn-accent" disabled style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;">⬇ EXPORT WAV</button>
+      <input type="file" id="fileInput" accept=".wav,.aif,.aiff,.mp3,.ogg,.flac,.m4a,.aac">
+      <button id="saveBtn" class="btn-accent" disabled style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;">↓ EXPORT WAV</button>
+    </div>
+
+    <div class="module">
+      <span class="module-label">Record</span>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button id="recInternalBtn" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;">● RECORD SYSTEM AUDIO</button>
+        <button id="recMicBtn" style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;">⬤ RECORD MICROPHONE</button>
+        <div id="recStatus" style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.06em;text-align:center;min-height:14px;"></div>
+        <div id="recTimerWrap" style="display:none;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#C0392B;animation:recblink 1s infinite;flex-shrink:0;"></div>
+          <span id="recTimer" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--danger);letter-spacing:0.08em;">0:00.0</span>
+          <button id="recStopBtn" class="btn-sm btn-danger" style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10px;">■ STOP</button>
+        </div>
+      </div>
     </div>
 
     <div class="module">
@@ -396,18 +621,18 @@
     <div class="module">
       <span class="module-label">Edit</span>
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <button id="cropBtn" disabled>⊂ CROP TO SELECTION</button>
-        <button id="deleteBtn" class="btn-danger" disabled>✕ DELETE SELECTION</button>
-        <button id="undoBtn" disabled>↩ UNDO</button>
+        <button id="cropBtn" disabled>[ CROP TO SELECTION</button>
+        <button id="deleteBtn" class="btn-danger" disabled>X DELETE SELECTION</button>
+        <button id="undoBtn" disabled>← UNDO</button>
       </div>
     </div>
 
     <div class="module">
       <span class="module-label">Process</span>
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <button id="fadeInBtn" disabled>↗ FADE IN</button>
-        <button id="fadeOutBtn" disabled>↘ FADE OUT</button>
-        <button id="normalizeBtn" disabled>⊼ NORMALIZE</button>
+        <button id="fadeInBtn" disabled>/ FADE IN</button>
+        <button id="fadeOutBtn" disabled>\ FADE OUT</button>
+        <button id="normalizeBtn" disabled>△ NORMALIZE</button>
       </div>
     </div>
 
@@ -417,7 +642,7 @@
       <input type="range" id="zoomRange" min="1" max="100" value="1" step="1">
       <div class="btn-row" style="margin-top:10px;">
         <button class="btn-sm" id="zoomOutBtn">−</button>
-        <button class="btn-sm" id="zoomFitBtn">FIT</button>
+        <button class="btn-sm" id="zoomFitBtn">FIT SEL</button>
         <button class="btn-sm" id="zoomInBtn">+</button>
       </div>
     </div>
@@ -472,6 +697,48 @@
   </div>
 </div>
 
+<!-- Floating Transport Bar -->
+<div class="float-transport" id="floatTransport">
+  <span style="font-size:13px;color:var(--hint);margin-right:4px;flex-shrink:0;cursor:grab;letter-spacing:-1px;" title="Drag to move">&#x2237;</span>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn" id="ftSkipStartBtn" title="Go to start">&#x23EE;</button>
+    <span class="ft-label">START</span>
+  </div>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn" id="ftRewindBtn" title="Rewind 5s">&#x23EA;</button>
+    <span class="ft-label">-5s</span>
+  </div>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn big accent" id="ftPlayBtn" title="Play / Stop">&#x25B6;</button>
+    <span class="ft-label">PLAY</span>
+  </div>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn" id="ftFwdBtn" title="Forward 5s">&#x23E9;</button>
+    <span class="ft-label">+5s</span>
+  </div>
+  <div class="ft-divider"></div>
+  <div class="ft-time" id="ftTime">0:00.000</div>
+  <div class="ft-divider"></div>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn ft-loop-btn" id="ftLoopBtn" title="Toggle loop selection">
+      <span class="ft-loop-icon">⇄</span>
+    </button>
+    <span class="ft-label ft-loop-label" id="ftLoopLabel">LOOP</span>
+  </div>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn" id="ftFitBtn" title="Zoom to selection">&#x26F6;</button>
+    <span class="ft-label">FIT SEL</span>
+  </div>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn" id="ftZoomOutBtn" title="Zoom out">&#x2212;</button>
+    <span class="ft-label">ZOOM</span>
+  </div>
+  <div class="ft-btn-wrap">
+    <button class="ft-btn" id="ftZoomInBtn" title="Zoom in">&#x2B;</button>
+    <span class="ft-label">ZOOM</span>
+  </div>
+</div>
+
 <script>
 const fileInput  = document.getElementById('fileInput');
 const uploadBox  = document.getElementById('uploadBox');
@@ -511,6 +778,14 @@ let isDragging = false, dragStart = 0;
 let history = [];
 let fileName = '';
 
+// Pre-warm AudioContext on first user gesture so it's never in suspended state when we need it
+function ensureAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+document.addEventListener('click', ensureAudioCtx, { once: true });
+
 const wCtx = waveCanvas.getContext('2d');
 const rCtx = rulerCanvas.getContext('2d');
 
@@ -527,7 +802,7 @@ function canvasW() {
 function resize() {
   const w = canvasW(), h = waveScroll.clientHeight || 200;
   waveCanvas.width = w; waveCanvas.height = h;
-  rulerCanvas.width = waveScroll.clientWidth; rulerCanvas.height = 22;
+  rulerCanvas.width = waveScroll.clientWidth; rulerCanvas.height = 32;
   draw();
 }
 
@@ -598,25 +873,46 @@ function draw() {
     wCtx.fillText('OUT',mx+3,11);
   }
 
-  // Playhead
+  // Playhead — wraps within loop region during looped playback
   const elapsed = isPlaying ? audioCtx.currentTime - playStartTime : 0;
-  const pos = Math.min(audioBuffer.duration, playOffset + elapsed);
+  let pos;
+  const loopRegion = getLoopRegion();
+  if (isPlaying && loopRegion) {
+    const loopLen = loopRegion.end - loopRegion.start;
+    pos = loopLen > 0
+      ? loopRegion.start + ((elapsed) % loopLen)
+      : loopRegion.start;
+  } else {
+    pos = Math.min(audioBuffer.duration, playOffset + elapsed);
+  }
   const px = pos*pps;
   wCtx.strokeStyle = '#F0EDE4'; wCtx.lineWidth = 1.5;
   wCtx.beginPath(); wCtx.moveTo(px,0); wCtx.lineTo(px,ch); wCtx.stroke();
   const td = fmt(pos);
   timeDisp.textContent = td; timeDispB.textContent = td;
+  const ftTimeEl = document.getElementById('ftTime');
+  if (ftTimeEl) ftTimeEl.textContent = td;
 
   drawRuler();
 }
 
 function drawRuler() {
-  const cw = rulerCanvas.width;
-  rCtx.clearRect(0,0,cw,22);
+  const cw = rulerCanvas.width, ch = rulerCanvas.height;
+  rCtx.clearRect(0,0,cw,ch);
   rCtx.fillStyle = '#141412';
-  rCtx.fillRect(0,0,cw,22);
+  rCtx.fillRect(0,0,cw,ch);
   if (!audioBuffer) return;
   const pps = waveCanvas.width / audioBuffer.duration;
+
+  // ── Selection region tint on ruler ──
+  if (selStart !== null && selEnd !== null && Math.abs(selEnd-selStart) > 0.001) {
+    const s = Math.min(selStart,selEnd), en = Math.max(selStart,selEnd);
+    const sx = Math.round(s*pps) - scrollX, ex = Math.round(en*pps) - scrollX;
+    rCtx.fillStyle = 'rgba(240,237,228,0.06)';
+    rCtx.fillRect(sx, 0, ex-sx, ch);
+  }
+
+  // ── Time ticks ──
   const intervals = [0.01,0.025,0.05,0.1,0.25,0.5,1,2,5,10,30,60];
   const iv = intervals.find(i => i*pps >= 55) || 60;
   rCtx.fillStyle = '#6A675E';
@@ -626,8 +922,45 @@ function drawRuler() {
   for (let t=0; t<=audioBuffer.duration; t+=iv) {
     const x = Math.round(t*pps) - scrollX;
     if (x<-50||x>cw+10) continue;
-    rCtx.beginPath(); rCtx.moveTo(x,16); rCtx.lineTo(x,22); rCtx.stroke();
-    rCtx.fillText(fmt(t), x+2, 12);
+    rCtx.beginPath(); rCtx.moveTo(x, ch-8); rCtx.lineTo(x, ch); rCtx.stroke();
+    rCtx.fillText(fmt(t), x+2, ch-10);
+  }
+
+  // ── Selection markers (9:16 triangles) ──
+  if (selStart !== null && selEnd !== null && Math.abs(selEnd-selStart) > 0.001) {
+    const s = Math.min(selStart,selEnd), en = Math.max(selStart,selEnd);
+    const sx = Math.round(s*pps) - scrollX;
+    const ex = Math.round(en*pps) - scrollX;
+    const mW = 9, mH = 16; // marker dimensions
+
+    // Start marker (points right ▶)
+    if (sx > -mW && sx < cw + mW) {
+      rCtx.fillStyle = '#F0EDE4';
+      rCtx.beginPath();
+      rCtx.moveTo(sx, 0);
+      rCtx.lineTo(sx, mH);
+      rCtx.lineTo(sx + mW, mH / 2);
+      rCtx.closePath();
+      rCtx.fill();
+      // Stem line down to waveform edge
+      rCtx.strokeStyle = 'rgba(240,237,228,0.3)';
+      rCtx.lineWidth = 1;
+      rCtx.beginPath(); rCtx.moveTo(sx, mH); rCtx.lineTo(sx, ch); rCtx.stroke();
+    }
+
+    // End marker (points left ◀)
+    if (ex > -mW && ex < cw + mW) {
+      rCtx.fillStyle = '#F0EDE4';
+      rCtx.beginPath();
+      rCtx.moveTo(ex, 0);
+      rCtx.lineTo(ex, mH);
+      rCtx.lineTo(ex - mW, mH / 2);
+      rCtx.closePath();
+      rCtx.fill();
+      rCtx.strokeStyle = 'rgba(240,237,228,0.3)';
+      rCtx.lineWidth = 1;
+      rCtx.beginPath(); rCtx.moveTo(ex, mH); rCtx.lineTo(ex, ch); rCtx.stroke();
+    }
   }
 }
 
@@ -661,25 +994,123 @@ function updateUI() {
   }
 }
 
+// ── AIFF parser: converts AIFF/AIFF-C to a decoded AudioBuffer ──────────────
+function parseAiff(arrayBuffer) {
+  const view = new DataView(arrayBuffer);
+  const readStr = (off, len) => { let s=''; for(let i=0;i<len;i++) s+=String.fromCharCode(view.getUint8(off+i)); return s; };
+  const readF80 = off => {
+    // 80-bit extended (IEEE 754) → number
+    const exp = ((view.getUint8(off)&0x7F)<<8)|view.getUint8(off+1);
+    let mant = 0;
+    for(let i=0;i<8;i++) mant = mant*256 + view.getUint8(off+2+i);
+    return (view.getUint8(off)&0x80?-1:1) * mant * Math.pow(2, exp-16383-63);
+  };
+
+  if (readStr(0,4) !== 'FORM') throw new Error('Not an AIFF file');
+  const formType = readStr(8,4);
+  const isAifc = formType === 'AIFC';
+  if (formType !== 'AIFF' && !isAifc) throw new Error('Not AIFF/AIFF-C');
+
+  let numChannels, sampleRate, bitDepth, numSamples, compression='NONE';
+  let soundDataOffset = -1, soundDataSize = 0, offset = 12;
+
+  while (offset < arrayBuffer.byteLength - 8) {
+    const chunkId = readStr(offset, 4);
+    const chunkSize = view.getInt32(offset+4, false);
+    const chunkData = offset+8;
+    if (chunkId === 'COMM') {
+      numChannels = view.getInt16(chunkData, false);
+      numSamples  = view.getUint32(chunkData+2, false);
+      bitDepth    = view.getInt16(chunkData+6, false);
+      sampleRate  = readF80(chunkData+8);
+      if (isAifc) compression = readStr(chunkData+18, 4).trim();
+    } else if (chunkId === 'SSND') {
+      const dataOff = view.getUint32(chunkData, false);
+      soundDataOffset = chunkData + 8 + dataOff;
+      soundDataSize   = chunkSize - 8 - dataOff;
+    }
+    offset += 8 + chunkSize + (chunkSize & 1);
+  }
+
+  if (soundDataOffset < 0) throw new Error('SSND chunk not found');
+  // Normalise compression tag: trim NUL bytes and whitespace
+  const compNorm = compression.replace(/\x00/g,'').trim().toUpperCase();
+  if (compNorm !== 'NONE' && compNorm !== 'SOWT' && compNorm !== '')
+    throw new Error(`Unsupported AIFF-C compression: "${compression}" — only PCM (NONE/sowt) supported`);
+
+  const littleEndian = (compNorm === 'SOWT');
+  const bytesPerSample = Math.ceil(bitDepth/8);
+  // Frame = one sample across ALL channels; total interleaved samples = channels * frames
+  const totalFrames = numSamples; // numSamples in COMM = frames, not individual samples
+  const totalSamples = numChannels * totalFrames;
+  const float32 = new Float32Array(totalSamples);
+  const max = Math.pow(2, bitDepth-1);
+
+  for (let i=0; i<totalSamples; i++) {
+    const pos = soundDataOffset + i*bytesPerSample;
+    if (pos + bytesPerSample > arrayBuffer.byteLength) break; // guard overread
+    let val = 0;
+    if (bitDepth <= 8) {
+      val = view.getInt8(pos) / max;
+    } else if (bitDepth === 16) {
+      val = view.getInt16(pos, littleEndian) / max;
+    } else if (bitDepth === 24) {
+      const b0=view.getUint8(pos), b1=view.getUint8(pos+1), b2=view.getUint8(pos+2);
+      const raw = littleEndian ? (b2<<16)|(b1<<8)|b0 : (b0<<16)|(b1<<8)|b2;
+      val = (raw >= 0x800000 ? raw - 0x1000000 : raw) / max;
+    } else if (bitDepth === 32) {
+      val = view.getInt32(pos, littleEndian) / max;
+    }
+    float32[i] = Math.max(-1, Math.min(1, val));
+  }
+
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  const buf = audioCtx.createBuffer(numChannels, numSamples, sampleRate);
+  for (let c=0; c<numChannels; c++) {
+    const ch = buf.getChannelData(c);
+    for (let i=0; i<numSamples; i++) ch[i] = float32[i*numChannels + c];
+  }
+  return buf;
+}
+
+function applyBuffer(buf) {
+  audioBuffer = buf;
+  selStart = selEnd = markerIn = markerOut = null;
+  history = []; playOffset = 0; zoom = 1; zoomRange.value = 1; zoomVal.textContent = '1×';
+  uploadOver.style.display = 'none';
+  document.getElementById('filenameInfo').innerHTML = `<b>${fileName}</b>`;
+  document.getElementById('sampleRateInfo').innerHTML = `<b>${buf.sampleRate}</b>&nbsp;Hz`;
+  document.getElementById('channelsInfo').innerHTML = `<b>${buf.numberOfChannels}</b>&nbsp;ch`;
+  document.getElementById('durationInfo').innerHTML = `<b>${fmt(buf.duration)}</b>`;
+  resize(); updateUI();
+}
+
 function loadFile(file) {
   fileName = file.name;
+  const isAiff = /\.(aif|aiff)$/i.test(file.name);
   const reader = new FileReader();
   reader.onload = e => {
-    if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-    audioCtx.decodeAudioData(e.target.result.slice(0), buf => {
-      audioBuffer = buf;
-      selStart = selEnd = markerIn = markerOut = null;
-      history = []; playOffset = 0; zoom = 1; zoomRange.value = 1; zoomVal.textContent = '1×';
-      uploadOver.style.display = 'none';
-      document.getElementById('filenameInfo').innerHTML = `<b>${fileName}</b>`;
-      document.getElementById('sampleRateInfo').innerHTML = `<b>${buf.sampleRate}</b>&nbsp;Hz`;
-      document.getElementById('channelsInfo').innerHTML = `<b>${buf.numberOfChannels}</b>&nbsp;ch`;
-      document.getElementById('durationInfo').innerHTML = `<b>${fmt(buf.duration)}</b>`;
-      resize(); updateUI();
-    }, () => alert('Could not decode. Try a standard WAV or AIFF file.'));
+    const ab = e.target.result.slice(0);
+    ensureAudioCtx();
+    if (isAiff) {
+      // Keep a separate copy for the manual parser in case native decode transfers/detaches ab
+      const abForParser = ab.slice(0);
+      audioCtx.decodeAudioData(ab, buf => applyBuffer(buf), () => {
+        try { applyBuffer(parseAiff(abForParser)); }
+        catch(err) { alert('Could not decode AIFF: ' + err.message); }
+      });
+    } else {
+      audioCtx.decodeAudioData(ab, buf => applyBuffer(buf),
+        () => alert('Could not decode audio. Try a standard WAV or AIFF file.'));
+    }
   };
   reader.readAsArrayBuffer(file);
 }
+
+// ── Drop anywhere on the page (works even after a file is loaded) ────────────
+function handleFileDrop(file) { if (file) loadFile(file); }
+['dragover','dragenter'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); }));
+document.addEventListener('drop', e => { e.preventDefault(); handleFileDrop(e.dataTransfer.files[0]); });
 
 uploadBox.onclick = uploadBoxI.onclick = () => fileInput.click();
 fileInput.onchange = e => { if (e.target.files[0]) loadFile(e.target.files[0]); };
@@ -687,70 +1118,267 @@ fileInput.onchange = e => { if (e.target.files[0]) loadFile(e.target.files[0]); 
 uploadBoxI.ondragleave = () => { uploadBoxI.style.borderColor=''; };
 uploadBoxI.ondrop = e => { e.preventDefault(); uploadBoxI.style.borderColor=''; if(e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); };
 
-// Canvas mouse
-waveCanvas.onmousedown = e => {
+// ── Selection & handle dragging ───────────────────────────────────────────────
+// dragMode: null | 'new' | 'handle-start' | 'handle-end'
+let dragMode = null;
+const HANDLE_GRAB_PX = 14;
+
+function pps() {
+  return audioBuffer ? waveCanvas.width / audioBuffer.duration : 1;
+}
+function xToTime(x) {
+  return Math.max(0, Math.min(audioBuffer.duration, (x + scrollX) / pps()));
+}
+function timeToScreenX(t) {
+  return t * pps() - scrollX;
+}
+function getHandleHit(screenX) {
+  if (!audioBuffer || selStart === null || selEnd === null || Math.abs(selEnd - selStart) < 0.001) return null;
+  const sX = timeToScreenX(Math.min(selStart, selEnd));
+  const eX = timeToScreenX(Math.max(selStart, selEnd));
+  if (Math.abs(screenX - sX) <= HANDLE_GRAB_PX) return 'handle-start';
+  if (Math.abs(screenX - eX) <= HANDLE_GRAB_PX) return 'handle-end';
+  return null;
+}
+
+// Ruler handles the marker dragging (markers live in the ruler visually)
+rulerCanvas.style.cursor = 'default';
+rulerCanvas.addEventListener('mousemove', e => {
   if (!audioBuffer) return;
+  const hit = getHandleHit(e.offsetX);
+  rulerCanvas.style.cursor = hit ? 'ew-resize' : 'default';
+});
+rulerCanvas.addEventListener('mousedown', e => {
+  if (!audioBuffer) return;
+  const hit = getHandleHit(e.offsetX);
+  if (!hit) return;
+  e.preventDefault();
+  dragMode = hit;
   isDragging = true;
-  const pps = waveCanvas.width/audioBuffer.duration;
-  dragStart = (e.offsetX+scrollX)/pps;
-  selStart = selEnd = dragStart;
+});
+
+// Wave canvas — new selections
+waveCanvas.addEventListener('mousemove', e => {
+  if (!audioBuffer) return;
+  // Check if near a handle (handles extend visually from ruler down)
+  const hit = getHandleHit(e.offsetX);
+  waveCanvas.style.cursor = hit ? 'ew-resize' : 'crosshair';
+});
+waveCanvas.addEventListener('mousedown', e => {
+  if (!audioBuffer) return;
+  // Check handle hit first — allow even when loop on
+  const hit = getHandleHit(e.offsetX);
+  if (hit) {
+    e.preventDefault();
+    dragMode = hit;
+    isDragging = true;
+    return;
+  }
+  if (ftLoopEnabled) return;
+  dragMode = 'new';
+  isDragging = true;
+  const t = xToTime(e.offsetX);
+  dragStart = t;
+  selStart = selEnd = t;
   draw(); updateUI();
-};
-waveCanvas.onmousemove = e => {
-  if (!isDragging||!audioBuffer) return;
-  const pps = waveCanvas.width/audioBuffer.duration;
-  selEnd = Math.max(0,Math.min(audioBuffer.duration,(e.offsetX+scrollX)/pps));
+});
+
+// Document-level mousemove/mouseup so dragging outside the element works
+document.addEventListener('mousemove', e => {
+  if (!isDragging || !dragMode || !audioBuffer) return;
+  // Get x relative to waveScroll
+  const rect = waveScroll.getBoundingClientRect();
+  const relX = e.clientX - rect.left;
+  const t = xToTime(relX);
+  if (dragMode === 'handle-start') {
+    selStart = t;
+  } else if (dragMode === 'handle-end') {
+    selEnd = t;
+  } else if (dragMode === 'new') {
+    selEnd = t;
+  }
   draw(); updateUI();
-};
-waveCanvas.onmouseup = () => { isDragging=false; updateUI(); };
-waveCanvas.onmouseleave = () => { if(isDragging){isDragging=false;updateUI();} };
+});
+
+document.addEventListener('mouseup', e => {
+  if (!isDragging || !dragMode) return;
+  isDragging = false;
+  // Normalise
+  if (selStart !== null && selEnd !== null && selStart > selEnd) {
+    [selStart, selEnd] = [selEnd, selStart];
+  }
+  dragMode = null;
+  updateUI();
+});
+
 waveCanvas.onclick = e => {
-  if (!audioBuffer||Math.abs((selEnd||0)-(selStart||0))>0.01) return;
-  const pps=waveCanvas.width/audioBuffer.duration;
-  playOffset=Math.max(0,Math.min(audioBuffer.duration,(e.offsetX+scrollX)/pps));
-  selStart=selEnd=null;
-  if (!isPlaying) { timeDisp.textContent=fmt(playOffset); timeDispB.textContent=fmt(playOffset); }
+  if (!audioBuffer) return;
+  // Suppress if this was end of a drag
+  if (Math.abs((selEnd || 0) - (selStart || 0)) > 0.01) {
+    // If loop on, allow seeking within canvas
+    if (ftLoopEnabled) {
+      const clickPos = xToTime(e.offsetX);
+      const wasPlaying = isPlaying;
+      if (wasPlaying) stopPlay();
+      playOffset = clickPos;
+      if (wasPlaying) startPlay(); else draw();
+    }
+    return;
+  }
+  const clickPos = xToTime(e.offsetX);
+  playOffset = clickPos;
+  selStart = selEnd = null;
+  if (!isPlaying) { timeDisp.textContent = fmt(playOffset); timeDispB.textContent = fmt(playOffset); }
   draw(); updateUI();
 };
 
 waveScroll.onscroll = () => { scrollX=waveScroll.scrollLeft; draw(); };
 
 // Zoom
-function applyZoom(v) {
-  zoom=Math.max(1,Math.min(100,v));
-  zoomRange.value=zoom;
-  zoomVal.textContent=zoom.toFixed(1)+'×';
-  resize();
-}
-zoomRange.oninput = () => applyZoom(Number(zoomRange.value));
-document.getElementById('zoomInBtn').onclick = () => applyZoom(zoom*1.5);
-document.getElementById('zoomOutBtn').onclick = () => applyZoom(zoom/1.5);
-document.getElementById('zoomFitBtn').onclick = () => applyZoom(1);
+let preZoomFitState = null; // stores {zoom, scrollX} before zoom-to-sel
 
-// Play
-function startPlay() {
-  if (!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  if (audioCtx.state==='suspended') audioCtx.resume();
-  sourceNode=audioCtx.createBufferSource();
-  sourceNode.buffer=audioBuffer;
-  sourceNode.connect(audioCtx.destination);
-  playStartTime=audioCtx.currentTime;
-  sourceNode.start(0,playOffset);
-  isPlaying=true;
-  playIcon.className='ti ti-player-stop'; playIconB.className='ti ti-player-stop';
-  sourceNode.onended=stopPlay;
-  animFrame=requestAnimationFrame(function loop(){draw();if(isPlaying)animFrame=requestAnimationFrame(loop);});
+function applyZoom(v, targetScrollX) {
+  zoom = Math.max(1, Math.min(100, v));
+  zoomRange.value = zoom;
+  zoomVal.textContent = zoom.toFixed(1) + '×';
+  resize();
+  if (targetScrollX !== undefined) {
+    waveScroll.scrollLeft = targetScrollX;
+    scrollX = targetScrollX;
+    draw();
+  }
 }
+
+function zoomToSelection() {
+  if (!audioBuffer || selStart === null || selEnd === null || Math.abs(selEnd - selStart) < 0.001) return;
+  const s = Math.min(selStart, selEnd), e = Math.max(selStart, selEnd);
+  const selDur = e - s;
+  const viewW = waveScroll.clientWidth;
+  const padding = 0.05; // 5% padding either side
+  const paddedDur = selDur * (1 + padding * 2);
+  const newZoom = Math.min(100, audioBuffer.duration / paddedDur);
+  // Save state for back-zoom
+  preZoomFitState = { zoom, scrollX: waveScroll.scrollLeft };
+  const newPps = viewW * newZoom / audioBuffer.duration;
+  const newScrollX = Math.max(0, (s - selDur * padding) * newPps);
+  applyZoom(newZoom, newScrollX);
+  document.getElementById('zoomFitBtn').textContent = '← BACK';
+  const ftFit = document.getElementById('ftFitBtn');
+  if (ftFit) { ftFit.innerHTML = '&#x2B0C;'; ftFit.title = 'Zoom back out'; }
+}
+
+function zoomBack() {
+  if (!preZoomFitState) { applyZoom(1, 0); return; }
+  applyZoom(preZoomFitState.zoom, preZoomFitState.scrollX);
+  preZoomFitState = null;
+  document.getElementById('zoomFitBtn').textContent = 'FIT SEL';
+  const ftFit = document.getElementById('ftFitBtn');
+  if (ftFit) { ftFit.innerHTML = '&#x26F6;'; ftFit.title = 'Zoom to selection'; }
+}
+
+function toggleZoomFit() {
+  playClick('soft');
+  if (preZoomFitState) { zoomBack(); } else { zoomToSelection(); }
+}
+
+zoomRange.oninput = () => { preZoomFitState = null; applyZoom(Number(zoomRange.value)); document.getElementById('zoomFitBtn').textContent = 'FIT SEL'; };
+document.getElementById('zoomInBtn').onclick  = () => { playClick('soft'); preZoomFitState = null; applyZoom(zoom * 1.5); };
+document.getElementById('zoomOutBtn').onclick = () => { playClick('soft'); preZoomFitState = null; applyZoom(zoom / 1.5); };
+document.getElementById('zoomFitBtn').onclick = toggleZoomFit;
+
+// Play — loop-aware
+let ftLoopEnabled = false;
+
+function getLoopRegion() {
+  // Returns {start, end} if we have a valid selection loop, else null
+  if (ftLoopEnabled && selStart !== null && selEnd !== null && Math.abs(selEnd - selStart) > 0.01) {
+    return { start: Math.min(selStart, selEnd), end: Math.max(selStart, selEnd) };
+  }
+  return null;
+}
+
+// ── UI click sound ────────────────────────────────────────────────────────────
+function playClick(type = 'soft') {
+  try {
+    const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    const now = ctx.currentTime;
+    if (type === 'play') {
+      // Brighter tick for play
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(800, now + 0.04);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+      osc.start(now); osc.stop(now + 0.06);
+    } else if (type === 'stop') {
+      osc.frequency.setValueAtTime(700, now);
+      osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+      gain.gain.setValueAtTime(0.07, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+      osc.start(now); osc.stop(now + 0.07);
+    } else {
+      // Soft tick for nav/zoom buttons
+      osc.frequency.setValueAtTime(900, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.03);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+      osc.start(now); osc.stop(now + 0.04);
+    }
+  } catch(e) {}
+}
+
+async function startPlay() {
+  if (!audioBuffer) return;
+  ensureAudioCtx();
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+  const region = getLoopRegion();
+  const startOffset = region ? region.start : playOffset;
+
+  sourceNode = audioCtx.createBufferSource();
+  sourceNode.buffer = audioBuffer;
+  sourceNode.connect(audioCtx.destination);
+
+  if (region) {
+    sourceNode.loop = true;
+    sourceNode.loopStart = region.start;
+    sourceNode.loopEnd   = region.end;
+  } else {
+    sourceNode.loop = false;
+  }
+
+  playStartTime = audioCtx.currentTime;
+  sourceNode.start(0, startOffset);
+  isPlaying = true;
+  playIcon.className = 'ti ti-player-stop';
+  playIconB.className = 'ti ti-player-stop';
+  updateFtPlay();
+  sourceNode.onended = stopPlay;
+  animFrame = requestAnimationFrame(function tick() { draw(); if (isPlaying) animFrame = requestAnimationFrame(tick); });
+}
+
 function stopPlay() {
-  if (sourceNode){try{sourceNode.stop();}catch(e){} sourceNode=null;}
+  if (sourceNode) { try { sourceNode.stop(); } catch(e) {} sourceNode = null; }
   if (animFrame) cancelAnimationFrame(animFrame);
-  const e=isPlaying?audioCtx.currentTime-playStartTime:0;
-  playOffset=Math.min(audioBuffer.duration,playOffset+e);
-  isPlaying=false;
-  playIcon.className='ti ti-player-play'; playIconB.className='ti ti-player-play';
+  const elapsed = isPlaying && audioCtx ? audioCtx.currentTime - playStartTime : 0;
+  if (audioBuffer) playOffset = Math.min(audioBuffer.duration, playOffset + elapsed);
+  isPlaying = false;
+  playIcon.className = 'ti ti-player-play';
+  playIconB.className = 'ti ti-player-play';
+  updateFtPlay();
   draw();
 }
-playBtn.onclick = playBtnB.onclick = () => isPlaying?stopPlay():startPlay();
+
+function updateFtPlay() {
+  const ftpb = document.getElementById('ftPlayBtn');
+  if (!ftpb) return;
+  ftpb.innerHTML = isPlaying ? '&#x23F9;' : '&#x25B6;';
+  ftpb.title = isPlaying ? 'Stop' : 'Play';
+}
+
+playBtn.onclick = playBtnB.onclick = () => { if (isPlaying) { playClick('stop'); stopPlay(); } else { playClick('play'); startPlay(); } };
 
 // Markers
 setInBtn.onclick = () => { if(!audioBuffer)return; markerIn=selStart!==null?Math.min(selStart,selEnd??selStart):playOffset; draw(); };
@@ -851,5 +1479,212 @@ saveBtn.onclick = () => {
 
 new ResizeObserver(resize).observe(waveScroll);
 resize();
+
+// ── Floating Transport — wired & draggable ───────────────────────────────────
+(function() {
+  const ft = document.getElementById('floatTransport');
+  if (!ft) return;
+
+  // Wire buttons
+  document.getElementById('ftPlayBtn').onclick      = () => { if (isPlaying) { playClick('stop'); stopPlay(); } else { playClick('play'); startPlay(); } };
+  document.getElementById('ftSkipStartBtn').onclick = () => {
+    if (!audioBuffer) return;
+    playClick('soft');
+    const wasPlaying = isPlaying; if (wasPlaying) stopPlay();
+    playOffset = 0; if (wasPlaying) startPlay(); else draw();
+  };
+  document.getElementById('ftRewindBtn').onclick = () => {
+    if (!audioBuffer) return;
+    playClick('soft');
+    const wasPlaying = isPlaying; if (wasPlaying) stopPlay();
+    playOffset = Math.max(0, playOffset - 5); if (wasPlaying) startPlay(); else draw();
+  };
+  document.getElementById('ftFwdBtn').onclick = () => {
+    if (!audioBuffer) return;
+    playClick('soft');
+    const wasPlaying = isPlaying; if (wasPlaying) stopPlay();
+    playOffset = Math.min(audioBuffer.duration, playOffset + 5); if (wasPlaying) startPlay(); else draw();
+  };
+  document.getElementById('ftFitBtn').onclick   = () => toggleZoomFit();
+  document.getElementById('ftZoomInBtn').onclick  = () => { playClick('soft'); preZoomFitState = null; document.getElementById('zoomFitBtn').textContent = 'FIT SEL'; applyZoom(zoom * 1.5); };
+  document.getElementById('ftZoomOutBtn').onclick = () => { playClick('soft'); preZoomFitState = null; document.getElementById('zoomFitBtn').textContent = 'FIT SEL'; applyZoom(zoom / 1.5); };
+
+  const ftLoopBtn = document.getElementById('ftLoopBtn');
+  const ftLoopLabel = document.getElementById('ftLoopLabel');
+
+  function updateLoopBtn() {
+    if (ftLoopEnabled) {
+      ftLoopBtn.classList.remove('loop-off'); ftLoopBtn.classList.add('loop-on');
+      ftLoopLabel.classList.add('loop-on');
+      ftLoopBtn.title = 'Loop ON — click to disable';
+    } else {
+      ftLoopBtn.classList.remove('loop-on'); ftLoopBtn.classList.add('loop-off');
+      ftLoopLabel.classList.remove('loop-on');
+      ftLoopBtn.title = 'Loop OFF — click to enable';
+    }
+  }
+  updateLoopBtn();
+
+  ftLoopBtn.onclick = () => {
+    ftLoopEnabled = !ftLoopEnabled;
+    playClick(ftLoopEnabled ? 'play' : 'soft');
+    updateLoopBtn();
+    // restart from loop start if currently playing
+    if (isPlaying) { stopPlay(); startPlay(); }
+  };
+
+  // ── Drag to move ──────────────────────────────────────────────────────────
+  // Start as fixed bottom-center; switch to absolute on first drag
+  let dragging = false, dragOX = 0, dragOY = 0;
+
+  // Drag handle = the bar itself (not buttons)
+  ft.addEventListener('mousedown', e => {
+    if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SPAN') return;
+    e.preventDefault();
+    // Convert fixed → absolute positioned relative to viewport on first drag
+    if (ft.style.position !== 'absolute') {
+      const r = ft.getBoundingClientRect();
+      ft.style.position = 'fixed'; // keep fixed but track manually
+      ft.style.left   = r.left + 'px';
+      ft.style.top    = r.top  + 'px';
+      ft.style.bottom = 'auto';
+      ft.style.transform = 'none';
+    }
+    dragging = true;
+    dragOX = e.clientX - ft.getBoundingClientRect().left;
+    dragOY = e.clientY - ft.getBoundingClientRect().top;
+    ft.style.cursor = 'grabbing';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    let nx = e.clientX - dragOX;
+    let ny = e.clientY - dragOY;
+    // Clamp to viewport
+    nx = Math.max(0, Math.min(window.innerWidth  - ft.offsetWidth,  nx));
+    ny = Math.max(0, Math.min(window.innerHeight - ft.offsetHeight, ny));
+    ft.style.left = nx + 'px';
+    ft.style.top  = ny + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (dragging) { dragging = false; ft.style.cursor = 'grab'; }
+  });
+
+  ft.style.cursor = 'grab';
+
+  // Auto-fade when mouse far away
+  document.addEventListener('mousemove', e => {
+    if (dragging) { ft.style.opacity = '1'; return; }
+    const r = ft.getBoundingClientRect();
+    const dx = Math.max(0, r.left - e.clientX, e.clientX - r.right);
+    const dy = Math.max(0, r.top  - e.clientY, e.clientY - r.bottom);
+    ft.style.opacity = Math.sqrt(dx*dx + dy*dy) < 100 ? '1' : '0.5';
+  });
+})();
+
+
+
+// ── Recording ────────────────────────────────────────────────────────────────
+const recInternalBtn = document.getElementById('recInternalBtn');
+const recMicBtn      = document.getElementById('recMicBtn');
+const recStopBtn     = document.getElementById('recStopBtn');
+const recStatus      = document.getElementById('recStatus');
+const recTimerWrap   = document.getElementById('recTimerWrap');
+const recTimerEl     = document.getElementById('recTimer');
+
+let mediaRecorder = null, recChunks = [], recStartTime = 0, recTimerAF = null;
+
+function fmtRec(ms) {
+  const s = ms / 1000;
+  const m = Math.floor(s / 60);
+  return `${m}:${(s - m*60).toFixed(1).padStart(4,'0')}`;
+}
+
+function startRecordingUI() {
+  recTimerWrap.style.display = 'flex';
+  recInternalBtn.disabled = true;
+  recMicBtn.disabled = true;
+  recStartTime = performance.now();
+  function tick() {
+    recTimerEl.textContent = fmtRec(performance.now() - recStartTime);
+    recTimerAF = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function stopRecordingUI() {
+  recTimerWrap.style.display = 'none';
+  recInternalBtn.disabled = false;
+  recMicBtn.disabled = false;
+  recStatus.textContent = '';
+  if (recTimerAF) cancelAnimationFrame(recTimerAF);
+}
+
+function finishRecording(chunks, mimeType) {
+  const blob = new Blob(chunks, { type: mimeType });
+  const reader = new FileReader();
+  reader.onload = e => {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.decodeAudioData(e.target.result.slice(0), buf => {
+      fileName = 'recording.wav';
+      applyBuffer(buf);
+    }, err => alert('Could not decode recorded audio: ' + err));
+  };
+  reader.readAsArrayBuffer(blob);
+}
+
+async function startCapture(useDisplay) {
+  recStatus.textContent = '';
+  let stream;
+  try {
+    if (useDisplay) {
+      // getDisplayMedia with audio:true captures system/tab audio on macOS Chrome/Edge
+      stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+      // We only need the audio tracks — stop the video track immediately
+      stream.getVideoTracks().forEach(t => t.stop());
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length === 0) {
+        // User may have not ticked "Share system audio" — inform them
+        stream.getTracks().forEach(t => t.stop());
+        recStatus.textContent = '⚠ No system audio — tick "Share audio" in the picker';
+        return;
+      }
+      // Rebuild stream with only audio so MediaRecorder is happy
+      stream = new MediaStream(audioTracks);
+    } else {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    }
+  } catch (err) {
+    if (err.name === 'NotAllowedError') {
+      recStatus.textContent = useDisplay ? '⚠ Screen share denied' : '⚠ Mic permission denied';
+    } else {
+      recStatus.textContent = '⚠ ' + err.message;
+    }
+    return;
+  }
+
+  // Pick best supported MIME type
+  const mimes = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
+  const mime = mimes.find(m => MediaRecorder.isTypeSupported(m)) || '';
+  mediaRecorder = new MediaRecorder(stream, mime ? { mimeType: mime } : {});
+  recChunks = [];
+  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recChunks.push(e.data); };
+  mediaRecorder.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    stopRecordingUI();
+    if (recChunks.length) finishRecording(recChunks, mediaRecorder.mimeType || 'audio/webm');
+  };
+  mediaRecorder.start(100);
+  startRecordingUI();
+  if (useDisplay) recStatus.textContent = 'Recording system audio…';
+  else            recStatus.textContent = 'Recording mic…';
+}
+
+recInternalBtn.onclick = () => startCapture(true);
+recMicBtn.onclick      = () => startCapture(false);
+recStopBtn.onclick     = () => { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); };
+
 </script>
+
 </body>
