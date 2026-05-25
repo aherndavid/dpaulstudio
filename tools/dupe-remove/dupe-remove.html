@@ -224,6 +224,9 @@
         }
 
         .drop-zone {
+            display: none !important;
+        }
+        .drop-zone-hidden {
             background: var(--bg-main);
             box-shadow: var(--pillow-inset);
             border-radius: 18px;
@@ -405,7 +408,13 @@
         <span style="color:var(--success)">KEEP <b id="ts-keep">0</b></span>
         <span style="color:var(--danger)">PURGE <b id="ts-delete">0</b></span>
     </div>
-    <button class="btn-help" onclick="document.getElementById('modal').classList.add('open')" style="margin-left:20px;">? HOW TO USE</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-left:20px;">
+        <button class="btn-help" onclick="document.getElementById('modal-changelog').classList.add('open')"
+            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;color:var(--muted);padding:8px 14px;">
+            v1.6
+        </button>
+        <button class="btn-help" onclick="document.getElementById('modal').classList.add('open')">? HOW TO USE</button>
+    </div>
 
 </div>
 
@@ -457,6 +466,75 @@
             ⚠ Exports go to your Downloads folder one file at a time to avoid browser limits.<br>
             ⚠ TIFF files are not supported — browsers cannot decode them. Convert to JPG or PNG first.
         </div>
+    </div>
+</div>
+
+<!-- Changelog Modal -->
+<div class="modal-backdrop" id="modal-changelog" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" style="max-width:480px;">
+        <button class="modal-close" onclick="document.getElementById('modal-changelog').classList.remove('open')">✕</button>
+        <div class="modal-title">Version Log // Dupe Remove</div>
+
+        <!-- Current -->
+        <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+                background:#1a1a1a;color:white;padding:4px 10px;border-radius:8px;
+                letter-spacing:0.06em;white-space:nowrap;margin-top:1px;">v1.6</div>
+            <div>
+                <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:6px;">CURRENT</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.7;">
+                    Orient module — crop &amp; rotate tools. Perceptual hash clustering. Staggered export to avoid Chrome throttling. Group-based review with bulk keep/delete. Password gate.
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Upcoming -->
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+            color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">
+            On the Horizon
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+                    background:var(--bg-main);box-shadow:var(--pillow-raised);
+                    padding:4px 10px;border-radius:8px;letter-spacing:0.06em;
+                    white-space:nowrap;margin-top:1px;color:var(--muted);">v1.7</div>
+                <div>
+                    <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;">Python CLI Mode</div>
+                    <div style="font-size:12px;color:var(--muted);line-height:1.6;">True local file deletion — run as a script directly against your folders. No browser download loop.</div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+                    background:var(--bg-main);box-shadow:var(--pillow-raised);
+                    padding:4px 10px;border-radius:8px;letter-spacing:0.06em;
+                    white-space:nowrap;margin-top:1px;color:var(--muted);">v1.8</div>
+                <div>
+                    <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;">Pro &amp; Studio Tiers</div>
+                    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Unlocked via one-time purchase. Higher batch limits, priority processing, and advanced export options.</div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+                    background:var(--bg-main);box-shadow:var(--pillow-raised);
+                    padding:4px 10px;border-radius:8px;letter-spacing:0.06em;
+                    white-space:nowrap;margin-top:1px;color:var(--muted);">v2.0</div>
+                <div>
+                    <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;">AI-Assisted Review</div>
+                    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Smart keep suggestions — automatically surface the sharpest, best-exposed image from each group.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-divider"></div>
+        <div class="modal-tip">Built by dPaul Technologies · All processing is local · No data ever leaves your device.</div>
     </div>
 </div>
 
@@ -533,6 +611,47 @@
     </div>
 </div>
 
+<!-- Export Progress Modal -->
+<div id="modal-exporting" style="display:none;position:fixed;inset:0;z-index:1000;
+    background:rgba(242,242,240,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    align-items:center;justify-content:center;">
+    <div style="background:var(--bg-main);border-radius:28px;
+        box-shadow:12px 12px 32px #c8c8c6,-12px -12px 32px #ffffff;
+        border:1px solid rgba(255,255,255,0.6);
+        padding:44px 48px;width:420px;max-width:90vw;text-align:center;">
+        <div id="export-modal-eq" style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:32px;margin-bottom:28px;">
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+        </div>
+        <div id="export-modal-title" style="font-family:'Courier New',Courier,monospace;font-size:13px;
+            font-weight:900;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;color:#1a1a1a;">
+            EXPORTING
+        </div>
+        <div id="export-modal-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;
+            color:var(--muted);letter-spacing:0.04em;margin-bottom:20px;">
+            Preparing files…
+        </div>
+        <!-- Progress bar -->
+        <div style="height:6px;background:var(--bg-main);border-radius:10px;
+            box-shadow:var(--pillow-inset);overflow:hidden;">
+            <div id="export-modal-bar" style="height:100%;background:#1a1a1a;width:0%;
+                border-radius:10px;transition:width 0.25s ease;"></div>
+        </div>
+        <!-- Complete button (hidden until done) -->
+        <button id="export-modal-done" onclick="document.getElementById('modal-exporting').style.display='none';document.getElementById('btn-export').textContent='⬇ EXPORT KEPT';document.getElementById('btn-export').disabled=false;"
+            style="display:none;margin-top:28px;width:auto;padding:12px 32px;font-size:12px;
+            font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;
+            background:#1a1a1a;color:white;border-radius:16px;">
+            ✓ DONE
+        </button>
+    </div>
+</div>
+
 <!-- Start Again Confirm Modal -->
 <div class="modal-backdrop" id="modal-restart" onclick="if(event.target===this)this.classList.remove('open')">
     <div class="modal-box" style="max-width:400px;text-align:center;">
@@ -560,10 +679,7 @@
     <div class="sidebar">
         <div class="module">
             <span class="module-label">Intake</span>
-            <div class="drop-zone" id="drop-zone" style="white-space:nowrap;font-size:11px;font-weight:600;letter-spacing:0.04em;">
-                SELECT OR DRAG IMAGES HERE
-            </div>
-            <div style="display:flex;gap:10px;margin-top:14px;">
+            <div style="display:flex;gap:10px;">
                 <button style="width:50%;font-size:11px;padding:10px;" onclick="document.getElementById('file-input').click()">📁 FILES</button>
                 <button style="width:50%;font-size:11px;padding:10px;" onclick="document.getElementById('folder-input').click()">📂 FOLDER</button>
             </div>
@@ -683,10 +799,7 @@
         <!-- Group nav -->
         <div id="group-nav" style="display:flex;flex-direction:column;gap:8px;padding:4px 2px;"></div>
 
-        <!-- Version -->
-        <div style="padding:16px 10px 4px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;">
-            v1.6
-        </div>
+
     </div>
 
     <div class="main" id="main">
@@ -751,11 +864,6 @@ let exportMaxWidth = 0;        // 0 = no resize
 // ── Wiring ────────────────────────────────────────────
 document.getElementById('file-input').onchange   = e => loadFiles(e.target.files);
 document.getElementById('folder-input').onchange = e => loadFiles(e.target.files);
-const dz = document.getElementById('drop-zone');
-dz.onclick     = () => document.getElementById('file-input').click();
-dz.ondragover  = e => { e.preventDefault(); dz.style.boxShadow = 'var(--pillow-inset)'; };
-dz.ondragleave = () => { dz.style.boxShadow = ''; };
-dz.ondrop      = e => { e.preventDefault(); dz.style.boxShadow = ''; loadFiles(e.dataTransfer.files); };
 
 // ── Load files ────────────────────────────────────────
 function loadFiles(files) {
@@ -769,6 +877,14 @@ function loadFiles(files) {
         document.getElementById('modal-alert').classList.add('open');
     }
     if (!imgs.length) return;
+    const LIMIT = 500;
+    const incoming = registry.length + imgs.length;
+    if (incoming > LIMIT) {
+        document.getElementById('modal-alert-msg').innerHTML =
+            `<strong>Batch limit exceeded.</strong><br><br>Dupe Remove supports a maximum of ${LIMIT} images per session. You tried to load <strong>${imgs.length}</strong> images${registry.length ? ` (${registry.length} already loaded)` : ''}.<br><br>Split your folder into smaller batches and run separate sessions.`;
+        document.getElementById('modal-alert').classList.add('open');
+        return;
+    }
     let done = 0;
     imgs.forEach(file => {
         const r = new FileReader();
@@ -1266,8 +1382,22 @@ async function exportKept() {
             const rootDir = await window.showDirectoryPicker({ mode: 'readwrite' });
             const dir = await rootDir.getDirectoryHandle('Dupe-Cleaned', { create: true });
 
+            // Show export modal
+            const em = document.getElementById('modal-exporting');
+            const emLabel = document.getElementById('export-modal-label');
+            const emBar = document.getElementById('export-modal-bar');
+            const emTitle = document.getElementById('export-modal-title');
+            const emDone = document.getElementById('export-modal-done');
+            const emEq = document.getElementById('export-modal-eq');
+            emTitle.textContent = 'EXPORTING'; emTitle.style.color = '#1a1a1a';
+            emEq.querySelectorAll('.eq-bar').forEach(b => b.style.background = '#1a1a1a');
+            emDone.style.display = 'none'; emBar.style.width = '0%';
+            em.style.display = 'flex';
+
             for (let n = 0; n < list.length; n++) {
                 btn.textContent = `⬇ SAVING ${n+1} / ${list.length}`;
+                emLabel.textContent = `Saving ${n+1} of ${list.length}…`;
+                emBar.style.width = ((n / list.length) * 100) + '%';
                 const item = list[n];
                 const filename = buildExportName(baseName, n, item);
                 const converted = await convertDataUrl(item.dataUrl, fmt, quality, maxWidth);
@@ -1279,8 +1409,13 @@ async function exportKept() {
                 await writable.close();
             }
 
+            emBar.style.width = '100%';
+            emLabel.textContent = `${list.length} image${list.length !== 1 ? 's' : ''} saved to Dupe-Cleaned`;
+            emTitle.textContent = 'COMPLETE';
+            emTitle.style.color = '#1A7A4A';
+            emEq.querySelectorAll('.eq-bar').forEach(b => b.style.background = '#1A7A4A');
+            emDone.style.display = 'inline-block';
             btn.textContent = '✓ SAVED TO DUPE-CLEANED';
-            setTimeout(() => { btn.textContent = '⬇ EXPORT KEPT'; btn.disabled = false; }, 3000);
             return;
         } catch (err) {
             if (err.name === 'AbortError') {
@@ -1292,8 +1427,23 @@ async function exportKept() {
         }
     }
 
+    // Downloads fallback — show export modal
+    const em = document.getElementById('modal-exporting');
+    const emLabel = document.getElementById('export-modal-label');
+    const emBar = document.getElementById('export-modal-bar');
+    const emTitle = document.getElementById('export-modal-title');
+    const emDone = document.getElementById('export-modal-done');
+    const emEq = document.getElementById('export-modal-eq');
+    emTitle.textContent = 'EXPORTING'; emTitle.style.color = '#1a1a1a';
+    emEq.querySelectorAll('.eq-bar').forEach(b => b.style.background = '#1a1a1a');
+    emDone.style.display = 'none'; emBar.style.width = '0%';
+    emLabel.textContent = 'Preparing files…';
+    em.style.display = 'flex';
+
     for (let n = 0; n < list.length; n++) {
         btn.textContent = `⬇ EXPORTING ${n+1} / ${list.length}`;
+        emLabel.textContent = `Downloading ${n+1} of ${list.length}…`;
+        emBar.style.width = ((n / list.length) * 100) + '%';
         const item = list[n];
         const converted = await convertDataUrl(item.dataUrl, fmt, quality, maxWidth);
         const a = document.createElement('a');
@@ -1302,8 +1452,14 @@ async function exportKept() {
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         await new Promise(r => setTimeout(r, 300));
     }
+
+    emBar.style.width = '100%';
+    emLabel.textContent = `${list.length} image${list.length !== 1 ? 's' : ''} sent to Downloads`;
+    emTitle.textContent = 'COMPLETE';
+    emTitle.style.color = '#1A7A4A';
+    emEq.querySelectorAll('.eq-bar').forEach(b => b.style.background = '#1A7A4A');
+    emDone.style.display = 'inline-block';
     btn.textContent = '✓ COMPLETE';
-    setTimeout(() => { btn.textContent = '⬇ EXPORT KEPT'; btn.disabled = false; }, 2500);
 }
 
 // ── Start Again ───────────────────────────────────────
