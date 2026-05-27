@@ -36,23 +36,45 @@
         }
 
         /* ── NAV ── */
-        nav {
-            position: sticky; top: 0; z-index: 100;
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
             background: var(--bg); border-bottom: 1px solid var(--border);
-            padding: 0 16px; display: flex; align-items: center; gap: 0; height: 56px;
-            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            height: 64px;
         }
-        nav::-webkit-scrollbar { display: none; }
-        nav a {
-            font-family: 'Courier New', Courier, monospace; font-size: 0.85rem;
-            color: var(--cream); font-weight: bold; text-decoration: none;
-            display: inline-block; white-space: nowrap; text-align: center;
-            border: 1px solid transparent; border-radius: 3px;
-            letter-spacing: 0.04em; transition: none;
-            text-transform: lowercase; padding: 6px 10px; flex-shrink: 0;
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
         }
-        nav a:active { border-color: var(--orange); color: var(--orange); }
-        nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px;
+            background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            z-index: 999;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu a {
+            font-size: 1.4rem; color: var(--cream); text-decoration: none;
+            text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+        }
+        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
 
         /* ── TICKER ── */
         .ticker-wrap {
@@ -334,8 +356,17 @@
     </div>
 </div>
 
-<nav>
-    <a href="about.html">about</a>
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="about.html">info</a>
     <a href="current.html">current</a>
     <a href="design.html">design</a>
     <a href="dev-tools.html">dev tools</a>
@@ -345,7 +376,7 @@
     <a href="synths.html">synths</a>
     <a href="tools.html">tools</a>
     <a href="video.html">video</a>
-</nav>
+</div>
 
 <div class="ticker-wrap">
     <div class="ticker-track">
@@ -779,6 +810,15 @@
 </div>
 
 <script>
+    // ── MENU ──
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+    }
+
     /* ── SCROLL REVEAL ── */
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
