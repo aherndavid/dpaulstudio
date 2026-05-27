@@ -386,19 +386,6 @@
     <a href="video.html">video</a>
 </div>
 
-<div class="ticker-wrap">
-    <div class="ticker-track">
-        <span>LIMITED RUN</span><span class="tick-dot">-</span>
-        <span>STUDIO AESTHETIC</span><span class="tick-dot">-</span>
-        <span>ONCE GONE, GONE</span><span class="tick-dot">-</span>
-        <span>EXCLUSIVE PIECES</span><span class="tick-dot">-</span>
-        <span>LIMITED RUN</span><span class="tick-dot">-</span>
-        <span>STUDIO AESTHETIC</span><span class="tick-dot">-</span>
-        <span>ONCE GONE, GONE</span><span class="tick-dot">-</span>
-        <span>EXCLUSIVE PIECES</span><span class="tick-dot">-</span>
-    </div>
-</div>
-
 <div class="page">
 
     <!-- HERO -->
@@ -824,7 +811,10 @@
         const btn = document.getElementById('burgerBtn');
         menu.classList.toggle('open');
         btn.classList.toggle('active');
-        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
     }
 
     /* ── SCROLL REVEAL ── */
