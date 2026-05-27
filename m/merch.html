@@ -816,6 +816,11 @@
         document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
         document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
         document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
     }
 
     /* ── SCROLL REVEAL ── */

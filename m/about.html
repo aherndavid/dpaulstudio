@@ -318,6 +318,13 @@
         document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
         document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
         document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        // Hide everything in nav-wrapper except burger (catches share.js widget)
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        // Hide page content behind menu
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
     }
 
     // ── REVEAL ──
