@@ -383,7 +383,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">001</span>
-                <img id="img-001" src="assets/merch/design-001.png" alt="DPAUL Head Right T-Shirt">
+                <img id="img-001" src="../assets/merch/design-001.png" alt="DPAUL Head Right T-Shirt">
                 <div class="colour-toggle">
                     <div class="colour-btn black active" title="Black" onclick="switchColour('001','black',this)"></div>
                     <div class="colour-btn white" title="White" onclick="switchColour('001','white',this)"></div>
@@ -423,7 +423,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">002</span>
-                <img id="img-002" src="assets/merch/design-002.png" alt="DPAUL Head Left T-Shirt">
+                <img id="img-002" src="../assets/merch/design-002.png" alt="DPAUL Head Left T-Shirt">
                 <div class="colour-toggle">
                     <div class="colour-btn black active" title="Black" onclick="switchColour('002','black',this)"></div>
                     <div class="colour-btn white" title="White" onclick="switchColour('002','white',this)"></div>
@@ -463,7 +463,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">003</span>
-                <img id="img-003" src="assets/merch/design-003.png" alt="Embrace AI T-Shirt">
+                <img id="img-003" src="../assets/merch/design-003.png" alt="Embrace AI T-Shirt">
                 <div class="colour-toggle">
                     <div class="colour-btn black active" title="Black" onclick="switchColour('003','black',this)"></div>
                     <div class="colour-btn white" title="White" onclick="switchColour('003','white',this)"></div>
@@ -503,7 +503,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">004</span>
-                <img id="img-004" src="assets/merch/design-004.png" alt="Logic by Day T-Shirt">
+                <img id="img-004" src="../assets/merch/design-004.png" alt="Logic by Day T-Shirt">
                 <div class="colour-toggle">
                     <div class="colour-btn black active" title="Black" onclick="switchColour('004','black',this)"></div>
                     <div class="colour-btn white" title="White" onclick="switchColour('004','white',this)"></div>
@@ -543,7 +543,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">005</span>
-                <img id="img-005" src="assets/merch/design-005.png" alt="DPAUL Studio Hoodie">
+                <img id="img-005" src="../assets/merch/design-005.png" alt="DPAUL Studio Hoodie">
                 <div class="view-toggle">
                     <button class="view-btn active" onclick="switchView('005','front',this)">Front</button>
                     <button class="view-btn" onclick="switchView('005','rear',this)">Rear</button>
@@ -589,7 +589,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">006</span>
-                <img id="img-006" src="assets/merch/design-006b.png" alt="Zebra Three T-Shirt">
+                <img id="img-006" src="../assets/merch/design-006b.png" alt="Zebra Three T-Shirt">
                 <div class="colour-toggle">
                     <div class="colour-btn black active" title="Black" onclick="switchColour006('black',this)"></div>
                     <div class="colour-btn white" title="White" onclick="switchColour006('white',this)"></div>
@@ -629,7 +629,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">007</span>
-                <img id="img-007" src="assets/merch/design-007.png" alt="Apollo 11 T-Shirt">
+                <img id="img-007" src="../assets/merch/design-007.png" alt="Apollo 11 T-Shirt">
             </div>
             <div class="product-info">
                 <p class="product-tag">// Men's T-Shirt — 007</p>
@@ -665,7 +665,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">008</span>
-                <img id="img-008" src="assets/merch/design-008b.png" alt="1979 T-Shirt">
+                <img id="img-008" src="../assets/merch/design-008b.png" alt="1979 T-Shirt">
                 <div class="colour-toggle">
                     <div class="colour-btn black active" title="Black" onclick="switchColour008('black',this)"></div>
                     <div class="colour-btn white" title="White" onclick="switchColour008('white',this)"></div>
@@ -705,7 +705,7 @@
         <div class="product-card reveal">
             <div class="product-image-wrap">
                 <span class="product-num">009</span>
-                <img id="img-009" src="assets/merch/design-009b.png" alt="DPAUL Logo T-Shirt">
+                <img id="img-009" src="../assets/merch/design-009b.png" alt="DPAUL Logo T-Shirt">
                 <div class="colour-toggle">
                     <div class="colour-btn black active" title="Black" onclick="switchColour009('black',this)"></div>
                     <div class="colour-btn white" title="White" onclick="switchColour009('white',this)"></div>
@@ -805,7 +805,7 @@
         const suffix = colour === 'white' ? 'w' : '';
         img.style.opacity = '0';
         setTimeout(() => {
-            img.src = 'assets/merch/design-' + productId + suffix + '.png';
+            img.src = '../assets/merch/design-' + productId + suffix + '.png';
             img.style.opacity = '1';
         }, 300);
         const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
@@ -823,7 +823,7 @@
         const viewSuffix = isRear ? 'r' : '';
         img.style.opacity = '0';
         setTimeout(() => {
-            img.src = 'assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
+            img.src = '../assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
             img.style.opacity = '1';
         }, 300);
         const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
@@ -840,7 +840,7 @@
         const viewSuffix = view === 'rear' ? 'r' : '';
         img.style.opacity = '0';
         setTimeout(() => {
-            img.src = 'assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
+            img.src = '../assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
             img.style.opacity = '1';
         }, 300);
         const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
@@ -858,7 +858,7 @@
         const suffix = colour === 'white' ? 'w' : 'b';
         img.style.opacity = '0';
         setTimeout(() => {
-            img.src = 'assets/merch/design-006' + suffix + '.png';
+            img.src = '../assets/merch/design-006' + suffix + '.png';
             img.style.opacity = '1';
         }, 300);
         document.getElementById('buy-006').href = stripeLinks006[colour];
@@ -877,7 +877,7 @@
         const suffix = colour === 'white' ? 'w' : 'b';
         img.style.opacity = '0';
         setTimeout(() => {
-            img.src = 'assets/merch/design-008' + suffix + '.png';
+            img.src = '../assets/merch/design-008' + suffix + '.png';
             img.style.opacity = '1';
         }, 300);
         document.getElementById('buy-008').href = stripeLinks008[colour];
@@ -896,7 +896,7 @@
         const suffix = colour === 'white' ? 'w' : 'b';
         img.style.opacity = '0';
         setTimeout(() => {
-            img.src = 'assets/merch/design-009' + suffix + '.png';
+            img.src = '../assets/merch/design-009' + suffix + '.png';
             img.style.opacity = '1';
         }, 300);
         document.getElementById('buy-009').href = stripeLinks009[colour];
