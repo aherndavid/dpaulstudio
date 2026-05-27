@@ -66,19 +66,27 @@
         .burger.active span:nth-child(2) { opacity: 0; }
         .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
 
-        .mobile-menu {
+                .mobile-menu {
             position: fixed; top: 64px; left: 0; width: 100%; height: 0;
             background: var(--bg); overflow: hidden;
             transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
-            z-index: 999;
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;
+            padding: 24px 28px 0 0; gap: 0;
+            z-index: 1000;
         }
-        .mobile-menu.open { height: calc(100vh - 64px); border-bottom: 1px solid var(--border); }
+        .mobile-menu.open { height: calc(100vh - 64px); overflow-y: auto; }
         .mobile-menu a {
-            font-size: 1.4rem; color: var(--cream); text-decoration: none;
-            text-transform: lowercase; letter-spacing: 0.05em; transition: color 0.2s;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.4rem; font-weight: 700;
+            color: rgba(212,196,168,0.25);
+            text-decoration: none; text-transform: lowercase;
+            letter-spacing: 0.02em; line-height: 1.05;
+            padding: 4px 10px; display: block;
+            transition: color 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
         }
-        .mobile-menu a.active { color: var(--orange); font-weight: bold; }
+        .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
+        .mobile-menu a.active { color: var(--orange); }
 
         /* ── TICKER SYSTEM ── */
         .ticker-wrap {
@@ -261,12 +269,16 @@
 
 <script>
     // ── MENU LOGIC ──
-    function toggleMenu() {
+        function toggleMenu() {
         const menu = document.getElementById('mobileMenu');
         const btn = document.getElementById('burgerBtn');
         menu.classList.toggle('open');
         btn.classList.toggle('active');
-        document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : 'auto';
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
     }
 
     // ── VIDEO PLAYLIST ──
