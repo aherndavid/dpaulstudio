@@ -815,6 +815,7 @@
         document.body.style.overflow = isOpen ? 'hidden' : 'auto';
         document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
         document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
     }
 
     /* ── SCROLL REVEAL ── */
