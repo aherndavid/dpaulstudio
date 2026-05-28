@@ -91,11 +91,12 @@
         /* ── TICKER SYSTEM ── */
         .ticker-wrap {
             background: #000; border-bottom: 1px solid #222;
-            overflow: hidden; padding: 10px 0;
+            overflow: hidden; padding: 30px 0;
         }
         .ticker-track {
             display: flex; gap: 40px; width: max-content;
             animation: ticker 40s linear infinite;
+            will-change: transform;
         }
         .ticker-track span {
             font-family: 'VT323', monospace; font-size: 1.8rem;
