@@ -797,6 +797,84 @@
             </div>
         </div>
 
+        <!-- 011 — PORSCHE 993 -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <img id="img-011" src="../assets/merch/air-cooled-black.png" alt="DPAUL Design Porsche 993 Air-Cooled Architecture T-Shirt">
+                <div class="colour-toggle">
+                    <div class="colour-btn black active" title="Black" onclick="switchColour011('black',this)"></div>
+                    <div class="colour-btn white" title="White" onclick="switchColour011('white',this)"></div>
+                </div>
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's T-Shirt</p>
+                <h2 class="product-name">DPAUL Design<br><em>Porsche 993 — Air-Cooled Architecture</em></h2>
+                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">XS</div>
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>100% Cotton</li>
+                    <li>Fine gauge knit, 141 GSM</li>
+                    <li>Shoulder-to-shoulder taping</li>
+                    <li>Rolled forward shoulders for a better fit</li>
+                    <li>Front coverseaming on collar</li>
+                    <li>Available in Black &amp; White</li>
+                </ul>
+                <div class="product-actions">
+                    <a id="buy-011" href="https://buy.stripe.com/eVqbJ27JT7LMe9zfp1b3q0k" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
+                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 012 — LAMBO -->
+        <div class="product-card reveal">
+            <div class="product-image-wrap">
+                <img id="img-012" src="../assets/merch/dpaulstudio-lambo-white-front.png" alt="DPAUL Design Lambo T-Shirt — Front">
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView012('front',this)">Front</button>
+                    <button class="view-btn" onclick="switchView012('rear',this)">Rear</button>
+                </div>
+            </div>
+            <div class="product-info">
+                <p class="product-tag">// Men's T-Shirt</p>
+                <h2 class="product-name">DPAUL Design<br><em>Lambo</em></h2>
+                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
+                <p class="sizes-label">Select size</p>
+                <div class="size-pills">
+                    <div class="size-pill" onclick="selectSize(this)">XS</div>
+                    <div class="size-pill" onclick="selectSize(this)">S</div>
+                    <div class="size-pill" onclick="selectSize(this)">M</div>
+                    <div class="size-pill" onclick="selectSize(this)">L</div>
+                    <div class="size-pill" onclick="selectSize(this)">XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
+                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
+                </div>
+                <ul class="spec-list">
+                    <li>100% Cotton</li>
+                    <li>Fine gauge knit, 141 GSM</li>
+                    <li>Shoulder-to-shoulder taping</li>
+                    <li>Rolled forward shoulders for a better fit</li>
+                    <li>Front coverseaming on collar</li>
+                    <li>Available in White</li>
+                </ul>
+                <div class="product-actions">
+                    <a href="https://buy.stripe.com/7sYeVe2pzfee5D3gt5b3q0l" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
+                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
+                </div>
+            </div>
+        </div>
+
     </div><!-- /collection -->
 
     <footer class="company-footer">
@@ -917,6 +995,32 @@
             img.src = '../assets/merch/design-' + productId + colourSuffix + viewSuffix + '.png';
             img.style.opacity = '1';
         }, 300);
+        const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
+        viewBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    /* ── COLOUR SWITCHER — 011 PORSCHE 993 ── */
+    function switchColour011(colour, btn) {
+        const img = document.getElementById('img-011');
+        const src = colour === 'white'
+            ? '../assets/merch/air-cooled-white.png'
+            : '../assets/merch/air-cooled-black.png';
+        img.style.opacity = '0';
+        setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 300);
+        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    /* ── VIEW TOGGLE — 012 LAMBO ── */
+    function switchView012(view, btn) {
+        const img = document.getElementById('img-012');
+        const src = view === 'rear'
+            ? '../assets/merch/dpaulstudio-lambo-white-rear.png'
+            : '../assets/merch/dpaulstudio-lambo-white-front.png';
+        img.style.opacity = '0';
+        setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 300);
         const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
         viewBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
