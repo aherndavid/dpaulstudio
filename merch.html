@@ -888,7 +888,7 @@
         <div class="product-row reveal">
             <div class="product-image-col">
                 <span class="product-num">010</span>
-                <img id="img-010" src="https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/merch/design-011-wf.png" alt="DPAUL T-Shirt — 010 Front">
+                <img id="img-010" src="assets/merch/design-011-wf.png" alt="DPAUL T-Shirt — 010 Front">
                 <div class="view-toggle">
                     <button class="view-btn active" onclick="switchView010('front',this)">Front</button>
                     <button class="view-btn" onclick="switchView010('rear',this)">Rear</button>
@@ -1143,8 +1143,8 @@
     function switchView010(view, btn) {
         const img = document.getElementById('img-010');
         const src = view === 'rear'
-            ? 'https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/merch/design-011-wr.png'
-            : 'https://raw.githubusercontent.com/aherndavid/dpaulstudio/main/assets/merch/design-011-wf.png';
+            ? 'assets/merch/design-011-wr.png'
+            : 'assets/merch/design-011-wf.png';
         img.style.opacity = '0';
         setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 300);
         const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
