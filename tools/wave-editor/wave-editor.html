@@ -604,6 +604,10 @@
           <span id="recTimer" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--danger);letter-spacing:0.08em;">0:00.0</span>
           <button id="recStopBtn" class="btn-sm btn-danger" style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10px;">■ STOP</button>
         </div>
+        <div class="btn-row" style="margin-top:2px;">
+          <button id="recUndoBtn" class="btn-sm" disabled style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;">← UNDO REC</button>
+          <button id="recClearBtn" class="btn-sm btn-danger" disabled style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;">✕ CLEAR</button>
+        </div>
       </div>
     </div>
 
@@ -1073,10 +1077,11 @@ function parseAiff(arrayBuffer) {
   return buf;
 }
 
-function applyBuffer(buf) {
+function applyBuffer(buf, fromRecording) {
   audioBuffer = buf;
   selStart = selEnd = markerIn = markerOut = null;
-  history = []; playOffset = 0; zoom = 1; zoomRange.value = 1; zoomVal.textContent = '1×';
+  if (!fromRecording) history = [];
+  playOffset = 0; zoom = 1; zoomRange.value = 1; zoomVal.textContent = '1×';
   uploadOver.style.display = 'none';
   document.getElementById('filenameInfo').innerHTML = `<b>${fileName}</b>`;
   document.getElementById('sampleRateInfo').innerHTML = `<b>${buf.sampleRate}</b>&nbsp;Hz`;
@@ -1627,8 +1632,11 @@ function finishRecording(chunks, mimeType) {
   reader.onload = e => {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     audioCtx.decodeAudioData(e.target.result.slice(0), buf => {
+      // Save previous buffer so Undo Rec can restore it
+      if (audioBuffer) history.push(audioBuffer);
       fileName = 'recording.wav';
-      applyBuffer(buf);
+      applyBuffer(buf, true);
+      updateRecButtons();
     }, err => alert('Could not decode recorded audio: ' + err));
   };
   reader.readAsArrayBuffer(blob);
@@ -1680,6 +1688,47 @@ async function startCapture(useDisplay) {
   if (useDisplay) recStatus.textContent = 'Recording system audio…';
   else            recStatus.textContent = 'Recording mic…';
 }
+
+const recUndoBtn  = document.getElementById('recUndoBtn');
+const recClearBtn = document.getElementById('recClearBtn');
+
+function updateRecButtons() {
+  const hasRec = audioBuffer && fileName === 'recording.wav';
+  recClearBtn.disabled = !hasRec;
+  recUndoBtn.disabled  = !hasRec || history.length === 0;
+}
+
+recClearBtn.onclick = () => {
+  if (!audioBuffer) return;
+  if (isPlaying) stopPlay();
+  // If there's a previous buffer in history, pop it; otherwise go fully empty
+  if (history.length > 0) {
+    audioBuffer = history.pop();
+    fileName = 'recording.wav'; // keep the name neutral; doesn't matter once cleared
+  } else {
+    audioBuffer = null;
+    fileName = '';
+    uploadOver.style.display = 'flex';
+    document.getElementById('filenameInfo').style.color = 'var(--muted)';
+    document.getElementById('filenameInfo').textContent = 'No file loaded';
+    document.getElementById('sampleRateInfo').textContent = '';
+    document.getElementById('channelsInfo').textContent = '';
+    document.getElementById('durationInfo').textContent = '';
+  }
+  selStart = selEnd = markerIn = markerOut = null;
+  playOffset = 0; zoom = 1; zoomRange.value = 1; zoomVal.textContent = '1×';
+  history = [];
+  resize(); updateUI(); updateRecButtons();
+};
+
+recUndoBtn.onclick = () => {
+  if (history.length === 0) return;
+  if (isPlaying) stopPlay();
+  audioBuffer = history.pop();
+  selStart = selEnd = null;
+  playOffset = 0;
+  resize(); updateUI(); updateRecButtons();
+};
 
 recInternalBtn.onclick = () => startCapture(true);
 recMicBtn.onclick      = () => startCapture(false);
