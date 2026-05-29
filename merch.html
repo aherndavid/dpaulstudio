@@ -51,10 +51,9 @@
         .bg-wrap img {
             position: absolute; inset: 0;
             width: 100%; height: 100%;
-            object-fit: cover; opacity: 0;
-            transition: opacity 1.2s ease-in-out;
+            object-fit: cover; object-position: center;
+            opacity: 0.08;
         }
-        .bg-wrap img.active { opacity: 0.08; }
 
         /* ── NAV ── */
         nav {
@@ -379,8 +378,7 @@
 </div>
 
 <div class="bg-wrap">
-    <img id="bg0" src="assets/merch-trolley.png" alt="" class="active">
-    <img id="bg1" src="assets/merch-trolley-2.png" alt="">
+    <img src="assets/merch-moon.png" alt="">
 </div>
 
 <!-- ── SIZE GUIDE MODAL ── -->
@@ -497,10 +495,10 @@
         <!-- ── PRODUCT 001 ── -->
         <div class="product-row reveal">
             <div class="product-image-col">
-                <img id="img-001" src="assets/merch/design-001.png" alt="DPAUL Head Right T-Shirt in Black">
+                <img id="img-001" src="assets/merch/design-001w.png" alt="DPAUL Head Right T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour('001','black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour('001','white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour('001','black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour('001','white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -539,10 +537,10 @@
         <!-- ── PRODUCT 002 ── -->
         <div class="product-row reverse reveal">
             <div class="product-image-col">
-                <img id="img-002" src="assets/merch/design-002.png" alt="DPAUL Head Left T-Shirt in Black">
+                <img id="img-002" src="assets/merch/design-002w.png" alt="DPAUL Head Left T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour('002','black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour('002','white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour('002','black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour('002','white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -581,10 +579,10 @@
         <!-- ── PRODUCT 003 ── -->
         <div class="product-row reveal">
             <div class="product-image-col">
-                <img id="img-003" src="assets/merch/design-003.png" alt="Embrace AI T-Shirt in Black">
+                <img id="img-003" src="assets/merch/design-003w.png" alt="Embrace AI T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour('003','black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour('003','white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour('003','black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour('003','white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -623,10 +621,10 @@
         <!-- ── PRODUCT 004 ── -->
         <div class="product-row reverse reveal">
             <div class="product-image-col">
-                <img id="img-004" src="assets/merch/design-004.png" alt="Logic by Day T-Shirt in Black">
+                <img id="img-004" src="assets/merch/design-004w.png" alt="Logic by Day T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour('004','black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour('004','white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour('004','black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour('004','white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -665,14 +663,14 @@
         <!-- ── PRODUCT 005 — HOODIE ── -->
         <div class="product-row reveal">
             <div class="product-image-col">
-                <img id="img-005" src="assets/merch/design-005.png" alt="DPAUL Hoodie in Black — Front">
+                <img id="img-005" src="assets/merch/design-005w.png" alt="DPAUL Hoodie in White — Front">
                 <div class="view-toggle">
                     <button class="view-btn active" onclick="switchView('005','front',this)">Front</button>
                     <button class="view-btn" onclick="switchView('005','rear',this)">Rear</button>
                 </div>
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColourHoodie('005','black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColourHoodie('005','white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColourHoodie('005','black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColourHoodie('005','white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -714,10 +712,10 @@
         <!-- ── PRODUCT 006 — ZEBRA THREE ── -->
         <div class="product-row reverse reveal">
             <div class="product-image-col">
-                <img id="img-006" src="assets/merch/design-006b.png" alt="Zebra Three T-Shirt in Black">
+                <img id="img-006" src="assets/merch/design-006w.png" alt="Zebra Three T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour006('black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour006('white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour006('black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour006('white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -794,10 +792,10 @@
         <!-- ── PRODUCT 008 — 1979 ── -->
         <div class="product-row reveal">
             <div class="product-image-col">
-                <img id="img-008" src="assets/merch/design-008b.png" alt="1979 T-Shirt in Black">
+                <img id="img-008" src="assets/merch/design-008w.png" alt="1979 T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour008('black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour008('white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour008('black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour008('white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -836,10 +834,10 @@
         <!-- ── PRODUCT 009 — DPAUL LOGO T-SHIRT ── -->
         <div class="product-row reverse reveal">
             <div class="product-image-col">
-                <img id="img-009" src="assets/merch/design-009b.png" alt="DPAUL Logo T-Shirt in Black">
+                <img id="img-009" src="assets/merch/design-009w.png" alt="DPAUL Logo T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour009('black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour009('white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour009('black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour009('white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -920,10 +918,10 @@
         <!-- ── PRODUCT 011 — PORSCHE 993 ── -->
         <div class="product-row reverse reveal">
             <div class="product-image-col">
-                <img id="img-011" src="assets/merch/air-cooled-black.png" alt="DPAUL Design Porsche 993 Air-Cooled Architecture T-Shirt in Black">
+                <img id="img-011" src="assets/merch/air-cooled-white.png" alt="DPAUL Design Porsche 993 Air-Cooled Architecture T-Shirt in White">
                 <div class="colour-toggle">
-                    <div class="colour-btn black active" title="Black" onclick="switchColour011('black',this)"></div>
-                    <div class="colour-btn white" title="White" onclick="switchColour011('white',this)"></div>
+                    <div class="colour-btn black" title="Black" onclick="switchColour011('black',this)"></div>
+                    <div class="colour-btn white active" title="White" onclick="switchColour011('white',this)"></div>
                 </div>
             </div>
             <div class="product-info-col">
@@ -1086,17 +1084,6 @@
             requestAnimationFrame(animateEQ);
         }
         animateEQ();
-    })();
-
-    /* ── BG CROSSFADE ── */
-    (function() {
-        const imgs = [document.getElementById('bg0'), document.getElementById('bg1')];
-        let current = 0;
-        setInterval(() => {
-            imgs[current].classList.remove('active');
-            current = (current + 1) % imgs.length;
-            imgs[current].classList.add('active');
-        }, 8000);
     })();
 
     /* ── SCROLL REVEAL ── */
