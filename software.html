@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+    var path = window.location.pathname.split("/").pop();
+    if (path === "") path = "index.html";
+    window.location.replace('m/' + path);
+  }
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software — dPaul Technologies</title>
+    <style>
+        :root { --bg:#131413;--bg2:#1a1c1a;--orange:#FF6600;--cream:#D4C4A8;--text:#c8c8c0;--dim:#7a7a70;--border:rgba(255,102,0,0.25);--border-dim:rgba(255,255,255,0.07);--gold:#ffbb00;--font-scale:1; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background:var(--bg);color:var(--text);font-family:'Courier New',Courier,monospace;font-size:130%;min-height:100vh;overflow-x:hidden;}
+        body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.35;}
+        body::after{content:'';position:fixed;top:72px;left:0;right:0;bottom:0;background-image:url('assets/code.png');background-size:cover;background-position:center top;background-repeat:no-repeat;opacity:.06;pointer-events:none;z-index:-1;}
+
+        .font-nudge{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .3s;}
+        .font-nudge-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);}
+        .font-nudge-controls{display:flex;align-items:center;gap:8px;}
+        .font-btn{background:#222;border:1px solid var(--border-dim);color:var(--cream);font-family:'Courier New',Courier,monospace;width:32px;height:32px;cursor:pointer;border-radius:3px;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+        .font-btn:hover{border-color:var(--orange);color:var(--orange);}
+        .font-size-indicator{font-size:.7rem;color:var(--dim);letter-spacing:.1em;min-width:32px;text-align:center;}
+        .font-nudge-dismiss{background:none;border:none;color:var(--dim);font-family:'Courier New',Courier,monospace;font-size:.65rem;cursor:pointer;letter-spacing:.1em;text-align:right;padding:0;}
+        .font-nudge-dismiss:hover{color:var(--orange);}
+
+        nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;gap:4px;height:72px;}
+        nav a{font-family:'Courier New',Courier,monospace;font-size:1.4rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:160px;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:3px;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 4px;}
+        nav a:hover{border-color:var(--orange);color:var(--orange);}
+        nav a.active{background:var(--orange);color:#000;border-color:var(--orange);}
+        .nav-spacer{flex:1;}
+        #nav-eq-container{display:flex;align-items:flex-end;gap:2px;height:22px;margin:0 24px;padding-bottom:2px;}
+        .nav-eq-bar{width:3px;background:var(--orange);transition:height 0.1s ease;border-radius:1px;}
+        #nav-share-container{min-width:130px;display:flex;align-items:center;justify-content:flex-end;}
+
+        .page{max-width:1400px;margin:0 auto;padding:0 56px 120px;position:relative;z-index:1;}
+
+        /* HERO */
+        .hero{padding:64px 0 56px;border-bottom:1px solid var(--border);}
+        .hero-label{font-size:1.17rem;color:var(--orange);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
+        .hero h1{font-size:clamp(2.86rem,5.5vw,5.2rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:20px;}
+        .hero h1 span{color:var(--orange);}
+        .hero p{font-size:calc(1.365rem * var(--font-scale));line-height:1.9;max-width:640px;color:var(--text);}
+
+        /* PRODUCT BLOCKS */
+        .product-block{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;padding:80px 0;border-bottom:1px solid var(--border);}
+        .product-block.flip{direction:rtl;}
+        .product-block.flip > *{direction:ltr;}
+
+        .product-visual{display:flex;justify-content:center;align-items:start;}
+        .product-frame{width:100%;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#0e0f0e;transition:border-color .3s;}
+        .product-frame:hover{border-color:var(--orange);}
+        .product-frame img,.product-frame video{width:100%;height:100%;display:block;object-fit:cover;}
+
+        .product-eyebrow{font-size:1.04rem;color:var(--orange);letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px;}
+        .product-name{font-size:clamp(2.4rem,3.5vw,3.6rem);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:6px;line-height:1.1;}
+        .product-tagline{font-size:calc(1.17rem * var(--font-scale));color:var(--dim);letter-spacing:.08em;margin-bottom:28px;line-height:1.6;}
+        .product-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);margin-bottom:20px;}
+        .product-story em{color:var(--cream);font-style:normal;border-bottom:1px solid rgba(212,196,168,.3);}
+
+        .feature-list{list-style:none;margin:0 0 28px;}
+        .feature-list li{font-size:calc(1.04rem * var(--font-scale));color:var(--text);padding:8px 0 8px 18px;border-bottom:1px solid var(--border-dim);position:relative;line-height:1.6;}
+        .feature-list li:first-child{border-top:1px solid var(--border-dim);}
+        .feature-list li::before{content:'›';position:absolute;left:0;color:var(--orange);}
+
+        .privacy-strip{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;}
+        .privacy-tag{font-size:calc(.884rem * var(--font-scale));letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border-dim);border-radius:2px;color:var(--cream);}
+        .privacy-tag.highlight{border-color:rgba(80,200,100,.3);color:#50c864;background:rgba(80,200,100,.06);}
+
+        /* BUY BUTTON */
+        .buy-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:var(--orange);color:#000;font-family:'Courier New',Courier,monospace;font-size:1.17rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:3px;transition:background .2s,transform .15s;margin-right:12px;}
+        .buy-btn:hover{background:#ff8533;transform:translateY(-2px);}
+        .buy-btn-secondary{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:none;color:var(--orange);font-family:'Courier New',Courier,monospace;font-size:1.066rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--orange);border-radius:3px;transition:background .2s,color .2s,transform .15s;}
+        .buy-btn-secondary:hover{background:var(--orange);color:#000;transform:translateY(-2px);}
+        .price-note{display:block;font-size:calc(.884rem * var(--font-scale));color:var(--dim);letter-spacing:.1em;margin-top:12px;}
+
+        /* TRIAL BLOCK */
+        .trial-block{margin-top:28px;padding:18px 20px;border:1px solid var(--border-dim);border-radius:4px;background:var(--bg2);max-width:480px;}
+        .trial-label{font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+        .trial-desc{font-size:calc(1rem * var(--font-scale));color:var(--dim);line-height:1.7;}
+
+        /* PRO BLOCK (html-live pro) */
+        .pro-block{margin-top:28px;padding:22px 24px;border:1px solid #554400;border-radius:4px;background:rgba(255,187,0,0.04);}
+        .pro-eyebrow{font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+        .pro-name{font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;}
+        .pro-desc{font-size:calc(1rem * var(--font-scale));color:var(--dim);line-height:1.7;margin-bottom:16px;}
+        .pro-feature-list{list-style:none;margin:0 0 18px;}
+        .pro-feature-list li{font-size:calc(.98rem * var(--font-scale));color:var(--text);padding:5px 0 5px 18px;position:relative;border-bottom:1px solid rgba(85,68,0,.4);line-height:1.5;}
+        .pro-feature-list li:first-child{border-top:1px solid rgba(85,68,0,.4);}
+        .pro-feature-list li::before{content:'★';position:absolute;left:0;color:var(--gold);font-size:.7rem;top:8px;}
+        .pro-buy-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--gold);color:#000;font-family:'Courier New',Courier,monospace;font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:3px;transition:background .2s,transform .15s;}
+        .pro-buy-btn:hover{background:#ffdd55;transform:translateY(-2px);}
+        .pro-price-note{font-size:.88rem;color:#776633;letter-spacing:.08em;margin-left:12px;vertical-align:middle;}
+
+        /* REVEAL */
+        .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease;}
+        .reveal.visible{opacity:1;transform:none;}
+
+        /* COMPANY FOOTER */
+        .company-footer{margin-top:48px;padding:32px 0;border-top:1px solid var(--border-dim);display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start;max-width:960px;}
+        .company-footer-block{display:flex;flex-direction:column;gap:6px;}
+        .company-footer-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--orange);}
+        .company-footer-val{font-size:.91rem;color:var(--dim);letter-spacing:.05em;}
+        .company-footer-val a{color:var(--dim);text-decoration:none;}
+        .company-footer-val a:hover{color:var(--orange);}
+        .company-footer-note{font-size:.84rem;color:var(--dim);opacity:.6;max-width:520px;line-height:1.7;}
+        .footer-line{margin-top:80px;padding-top:32px;padding-bottom:0;font-size:.85rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;border-top:1px solid var(--border);}
+
+        @media(max-width:900px){
+            .product-block{grid-template-columns:1fr;gap:40px;}
+            .product-block.flip{direction:ltr;}
+            nav{padding:0 16px;}
+            nav a{padding:5px 8px;font-size:1rem;min-width:unset;}
+            .page{padding:0 24px 80px;}
+            .font-nudge{bottom:16px;right:16px;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)">A&#8722;</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
+</div>
+
+<nav>
+    <a href="about.html">about</a>
+    <a href="current.html">current</a>
+    <a href="design.html">design</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="services.html">services</a>
+    <a href="software.html" class="active">software</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <div class="nav-spacer"></div>
+    <div id="nav-eq-container"></div>
+    <div id="nav-share-container"></div>
+</nav>
+
+<div class="page">
+
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Software</div>
+        <h1>Mac software.<br><span>Built to last.</span></h1>
+        <p>Paid tools built to a higher standard — more power, more control, runs natively on your Mac. Pay once, no subscription, free updates included.</p>
+    </section>
+
+    <!-- ── DUPE REMOVE ── -->
+    <div class="product-block reveal" id="software-dupe-remove">
+        <div class="product-visual">
+            <div class="product-frame" style="aspect-ratio:9/16;overflow:hidden;">
+                <img src="../assets/dupe-remove.png" alt="Dupe Remove — Duplicate Image Cleaner for Mac" style="width:100%;height:100%;object-fit:cover;display:block;">
+            </div>
+        </div>
+        <div class="product-info">
+            <div class="product-eyebrow">// 01 — Image Deduplication</div>
+            <div class="product-name">Dupe Remove</div>
+            <p class="product-tagline">Find and remove duplicate photos. Fast, private, runs entirely on your Mac.</p>
+
+            <p class="product-story">If you shoot a lot of photos, you know the problem — hundreds of near-identical shots clogging up your drive. Dupe Remove finds them fast using <em>perceptual hashing</em>, groups them visually, and lets you decide what to keep. Nothing is deleted without your say-so.</p>
+
+            <ul class="feature-list">
+                <li>Detects exact and visually similar duplicates — not just identical files</li>
+                <li>Group review — see duplicates side by side before deleting anything</li>
+                <li>One-click keep or delete per group, or select individually</li>
+                <li>Export clean images directly to a folder of your choice</li>
+                <li>Adjustable sensitivity — strict matching or looser visual similarity</li>
+                <li>Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more</li>
+                <li>Up to 5,000 images per session</li>
+            </ul>
+
+            <div class="privacy-strip">
+                <span class="privacy-tag highlight">100% local</span>
+                <span class="privacy-tag">No subscription</span>
+                <span class="privacy-tag">Free updates</span>
+                <span class="privacy-tag">Mac only</span>
+                <span class="privacy-tag">30-day trial</span>
+            </div>
+
+            <div>
+                <a href="https://davidpaul2.gumroad.com/l/wfujsa" target="_blank" class="buy-btn">Buy Now — £19</a>
+                <span class="price-note">One-off payment &middot; no subscription &middot; macOS 10.15+</span>
+            </div>
+
+            <div class="trial-block">
+                <div class="trial-label">// Free Trial</div>
+                <p class="trial-desc">30-day trial included — no credit card required. Download and run it on your own images before you decide.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── HTML-LIVE PRO ── -->
+    <div class="product-block flip reveal" id="software-html-live-pro">
+        <div class="product-visual">
+            <div class="product-frame">
+                <img src="../assets/html-live-laptop.png" alt="HTML-Live Pro" style="width:100%;height:auto;display:block;">
+            </div>
+        </div>
+        <div class="product-info">
+            <div class="product-eyebrow">// 02 — Live HTML Editor</div>
+            <div class="product-name">HTML&#8209;Live</div>
+            <p class="product-tagline">Write HTML, see it live — no button to press, no delay.</p>
+
+            <p class="product-story">The free version is powerful. The Pro version goes further — built for designers and developers who work with <em>local project files</em> and push to GitHub. Write, preview, save and commit without leaving the editor.</p>
+
+            <a href="../tools/html-live/html-live.html" target="_blank" class="buy-btn-secondary" style="margin-bottom:24px;display:inline-flex;">Try free version &#8594;</a>
+
+            <div class="pro-block">
+                <div class="pro-eyebrow">★ Pro Edition</div>
+                <div class="pro-name">HTML&#8209;Live ★ Pro</div>
+                <p class="pro-desc">Everything in the free version, plus full local file access, direct disk saves, and a built-in Git command panel.</p>
+                <ul class="pro-feature-list">
+                    <li>Local folder browser — open, edit and save any file in your project</li>
+                    <li>Direct file save to disk — Ctrl+S writes back instantly</li>
+                    <li>Git command panel — copy any git command in one click</li>
+                    <li>Companion git scripts for Mac, Linux &amp; Windows</li>
+                    <li>Chrome &amp; Edge — optimised for the File System Access API</li>
+                </ul>
+                <a href="https://davidpaul2.gumroad.com/l/yqwler" target="_blank" class="pro-buy-btn">★ Get Pro &mdash; £9</a>
+                <span class="pro-price-note">One-off download · no subscription</span>
+            </div>
+        </div>
+    </div>
+
+    <footer class="company-footer reveal">
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company</div>
+            <div class="company-footer-val">CitiIT Limited</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company No.</div>
+            <div class="company-footer-val">15811174</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">VAT No.</div>
+            <div class="company-footer-val">473 5892 49</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Website</div>
+            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
+        </div>
+    </footer>
+
+    <div class="footer-line reveal">// dPaul Technologies — Software</div>
+
+</div>
+
+<script>
+    // NAV EQ
+    (function(){const NUM_BARS=8,MAX_H=20,container=document.getElementById('nav-eq-container');if(!container)return;const levels=Array.from({length:NUM_BARS},()=>Math.random()*MAX_H),targets=[...levels],bars=[];for(let i=0;i<NUM_BARS;i++){const b=document.createElement('div');b.className='nav-eq-bar';container.appendChild(b);bars.push(b);}function animateEQ(){for(let i=0;i<NUM_BARS;i++){if(Math.random()<0.1)targets[i]=Math.random()*MAX_H+2;levels[i]+=(targets[i]-levels[i])*0.15;bars[i].style.height=levels[i]+'px';}requestAnimationFrame(animateEQ);}animateEQ();})();
+
+    // FONT NUDGE
+    const fontScaleLevels=[1,1.15,1.3,1.5,1.7];let fontScaleIndex=0;const indicators=['100%','115%','130%','150%','170%'];
+    function applyFontScale(){document.documentElement.style.setProperty('--font-scale',fontScaleLevels[fontScaleIndex]);document.getElementById('fontIndicator').textContent=indicators[fontScaleIndex];try{localStorage.setItem('dp-font-scale',fontScaleIndex);}catch(e){}}
+    function adjustFont(dir){fontScaleIndex=Math.max(0,Math.min(fontScaleLevels.length-1,fontScaleIndex+dir));applyFontScale();}
+    function dismissNudge(){document.getElementById('fontNudge').style.opacity='0';document.getElementById('fontNudge').style.pointerEvents='none';try{localStorage.setItem('dp-nudge-dismissed','1');}catch(e){}}
+    try{const saved=localStorage.getItem('dp-font-scale');if(saved!==null){fontScaleIndex=parseInt(saved);applyFontScale();}if(localStorage.getItem('dp-nudge-dismissed')==='1'){dismissNudge();}}catch(e){}
+
+    // REVEAL
+    const revealEls=document.querySelectorAll('.reveal');
+    const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.08});
+    revealEls.forEach(el=>observer.observe(el));
+</script>
+<script src="share.js"></script>
+</body>
+</html>
