@@ -6,56 +6,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Lexus-inspired soft palette */
-            --bg-main:    #F2F2F0;
-            --soft-white: #ffffff;
-            --soft-shadow: #d1d1cf;
-            --text:       #1a1a1a;
-            --muted:      #8e8e93;
-            --danger:     #D0021B;
-            --success:    #1A7A4A;
-            --radius:     24px;
-            
-            /* Neumorphic 'Pillow' Shadows */
-            --pillow-raised: 8px 8px 16px var(--soft-shadow), -8px -8px 16px var(--soft-white);
-            --pillow-inset:  inset 6px 6px 12px var(--soft-shadow), inset -6px -6px 12px var(--soft-white);
+            --bg:         #0A0A0C;
+            --surface:    #111114;
+            --surface2:   #16161A;
+            --blue:       #4A9EFF;
+            --blue-dim:   rgba(74,158,255,0.15);
+            --blue-line:  rgba(74,158,255,0.25);
+            --text:       #E8E8EC;
+            --muted:      #52525A;
+            --muted2:     #78787E;
+            --danger:     #FF453A;
+            --success:    #32D74B;
+            --border:     rgba(74,158,255,0.18);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
+            background: var(--bg);
             color: var(--text);
             height: 100vh;
+            font-size: 13px;
             overflow: hidden;
         }
 
         /* ── Topbar ── */
         .topbar {
-            height: 70px;
-            background: var(--bg-main);
+            height: 56px;
+            background: var(--surface);
             display: flex;
             align-items: center;
-            padding: 0 40px;
-            z-index: 100;
-        }
-        .topbar h1 {
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            opacity: 0.8;
+            padding: 0 24px 0 0;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
         .topbar-spacer { flex: 1; }
 
         /* ── EQ Logo ── */
-        .eq-logo { display: flex; align-items: center; gap: 14px; }
-        .eq-bars { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .eq-logo { display: flex; align-items: center; gap: 12px; }
+        .eq-bars { display: flex; align-items: flex-end; gap: 3px; height: 22px; }
         .eq-bar {
-            width: 5px;
-            background: #000000;
-            border-radius: 2px 2px 0 0;
+            width: 3px;
+            background: var(--blue);
+            border-radius: 1px 1px 0 0;
             flex-shrink: 0;
             animation: eq-bounce 0.6s ease-in-out infinite alternate;
         }
@@ -66,45 +60,42 @@
         .eq-bar:nth-child(5) { animation-duration: 0.65s; animation-delay: 0.15s; }
         .eq-bar:nth-child(6) { animation-duration: 0.55s; animation-delay: 0.08s; }
         .eq-bar:nth-child(7) { animation-duration: 0.50s; animation-delay: 0.25s; }
-        @keyframes eq-bounce {
-            0%   { height: 4px; }
-            100% { height: 28px; }
-        }
+        @keyframes eq-bounce { 0% { height: 3px; } 100% { height: 22px; } }
+
         .eq-wordmark {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
             font-weight: 900;
-            color: #000000;
+            color: var(--text);
             letter-spacing: -0.02em;
             line-height: 1;
         }
 
-        /* ── Instructions ── */
+        /* ── Topbar buttons ── */
         .btn-help {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
-            background: var(--bg-main);
-            box-shadow: var(--pillow-raised);
-            color: var(--muted);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted2);
             cursor: pointer;
             width: auto;
-            transition: all 0.2s;
+            transition: all 0.15s;
         }
-        .btn-help:hover { color: var(--text); }
-        .btn-help:active { box-shadow: var(--pillow-inset); }
+        .btn-help:hover { color: var(--blue); border-color: var(--blue-line); }
+        .btn-help:active { background: var(--blue-dim); }
 
+        /* ── Modals ── */
         .modal-backdrop {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(242,242,240,0.6);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
             z-index: 999;
             align-items: center;
             justify-content: center;
@@ -112,54 +103,53 @@
         .modal-backdrop.open { display: flex; }
 
         .modal-box {
-            background: rgba(242,242,240,0.92);
-            border-radius: 28px;
-            box-shadow: 12px 12px 24px #c8c8c6, -12px -12px 24px #ffffff;
-            border: 1px solid rgba(255,255,255,0.6);
-            padding: 40px 44px;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 36px 40px;
             max-width: 520px;
             width: 90%;
             position: relative;
         }
         .modal-close {
             position: absolute;
-            top: 20px; right: 24px;
-            font-size: 20px;
+            top: 18px; right: 20px;
+            font-size: 16px;
             cursor: pointer;
             color: var(--muted);
             background: none;
             border: none;
             width: auto;
-            box-shadow: none;
-            padding: 0;
+            padding: 4px 8px;
             line-height: 1;
         }
         .modal-close:hover { color: var(--text); }
-        .modal-close:active { box-shadow: none; transform: none; }
+        .modal-close:active { background: transparent; }
 
         .modal-title {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
-            font-weight: 900;
-            letter-spacing: -0.01em;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
             margin-bottom: 24px;
-            color: var(--text);
+            color: var(--blue);
         }
         .modal-step {
             display: flex;
-            gap: 16px;
-            margin-bottom: 18px;
+            gap: 14px;
+            margin-bottom: 16px;
             align-items: flex-start;
         }
         .modal-step-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-family: 'Inter', monospace;
+            font-size: 10px;
             font-weight: 700;
-            color: #ffffff;
-            background: #1a1a1a;
+            color: var(--blue);
+            border: 1px solid var(--blue-line);
             border-radius: 50%;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -169,105 +159,100 @@
         .modal-step-text {
             font-size: 13px;
             line-height: 1.6;
-            color: var(--text);
+            color: var(--muted2);
         }
-        .modal-step-text strong {
-            font-weight: 700;
-        }
-        .modal-step-text span {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--muted);
-        }
-        .modal-divider {
-            height: 1px;
-            background: rgba(0,0,0,0.08);
-            margin: 22px 0;
-        }
-        .modal-tip {
-            font-size: 11px;
-            color: var(--muted);
-            font-family: 'JetBrains Mono', monospace;
-            line-height: 1.6;
-        }
-        
-        /* ── Shell ── */
-        .shell { display: flex; height: calc(100vh - 70px); padding: 0 20px 20px 20px; gap: 20px; }
+        .modal-step-text strong { color: var(--text); font-weight: 600; }
+        .modal-step-text span { font-size: 11px; color: var(--muted); }
+        .modal-divider { height: 1px; background: var(--border); margin: 20px 0; }
+        .modal-tip { font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+        /* ── Layout ── */
+        .shell { display: flex; height: calc(100vh - 56px); overflow: hidden; }
 
         /* ── Sidebar ── */
         .sidebar {
-            width: 300px;
-            min-width: 300px;
+            width: 260px;
+            min-width: 260px;
+            background: var(--surface);
             display: flex;
             flex-direction: column;
-            gap: 20px;
             overflow-y: auto;
-            padding: 10px;
+            border-right: 1px solid var(--border);
+            scrollbar-width: thin;
+            scrollbar-color: var(--muted) transparent;
         }
 
         .module {
-            background: var(--bg-main);
-            border-radius: var(--radius);
-            box-shadow: var(--pillow-raised);
-            padding: 24px;
-            border: 1px solid rgba(255,255,255,0.4);
+            padding: 18px 18px;
+            border-bottom: 1px solid var(--border);
         }
 
         .module-label {
-            font-size: 10px;
-            font-weight: 800;
+            font-size: 9px;
+            font-weight: 600;
             color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 16px;
+            letter-spacing: 0.14em;
+            margin-bottom: 12px;
             display: block;
         }
 
-        .drop-zone {
-            display: none !important;
-        }
+        .drop-zone { display: none !important; }
         .drop-zone-hidden {
-            background: var(--bg-main);
-            box-shadow: var(--pillow-inset);
-            border-radius: 18px;
-            padding: 20px;
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 18px;
             text-align: center;
             cursor: pointer;
-            border: none;
+            border: 1px dashed var(--border);
             color: var(--muted);
-            font-size: 12px;
-            transition: 0.2s;
+            font-size: 11px;
+            transition: 0.15s;
         }
+        .drop-zone-hidden:hover { border-color: var(--blue-line); color: var(--blue); }
 
         /* ── Buttons ── */
         button {
             font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 13px;
-            padding: 14px;
-            border-radius: 16px;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 10px 14px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            background: var(--bg-main);
-            box-shadow: var(--pillow-raised);
+            transition: all 0.12s;
+            border: 1px solid var(--border);
+            background: var(--surface2);
             color: var(--text);
             width: 100%;
         }
-        button:active { box-shadow: var(--pillow-inset); transform: scale(0.98); }
-        button:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; border: 1px solid var(--soft-shadow); }
+        button:hover { border-color: var(--blue-line); color: var(--blue); background: var(--blue-dim); }
+        button:active { background: rgba(74,158,255,0.25); }
+        button:disabled { opacity: 0.25; cursor: not-allowed; }
 
-        .btn-accent { background: #1a1a1a; color: white; }
-        .btn-danger { color: var(--danger); }
+        .btn-accent {
+            background: var(--blue);
+            color: #000;
+            border-color: var(--blue);
+            font-weight: 700;
+        }
+        .btn-accent:hover { background: #6AAFFF; border-color: #6AAFFF; color: #000; }
+        .btn-accent:active { background: #3A8EEF; }
 
-        /* ── Main Panel (Right Side) ── */
+        .btn-danger {
+            border-color: rgba(255,69,58,0.3);
+            color: var(--danger);
+            background: rgba(255,69,58,0.08);
+        }
+        .btn-danger:hover { background: rgba(255,69,58,0.18); border-color: rgba(255,69,58,0.5); color: var(--danger); }
+
+        /* ── Main Panel ── */
         .main {
             flex: 1;
-            background: var(--bg-main);
-            border-radius: 32px;
-            box-shadow: var(--pillow-inset);
+            background: var(--bg);
             overflow-y: auto;
-            padding: 40px;
+            padding: 32px;
             display: flex;
             flex-direction: column;
         }
@@ -275,11 +260,10 @@
         .image-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 30px;
+            gap: 16px;
             width: 100%;
         }
 
-        /* ── Welcome Hero / Large Image ── */
         .welcome-hero {
             flex: 1;
             display: flex;
@@ -289,34 +273,36 @@
         }
 
         .welcome-logo {
-            max-width: 800px; /* Large scale for the right panel */
-            width: 85%;
+            max-width: 600px;
+            width: 75%;
             height: auto;
-            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.08));
+            opacity: 0.9;
             transition: opacity 0.5s ease;
         }
 
         /* ── Image Cards ── */
         .card {
-            background: var(--bg-main);
-            border-radius: var(--radius);
-            padding: 12px;
-            box-shadow: var(--pillow-raised);
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 8px;
+            border: 1px solid var(--border);
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.5);
+            transition: border-color 0.15s;
         }
+        .card:hover { border-color: var(--blue-line); }
         .card img {
             width: 100%;
-            height: 160px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 16px;
+            border-radius: 4px;
             display: block;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-        .card.state-delete { box-shadow: inset 0 0 0 3px var(--danger), var(--pillow-raised); }
+        .card.state-delete { border-color: var(--danger); }
+        .card.state-keep  { border-color: var(--success); }
 
         .card-name {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 10px;
             color: var(--muted);
             white-space: nowrap;
@@ -324,98 +310,142 @@
             text-overflow: ellipsis;
         }
 
-        /* ── Orient Controls ── */
-        .orient-ratio-pills { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+        /* ── Orient pills ── */
+        .orient-ratio-pills { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
         .orient-ratio-pills button {
-            flex:1; min-width:calc(33% - 6px); padding:7px 4px;
-            font-size:9px; font-family:'JetBrains Mono'; font-weight:700;
-            letter-spacing:0.04em; border-radius:10px; width:auto;
+            flex:1; min-width:calc(33% - 4px); padding:7px 4px;
+            font-size:10px; border-radius:6px; width:auto;
         }
-        .orient-ratio-pills button.active { background:#1a1a1a; color:white; box-shadow:none; }
+        .orient-ratio-pills button.active {
+            background: var(--blue-dim);
+            border-color: var(--blue);
+            color: var(--blue);
+        }
 
-        /* Rotate overlay buttons on cards */
+        /* Rotate buttons on cards */
         .card-rotate-bar {
-            position:absolute; bottom:38px; right:8px;
+            position:absolute; bottom:36px; right:6px;
             display:flex; gap:4px; z-index:10;
         }
         .card-rotate-btn {
-            width:28px; height:28px; border-radius:50%;
-            background:rgba(255,255,255,0.85); box-shadow:0 2px 8px rgba(0,0,0,0.15);
-            font-size:13px; display:flex; align-items:center; justify-content:center;
-            cursor:pointer; border:none; padding:0; width:28px;
-            transition:background 0.15s;
+            width:26px; height:26px; border-radius:50%;
+            background:rgba(10,10,12,0.7); border:1px solid var(--border);
+            font-size:12px; display:flex; align-items:center; justify-content:center;
+            cursor:pointer; padding:0; width:26px; color: var(--text);
+            transition: all 0.12s;
         }
-        .card-rotate-btn:hover { background:#1a1a1a; color:white; }
-        .card-rotate-btn:active { transform:scale(0.92); box-shadow:none; }
+        .card-rotate-btn:hover { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+        .card-rotate-btn:active { transform:scale(0.9); }
 
-        /* Orientation badge */
         .orient-badge {
-            position:absolute; bottom:38px; left:8px;
-            font-family:'JetBrains Mono'; font-size:8px; font-weight:700;
-            padding:3px 7px; border-radius:6px; letter-spacing:0.06em;
-            background:rgba(0,0,0,0.55); color:rgba(255,255,255,0.9);
+            position:absolute; bottom:36px; left:6px;
+            font-family:'Inter'; font-size:8px; font-weight:600;
+            padding:2px 6px; border-radius:4px; letter-spacing:0.06em;
+            background:rgba(0,0,0,0.6); color:var(--muted2);
+            border: 1px solid var(--border);
             pointer-events:none;
         }
 
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
+        /* ── Manual Remove Mode ── */
+        body.remove-mode .card { cursor: crosshair; }
+        body.remove-mode .card:hover { border-color: #FF6600; }
+        body.remove-mode .card.selected-remove { border-color: #FF6600 !important; }
+        body.remove-mode .card.selected-remove .card-tick { background: #FF6600 !important; color: white; }
+
+        #remove-mode-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(255,102,0,0.06);
+            border: 1px solid rgba(255,102,0,0.2);
+            border-radius: 6px;
+            margin-bottom: 16px;
         }
+        #remove-mode-bar.visible { display: flex; }
+        #remove-mode-count {
+            font-size: 11px;
+            font-weight: 600;
+            color: #FF6600;
+            flex: 1;
+        }
+
+        /* ── Range sliders ── */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 8px;
-            background: var(--bg-main);
-            box-shadow: var(--pillow-inset);
-            border-radius: 10px;
+            height: 2px;
+            background: var(--border);
+            border-radius: 2px;
         }
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 24px; width: 24px;
+            height: 14px; width: 14px;
             border-radius: 50%;
-            background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: var(--blue);
             cursor: pointer;
-            margin-top: -8px;
+            margin-top: -6px;
+            box-shadow: 0 0 6px rgba(74,158,255,0.4);
         }
 
+        /* ── Topbar zoom ── */
+        #zoom-control { display:none; align-items:center; gap:8px; margin-left:16px; }
+        #zoom-control.visible { display:flex; }
+        #zoom-control span {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        #zoom-slider { width: 80px; margin: 0; }
 
+        /* ── Group nav ── */
+        .group-nav-btn {
+            font-size: 10px !important;
+            padding: 7px 10px !important;
+            text-align: left !important;
+            border-radius: 4px !important;
+        }
 
+        /* ── Topbar stats ── */
+        #topbar-stats {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+        }
     </style>
 </head>
 <body>
 
 <div class="topbar">
-    <div class="eq-logo">
-        <div class="eq-bars">
-            <div class="eq-bar"></div>
-            <div class="eq-bar"></div>
-            <div class="eq-bar"></div>
-            <div class="eq-bar"></div>
-            <div class="eq-bar"></div>
-            <div class="eq-bar"></div>
-            <div class="eq-bar"></div>
-        </div>
-        <div>
-            <div class="eq-wordmark">dPaul</div>
-            <div style="font-family:'Courier New',Courier,monospace;font-size:9px;font-weight:700;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-top:2px;">Technologies</div>
+    <div style="width:260px;min-width:260px;height:100%;background:var(--surface);
+                display:flex;align-items:center;padding:0 18px;border-right:1px solid var(--border);flex-shrink:0;">
+        <div class="eq-logo">
+            <div class="eq-bars">
+                <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+            <div>
+                <div class="eq-wordmark">dPaul</div>
+                <div style="font-size:8px;font-weight:600;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;margin-top:2px;">Technologies</div>
+            </div>
         </div>
     </div>
     <div class="topbar-spacer"></div>
-    <div id="topbar-stats" style="display:none; font-family:'JetBrains Mono'; font-size:11px; gap:24px; align-items:center;">
-        <span>REGISTRY <b id="ts-total">0</b></span>
-        <span>GROUPS <b id="ts-groups">0</b></span>
-        <span style="color:var(--success)">KEEP <b id="ts-keep">0</b></span>
-        <span style="color:var(--danger)">PURGE <b id="ts-delete">0</b></span>
+    <div id="topbar-stats" style="display:none;gap:20px;align-items:center;">
+        <span style="color:var(--muted)">IMAGES <b id="ts-total" style="color:var(--text)">0</b></span>
+        <span style="color:var(--muted)">GROUPS <b id="ts-groups" style="color:var(--blue)">0</b></span>
+        <span style="color:var(--muted)">KEEP <b id="ts-keep" style="color:var(--success)">0</b></span>
+        <span style="color:var(--muted)">PURGE <b id="ts-delete" style="color:var(--danger)">0</b></span>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;margin-left:20px;">
-        <button class="btn-help" onclick="document.getElementById('modal-changelog').classList.add('open')"
-            style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.06em;color:var(--muted);padding:8px 14px;">
-            v1.6
-        </button>
-        <button class="btn-help" onclick="document.getElementById('modal').classList.add('open')">? HOW TO USE</button>
+    <div id="zoom-control">
+        <span>−</span>
+        <input type="range" id="zoom-slider" min="80" max="320" value="200" step="10" oninput="applyZoom(this.value)">
+        <span>+</span>
     </div>
-
+    <div style="display:flex;align-items:center;gap:8px;margin-left:16px;">
+        <button class="btn-help" onclick="document.getElementById('modal-changelog').classList.add('open')" style="font-size:10px;padding:5px 10px;color:var(--muted);">v1.8</button>
+        <button class="btn-help" onclick="document.getElementById('modal').classList.add('open')">HOW TO USE</button>
+    </div>
 </div>
 
 <!-- Instructions Modal -->
@@ -427,44 +457,58 @@
         <div class="modal-step">
             <div class="modal-step-num">1</div>
             <div class="modal-step-text">
-                <strong>Import your images</strong><br>
-                <span>Drag images into the drop zone, or use the FILES / FOLDER buttons to select from your computer.</span>
+                <strong>Import</strong><br>
+                <span>Use FILES to pick individual images or FOLDER to load an entire directory.</span>
             </div>
         </div>
         <div class="modal-step">
             <div class="modal-step-num">2</div>
             <div class="modal-step-text">
                 <strong>Set sensitivity</strong><br>
-                <span>Slide left for stricter matching (exact dupes only). Slide right to catch visually similar images too.</span>
+                <span>Lower = stricter (exact dupes only). Higher = catches visually similar images too.</span>
             </div>
         </div>
         <div class="modal-step">
             <div class="modal-step-num">3</div>
             <div class="modal-step-text">
                 <strong>Run Analysis</strong><br>
-                <span>Perceptual hashing compares every image. Results appear as groups — originals are marked green, duplicates red.</span>
+                <span>Perceptual hashing groups similar images together. Review each group and mark what to keep or delete.</span>
             </div>
         </div>
         <div class="modal-step">
             <div class="modal-step-num">4</div>
             <div class="modal-step-text">
-                <strong>Review each group</strong><br>
-                <span>Use KEEP ALL or DELETE DUPES per group, or click individual images to toggle their status. ✓ = keep · ✕ = delete.</span>
+                <strong>Review groups</strong><br>
+                <span>Use KEEP ALL or DELETE DUPES per group, or click individual images to toggle. Green border = keep · Red border = delete.</span>
             </div>
         </div>
         <div class="modal-step">
             <div class="modal-step-num">5</div>
             <div class="modal-step-text">
-                <strong>Export or Purge</strong><br>
-                <span>Add an optional prefix then hit EXPORT KEPT to download clean images. PURGE SESSION removes marked images from the current view.</span>
+                <strong>Orient (optional)</strong><br>
+                <span>Crop all images to a target ratio (16:9, 9:16, 1:1 etc.) and rotate individual images before exporting.</span>
+            </div>
+        </div>
+        <div class="modal-step">
+            <div class="modal-step-num">6</div>
+            <div class="modal-step-text">
+                <strong>Manual Remove (optional)</strong><br>
+                <span>Select individual images to remove from the session without running analysis — useful for quick culling.</span>
+            </div>
+        </div>
+        <div class="modal-step">
+            <div class="modal-step-num">7</div>
+            <div class="modal-step-text">
+                <strong>Export</strong><br>
+                <span>Choose a filename prefix and format, then hit EXPORT KEPT. You'll be prompted to pick a save folder — images go straight there.</span>
             </div>
         </div>
 
         <div class="modal-divider"></div>
         <div class="modal-tip">
-            ⚠ No files are ever deleted from your disk — purge only removes from this session.<br>
-            ⚠ Exports go to your Downloads folder one file at a time to avoid browser limits.<br>
-            ⚠ TIFF files are not supported — browsers cannot decode them. Convert to JPG or PNG first.
+            ⚠ No files are ever deleted from your disk — this tool only manages what you export.<br>
+            ⚠ TIFF files are not supported — convert to JPG or PNG first.<br>
+            ⚠ All processing is local. Nothing leaves your device.
         </div>
     </div>
 </div>
@@ -478,12 +522,12 @@
         <!-- Current -->
         <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;">
             <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
-                background:#1a1a1a;color:white;padding:4px 10px;border-radius:8px;
-                letter-spacing:0.06em;white-space:nowrap;margin-top:1px;">v1.6</div>
+                background:var(--blue-dim);color:var(--blue);padding:4px 10px;border-radius:4px;
+                border:1px solid var(--blue-line);letter-spacing:0.06em;white-space:nowrap;margin-top:1px;">v1.8</div>
             <div>
                 <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:6px;">CURRENT</div>
                 <div style="font-size:12px;color:var(--muted);line-height:1.7;">
-                    Orient module — crop &amp; rotate tools. Perceptual hash clustering. Staggered export to avoid Chrome throttling. Group-based review with bulk keep/delete. Password gate.
+                    Full UI redesign: dark panel sidebar, flat modern buttons with rounded corners, off-white main canvas, clean Inter typography. — visible borders, offset shadow press-state, JetBrains Mono uppercase throughout. Orient module — crop &amp; rotate tools. Perceptual hash clustering. Staggered export to avoid Chrome throttling. Group-based review with bulk keep/delete. Password gate.
                 </div>
             </div>
         </div>
@@ -500,9 +544,9 @@
 
             <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
-                    background:var(--bg-main);box-shadow:var(--pillow-raised);
-                    padding:4px 10px;border-radius:8px;letter-spacing:0.06em;
-                    white-space:nowrap;margin-top:1px;color:var(--muted);">v1.7</div>
+                    background:var(--bg);box-shadow:none;
+                    padding:4px 10px;border-radius:0;letter-spacing:0.06em;
+                    white-space:nowrap;margin-top:1px;color:var(--muted);">v1.9</div>
                 <div>
                     <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;">Python CLI Mode</div>
                     <div style="font-size:12px;color:var(--muted);line-height:1.6;">True local file deletion — run as a script directly against your folders. No browser download loop.</div>
@@ -511,9 +555,9 @@
 
             <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
-                    background:var(--bg-main);box-shadow:var(--pillow-raised);
-                    padding:4px 10px;border-radius:8px;letter-spacing:0.06em;
-                    white-space:nowrap;margin-top:1px;color:var(--muted);">v1.8</div>
+                    background:var(--bg);box-shadow:none;
+                    padding:4px 10px;border-radius:0;letter-spacing:0.06em;
+                    white-space:nowrap;margin-top:1px;color:var(--muted);">v2.0</div>
                 <div>
                     <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;">Pro &amp; Studio Tiers</div>
                     <div style="font-size:12px;color:var(--muted);line-height:1.6;">Unlocked via one-time purchase. Higher batch limits, priority processing, and advanced export options.</div>
@@ -522,8 +566,8 @@
 
             <div style="display:flex;gap:14px;align-items:flex-start;">
                 <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
-                    background:var(--bg-main);box-shadow:var(--pillow-raised);
-                    padding:4px 10px;border-radius:8px;letter-spacing:0.06em;
+                    background:var(--bg);box-shadow:none;
+                    padding:4px 10px;border-radius:0;letter-spacing:0.06em;
                     white-space:nowrap;margin-top:1px;color:var(--muted);">v2.0</div>
                 <div>
                     <div style="font-size:11px;font-weight:700;letter-spacing:0.04em;margin-bottom:4px;">AI-Assisted Review</div>
@@ -541,17 +585,15 @@
 <!-- Delete Confirm Modal -->
 <div class="modal-backdrop" id="modal-delete-confirm" onclick="if(event.target===this)this.classList.remove('open')">
     <div class="modal-box" style="max-width:400px;text-align:center;">
-        <div class="modal-title" style="margin-bottom:12px;">⚠ Confirm Purge</div>
+        <div class="modal-title" style="margin-bottom:12px;">Confirm Purge</div>
         <p id="modal-delete-msg" style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:8px;"></p>
         <p style="font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:28px;letter-spacing:0.03em;">Original files on disk are not affected.</p>
         <div style="display:flex;gap:12px;justify-content:center;">
             <button onclick="document.getElementById('modal-delete-confirm').classList.remove('open')"
-                style="width:auto;padding:12px 24px;font-size:12px;color:var(--muted);">
-                CANCEL
+                style="width:auto;padding:9px 20px;color:var(--muted);">CANCEL
             </button>
             <button onclick="confirmDelete()"
-                style="width:auto;padding:12px 24px;font-size:12px;background:#D0021B;color:white;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
-                YES, PURGE
+                style="width:auto;padding:9px 20px;background:var(--danger);color:#000;border-color:var(--danger);">YES, PURGE
             </button>
         </div>
     </div>
@@ -562,8 +604,7 @@
     <div class="modal-box" style="max-width:400px;text-align:center;">
         <p id="modal-alert-msg" style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:28px;"></p>
         <button onclick="document.getElementById('modal-alert').classList.remove('open')"
-            style="width:auto;padding:12px 28px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
-            OK
+            style="width:auto;padding:12px 28px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.08em;border-radius:6px;">OK
         </button>
     </div>
 </div>
@@ -577,35 +618,33 @@
             <strong style="color:var(--text);">Try increasing the sensitivity slider and running again.</strong>
         </p>
         <button onclick="document.getElementById('modal-no-dupes').classList.remove('open')"
-            style="width:auto;padding:12px 28px;font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
-            OK
+            style="width:auto;padding:12px 28px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.08em;border-radius:6px;">OK
         </button>
     </div>
 </div>
 
 <!-- Purge Progress Modal -->
 <div id="modal-purging" style="display:none;position:fixed;inset:0;z-index:1000;
-    background:rgba(242,242,240,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     align-items:center;justify-content:center;">
-    <div style="background:var(--bg-main);border-radius:28px;
-        box-shadow:12px 12px 32px #c8c8c6,-12px -12px 32px #ffffff;
-        border:1px solid rgba(255,255,255,0.6);
+    <div style="background:var(--surface);border-radius:12px;
+        border:1px solid var(--border);
         padding:44px 48px;width:380px;max-width:90vw;text-align:center;">
         <div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:32px;margin-bottom:28px;">
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#D0021B;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#D0021B;"></div>
         </div>
         <div style="font-family:'Courier New',Courier,monospace;font-size:13px;
-            font-weight:900;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;color:#D0021B;">
+            font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;color:var(--danger);">
             PURGING
         </div>
         <div id="purge-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;
-            color:var(--muted);letter-spacing:0.04em;">
+            color:var(--muted2);letter-spacing:0.04em;">
             Removing duplicates…
         </div>
     </div>
@@ -613,40 +652,36 @@
 
 <!-- Export Progress Modal -->
 <div id="modal-exporting" style="display:none;position:fixed;inset:0;z-index:1000;
-    background:rgba(242,242,240,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     align-items:center;justify-content:center;">
-    <div style="background:var(--bg-main);border-radius:28px;
-        box-shadow:12px 12px 32px #c8c8c6,-12px -12px 32px #ffffff;
-        border:1px solid rgba(255,255,255,0.6);
+    <div style="background:var(--surface);border-radius:12px;
+        border:1px solid var(--border);
         padding:44px 48px;width:420px;max-width:90vw;text-align:center;">
         <div id="export-modal-eq" style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:32px;margin-bottom:28px;">
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#1a1a1a;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;background:#1a1a1a;"></div>
         </div>
         <div id="export-modal-title" style="font-family:'Courier New',Courier,monospace;font-size:13px;
             font-weight:900;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;color:#1a1a1a;">
             EXPORTING
         </div>
         <div id="export-modal-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;
-            color:var(--muted);letter-spacing:0.04em;margin-bottom:20px;">
+            color:var(--muted2);letter-spacing:0.04em;margin-bottom:20px;">
             Preparing files…
         </div>
         <!-- Progress bar -->
-        <div style="height:6px;background:var(--bg-main);border-radius:10px;
-            box-shadow:var(--pillow-inset);overflow:hidden;">
-            <div id="export-modal-bar" style="height:100%;background:#1a1a1a;width:0%;
-                border-radius:10px;transition:width 0.25s ease;"></div>
+        <div style="height:2px;background:var(--surface2);border-radius:2px;
+            box-shadow:none;overflow:hidden;">
+            <div id="export-modal-bar" style="height:100%;background:var(--blue);width:0%;border-radius:2px;transition:width 0.25s ease;"></div>
         </div>
         <!-- Complete button (hidden until done) -->
-        <button id="export-modal-done" onclick="document.getElementById('modal-exporting').style.display='none';document.getElementById('btn-export').textContent='⬇ EXPORT KEPT';document.getElementById('btn-export').disabled=false;"
-            style="display:none;margin-top:28px;width:auto;padding:12px 32px;font-size:12px;
-            font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;
-            background:#1a1a1a;color:white;border-radius:16px;">
+        <button id="export-modal-done" onclick="document.getElementById('modal-exporting').style.display='none';document.getElementById('btn-export').textContent='EXPORT KEPT';document.getElementById('btn-export').disabled=false;"
+            style="display:none;margin-top:24px;width:auto;padding:9px 24px;background:var(--success);border-color:var(--success);color:#000;">
             ✓ DONE
         </button>
     </div>
@@ -655,7 +690,7 @@
 <!-- Start Again Confirm Modal -->
 <div class="modal-backdrop" id="modal-restart" onclick="if(event.target===this)this.classList.remove('open')">
     <div class="modal-box" style="max-width:400px;text-align:center;">
-        <div class="modal-title" style="margin-bottom:12px;">⚠ End Session?</div>
+        <div class="modal-title" style="margin-bottom:12px;">End Session?</div>
         <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:28px;">
             This will clear all loaded images, groups, and selections.<br>
             <strong style="color:var(--text);">The page will refresh and cannot be undone.</strong><br><br>
@@ -663,12 +698,10 @@
         </p>
         <div style="display:flex;gap:12px;justify-content:center;">
             <button onclick="document.getElementById('modal-restart').classList.remove('open')"
-                style="width:auto;padding:12px 24px;font-size:12px;color:var(--muted);">
-                CANCEL
+                style="width:auto;padding:9px 20px;color:var(--muted);">CANCEL
             </button>
             <button onclick="location.reload()"
-                style="width:auto;padding:12px 24px;font-size:12px;background:#1a1a1a;color:white;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:0.04em;">
-                YES, START AGAIN
+                style="width:auto;padding:9px 20px;background:var(--blue);border-color:var(--blue);color:#000;">YES, START AGAIN
             </button>
         </div>
     </div>
@@ -688,8 +721,8 @@
         <div class="module">
             <span class="module-label">Sensitivity</span>
             <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:12px; font-weight:600;">
-                <span>MATCH LEVEL</span>
-                <span id="thresh-val">10</span>
+                <span style="color:var(--muted)">MATCH LEVEL</span>
+                <span id="thresh-val" style="color:var(--blue);font-weight:700;font-size:13px;">10</span>
             </div>
             <input type="range" id="threshold" min="1" max="20" value="10"
                    oninput="document.getElementById('thresh-val').textContent=this.value">
@@ -699,7 +732,7 @@
         <div class="module" id="orient-module" style="display:none;">
             <span class="module-label">Orient</span>
 
-            <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:0.04em;">TARGET RATIO</div>
+            <div style="font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:0.12em;font-weight:600;text-transform:uppercase;">TARGET RATIO</div>
             <div class="orient-ratio-pills" id="orient-pills">
                 <button data-ratio="16:9"  onclick="setOrientRatio('16:9')" >16:9</button>
                 <button data-ratio="9:16"  onclick="setOrientRatio('9:16')" >9:16</button>
@@ -709,18 +742,32 @@
                 <button data-ratio="free"  onclick="setOrientRatio('free')" >FREE</button>
             </div>
 
-            <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:0.04em;">APPLY TO</div>
+            <div style="font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:0.12em;font-weight:600;text-transform:uppercase;">APPLY TO</div>
             <div style="display:flex;gap:6px;margin-bottom:14px;" id="orient-scope-pills">
-                <button data-scope="all"       onclick="setOrientScope('all')"       style="flex:1;padding:7px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.04em;border-radius:10px;width:auto;background:#1a1a1a;color:white;box-shadow:none;">ALL</button>
-                <button data-scope="landscape" onclick="setOrientScope('landscape')" style="flex:1;padding:7px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.04em;border-radius:10px;width:auto;">LAND</button>
-                <button data-scope="portrait"  onclick="setOrientScope('portrait')"  style="flex:1;padding:7px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.04em;border-radius:10px;width:auto;">PORT</button>
+                <button data-scope="all"       onclick="setOrientScope('all')"       style="flex:1;padding:7px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.08em;border-radius:0;width:auto;background:#FFFFFF;color:#1a1a1a;">ALL</button>
+                <button data-scope="landscape" onclick="setOrientScope('landscape')" style="flex:1;padding:8px 4px;font-size:10px;font-family:\'Inter\',sans-serif;font-weight:700;letter-spacing:0.01em;border-radius:8px;width:auto;">LAND</button>
+                <button data-scope="portrait"  onclick="setOrientScope('portrait')"  style="flex:1;padding:8px 4px;font-size:10px;font-family:\'Inter\',sans-serif;font-weight:700;letter-spacing:0.01em;border-radius:8px;width:auto;">PORT</button>
             </div>
 
             <button class="btn-accent" id="btn-orient" onclick="applyOrient()" disabled
-                style="margin-bottom:8px;">⟳ CONVERT</button>
+                style="margin-bottom:8px;">CONVERT</button>
             <button id="btn-orient-reset" onclick="resetOrient()"
-                style="margin-bottom:8px;font-size:11px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.04em;color:var(--muted);">↩ RESET TO ORIGINAL</button>
-            <div id="orient-status" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);text-align:center;min-height:16px;"></div>
+                style="margin-bottom:8px;font-size:11px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.04em;color:var(--muted);">RESET TO ORIGINAL</button>
+            <div id="orient-status" style="font-size:10px;color:var(--blue);text-align:center;min-height:16px;font-weight:500;"></div>
+        </div>
+
+        <!-- Manual Remove Module -->
+        <div class="module" id="manual-remove-module" style="display:none;">
+            <span class="module-label">Manual Remove</span>
+            <p style="font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+                Select individual images to remove from this session before or after analysis.
+            </p>
+            <button id="btn-remove-mode" onclick="toggleRemoveMode()" style="margin-bottom:8px;">
+                ✕ SELECT TO REMOVE
+            </button>
+            <button id="btn-remove-selected" onclick="removeSelected()" style="color:#FF6600;display:none;">
+                REMOVE SELECTED (<span id="remove-selected-count">0</span>)
+            </button>
         </div>
 
         <div class="module">
@@ -731,39 +778,36 @@
 
         <div class="module">
             <span class="module-label">Export</span>
-            <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:0.04em;">FILE NAME (optional)</div>
+            <div style="font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:0.12em;font-weight:600;text-transform:uppercase;">FILE NAME (optional)</div>
             <input type="text" id="export-name" placeholder="e.g. ferrari"
                    oninput="updateExportPreview()"
-                   style="font-family:'JetBrains Mono';font-size:11px;padding:12px 14px;background:var(--bg-main);
-                          box-shadow:var(--pillow-inset);border:none;border-radius:14px;color:var(--text);
+                   style="font-family:'JetBrains Mono';font-size:11px;padding:12px 14px;background:var(--bg);
+                          box-shadow:none;border:none;border-radius:0;color:var(--text);
                           width:100%;margin-bottom:10px;outline:none;">
             <div id="export-preview" style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);
-                 margin-bottom:14px;padding:8px 12px;background:var(--bg-main);
-                 box-shadow:var(--pillow-inset);border-radius:10px;letter-spacing:0.02em;line-height:1.8;">
+                 margin-bottom:14px;padding:8px 12px;background:var(--bg);
+                 box-shadow:none;border-radius:0;letter-spacing:0.02em;line-height:1.8;">
                 <span id="preview-line">cleaned-1.jpg · cleaned-2.jpg …</span>
             </div>
 
-            <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:0.04em;">FORMAT</div>
+            <div style="font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:0.12em;font-weight:600;text-transform:uppercase;">FORMAT</div>
             <div style="display:flex;gap:6px;margin-bottom:14px;" id="fmt-pills">
                 <button onclick="setFormat('original')" data-fmt="original"
                     style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
-                           letter-spacing:0.04em;border-radius:12px;background:#1a1a1a;color:white;width:auto;">
+                           border-radius:6px;background:var(--blue-dim);border-color:var(--blue);color:var(--blue);width:auto;">
                     ORIGINAL
                 </button>
                 <button onclick="setFormat('webp')" data-fmt="webp"
                     style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
-                           letter-spacing:0.04em;border-radius:12px;width:auto;">
-                    WEBP
+                           border-radius:6px;width:auto;">WEBP
                 </button>
                 <button onclick="setFormat('jpeg')" data-fmt="jpeg"
                     style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
-                           letter-spacing:0.04em;border-radius:12px;width:auto;">
-                    JPEG
+                           border-radius:6px;width:auto;">JPEG
                 </button>
                 <button onclick="setFormat('png')" data-fmt="png"
                     style="flex:1;padding:8px 4px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;
-                           letter-spacing:0.04em;border-radius:12px;width:auto;">
-                    PNG
+                           border-radius:6px;width:auto;">PNG
                 </button>
             </div>
 
@@ -776,24 +820,22 @@
             </div>
 
             <div id="resize-wrap" style="display:none;margin-bottom:14px;">
-                <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--muted);margin-bottom:8px;letter-spacing:0.04em;">MAX WIDTH (px)</div>
+                <div style="font-size:9px;color:var(--muted);margin-bottom:8px;letter-spacing:0.12em;font-weight:600;text-transform:uppercase;">MAX WIDTH (px)</div>
                 <div style="display:flex;gap:6px;" id="resize-pills">
-                    <button onclick="setMaxWidth(0)"   data-mw="0"    style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;background:#1a1a1a;color:white;width:auto;">ORIG</button>
-                    <button onclick="setMaxWidth(1920)" data-mw="1920" style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;width:auto;">1920</button>
-                    <button onclick="setMaxWidth(1280)" data-mw="1280" style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;width:auto;">1280</button>
-                    <button onclick="setMaxWidth(800)"  data-mw="800"  style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;letter-spacing:0.03em;border-radius:10px;width:auto;">800</button>
+                    <button onclick="setMaxWidth(0)"   data-mw="0"    style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;border-radius:6px;background:var(--blue-dim);border-color:var(--blue);color:var(--blue);width:auto;">ORIG</button>
+                    <button onclick="setMaxWidth(1920)" data-mw="1920" style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;border-radius:6px;width:auto;">1920</button>
+                    <button onclick="setMaxWidth(1280)" data-mw="1280" style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;border-radius:6px;width:auto;">1280</button>
+                    <button onclick="setMaxWidth(800)"  data-mw="800"  style="flex:1;padding:7px 2px;font-size:9px;font-family:'JetBrains Mono';font-weight:700;border-radius:6px;width:auto;">800</button>
                 </div>
             </div>
 
-            <button class="btn-accent" id="btn-export" onclick="exportKept()" disabled>⬇ EXPORT KEPT</button>
+            <button class="btn-accent" id="btn-export" onclick="exportKept()" disabled>EXPORT KEPT</button>
         </div>
 
         <div class="module" style="margin-top: auto;">
             <span class="module-label">Terminate</span>
             <button class="btn-danger" id="btn-delete" onclick="deleteMarked()" disabled>PURGE SESSION</button>
-            <button onclick="startAgain()" style="margin-top:10px;font-size:11px;padding:10px;font-weight:700;
-                font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;color:var(--muted);
-                border:1px dashed #c0c0be;">↺ START AGAIN</button>
+            <button onclick="startAgain()" style="margin-top:8px;background:rgba(180,20,20,0.12);border:1px solid rgba(180,20,20,0.35);color:#C0392B;border-radius:6px;">START AGAIN</button>
         </div>
 
         <!-- Group nav -->
@@ -811,44 +853,80 @@
 <input type="file" id="file-input" multiple accept="image/*" style="display:none">
 <input type="file" id="folder-input" webkitdirectory directory multiple style="display:none">
 
+<!-- Import In Progress Modal -->
+<div id="modal-importing" style="display:none;position:fixed;inset:0;z-index:1000;
+    background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border-radius:12px;
+        border:1px solid var(--border);
+        padding:44px 48px;width:420px;max-width:90vw;text-align:center;">
+
+        <div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:32px;margin-bottom:28px;">
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+        </div>
+
+        <div style="font-family:'Courier New',Courier,monospace;font-size:13px;
+            font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;color:var(--blue);font-size:12px;">
+            IMPORTING
+        </div>
+        <div id="import-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;
+            color:var(--muted2);margin-bottom:24px;letter-spacing:0.04em;">
+            Please wait…
+        </div>
+
+        <div style="height:8px;background:var(--bg);border-radius:0;
+            box-shadow:none;overflow:hidden;margin-bottom:12px;">
+            <div id="import-bar" style="height:100%;background:#1a1a1a;width:0%;
+                border-radius:0;transition:width 0.2s ease;"></div>
+        </div>
+
+        <div id="import-pct" style="font-family:'JetBrains Mono',monospace;font-size:10px;
+            color:var(--muted2);letter-spacing:0.06em;">0%</div>
+    </div>
+</div>
+
 <!-- Progress Modal -->
 <div id="progress-modal" style="display:none;position:fixed;inset:0;z-index:1000;
-    background:rgba(242,242,240,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     align-items:center;justify-content:center;">
-    <div style="background:var(--bg-main);border-radius:28px;
-        box-shadow:12px 12px 32px #c8c8c6,-12px -12px 32px #ffffff;
-        border:1px solid rgba(255,255,255,0.6);
+    <div style="background:var(--surface);border-radius:12px;
+        border:1px solid var(--border);
         padding:44px 48px;width:420px;max-width:90vw;text-align:center;">
 
         <!-- Animated EQ bars -->
         <div style="display:flex;align-items:flex-end;justify-content:center;gap:4px;height:32px;margin-bottom:28px;">
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
-            <div class="eq-bar" style="width:6px;border-radius:3px 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
+            <div class="eq-bar" style="width:6px;border-radius:0 3px 0 0;"></div>
         </div>
 
         <div id="pm-phase" style="font-family:'Courier New',Courier,monospace;font-size:13px;
-            font-weight:900;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;">
+            font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;color:var(--blue);font-size:12px;">
             ANALYSING
         </div>
         <div id="pm-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;
-            color:var(--muted);margin-bottom:24px;letter-spacing:0.04em;">
+            color:var(--muted2);margin-bottom:24px;letter-spacing:0.04em;">
             Preparing…
         </div>
 
         <!-- Track -->
-        <div style="height:8px;background:var(--bg-main);border-radius:10px;
-            box-shadow:var(--pillow-inset);overflow:hidden;margin-bottom:12px;">
-            <div id="pm-bar" style="height:100%;background:#1a1a1a;width:0%;
-                border-radius:10px;transition:width 0.25s ease;"></div>
+        <div style="height:8px;background:var(--bg);border-radius:0;
+            box-shadow:none;overflow:hidden;margin-bottom:12px;">
+            <div id="pm-bar" style="height:100%;background:var(--blue);width:0%;border-radius:2px;transition:width 0.25s ease;"></div>
         </div>
 
         <div id="pm-pct" style="font-family:'JetBrains Mono',monospace;font-size:10px;
-            color:var(--muted);letter-spacing:0.08em;">0%</div>
+            color:var(--muted2);letter-spacing:0.06em;">0%</div>
     </div>
 </div>
 
@@ -859,16 +937,16 @@ function playClick() {
     try {
         if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const ctx = _audioCtx;
+        const t = ctx.currentTime;
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(1200, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.04);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.06);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.06);
+        osc.frequency.setValueAtTime(1400, t);
+        osc.frequency.exponentialRampToValueAtTime(600, t + 0.03);
+        gain.gain.setValueAtTime(0.06, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(t); osc.stop(t + 0.04);
     } catch(e) {}
 }
 document.addEventListener('click', e => {
@@ -908,11 +986,26 @@ function loadFiles(files) {
         return;
     }
     let done = 0;
+    const importModal = document.getElementById('modal-importing');
+    const importLabel = document.getElementById('import-label');
+    const importBar   = document.getElementById('import-bar');
+    const importPct   = document.getElementById('import-pct');
+    importBar.style.width = '0%';
+    importPct.textContent = '0%';
+    importLabel.textContent = `Loading ${imgs.length} image${imgs.length !== 1 ? 's' : ''}…`;
+    importModal.style.display = 'flex';
+
     imgs.forEach(file => {
         const r = new FileReader();
         r.onload = e => {
             registry.push({ id: crypto.randomUUID(), file, name: file.name, size: file.size, dataUrl: e.target.result, originalDataUrl: e.target.result, phash: null });
-            if (++done === imgs.length) {
+            done++;
+            const pct = Math.round((done / imgs.length) * 100);
+            importBar.style.width = pct + '%';
+            importPct.textContent = pct + '%';
+            importLabel.textContent = `${done} / ${imgs.length} loaded…`;
+            if (done === imgs.length) {
+                importModal.style.display = 'none';
                 document.getElementById('btn-scan').disabled = false;
                 showAllView();
                 updateStats();
@@ -1063,6 +1156,8 @@ function toggleCard(itemId) {
 }
 
 function paintCard(card, id) {
+    // Don't override remove-selection visual state
+    if (card.classList.contains('selected-remove')) return;
     card.classList.remove('state-keep','state-delete');
     const tick = card.querySelector('.card-tick');
     if (toKeep.has(id))        { card.classList.add('state-keep');   if(tick) tick.textContent='✓'; }
@@ -1096,7 +1191,7 @@ function buildGroupNav() {
 
     const mkBtn = (label, onClick) => {
         const el = document.createElement('div');
-        el.style.cssText = `background:var(--bg-main);border-radius:16px;box-shadow:var(--pillow-raised);
+        el.style.cssText = `background:var(--surface);border-radius:8px;border:1px solid var(--border);margin-bottom:4px;
             padding:12px 16px;cursor:pointer;font-size:11px;font-weight:700;font-family:'JetBrains Mono';
             color:var(--muted);display:flex;align-items:center;gap:10px;transition:0.15s;border:1px solid rgba(255,255,255,0.4);`;
         el.innerHTML = label;
@@ -1111,7 +1206,7 @@ function buildGroupNav() {
 
     groups.forEach(g => {
         const first = registry.find(r => r.id === g.members[0].itemId);
-        const el = mkBtn(`<img src="${first.dataUrl}" style="width:28px;height:28px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+        const el = mkBtn(`<img src="${first.dataUrl}" style="width:28px;height:28px;object-fit:cover;border-radius:0;flex-shrink:0;">
             <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.label}</span>
             <span style="margin-left:auto">${g.members.length}</span>`, () => scrollToGroup(g.id));
         nav.appendChild(el);
@@ -1141,12 +1236,12 @@ function showGroupsView() {
         btnWrap.style.cssText = 'margin-left:auto;display:flex;gap:8px;';
 
         const btnKeep = document.createElement('button');
-        btnKeep.textContent = '✓ KEEP ALL';
+        btnKeep.textContent = 'KEEP ALL';
         btnKeep.style.cssText = 'width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--success);';
         btnKeep.addEventListener('click', () => groupKeepAll(g.id));
 
         const btnDel = document.createElement('button');
-        btnDel.textContent = '✕ DELETE DUPES';
+        btnDel.textContent = 'DELETE DUPES';
         btnDel.style.cssText = 'width:auto;padding:8px 14px;font-size:11px;border-radius:12px;color:var(--danger);';
         btnDel.addEventListener('click', () => groupDeleteDups(g.id));
 
@@ -1162,6 +1257,7 @@ function showGroupsView() {
         sec.appendChild(grid);
         main.appendChild(sec);
     });
+    if (document._zoomSize) applyZoom(document._zoomSize);
 }
 
 function showAllView() {
@@ -1186,6 +1282,7 @@ function showAllView() {
         grid.appendChild(makeCard(item, role, sim));
     });
     main.appendChild(grid);
+    if (document._zoomSize) applyZoom(document._zoomSize);
 }
 
 function makeCard(item, role, sim) {
@@ -1194,12 +1291,12 @@ function makeCard(item, role, sim) {
     card.dataset.id = item.id;
 
     const roleHtml = role ? `<div style="position:absolute;top:20px;left:20px;font-family:'JetBrains Mono';
-        font-size:9px;padding:3px 8px;border-radius:6px;font-weight:600;
+        font-size:9px;padding:3px 8px;border-radius:0;font-weight:600;
         background:${role==='original'?'rgba(26,122,74,0.85)':'rgba(208,2,27,0.85)'};color:white;">
         ${role.toUpperCase()}</div>` : '';
 
     const simHtml = (role==='dupe'&&sim!==null) ? `<div style="position:absolute;bottom:52px;left:20px;
-        font-family:'JetBrains Mono';font-size:9px;padding:3px 8px;border-radius:6px;
+        font-family:'JetBrains Mono';font-size:9px;padding:3px 8px;border-radius:0;
         background:rgba(0,0,0,0.7);color:white;">${sim}% MATCH</div>` : '';
 
     const tickHtml = `<div class="card-tick" style="position:absolute;top:20px;right:20px;width:22px;height:22px;
@@ -1221,7 +1318,7 @@ function makeCard(item, role, sim) {
         ${simHtml}
         ${orientBadgeHtml}
         ${rotateBarHtml}
-        <img src="${item.dataUrl}" loading="lazy" style="width:100%;height:160px;object-fit:cover;border-radius:16px;display:block;margin-bottom:12px;">
+        <img src="${item.dataUrl}" loading="lazy" style="width:100%;height:${document._zoomImgH || 160}px;object-fit:cover;border-radius:0;display:block;margin-bottom:12px;">
         <div class="card-name">${getDisplayName(item)}</div>
         <div style="font-family:'JetBrains Mono';font-size:9px;color:var(--muted);margin-top:3px;">${(item.size/1024).toFixed(1)} KB</div>
     `;
@@ -1229,7 +1326,11 @@ function makeCard(item, role, sim) {
         btn.addEventListener('click', e => { e.stopPropagation(); rotateCard(item.id, parseInt(btn.dataset.rotate)); });
     });
     paintCard(card, item.id);
-    card.addEventListener('click', () => toggleCard(item.id));
+    if (selectedForRemoval.has(item.id)) { card.classList.add('selected-remove'); card.querySelector('.card-tick').textContent = '✕'; }
+    card.addEventListener('click', () => {
+        if (removeMode) { toggleRemoveCard(item.id); return; }
+        toggleCard(item.id);
+    });
     return card;
 }
 
@@ -1253,6 +1354,8 @@ function deleteMarked() {
 async function confirmDelete() {
     const modal = document.getElementById('modal-delete-confirm');
     modal.classList.remove('open');
+    const isManualRemove = modal.dataset.isManualRemove === '1';
+    delete modal.dataset.isManualRemove;
 
     // Determine what to purge — group-specific ids or full toDelete set
     let idsToRemove;
@@ -1264,6 +1367,12 @@ async function confirmDelete() {
     }
 
     if (!idsToRemove.size) return;
+
+    // Exit remove mode before purging
+    if (isManualRemove) {
+        selectedForRemoval = new Set([...selectedForRemoval].filter(id => !idsToRemove.has(id)));
+        exitRemoveMode();
+    }
 
     // Show purge progress modal
     const purgeModal = document.getElementById('modal-purging');
@@ -1278,7 +1387,7 @@ async function confirmDelete() {
     toDelete = new Set([...toDelete].filter(id => !idsToRemove.has(id)));
     toKeep = new Set([...toKeep].filter(id => registry.find(r => r.id === id)));
 
-    purgeLabel.textContent = '✓ Done';
+    purgeLabel.textContent = 'DONE';
     await new Promise(r => setTimeout(r, 600));
     purgeModal.style.display = 'none';
 
@@ -1290,9 +1399,11 @@ function setFormat(fmt) {
     exportFormat = fmt;
     document.querySelectorAll('#fmt-pills button').forEach(b => {
         const active = b.dataset.fmt === fmt;
-        b.style.background = active ? '#1a1a1a' : 'var(--bg-main)';
-        b.style.color = active ? 'white' : 'var(--text)';
-        b.style.boxShadow = active ? 'none' : 'var(--pillow-raised)';
+        b.style.background = active ? 'var(--blue-dim)' : '';
+        b.style.color = active ? 'var(--blue)' : '';
+        b.style.borderColor = active ? 'var(--blue)' : '';
+        b.style.boxShadow = '';
+        b.style.transform = '';
     });
     const needsQuality = fmt === 'webp' || fmt === 'jpeg';
     const needsResize  = fmt !== 'original';
@@ -1305,9 +1416,11 @@ function setMaxWidth(w) {
     exportMaxWidth = w;
     document.querySelectorAll('#resize-pills button').forEach(b => {
         const active = parseInt(b.dataset.mw) === w;
-        b.style.background = active ? '#1a1a1a' : 'var(--bg-main)';
-        b.style.color = active ? 'white' : 'var(--text)';
-        b.style.boxShadow = active ? 'none' : 'var(--pillow-raised)';
+        b.style.background = active ? 'var(--blue-dim)' : '';
+        b.style.color = active ? 'var(--blue)' : '';
+        b.style.borderColor = active ? 'var(--blue)' : '';
+        b.style.boxShadow = '';
+        b.style.transform = '';
     });
 }
 
@@ -1400,7 +1513,7 @@ async function exportKept() {
 
     if (window.showDirectoryPicker) {
         try {
-            btn.textContent = '📁 CHOOSE FOLDER…';
+            btn.textContent = 'CHOOSE FOLDER…';
             const rootDir = await window.showDirectoryPicker({ mode: 'readwrite' });
             const dir = await rootDir.getDirectoryHandle('Dupe-Cleaned', { create: true });
 
@@ -1417,7 +1530,7 @@ async function exportKept() {
             em.style.display = 'flex';
 
             for (let n = 0; n < list.length; n++) {
-                btn.textContent = `⬇ SAVING ${n+1} / ${list.length}`;
+                btn.textContent = `SAVING ${n+1} / ${list.length}`;
                 emLabel.textContent = `Saving ${n+1} of ${list.length}…`;
                 emBar.style.width = ((n / list.length) * 100) + '%';
                 const item = list[n];
@@ -1437,11 +1550,11 @@ async function exportKept() {
             emTitle.style.color = '#1A7A4A';
             emEq.querySelectorAll('.eq-bar').forEach(b => b.style.background = '#1A7A4A');
             emDone.style.display = 'inline-block';
-            btn.textContent = '✓ SAVED TO DUPE-CLEANED';
+            btn.textContent = 'SAVED TO DUPE-CLEANED';
             return;
         } catch (err) {
             if (err.name === 'AbortError') {
-                btn.textContent = '⬇ EXPORT KEPT';
+                btn.textContent = 'EXPORT KEPT';
                 btn.disabled = false;
                 return;
             }
@@ -1463,7 +1576,7 @@ async function exportKept() {
     em.style.display = 'flex';
 
     for (let n = 0; n < list.length; n++) {
-        btn.textContent = `⬇ EXPORTING ${n+1} / ${list.length}`;
+        btn.textContent = `EXPORTING ${n+1} / ${list.length}`;
         emLabel.textContent = `Downloading ${n+1} of ${list.length}…`;
         emBar.style.width = ((n / list.length) * 100) + '%';
         const item = list[n];
@@ -1481,7 +1594,7 @@ async function exportKept() {
     emTitle.style.color = '#1A7A4A';
     emEq.querySelectorAll('.eq-bar').forEach(b => b.style.background = '#1A7A4A');
     emDone.style.display = 'inline-block';
-    btn.textContent = '✓ COMPLETE';
+    btn.textContent = 'COMPLETE';
 }
 
 // ── Start Again ───────────────────────────────────────
@@ -1530,9 +1643,11 @@ function setOrientRatio(r) {
     document.querySelectorAll('#orient-pills button').forEach(b => {
         const active = b.dataset.ratio === orientRatio;
         b.classList.toggle('active', active);
-        b.style.background = active ? '#1a1a1a' : '';
-        b.style.color = active ? 'white' : '';
-        b.style.boxShadow = active ? 'none' : '';
+        b.style.background = active ? 'var(--blue-dim)' : '';
+        b.style.color = active ? 'var(--blue)' : '';
+        b.style.borderColor = active ? 'var(--blue)' : '';
+        b.style.boxShadow = '';
+        b.style.transform = '';
     });
     document.getElementById('btn-orient').disabled = !orientRatio || orientRatio === 'free';
 }
@@ -1541,9 +1656,11 @@ function setOrientScope(s) {
     orientScope = s;
     document.querySelectorAll('#orient-scope-pills button').forEach(b => {
         const active = b.dataset.scope === s;
-        b.style.background = active ? '#1a1a1a' : 'var(--bg-main)';
-        b.style.color = active ? 'white' : 'var(--text)';
-        b.style.boxShadow = active ? 'none' : 'var(--pillow-raised)';
+        b.style.background = active ? 'var(--blue-dim)' : '';
+        b.style.color = active ? 'var(--blue)' : '';
+        b.style.borderColor = active ? 'var(--blue)' : '';
+        b.style.boxShadow = '';
+        b.style.transform = '';
     });
 }
 
@@ -1639,7 +1756,7 @@ async function applyOrient() {
         await new Promise(r => setTimeout(r, 0));
     }
 
-    status.textContent = `✓ ${targets.length} IMAGE${targets.length!==1?'S':''} CONVERTED`;
+    status.textContent = `${targets.length} IMAGE${targets.length!==1?'S':''} CONVERTED`;
     btn.disabled = false;
 
     // Re-render current view
@@ -1665,7 +1782,7 @@ async function resetOrient() {
         // Re-detect dims for badges
         await ensureAllDimensions();
         groups.length ? showGroupsView() : showAllView();
-        status.textContent = `↩ ${count} IMAGE${count!==1?'S':''} RESTORED`;
+        status.textContent = `${count} IMAGE${count!==1?'S':''} RESTORED`;
     }
     setTimeout(() => { status.textContent = ''; }, 3000);
 }
@@ -1674,6 +1791,97 @@ async function resetOrient() {
 function showOrientModule() {
     document.getElementById('orient-module').style.display = 'block';
     document.getElementById('btn-orient').disabled = !orientRatio || orientRatio === 'free';
+    document.getElementById('manual-remove-module').style.display = 'block';
+    document.getElementById('zoom-control').classList.add('visible');
+    applyZoom(document.getElementById('zoom-slider').value);
+}
+
+// ── Zoom ──────────────────────────────────────────────
+function applyZoom(val) {
+    const size = parseInt(val);
+    // Grid column width drives how many columns fit
+    document.querySelectorAll('.image-grid').forEach(g => {
+        g.style.gridTemplateColumns = `repeat(auto-fill, minmax(${size}px, 1fr))`;
+        g.style.gap = size < 120 ? '12px' : size < 180 ? '20px' : '30px';
+    });
+    // Card image height scales proportionally
+    const imgH = Math.round(size * 0.75);
+    document.querySelectorAll('.card img').forEach(img => {
+        img.style.height = imgH + 'px';
+    });
+    // Store so new cards rendered later pick it up
+    document._zoomSize = size;
+    document._zoomImgH = imgH;
+}
+
+// ── Manual Remove Mode ────────────────────────────────
+let removeMode = false;
+let selectedForRemoval = new Set();
+
+function toggleRemoveMode() {
+    removeMode = !removeMode;
+    const btn = document.getElementById('btn-remove-mode');
+    const btnRemove = document.getElementById('btn-remove-selected');
+
+    if (removeMode) {
+        document.body.classList.add('remove-mode');
+        btn.textContent = 'CANCEL';
+        btn.style.color = '#FF6600';
+        btnRemove.style.display = 'block';
+        // Switch to all-images view so user can see everything
+        showAllView();
+    } else {
+        exitRemoveMode();
+    }
+}
+
+function exitRemoveMode() {
+    removeMode = false;
+    selectedForRemoval.clear();
+    document.body.classList.remove('remove-mode');
+    const btn = document.getElementById('btn-remove-mode');
+    if (btn) { btn.textContent = 'SELECT TO REMOVE'; btn.style.color = ''; }
+    const btnRemove = document.getElementById('btn-remove-selected');
+    if (btnRemove) btnRemove.style.display = 'none';
+    updateRemoveCount();
+    // Re-paint cards to clear orange selection outlines
+    document.querySelectorAll('.card[data-id]').forEach(c => c.classList.remove('selected-remove'));
+}
+
+function toggleRemoveCard(itemId) {
+    const card = document.querySelector(`.card[data-id="${itemId}"]`);
+    if (selectedForRemoval.has(itemId)) {
+        selectedForRemoval.delete(itemId);
+        if (card) { card.classList.remove('selected-remove'); card.querySelector('.card-tick').textContent = ''; }
+    } else {
+        selectedForRemoval.add(itemId);
+        if (card) { card.classList.add('selected-remove'); card.querySelector('.card-tick').textContent = '✕'; }
+    }
+    updateRemoveCount();
+}
+
+function updateRemoveCount() {
+    const n = selectedForRemoval.size;
+    const el = document.getElementById('remove-selected-count');
+    if (el) el.textContent = n;
+    const btn = document.getElementById('btn-remove-selected');
+    if (btn) {
+        btn.disabled = false; // never disable — visibility handles it
+        btn.style.opacity = n === 0 ? '0.35' : '1';
+        btn.style.pointerEvents = n === 0 ? 'none' : 'auto';
+    }
+}
+
+function removeSelected() {
+    if (!selectedForRemoval.size) return;
+    const n = selectedForRemoval.size;
+    const modal = document.getElementById('modal-delete-confirm');
+    modal.dataset.pendingIds = JSON.stringify([...selectedForRemoval]);
+    document.getElementById('modal-delete-msg').textContent =
+        `Remove ${n} image${n !== 1 ? 's' : ''} from this session? Original files are not affected.`;
+    // Wrap confirmDelete to also exit remove mode after
+    modal.dataset.isManualRemove = '1';
+    modal.classList.add('open');
 }
 
 // ── Stats ─────────────────────────────────────────────
@@ -1691,9 +1899,9 @@ function updateStats() {
 
 // Card state classes for keep
 const _style = document.createElement('style');
-_style.textContent = `.card.state-keep { box-shadow: inset 0 0 0 3px var(--success), var(--pillow-raised) !important; }
-.card.state-keep .card-tick { background: var(--success) !important; color: white; }
-.card.state-delete .card-tick { background: var(--danger) !important; color: white; }`;
+_style.textContent = `.card.state-keep { border-color: var(--success) !important; }
+.card.state-keep .card-tick { background: var(--success) !important; color: #000; }
+.card.state-delete .card-tick { background: var(--danger) !important; color: #000; }`;
 document.head.appendChild(_style);
 </script>
 </body>
