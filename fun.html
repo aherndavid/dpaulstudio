@@ -10,7 +10,7 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools — dPaul Technologies</title>
+    <title>Fun — dPaul Technologies</title>
     <style>
         :root { --bg:#131413;--bg2:#1a1c1a;--orange:#FF6600;--cream:#D4C4A8;--text:#c8c8c0;--dim:#7a7a70;--border:rgba(255,102,0,0.25);--border-dim:rgba(255,255,255,0.07);--font-scale:1; }
         *{margin:0;padding:0;box-sizing:border-box;}
@@ -46,29 +46,7 @@
         .hero h1 em{color:var(--orange);font-style:normal;}
         .hero-intro{font-size:calc(1.365rem * var(--font-scale));line-height:1.95;color:var(--text);max-width:660px;border-left:2px solid var(--orange);padding-left:20px;margin-top:8px;}
 
-        /* SECTION DIVIDER */
-        .section-divider{padding:56px 0 0;margin-bottom:0;}
-        .section-divider-label{font-size:1.17rem;color:var(--orange);letter-spacing:.22em;text-transform:uppercase;margin-bottom:8px;}
-        .section-divider-desc{font-size:calc(1.1rem * var(--font-scale));color:var(--dim);line-height:1.7;max-width:560px;border-bottom:1px solid var(--border);padding-bottom:40px;}
-
-        /* INSTRUMENT BLOCKS (from tools.html) */
-        .instrument{padding:80px 0;border-bottom:1px solid var(--border);}
-        .instrument-eyebrow{font-size:1.17rem;color:var(--orange);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
-        .instrument-name{font-size:clamp(2.6rem,4vw,3.9rem);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:40px;}
-        .instrument-body{display:grid;grid-template-columns:1fr 300px;gap:64px;align-items:start;}
-        .spec-list{list-style:none;margin:24px 0 32px;}
-        .spec-list li{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-dim);font-size:calc(1.17rem * var(--font-scale));}
-        .spec-list li:first-child{border-top:1px solid var(--border-dim);}
-        .spec-key{color:var(--dim);}
-        .spec-val{color:var(--cream);}
-        .instrument-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);}
-        .instrument-story + .instrument-story{margin-top:16px;}
-        .instrument-visual{position:sticky;top:100px;}
-        .tool-render-img{width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 24px 40px rgba(0,0,0,.6));border-radius:4px;display:block;}
-        .img-large{width:130% !important;margin-left:-15% !important;}
-        .visual-caption{font-size:calc(1.066rem * var(--font-scale));color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:14px;text-align:center;}
-
-        /* TOOL BLOCKS (from dev-tools.html) */
+        /* TOOL BLOCKS */
         .tool-block{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;padding:72px 0;border-bottom:1px solid var(--border);}
         .tool-block.flip{direction:rtl;}
         .tool-block.flip > *{direction:ltr;}
@@ -77,47 +55,12 @@
         .tool-frame:hover{border-color:var(--orange);}
         .tool-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);margin-bottom:16px;}
         .tool-story em{color:var(--cream);font-style:normal;border-bottom:1px solid rgba(212,196,168,.3);}
-        .spec-list-bullets{list-style:none;margin:20px 0 0;}
-        .spec-list-bullets li{font-size:calc(1.04rem * var(--font-scale));color:var(--text);padding:7px 0 7px 16px;border-bottom:1px solid var(--border-dim);position:relative;line-height:1.6;}
-        .spec-list-bullets li:first-child{border-top:1px solid var(--border-dim);}
-        .spec-list-bullets li::before{content:'›';position:absolute;left:0;color:var(--orange);}
         .tool-info h3{font-size:1.82rem;font-weight:700;color:#fff;margin-bottom:6px;}
         .tool-sub{font-size:1.066rem;letter-spacing:.18em;color:var(--orange);text-transform:uppercase;margin-bottom:20px;}
-        .screenshot-gallery{display:flex;flex-direction:column;gap:24px;position:sticky;top:100px;}
-        .screenshot-label{font-size:.936rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-        .screenshot-img{width:100%;height:auto;display:block;border-radius:3px;border:1px solid var(--border-dim);transition:border-color .2s;}
-        .screenshot-img:hover{border-color:var(--orange);}
-        .screenshot-caption{font-size:calc(1.014rem * var(--font-scale));color:var(--dim);letter-spacing:.08em;margin-top:6px;}
-        .status-badge{display:inline-block;font-size:.884rem;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border-radius:2px;margin-left:10px;vertical-align:middle;}
-        .status-badge.live{background:rgba(80,200,100,.12);color:#50c864;border:1px solid rgba(80,200,100,.25);}
-        .status-badge.wip{background:rgba(255,102,0,.1);color:var(--orange);border:1px solid var(--border);}
 
-        /* LAUNCH / BUY BUTTONS */
+        /* LAUNCH BUTTON */
         .launch-btn{display:inline-block;margin-top:28px;padding:11px 28px;border:1px solid var(--orange);color:var(--orange);font-family:'Courier New',Courier,monospace;font-size:1.066rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border-radius:3px;transition:all .2s;}
         .launch-btn:hover{background:var(--orange);color:#000;transform:translateY(-2px);}
-
-        /* BMC BLOCK */
-        .bmc-block{margin-top:28px;padding:20px 22px;border:1px solid var(--border-dim);border-radius:4px;background:var(--bg2);display:flex;align-items:center;gap:20px;max-width:560px;}
-        .bmc-text{flex:1;}
-        .bmc-label{font-size:.91rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-        .bmc-desc{font-size:1rem;line-height:1.7;color:var(--dim);}
-        .bmc-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#FFDD00;color:#000;font-family:'Courier New',Courier,monospace;font-size:1.04rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:4px;white-space:nowrap;transition:background .2s,transform .15s;flex-shrink:0;}
-        .bmc-btn:hover{background:#ffe633;transform:translateY(-2px);}
-
-        /* SKILLS STRIP */
-        .skills-strip{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0;}
-        .skill-tag{font-size:calc(1.105rem * var(--font-scale));letter-spacing:.1em;text-transform:uppercase;color:var(--cream);border:1px solid var(--border-dim);border-radius:2px;padding:6px 14px;transition:border-color .2s,color .2s;}
-        .skill-tag:hover{border-color:var(--orange);color:var(--orange);}
-
-        /* LEARNING SECTION */
-        .learning-section{padding:80px 0 72px;border-bottom:1px solid var(--border);}
-        .section-label{font-size:1.17rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:40px;}
-        .learning-grid{display:grid;grid-template-columns:1fr 340px;gap:64px;align-items:start;}
-        .learning-body{font-size:calc(1.235rem * var(--font-scale));line-height:2;color:var(--text);}
-        .learning-body + .learning-body{margin-top:20px;}
-        .aside-label{font-size:1.105rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:14px;}
-        .aside-text{font-size:calc(1.196rem * var(--font-scale));line-height:1.85;color:var(--text);}
-        .aside-block + .aside-block{margin-top:28px;}
 
         /* CTA */
         .cta-block{padding:72px 0 0;text-align:center;}
@@ -129,16 +72,6 @@
         /* REVEAL */
         .reveal{opacity:0;transform:translateY(20px);transition:all .6s ease;}
         .reveal.visible{opacity:1;transform:none;}
-
-        /* COMPANY FOOTER */
-        .company-footer{margin-top:48px;padding:32px 0;border-top:1px solid var(--border-dim);display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start;max-width:960px;}
-        .company-footer-block{display:flex;flex-direction:column;gap:6px;}
-        .company-footer-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--orange);}
-        .company-footer-val{font-size:.91rem;color:var(--dim);letter-spacing:.05em;}
-        .company-footer-val a{color:var(--dim);text-decoration:none;}
-        .company-footer-val a:hover{color:var(--orange);}
-        .company-footer-note{font-size:.84rem;color:var(--dim);opacity:.6;max-width:520px;line-height:1.7;}
-        .footer-line{margin-top:80px;padding-top:32px;padding-bottom:0;font-size:.85rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;border-top:1px solid var(--border);}
 
         /* TTS */
         .tts-player{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px 20px;margin:32px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px;max-width:960px;}
@@ -165,16 +98,22 @@
         .tts-progress{font-size:.884rem;color:var(--dim);letter-spacing:.08em;white-space:nowrap;margin-left:auto;}
         .tts-highlight{background:rgba(255,102,0,.15);outline:1px solid rgba(255,102,0,.3);border-radius:2px;transition:background .3s;}
 
+        /* COMPANY FOOTER */
+        .company-footer{margin-top:48px;padding:32px 0;border-top:1px solid var(--border-dim);display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start;max-width:960px;}
+        .company-footer-block{display:flex;flex-direction:column;gap:6px;}
+        .company-footer-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--orange);}
+        .company-footer-val{font-size:.91rem;color:var(--dim);letter-spacing:.05em;}
+        .company-footer-val a{color:var(--dim);text-decoration:none;}
+        .company-footer-val a:hover{color:var(--orange);}
+        .company-footer-note{font-size:.84rem;color:var(--dim);opacity:.6;max-width:520px;line-height:1.7;}
+        .footer-line{margin-top:80px;padding-top:32px;padding-bottom:0;font-size:.85rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;border-top:1px solid var(--border);}
+
         @media(max-width:900px){
-            .instrument-body,.learning-grid{grid-template-columns:1fr;}
-            .instrument-visual{position:relative;top:0;margin-top:40px;}
             .tool-block{grid-template-columns:1fr;gap:32px;}
             .tool-block.flip{direction:ltr;}
-            .screenshot-gallery{position:relative;top:0;}
             nav{padding:0 16px;}
             nav a{padding:5px 8px;font-size:1rem;min-width:unset;}
             .page{padding:0 24px 80px;}
-            .bmc-block{flex-direction:column;align-items:flex-start;}
             .font-nudge{bottom:16px;right:16px;}
         }
     </style>
@@ -195,13 +134,13 @@
     <a href="about.html">about</a>
     <a href="current.html">current</a>
     <a href="design.html">design</a>
-    <a href="fun.html">fun</a>
+    <a href="fun.html" class="active">fun</a>
     <a href="merch.html">merch</a>
     <a href="music.html">music</a>
     <a href="services.html">services</a>
     <a href="software.html">software</a>
     <a href="synths.html">synths</a>
-    <a href="tools.html" class="active">tools</a>
+    <a href="tools.html">tools</a>
     <a href="video.html">video</a>
     <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
@@ -211,9 +150,9 @@
 <div class="page">
 
     <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies — Tools &amp; Utilities</div>
-        <h1>Browser tools.<br>Built for <em>real use.</em></h1>
-        <p class="hero-intro">Every tool here started as something I needed myself and couldn't find a clean version of. No sign-ups, no paywalls — open and use. Runs entirely in the browser.</p>
+        <div class="hero-label">// dPaul Technologies — Fun &amp; Games</div>
+        <h1>Made to<br><em>play with.</em></h1>
+        <p class="hero-intro">Not everything needs a purpose. These are the browser experiments that exist because they were enjoyable to build — and more enjoyable to use. No installs, no sign-ups. Just open and go.</p>
         <div class="tts-player" id="ttsPlayer">
             <span class="tts-label">// Speak this page</span>
             <div class="tts-controls">
@@ -241,81 +180,41 @@
         </div>
     </section>
 
-    <!-- ── SECTION: AUDIO & VOICE ── -->
-    <div class="section-divider reveal">
-        <div class="section-divider-label">// Audio &amp; Voice</div>
-        <p class="section-divider-desc">Browser-based audio utilities built around the Web Audio API. No installs, no accounts.</p>
-    </div>
-
-    <!-- VU METER -->
-    <div class="instrument reveal" id="tools-vu">
-        <div class="instrument-eyebrow">// 01 — Audio Utility</div>
-        <div class="instrument-name">dPaul VU <span style="color:var(--dim);font-size:1.2rem;font-weight:400;">v2.01</span></div>
-        <div class="instrument-body">
-            <div>
-                <p class="instrument-story">Monitoring levels accurately is the difference between a clean take and a digital mess. The dPaul VU is a high-sensitivity monitoring tool that captures incoming audio via the Web Audio API to provide real-time decibel tracking, peak history, and signal-to-noise visualisation.</p>
-                <ul class="spec-list">
-                    <li><span class="spec-key">Processing</span><span class="spec-val">Real-time Fast Fourier Transform</span></li>
-                    <li><span class="spec-key">Range</span><span class="spec-val">-40dB to +6dB full scale</span></li>
-                    <li><span class="spec-key">Features</span><span class="spec-val">Peak Hold &#183; Test Tone &#183; Reset</span></li>
-                    <li><span class="spec-key">Engine</span><span class="spec-val">Vanilla JS / Web Audio API</span></li>
-                </ul>
-                <a href="../vu-launcher-desktop.html" target="_blank" class="launch-btn">Launch VU Meter &#8594;</a>
+    <!-- SKRIBLA -->
+    <div class="tool-block flip reveal" id="fun-skribla">
+        <div class="tool-visual">
+            <div class="tool-frame">
+                <img src="../assets/skribla-on-desk.png" alt="Skribla on iPhone" style="width:100%;height:auto;display:block;">
             </div>
-            <div class="instrument-visual">
-                <img src="../assets/vu-3d.png" alt="dPaul VU Meter" class="tool-render-img">
-                <p class="visual-caption">3D render — the VU meter as a physical device</p>
-            </div>
+        </div>
+        <div class="tool-info">
+            <div class="tool-sub">// 01 — Scribble Pad</div>
+            <h3>Skribla</h3>
+            <p class="tool-story">A touch-friendly scribble pad that works on any device. Draw, sketch, doodle — lightweight and built for mobile.</p>
+            <a href="../tools/skribla/index.html" target="_blank" class="launch-btn">Launch Skribla &#8594;</a>
         </div>
     </div>
 
-    <!-- TTS -->
-    <div class="instrument reveal" id="tools-tts">
-        <div class="instrument-eyebrow">// 02 — Voice Generation</div>
-        <div class="instrument-name">dPaul TTS <span style="color:var(--dim);font-size:1.2rem;font-weight:400;">AI Engine</span></div>
-        <div class="instrument-body">
-            <div>
-                <p class="instrument-story">Voiceover work often requires a quick turnaround. This tool bridges the gap between raw text and professional-grade audio by integrating high-fidelity AI voice models. Granular control over speed, pitch, and export options makes it a clean interface for rapid vocal prototyping.</p>
-                <ul class="spec-list">
-                    <li><span class="spec-key">Integration</span><span class="spec-val">Unreal Speech API + Browser Fallback</span></li>
-                    <li><span class="spec-key">Controls</span><span class="spec-val">Pitch &#183; Rate &#183; Multi-voice Selection</span></li>
-                    <li><span class="spec-key">Export</span><span class="spec-val">Direct WAV Download</span></li>
-                    <li><span class="spec-key">Format</span><span class="spec-val">44.1kHz High-Fidelity Audio</span></li>
-                </ul>
-                <a href="../tts-launcher-desktop.html" target="_blank" class="launch-btn">Launch TTS Engine &#8594;</a>
-            </div>
-            <div class="instrument-visual">
-                <img src="../assets/tts.png" alt="dPaul TTS" class="tool-render-img img-large">
-                <p class="visual-caption">3D render — the TTS engine as a physical device</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- LEARNING SECTION -->
-    <section class="learning-section reveal">
-        <div class="section-label">// The philosophy behind the tools</div>
-        <div class="learning-grid">
-            <div class="learning-main">
-                <p class="learning-body">Building these tools taught more about JavaScript than any tutorial ever could. Dealing with the Web Audio API for the VU meter meant understanding buffers, sample rates, and how browsers handle real-time input. Getting HTMLHint integrated into HTML-Live meant reading API documentation properly for the first time — because the feature wouldn't work without it.</p>
-                <p class="learning-body">The Text-to-Speech tool was a lesson in API integration — handling asynchronous requests, managing the handoff between local browser capabilities and remote AI processing, and building a UI that made the complexity invisible to the person using it.</p>
-                <p class="learning-body">HTML-Live came from a more personal frustration. Reading through hundreds of lines of code in a flat text editor, switching between browser tabs to see the result, losing track of where things were — all of that friction adds up. The solution was to build the tool that should have existed already. Which, it turns out, is how most useful things get made.</p>
-            </div>
-            <div class="learning-aside">
-                <div class="aside-block">
-                    <div class="aside-label">The strategy</div>
-                    <p class="aside-text">The goal is always a single-file utility. If a tool can run entirely from one HTML file, it can live anywhere — on a USB stick, a shared folder, a GitHub page, or sent as an email attachment. Portability is the core philosophy of the dPaul Tech Lab. No dependencies, no server, no setup.</p>
-                </div>
-                <div class="aside-block">
-                    <div class="aside-label">Free &amp; open</div>
-                    <p class="aside-text">Every tool on this page is free to use. The work that goes into building and maintaining them takes time — if a tool has been useful to you, a coffee goes a long way.</p>
+    <!-- NEON PHEONIX -->
+    <div class="tool-block reveal" id="fun-neon">
+        <div class="tool-visual">
+            <div class="tool-frame" style="position:relative;overflow:hidden;">
+                <div style="width:100%;aspect-ratio:9/16;position:relative;">
+                    <video src="../assets/neon.mp4" style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;" autoplay loop muted playsinline></video>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="tool-info">
+            <div class="tool-sub">// 02 — Retro Game</div>
+            <h3>Neon Pheonix</h3>
+            <p class="tool-story">A retro arcade space game built entirely in the browser. Classic gameplay, no plugins, no install — just open and play.</p>
+            <a href="https://aherndavid.github.io/dpaulstudio/tools/neon-pheonix/neon-pheonix.html" target="_blank" class="launch-btn">Launch Neon Pheonix &#8594;</a>
+        </div>
+    </div>
 
     <div class="cta-block reveal">
-        <h2>Got a tool idea?</h2>
-        <p>Something you'd find useful in the browser — let me know and I'll build it.</p>
+        <h2>Got an idea for something fun?</h2>
+        <p>If there's a browser experiment you'd like to see built, get in touch.</p>
         <a href="about.html" class="cta-btn">Get in touch</a>
     </div>
 
@@ -339,7 +238,7 @@
         </div>
     </footer>
 
-    <div class="footer-line reveal">// dPaul Technologies — Tools &amp; Utilities</div>
+    <div class="footer-line reveal">// dPaul Technologies — Fun &amp; Games</div>
 
 </div>
 
@@ -363,8 +262,8 @@
     (function(){
         const synth=window.speechSynthesis;
         let chunks=[],idx=0,paused=false,currentUtterance=null,lastHighlighted=null,selectedVoice=null;
-        const READ_SELECTORS=['.hero h1','.hero-intro','.instrument-story','.tool-story','.learning-body','.aside-text'];
-        const SECTION_SELECTORS=['.hero-label','.section-divider-label','.instrument-eyebrow','.instrument-name','.tool-sub'];
+        const READ_SELECTORS=['.hero h1','.hero-intro','.tool-story'];
+        const SECTION_SELECTORS=['.hero-label','.tool-sub'];
         function populateVoiceList(){const voices=synth.getVoices();if(!voices.length)return;const sel=document.getElementById('ttsVoiceSel');if(!sel)return;sel.innerHTML='';const enVoices=voices.filter(v=>/^en/i.test(v.lang));const preferredFemale=['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];const preferredMale=['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];function pickVoice(preferred){for(const name of preferred){const match=enVoices.find(v=>v.name.includes(name));if(match)return match;}return null;}const femaleVoice=pickVoice(preferredFemale);const maleVoice=pickVoice(preferredMale);const fallbacks=enVoices.filter(v=>v!==femaleVoice&&v!==maleVoice);const options=[{label:'// voice — female',voice:femaleVoice||fallbacks[0]||null},{label:'// voice — male',voice:maleVoice||fallbacks[1]||null}].filter(o=>o.voice!==null);options.forEach(({label,voice})=>{const o=document.createElement('option');o.value=voice.name;o.textContent=label;sel.appendChild(o);});if(!selectedVoice&&options.length>0){selectedVoice=options[0].voice;sel.value=options[0].voice.name;}}
         window.ttsSetVoice=function(name){const voices=synth.getVoices();selectedVoice=voices.find(v=>v.name===name)||null;if(synth.speaking){synth.cancel();setTimeout(speakCurrent,80);}};
         function buildChunks(){chunks=[];document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el=>{const txt=el.innerText.trim();if(txt.length>2)chunks.push({el,text:txt});});}
