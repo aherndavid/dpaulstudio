@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun — dPaul Technologies</title>
+
+    <style>
+        :root {
+            --bg:      #131413;
+            --bg2:     #1a1c1a;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+            --text:    #c8c8c0;
+            --dim:     #7a7a70;
+            --border:  rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 110%;
+            margin: 0;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAV ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: var(--bg); border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--cream); transition: all 0.3s ease; }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;
+            padding: 24px 28px 0 0; gap: 0;
+            z-index: 1000;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); overflow-y: auto; }
+        .mobile-menu a {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.4rem; font-weight: 700;
+            color: rgba(212,196,168,0.25);
+            text-decoration: none; text-transform: lowercase;
+            letter-spacing: 0.02em; line-height: 1.05;
+            padding: 4px 10px; display: block;
+            transition: color 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
+        }
+        .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
+        .mobile-menu a.active { color: var(--orange); }
+
+        /* ── PAGE ── */
+        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        /* ── HERO ── */
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 900; }
+        .hero h1 em { color: var(--orange); font-style: normal; }
+        .hero-intro { font-size: 1.05rem; border-left: 2px solid var(--orange); padding-left: 16px; color: var(--text); line-height: 1.7; }
+
+        /* ── TTS ── */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+        }
+        .tts-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: inherit; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-btn.active { background: var(--orange); color: #000; }
+        .tts-voice-sel {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px; font-family: inherit; font-size: 0.85rem; width: 100%;
+        }
+        .tts-highlight { background: rgba(255,102,0,0.2); border-radius: 2px; }
+
+        /* ── TOOL CARDS ── */
+        .tool-card { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .tool-sub { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 8px; }
+        .tool-card h3 { font-size: 1.6rem; font-weight: 700; color: #fff; margin-bottom: 16px; }
+        .tool-story { font-size: 1rem; line-height: 1.7; color: var(--text); margin-bottom: 20px; }
+        .tool-story em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
+
+        .tool-visual { margin-bottom: 24px; }
+        .tool-frame {
+            width: 100%; border: 1px solid var(--border); border-radius: 6px;
+            overflow: hidden; background: #0e0f0e;
+        }
+        .tool-frame img { width: 100%; height: auto; display: block; }
+        .tool-frame video { width: 100%; display: block; }
+
+        .launch-btn {
+            display: block; padding: 14px 20px; text-align: center;
+            border: 1px solid var(--orange); color: var(--orange);
+            text-decoration: none; font-size: 0.88rem; text-transform: uppercase;
+            letter-spacing: 0.12em; border-radius: 3px; font-weight: bold;
+        }
+        .launch-btn:active { background: var(--orange); color: #000; }
+
+        /* ── CTA ── */
+        .cta-block { padding: 64px 0 0; text-align: center; }
+        .cta-block h2 { font-size: 1.5rem; color: #fff; margin-bottom: 12px; }
+        .cta-block p { font-size: 0.95rem; color: var(--text); margin-bottom: 28px; }
+        .cta-btn {
+            display: inline-block; padding: 14px 28px; background: var(--orange);
+            color: #000; font-family: inherit; font-size: 0.9rem; font-weight: bold;
+            text-transform: uppercase; text-decoration: none; border-radius: 3px;
+        }
+
+        /* ── COMPANY FOOTER ── */
+        .company-footer {
+            margin-top: 40px; padding: 24px 0;
+            border-top: 1px solid var(--border-dim);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .company-footer-block { display: flex; flex-direction: column; gap: 4px; }
+        .company-footer-label { font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange); }
+        .company-footer-val { font-size: 0.82rem; color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val a { color: var(--dim); text-decoration: none; }
+        .company-footer-note { font-size: 0.75rem; color: var(--dim); opacity: 0.6; line-height: 1.6; }
+
+        .footer-line {
+            margin-top: 32px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68rem; letter-spacing: 0.14em;
+            color: var(--dim); text-transform: uppercase;
+        }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="design.html">design</a>
+    <a href="fun.html" class="active">fun</a>
+    <a href="merch.html">merch</a>
+    <a href="music.html">music</a>
+    <a href="synths.html">synths</a>
+    <a href="tools.html">tools</a>
+    <a href="video.html">video</a>
+    <a href="about.html">info</a>
+</div>
+
+<div class="page">
+
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Fun &amp; Games</div>
+        <h1>Made to<br><em>play with.</em></h1>
+        <p class="hero-intro">Not everything needs a purpose. These are the browser experiments that exist because they were enjoyable to build — and more enjoyable to use. No installs, no sign-ups. Just open and go.</p>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
+                <button class="tts-btn" onclick="ttsStop()">&#9632; Stop</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKRIBLA -->
+    <div class="tool-card reveal" id="fun-skribla">
+        <div class="tool-sub">// 01 — Scribble Pad</div>
+        <h3>Skribla</h3>
+        <p class="tool-story">A touch-friendly scribble pad that works on any device. Draw, sketch, doodle — lightweight and built for mobile.</p>
+        <div class="tool-visual">
+            <div class="tool-frame">
+                <img src="../../assets/skribla-on-desk.png" alt="Skribla on iPhone">
+            </div>
+        </div>
+        <a href="../../tools/skribla/index.html" target="_blank" class="launch-btn">Launch Skribla &#8594;</a>
+    </div>
+
+    <!-- NEON PHEONIX -->
+    <div class="tool-card reveal" id="fun-neon">
+        <div class="tool-sub">// 02 — Retro Game</div>
+        <h3>Neon Pheonix</h3>
+        <p class="tool-story">A retro arcade space game built entirely in the browser. Classic gameplay, no plugins, no install — just open and play.</p>
+        <div class="tool-visual">
+            <div class="tool-frame" style="position:relative;overflow:hidden;">
+                <div style="width:100%;aspect-ratio:9/16;position:relative;">
+                    <video src="../../assets/neon.mp4" style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;" autoplay loop muted playsinline></video>
+                </div>
+            </div>
+        </div>
+        <a href="https://aherndavid.github.io/dpaulstudio/tools/neon-pheonix/neon-pheonix.html" target="_blank" class="launch-btn">Launch Neon Pheonix &#8594;</a>
+    </div>
+
+    <div class="cta-block reveal">
+        <h2>Got an idea for something fun?</h2>
+        <p>If there's a browser experiment you'd like to see built, get in touch.</p>
+        <a href="../about.html" class="cta-btn">Get in touch</a>
+    </div>
+
+    <footer class="company-footer reveal">
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company</div>
+            <div class="company-footer-val">CitiIT Limited</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company No.</div>
+            <div class="company-footer-val">15811174</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">VAT No.</div>
+            <div class="company-footer-val">473 5892 49</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Website</div>
+            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
+        </div>
+    </footer>
+
+    <div class="footer-line reveal">// dPaul Technologies — Fun &amp; Games</div>
+
+</div>
+
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // TTS ENGINE
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let currentIdx = 0;
+
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        if (!sel) return;
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        enVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
+        });
+        selectedVoice = enVoices[0];
+    }
+
+    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
+
+    function buildChunks() {
+        chunks = [];
+        document.querySelectorAll('h1, .hero-intro, .tool-story').forEach(el => {
+            const txt = el.innerText.trim();
+            if (txt.length > 2) chunks.push({ el, text: txt });
+        });
+    }
+
+    window.ttsPlay = () => {
+        if (!chunks.length) buildChunks();
+        synth.cancel();
+        currentIdx = 0;
+        speak();
+        const playBtn = document.getElementById('ttsPlay');
+        if (playBtn) playBtn.disabled = true;
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if (chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        const playBtn = document.getElementById('ttsPlay');
+        if (playBtn) playBtn.disabled = false;
+    };
+
+    function speak() {
+        if (currentIdx >= chunks.length) { ttsStop(); return; }
+        const chunk = chunks[currentIdx];
+        chunk.el.classList.add('tts-highlight');
+        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => {
+            chunk.el.classList.remove('tts-highlight');
+            currentIdx++;
+            speak();
+        };
+        synth.speak(utter);
+    }
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
+</script>
+
+<script src="share.js"></script>
+<script src="post-generator.js"></script>
+
+</body>
+</html>
