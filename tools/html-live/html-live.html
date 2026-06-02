@@ -1709,42 +1709,62 @@
 // 1. We need this global variable to "remember" the file link
   let fileHandle; 
 
-  // 2. Updated Import Logic (Using the Modern File System API)
+  // Import Logic — uses File System Access API with fallback for file:// context
   const importBtn = document.getElementById('import-btn');
   const importedFilename = document.getElementById('imported-filename');
+
+  function doFallbackImport() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.html,text/html';
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      const content = await file.text();
+      fileHandle = null;
+      takeSnapshot(editor.value);
+      editor.value = content;
+      importedFilename.textContent = file.name;
+      exportFilename.value = file.name;
+      updatePreview(); updateLineNumbers(); hideHighlight(); runHint();
+      if (fnrOpen) runFnrSearch();
+      editor.scrollTop = 0; syncGutterScroll(); editor.focus();
+      const tb = document.getElementById('editor-toolbar');
+      tb.style.transition = 'background 0.1s';
+      tb.style.background = 'rgba(40,160,80,0.25)';
+      setTimeout(() => { tb.style.background = ''; }, 700);
+      showToast("File imported! (read-only — Save will export a copy)", "success");
+    };
+    input.click();
+  }
+
   importBtn.addEventListener('click', async () => {
+    if (!window.showOpenFilePicker) { doFallbackImport(); return; }
     try {
       [fileHandle] = await window.showOpenFilePicker({
         types: [{ description: 'HTML Files', accept: { 'text/html': ['.html'] } }],
         multiple: false
       });
-
       const file = await fileHandle.getFile();
       const content = await file.text();
-
       takeSnapshot(editor.value);
       editor.value = content;
       importedFilename.textContent = file.name;
       exportFilename.value = file.name;
-
-      updatePreview();
-      updateLineNumbers();
-      hideHighlight();
-      runHint();
+      updatePreview(); updateLineNumbers(); hideHighlight(); runHint();
       if (fnrOpen) runFnrSearch();
-
-      editor.scrollTop = 0;
-      syncGutterScroll();
-      editor.focus();
-
+      editor.scrollTop = 0; syncGutterScroll(); editor.focus();
       const tb = document.getElementById('editor-toolbar');
       tb.style.transition = 'background 0.1s';
       tb.style.background = 'rgba(40,160,80,0.25)';
       setTimeout(() => { tb.style.background = ''; }, 700);
-
-      showToast("File linked! You can now use 'Save' or Ctrl+S", "success");
+      showToast("File linked! You can now use Save or Ctrl+S", "success");
     } catch (err) {
-      console.log("Import cancelled or not supported");
+      if (err.name === 'SecurityError' || err.name === 'NotAllowedError') {
+        doFallbackImport();
+      } else if (err.name !== 'AbortError') {
+        doFallbackImport();
+      }
     }
   });
 
