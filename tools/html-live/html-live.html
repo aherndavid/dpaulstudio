@@ -639,13 +639,78 @@
     text-transform: uppercase;
     margin-top: 2px;
   }
+  /* ── Splash screen ───────────────────────────────────────────────────── */
+  #splash {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #131413;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px;
+    cursor: pointer;
+    transition: opacity 0.6s ease;
+  }
+  #splash.fade-out { opacity: 0; pointer-events: none; }
+  #splash-eq {
+    display: flex; align-items: flex-end; gap: 4px; height: 36px;
+  }
+  #splash-eq .s-bar {
+    width: 5px; background: #ff6600; border-radius: 2px 2px 0 0;
+    animation: eq-bounce 0.6s ease-in-out infinite alternate;
+  }
+  #splash-eq .s-bar:nth-child(1){animation-duration:.60s;animation-delay:.00s;}
+  #splash-eq .s-bar:nth-child(2){animation-duration:.50s;animation-delay:.10s;}
+  #splash-eq .s-bar:nth-child(3){animation-duration:.70s;animation-delay:.05s;}
+  #splash-eq .s-bar:nth-child(4){animation-duration:.45s;animation-delay:.20s;}
+  #splash-eq .s-bar:nth-child(5){animation-duration:.65s;animation-delay:.15s;}
+  #splash-eq .s-bar:nth-child(6){animation-duration:.55s;animation-delay:.08s;}
+  #splash-eq .s-bar:nth-child(7){animation-duration:.50s;animation-delay:.25s;}
+  #splash-logo {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    animation: splash-fadein 0.8s ease forwards;
+  }
+  @keyframes splash-fadein { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+  #splash-name {
+    font-family: 'Courier New', monospace;
+    font-size: 42px; font-weight: 700; letter-spacing: 4px;
+    color: #ffffff;
+  }
+  #splash-name span { color: #ff6600; }
+  #splash-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
+    color: #555;
+  }
+  #splash-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: #333;
+  }
+  #splash-hint {
+    position: absolute; bottom: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: #333;
+    animation: splash-blink 1.5s ease-in-out infinite;
+  }
+  @keyframes splash-blink { 0%,100%{opacity:0.3} 50%{opacity:1} }
 </style>
 </head>
 <body>
+<div id=splash>
+  <div id=splash-eq>
+    <div class=s-bar></div><div class=s-bar></div><div class=s-bar></div>
+    <div class=s-bar></div><div class=s-bar></div><div class=s-bar></div>
+    <div class=s-bar></div>
+  </div>
+  <div id="splash-logo">
+    <div id="splash-name"><span>d</span>Paul Studio</div>
+    <div id="splash-sub">HTML Live Preview</div>
+    <div id="splash-version">Version 2.0</div>
+  </div>
+  <div id="splash-hint">Click anywhere to continue</div>
+</div>
 <div id="app">
   <div id="top-toolbar">
-    <span class="label">HTML Preview</span>
-    <span id="version-badge">v2.0</span>
     <div class="sep"></div>
     <span id="font-label">Font</span>
     <input type="range" id="font-size-slider" min="10" max="24" value="13" step="1">
@@ -1833,6 +1898,15 @@
 
   // ── Init ──────────────────────────────────────────────────────────────────
   updateLineNumbers();
+
+  // ── Splash ────────────────────────────────────────────────────────────────
+  const splash = document.getElementById('splash');
+  function dismissSplash() {
+    splash.classList.add('fade-out');
+    setTimeout(() => splash.remove(), 650);
+  }
+  splash.addEventListener('click', dismissSplash);
+  setTimeout(dismissSplash, 2800);
 </script>
 </body>
 </html>
