@@ -104,6 +104,52 @@
         }
 
         .hidden { display: none; }
+
+        /* ── TOUCH CONTROLS ── */
+        #touch-controls {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 22%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .touch-btn {
+            pointer-events: all;
+            background: rgba(0,255,65,0.08);
+            border: 1px solid rgba(0,255,65,0.4);
+            color: #00FF41;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.2vh;
+            width: 18vw;
+            max-width: 80px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0,255,65,0.2);
+            transition: background 0.1s;
+        }
+        .touch-btn:active, .touch-btn.pressed {
+            background: rgba(0,255,65,0.25);
+            box-shadow: 0 0 14px rgba(0,255,65,0.5);
+        }
+        #touch-fire {
+            width: 22vw;
+            max-width: 100px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            font-size: 1.8vh;
+            background: rgba(0,255,65,0.1);
+            border-color: rgba(0,255,65,0.6);
+        }
     </style>
 </head>
 <body>
@@ -130,6 +176,13 @@
             <div class="credit-text">
                 MUSIC BY LOGAN AHERN
             </div>
+        </div>
+
+        <!-- TOUCH CONTROLS -->
+        <div id="touch-controls">
+            <div class="touch-btn" id="touch-left">&#9664;</div>
+            <div class="touch-btn" id="touch-fire">FIRE</div>
+            <div class="touch-btn" id="touch-right">&#9654;</div>
         </div>
     </div>
 
@@ -193,6 +246,41 @@ window.addEventListener('keydown', e => {
     if (e.code === 'Enter' && !gameOverScreen.classList.contains('hidden')) location.reload();
 });
 window.addEventListener('keyup', e => keys[e.code] = false);
+
+// ── Touch controls ──────────────────────────────────────
+function holdStart(code) {
+    keys[code] = true;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (!gameRunning && gameOverScreen.classList.contains('hidden')) startGame();
+}
+function holdEnd(code) { keys[code] = false; }
+
+const tLeft  = document.getElementById('touch-left');
+const tRight = document.getElementById('touch-right');
+const tFire  = document.getElementById('touch-fire');
+
+tLeft.addEventListener('touchstart',  e => { e.preventDefault(); holdStart('ArrowLeft');  tLeft.classList.add('pressed'); },    { passive: false });
+tLeft.addEventListener('touchend',    e => { e.preventDefault(); holdEnd('ArrowLeft');    tLeft.classList.remove('pressed'); }, { passive: false });
+tRight.addEventListener('touchstart', e => { e.preventDefault(); holdStart('ArrowRight'); tRight.classList.add('pressed'); },   { passive: false });
+tRight.addEventListener('touchend',   e => { e.preventDefault(); holdEnd('ArrowRight');   tRight.classList.remove('pressed'); },{ passive: false });
+tFire.addEventListener('touchstart',  e => {
+    e.preventDefault();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (!gameRunning && gameOverScreen.classList.contains('hidden')) { startGame(); return; }
+    if (gameRunning && bullets.filter(b => b.fromPlayer).length < 3) {
+        bullets.push({ x: player.x, y: player.y - 10, speed: -8, fromPlayer: true });
+        sounds.shoot();
+    }
+    tFire.classList.add('pressed');
+}, { passive: false });
+tFire.addEventListener('touchend', e => { e.preventDefault(); tFire.classList.remove('pressed'); }, { passive: false });
+
+// Tap anywhere on start screen to begin
+document.getElementById('start-screen').addEventListener('touchstart', e => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (!gameRunning) startGame();
+}, { passive: true });
+// ────────────────────────────────────────────────────────
 
 function startGame() {
     score = 0;
