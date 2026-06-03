@@ -40,7 +40,7 @@
 
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
             z-index: 10;
         }
 
@@ -59,7 +59,7 @@
             font-size: 1.2rem;
             color: var(--orange);
             letter-spacing: 0.1em;
-            margin-top: 10px;
+            margin-top: 4px;
         }
 
         .game-wrapper {
@@ -260,9 +260,9 @@
         let obstacles = [];   // { x, y }
         let tunnels = [];     // pairs: [{ax,ay,bx,by}, ...]
 
-        // Resize — larger play area
+        // Resize — fill the screen
         function resizeCanvas() {
-            let size = Math.min(window.innerWidth - 40, window.innerHeight - 220, 560);
+            let size = Math.min(window.innerWidth - 16, window.innerHeight - 120);
             size = Math.floor(size / gridSize) * gridSize;
             canvas.width = size;
             canvas.height = size;
