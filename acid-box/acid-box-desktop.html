@@ -1059,21 +1059,28 @@
             if(!isPoweredOn) return;
             initAudio(); flashMidiOut();
             const now=audioContext.currentTime;
+            const dur=(decay/100)*2;
             const osc=audioContext.createOscillator(); osc.type='sawtooth'; osc.frequency.value=frequency;
             const env=audioContext.createGain(); env.gain.value=0;
             env.gain.setValueAtTime(0,now);
-            env.gain.linearRampToValueAtTime(accent/100,now+0.001);
-            env.gain.exponentialRampToValueAtTime(0.01,now+(decay/100)*2);
+            env.gain.linearRampToValueAtTime(Math.max(0.01,accent/100),now+0.001);
+            env.gain.exponentialRampToValueAtTime(0.001,now+dur);
+            // Per-note filter so automation doesn't conflict across simultaneous notes
+            const noteFilter=audioContext.createBiquadFilter();
+            noteFilter.type='lowpass';
             const ff=200+(cutoff/100)*3800;
-            filter.frequency.setValueAtTime(ff,now);
-            filter.frequency.exponentialRampToValueAtTime(ff+(resonance/100)*4000,now+0.001);
-            filter.frequency.exponentialRampToValueAtTime(ff,now+(decay/100)*1.5);
-            filter.Q.value=5+(resonance/100)*25;
-            osc.connect(env); env.connect(filter); filter.connect(delayNode); filter.connect(distortion);
-            osc.start(now); osc.stop(now+(decay/100)*2);
+            noteFilter.frequency.setValueAtTime(ff,now);
+            noteFilter.frequency.exponentialRampToValueAtTime(Math.max(ff,ff+(resonance/100)*4000),now+0.005);
+            noteFilter.frequency.exponentialRampToValueAtTime(Math.max(ff,ff*0.5),now+(decay/100)*1.5);
+            noteFilter.Q.value=5+(resonance/100)*25;
+            // Clean chain: osc → env → noteFilter → masterGain → destination + delay send
+            osc.connect(env); env.connect(noteFilter);
+            noteFilter.connect(masterGain);
+            noteFilter.connect(delayNode);
+            osc.start(now); osc.stop(now+dur+0.05);
             activeNotes.set(noteName,{osc,env});
             updateNoteDisplay(noteName);
-            setTimeout(()=>{if(!arpEnabled)updateNoteDisplay('---');},(decay/100)*2000);
+            setTimeout(()=>{if(!arpEnabled)updateNoteDisplay('---');},dur*1000);
             return {osc,env};
         }
 
