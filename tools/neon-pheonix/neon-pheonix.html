@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>NEON PHOENIX</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -19,14 +19,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            height: 100dvh;
             margin: 0;
             overflow: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
+            box-sizing: border-box;
         }
 
         #game-container {
             position: relative;
-            height: 95vh;
+            height: calc(100dvh - env(safe-area-inset-bottom) - 8px);
             aspect-ratio: 9 / 16;
             border: 2px solid #00FF41;
             box-shadow: 0 0 20px #00FF41, inset 0 0 10px #00FF41;
@@ -109,46 +111,46 @@
         #touch-controls {
             position: absolute;
             bottom: 0; left: 0; right: 0;
-            height: 22%;
+            height: 25%;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 6%;
+            padding: 0 6% 4%;
             z-index: 5;
             pointer-events: none;
         }
         .touch-btn {
             pointer-events: all;
-            background: rgba(0,255,65,0.08);
-            border: 1px solid rgba(0,255,65,0.4);
+            background: rgba(0,255,65,0.12);
+            border: 2px solid rgba(0,255,65,0.6);
             color: #00FF41;
             font-family: 'Press Start 2P', cursive;
-            font-size: 2.2vh;
-            width: 18vw;
-            max-width: 80px;
+            font-size: 3vh;
+            width: 22vw;
+            max-width: 90px;
             aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            border-radius: 6px;
             user-select: none;
             -webkit-user-select: none;
             cursor: pointer;
-            box-shadow: 0 0 8px rgba(0,255,65,0.2);
+            box-shadow: 0 0 10px rgba(0,255,65,0.3);
             transition: background 0.1s;
         }
         .touch-btn:active, .touch-btn.pressed {
-            background: rgba(0,255,65,0.25);
-            box-shadow: 0 0 14px rgba(0,255,65,0.5);
+            background: rgba(0,255,65,0.35);
+            box-shadow: 0 0 18px rgba(0,255,65,0.6);
         }
         #touch-fire {
-            width: 22vw;
-            max-width: 100px;
+            width: 26vw;
+            max-width: 110px;
             aspect-ratio: 1;
             border-radius: 50%;
-            font-size: 1.8vh;
-            background: rgba(0,255,65,0.1);
-            border-color: rgba(0,255,65,0.6);
+            font-size: 2vh;
+            background: rgba(0,255,65,0.15);
+            border-color: rgba(0,255,65,0.8);
         }
     </style>
 </head>
