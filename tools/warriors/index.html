@@ -95,7 +95,7 @@
             <button class="start-btn" onclick="startGame()">[ DEPLOY WARRIOR ]</button>
             <div id="highScoreDisplay" class="high-score-list"></div>
         </div>
-        <p style="color: #444; margin-top: 40px; font-size: 18px;">[SPACE] CANNONS | [X] SHIELD | [R] EMERGENCY RESET</p>
+        <p style="color: #444; margin-top: 40px; font-size: 18px;">[TILT] STEER | [SPACE] CANNONS | [X] SHIELD | [R] RESET</p>
     </div>
 
     <canvas id="gameCanvas" width="800" height="1000"></canvas>
@@ -185,6 +185,8 @@ class Mothership {
 for (let i = 0; i < 100; i++) stars.push({ x: Math.random() * 800, y: Math.random() * 1000, s: 1 + Math.random() * 4 });
 
 const keys = {};
+let tiltGamma = 0; // device tilt: negative = left, positive = right
+
 window.onkeydown = (e) => {
     keys[e.code] = true;
     if (e.code === 'KeyR') location.reload();
@@ -194,6 +196,31 @@ window.onkeydown = (e) => {
     }
 };
 window.onkeyup = (e) => keys[e.code] = false;
+
+// Request iOS 13+ permission if needed, then attach orientation listener
+function initTilt() {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // iOS 13+ requires a user gesture to request permission
+        DeviceOrientationEvent.requestPermission().then(state => {
+            if (state === 'granted') attachTilt();
+        }).catch(console.error);
+    } else {
+        attachTilt();
+    }
+}
+
+function attachTilt() {
+    window.addEventListener('deviceorientation', (e) => {
+        tiltGamma = e.gamma || 0; // gamma: left/right tilt in degrees (-90 to 90)
+    });
+}
+
+// Hook tilt init onto the start button click (needs user gesture for iOS)
+const origStart = window.startGame;
+window.startGame = function() {
+    initTilt();
+    origStart();
+};
 
 function fireEnemyBullet(x, y) { enemyBullets.push({ x, y, speed: 6 + level }); }
 
@@ -230,6 +257,12 @@ function gameLoop() {
     if (shieldActive) { shieldTimer--; if (shieldTimer <= 0) shieldActive = false; }
     if (hitFlash > 0) hitFlash--;
 
+    // Tilt control: gamma > deadzone = right, < -deadzone = left
+    const deadzone = 3;
+    const tiltSpeed = ship.speed * Math.min(Math.abs(tiltGamma) / 15, 1);
+    if (tiltGamma < -deadzone && ship.x > 45) ship.x -= tiltSpeed;
+    if (tiltGamma > deadzone && ship.x < 755) ship.x += tiltSpeed;
+    // Arrow key fallback for desktop testing
     if (keys['ArrowLeft'] && ship.x > 45) ship.x -= ship.speed;
     if (keys['ArrowRight'] && ship.x < 755) ship.x += ship.speed;
     if (keys['Space']) {
