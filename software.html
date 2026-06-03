@@ -46,14 +46,23 @@
         .hero p{font-size:calc(1.365rem * var(--font-scale));line-height:1.9;max-width:640px;color:var(--text);}
 
         /* PRODUCT BLOCKS */
-        .product-block{display:grid;grid-template-columns:1.4fr 1fr;gap:64px;align-items:start;padding:80px 0;border-bottom:1px solid var(--border);}
-        .product-block.flip{direction:rtl;}
-        .product-block.flip > *{direction:ltr;}
-
-        .product-visual{display:flex;justify-content:center;align-items:start;}
-        .product-frame{width:100%;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:#0e0f0e;transition:border-color .3s;}
-        .product-frame:hover{border-color:var(--orange);}
-        .product-frame img,.product-frame video{width:100%;height:100%;display:block;object-fit:cover;}
+        .product-block{display:grid;grid-template-columns:220px 1fr;gap:0;padding:52px 0;border-bottom:1px solid var(--border-dim);}
+        .product-date-col{padding-right:48px;padding-top:4px;position:relative;}
+        .product-date-col::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:var(--border-dim);}
+        .product-eyebrow-col{font-size:.78rem;letter-spacing:.2em;color:var(--orange);text-transform:uppercase;display:block;margin-bottom:8px;}
+        .product-title-col{font-size:1.5rem;font-weight:900;color:#fff;line-height:1.1;display:block;}
+        .product-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:16px;}
+        .product-tag{font-size:.62rem;letter-spacing:.1em;padding:2px 8px;border:1px solid var(--border-dim);color:var(--dim);text-transform:uppercase;}
+        .product-body{padding-left:48px;}
+        .product-body p{font-size:calc(1.1rem * var(--font-scale));line-height:1.9;color:var(--text);margin-bottom:20px;}
+        .product-body strong{color:var(--cream);font-weight:normal;}
+        .product-body em{color:var(--orange);font-style:normal;}
+        @media(max-width:900px){
+            .product-block{grid-template-columns:1fr;}
+            .product-date-col{padding-right:0;padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid var(--border-dim);}
+            .product-date-col::after{display:none;}
+            .product-body{padding-left:0;}
+        }
 
         .product-eyebrow{font-size:1.04rem;color:var(--orange);letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px;}
         .product-name{font-size:clamp(2.4rem,3.5vw,3.6rem);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:6px;line-height:1.1;}
@@ -164,83 +173,57 @@
 
     <!-- ── DUPE REMOVE ── -->
     <div class="product-block reveal" id="software-dupe-remove">
-        <div class="product-visual">
-            <div class="product-frame">
-                <img src="../assets/dupe-remove-one.png" alt="Dupe Remove screenshot" style="width:100%;height:auto;display:block;">
+        <div class="product-date-col">
+            <span class="product-eyebrow-col">// 01</span>
+            <span class="product-title-col">Dupe Remove</span>
+            <div class="product-tags">
+                <span class="product-tag">Software</span>
+                <span class="product-tag">Mac App</span>
+                <span class="product-tag">Images</span>
             </div>
         </div>
-        <div class="product-info">
-            <div class="product-eyebrow">// 01 — Image Deduplication</div>
-            <div class="product-name">Dupe Remove</div>
-            <p class="product-tagline">Find and remove duplicate photos. Fast, private, runs entirely on your Mac.</p>
-
-            <p class="product-story">If you shoot a lot of photos, you know the problem — hundreds of near-identical shots clogging up your drive. Dupe Remove finds them fast using <em>perceptual hashing</em>, groups them visually, and lets you decide what to keep. Nothing is deleted without your say-so.</p>
-
-            <ul class="feature-list">
-                <li>Detects exact and visually similar duplicates — not just identical files</li>
-                <li>Group review — see duplicates side by side before deleting anything</li>
-                <li>One-click keep or delete per group, or select individually</li>
-                <li>Export clean images directly to a folder of your choice</li>
-                <li>Adjustable sensitivity — strict matching or looser visual similarity</li>
-                <li>Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more</li>
-                <li>Up to 1,000 images per session</li>
-            </ul>
-
-            <div class="privacy-strip">
-                <span class="privacy-tag highlight">100% local</span>
-                <span class="privacy-tag">No subscription</span>
-                <span class="privacy-tag">Free updates</span>
-                <span class="privacy-tag">Mac only</span>
-                <span class="privacy-tag">30-day trial</span>
-            </div>
-
+        <div class="product-body">
+            <p>
+                Find and remove duplicate photos. Fast, private, runs entirely on your Mac.
+            </p>
+            <p>
+                If you shoot a lot of photos, you know the problem — hundreds of near-identical shots clogging up your drive. <em>Dupe Remove</em> finds them fast using <strong>perceptual hashing</strong>, groups them visually, and lets you decide what to keep. Nothing is deleted without your say-so.
+            </p>
+            <p>
+                Detects exact and visually similar duplicates. Group review side by side. Adjustable sensitivity. Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more. Up to 1,000 images per session. <strong>100% local — nothing leaves your Mac.</strong>
+            </p>
+            <img src="../assets/dupe-remove-one.png" alt="Dupe Remove — Duplicate Image Cleaner for Mac"
+                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:4px;margin-top:4px;margin-bottom:28px;display:block;">
             <div>
                 <a href="https://davidpaul2.gumroad.com/l/wfujsa" target="_blank" class="buy-btn">Buy Now — £19</a>
-                <span class="price-note">One-off payment &middot; no subscription &middot; macOS 10.15+</span>
-            </div>
-
-            <div class="trial-block">
-                <div class="trial-label">// Free Trial</div>
-                <p class="trial-desc">30-day trial included — no credit card required. Download and run it on your own images before you decide.</p>
+                <span class="price-note">One-off payment &middot; no subscription &middot; macOS 10.15+ &middot; 30-day trial included</span>
             </div>
         </div>
     </div>
 
     <!-- ── HTML-LIVE ── -->
-    <div class="product-block flip reveal" id="software-html-live">
-        <div class="product-visual">
-            <div class="product-frame">
-                <img src="../assets/html-live-on-macbook.png" alt="HTML Live running on a MacBook" style="width:100%;height:auto;display:block;">
+    <div class="product-block reveal" id="software-html-live">
+        <div class="product-date-col">
+            <span class="product-eyebrow-col">// 02</span>
+            <span class="product-title-col">HTML&#8209;Live</span>
+            <div class="product-tags">
+                <span class="product-tag">Software</span>
+                <span class="product-tag">Dev Tools</span>
+                <span class="product-tag">JavaScript</span>
             </div>
         </div>
-        <div class="product-info">
-            <div class="product-eyebrow">// 02 — Live HTML Editor</div>
-            <div class="product-name">HTML&#8209;Live</div>
-            <p class="product-tagline">Write HTML, see it live — no button to press, no delay. Now a native Mac app.</p>
-
-            <p class="product-story">A fast, distraction-free HTML editor and live preview tool for designers and developers. <em>No setup, no server, no dependencies</em> — just open and start building. Import your files, edit, and save directly back to disk.</p>
-
-            <ul class="feature-list">
-                <li>Real-time preview as you type — zero delay</li>
-                <li>Desktop, tablet and mobile preview modes</li>
-                <li>Import, edit and save files directly to disk</li>
-                <li>Find &amp; Replace with regex support</li>
-                <li>HTMLHint debug panel — errors and warnings highlighted live</li>
-                <li>Inspect mode — click elements in preview to jump to source</li>
-                <li>Selection highlight — see your selected code in the preview</li>
-                <li>Version rollback — restore any previous edit</li>
-                <li>Export as raw, formatted or minified HTML</li>
-                <li>Zoom controls &amp; font size adjustment</li>
-            </ul>
-
-            <div class="privacy-strip">
-                <span class="privacy-tag highlight">100% local</span>
-                <span class="privacy-tag">Native Mac app</span>
-                <span class="privacy-tag">No subscription</span>
-                <span class="privacy-tag">Free updates</span>
-                <span class="privacy-tag">macOS 10.12+</span>
-            </div>
-
+        <div class="product-body">
+            <p>
+                Write HTML, see it live — no button to press, no delay. Now a native Mac app.
+            </p>
+            <p>
+                A fast, distraction-free HTML editor and live preview tool for designers and developers. <em>No setup, no server, no dependencies</em> — just open and start building. Import your files, edit, and save directly back to disk. <strong>Full syntax support, live reload on every keystroke, and a reset control</strong> to wipe back to a clean slate.
+            </p>
+            <p>
+                Built entirely with vanilla JavaScript. Real-time preview, desktop/tablet/mobile modes, Find &amp; Replace with regex, HTMLHint debug panel, Inspect mode, version rollback, and export as raw, formatted or minified HTML.
+            </p>
+            <img src="../assets/html-live-on-macbook.png" alt="HTML Live running on a MacBook"
+                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:4px;margin-top:4px;margin-bottom:28px;display:block;">
             <div>
                 <a href="https://davidpaul2.gumroad.com/l/ecxbqg" target="_blank" class="buy-btn">Get HTML&#8209;Live</a>
                 <span class="price-note">Pay what you wish &middot; your support means everything &middot; thank you.</span>
