@@ -95,6 +95,12 @@
         .pro-buy-btn:hover{background:#ffdd55;transform:translateY(-2px);}
         .pro-price-note{font-size:.88rem;color:#776633;letter-spacing:.08em;margin-left:12px;vertical-align:middle;}
 
+        /* EXPAND IMAGE */
+        .img-expand-wrap{cursor:zoom-in;position:relative;}
+        .img-expand-wrap img{transition:transform .35s cubic-bezier(.4,0,.2,1),box-shadow .35s;}
+        .img-expand-wrap.expanded{cursor:zoom-out;position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);}
+        .img-expand-wrap.expanded img{max-width:90vw;max-height:90vh;width:auto;height:auto;box-shadow:0 0 80px rgba(0,0,0,.8);border-radius:6px;}
+
         /* REVEAL */
         .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease;}
         .reveal.visible{opacity:1;transform:none;}
@@ -159,8 +165,10 @@
     <!-- ── DUPE REMOVE ── -->
     <div class="product-block reveal" id="software-dupe-remove">
         <div class="product-visual" style="display:flex;flex-direction:column;gap:16px;">
-            <div class="product-frame" style="aspect-ratio:9/16;overflow:hidden;">
-                <img src="../assets/dupe-remove.png" alt="Dupe Remove — Duplicate Image Cleaner for Mac" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <div class="product-frame" style="border:none;">
+                <div class="img-expand-wrap" onclick="expandImg(this)" title="Click to expand">
+                    <img src="../assets/dupe-remove-two.png" alt="Dupe Remove — Duplicate Image Cleaner for Mac" style="width:100%;height:auto;display:block;">
+                </div>
             </div>
             <div class="product-frame">
                 <img src="../assets/dupe-remove-one.png" alt="Dupe Remove screenshot" style="width:100%;height:auto;display:block;">
@@ -207,7 +215,9 @@
     <div class="product-block flip reveal" id="software-html-live">
         <div class="product-visual" style="display:flex;flex-direction:column;gap:20px;">
             <div class="product-frame" style="border:none;">
-                <img src="../assets/html-live.png" alt="HTML Live — Mac App" style="width:100%;height:auto;display:block;">
+                <div class="img-expand-wrap" id="htmlLiveExpand" onclick="expandImg(this)" title="Click to expand">
+                    <img src="../assets/html-live.png" alt="HTML Live — Mac App" style="width:100%;height:auto;display:block;">
+                </div>
             </div>
             <div class="product-frame">
                 <img src="../assets/html-live-on-macbook.png" alt="HTML Live running on a MacBook" style="width:100%;height:auto;display:block;">
@@ -273,6 +283,19 @@
 </div>
 
 <script>
+    // EXPAND IMAGE
+    let expandTimer=null;
+    function expandImg(el){
+        if(el.classList.contains('expanded'))return collapseImg(el);
+        el.classList.add('expanded');
+        clearTimeout(expandTimer);
+        expandTimer=setTimeout(()=>collapseImg(el),3000);
+    }
+    function collapseImg(el){
+        el.classList.remove('expanded');
+        clearTimeout(expandTimer);
+    }
+
     // NAV EQ
     (function(){const NUM_BARS=8,MAX_H=20,container=document.getElementById('nav-eq-container');if(!container)return;const levels=Array.from({length:NUM_BARS},()=>Math.random()*MAX_H),targets=[...levels],bars=[];for(let i=0;i<NUM_BARS;i++){const b=document.createElement('div');b.className='nav-eq-bar';container.appendChild(b);bars.push(b);}function animateEQ(){for(let i=0;i<NUM_BARS;i++){if(Math.random()<0.1)targets[i]=Math.random()*MAX_H+2;levels[i]+=(targets[i]-levels[i])*0.15;bars[i].style.height=levels[i]+'px';}requestAnimationFrame(animateEQ);}animateEQ();})();
 

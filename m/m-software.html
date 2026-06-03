@@ -201,6 +201,19 @@
             color: var(--dim); text-transform: uppercase;
         }
 
+        /* ── EXPAND IMAGE ── */
+        .img-expand-wrap { cursor: zoom-in; }
+        .img-expand-wrap.expanded {
+            cursor: zoom-out; position: fixed; inset: 0; z-index: 9000;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.88);
+        }
+        .img-expand-wrap.expanded img {
+            max-width: 95vw; max-height: 90vh;
+            width: auto; height: auto;
+            border-radius: 4px; box-shadow: 0 0 60px rgba(0,0,0,0.8);
+        }
+
         .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
         .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
@@ -218,7 +231,7 @@
 </div>
 
 <div class="mobile-menu" id="mobileMenu">
-    <a href="m-about.html">info</a>
+    <a href="m-about.html">about</a>
     <a href="m-current.html">current</a>
     <a href="m-design.html">design</a>
     <a href="m-fun.html">fun</a>
@@ -242,8 +255,10 @@
 
     <!-- ── DUPE REMOVE ── -->
     <div class="product-block reveal" id="software-dupe-remove">
-        <div class="product-frame portrait">
-            <img src="../../assets/dupe-remove.png" alt="Dupe Remove — Duplicate Image Cleaner for Mac">
+        <div class="product-frame" style="border:none;">
+            <div class="img-expand-wrap" onclick="expandImg(this)" title="Tap to expand">
+                <img src="../../assets/dupe-remove-two.png" alt="Dupe Remove — Duplicate Image Cleaner for Mac" style="width:100%;height:auto;display:block;">
+            </div>
         </div>
         <div class="product-frame" style="margin-top:12px;">
             <img src="../../assets/dupe-remove-one.png" alt="Dupe Remove screenshot one" style="width:100%;height:auto;display:block;">
@@ -275,21 +290,14 @@
             <span class="privacy-tag">30-day trial</span>
         </div>
 
-        <div>
-            <a href="https://davidpaul2.gumroad.com/l/wfujsa" target="_blank" class="buy-btn">Buy Now — £19</a>
-            <span class="price-note">One-off payment · no subscription · macOS 10.15+</span>
-        </div>
-
-        <div class="trial-block">
-            <div class="trial-label">// Free Trial</div>
-            <p class="trial-desc">30-day trial included — no credit card required. Download and run it on your own images before you decide.</p>
-        </div>
     </div>
 
     <!-- ── HTML-LIVE ── -->
     <div class="product-block reveal" id="software-html-live">
-        <div class="product-frame">
-            <img src="../../assets/html-live.png" alt="HTML-Live — Mac App">
+        <div class="product-frame" style="border:none;">
+            <div class="img-expand-wrap" onclick="expandImg(this)" title="Tap to expand">
+                <img src="../../assets/html-live.png" alt="HTML-Live — Mac App" style="width:100%;height:auto;display:block;">
+            </div>
         </div>
         <div class="product-frame">
             <img src="../../assets/html-live-on-macbook.png" alt="HTML-Live running on a MacBook">
@@ -322,24 +330,6 @@
             <span class="privacy-tag">macOS 10.12+</span>
         </div>
 
-        <div>
-            <a href="https://davidpaul2.gumroad.com/l/ecxbqg" target="_blank" class="buy-btn">Get HTML&#8209;Live</a>
-            <span class="price-note">Pay what you wish · your support means everything · thank you.</span>
-        </div>
-
-        <div class="pro-block">
-            <div class="pro-eyebrow">// Pro Version</div>
-            <div class="pro-name">HTML&#8209;Live Pro</div>
-            <p class="pro-desc">Everything in the free version plus the features that make it a proper development environment.</p>
-            <ul class="pro-feature-list">
-                <li>File System folder browser sidebar</li>
-                <li>Git command reference panel</li>
-                <li>Companion shell scripts included</li>
-                <li>Universal binary — Intel &amp; Apple Silicon</li>
-            </ul>
-            <a href="https://davidpaul2.gumroad.com/l/ecxbqg" target="_blank" class="pro-buy-btn">Get Pro — £9</a>
-            <span class="pro-price-note">One-off · no subscription · free updates</span>
-        </div>
     </div>
 
     <footer class="company-footer reveal">
@@ -367,6 +357,19 @@
 </div><!-- /page -->
 
 <script>
+    /* ── EXPAND IMAGE ── */
+    let expandTimer = null;
+    function expandImg(el) {
+        if (el.classList.contains('expanded')) return collapseImg(el);
+        el.classList.add('expanded');
+        clearTimeout(expandTimer);
+        expandTimer = setTimeout(() => collapseImg(el), 3000);
+    }
+    function collapseImg(el) {
+        el.classList.remove('expanded');
+        clearTimeout(expandTimer);
+    }
+
     /* ── MENU ── */
     function toggleMenu() {
         const menu = document.getElementById('mobileMenu');
