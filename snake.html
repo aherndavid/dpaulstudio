@@ -201,11 +201,12 @@
     </div>
 
     <div class="game-wrapper">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <canvas id="gameCanvas" width="560" height="560"></canvas>
 
         <div id="startScreen" class="overlay">
             <h2>System Ready</h2>
-            <p style="color: var(--dim); margin-bottom: 20px;">Use arrow keys or D-Pad.</p>
+            <p style="color: var(--dim); margin-bottom: 8px;">Use arrow keys or D-Pad.</p>
+            <p style="color: var(--dim); font-size:0.85rem; margin-bottom:20px;"><span style="color:#fff;">█</span> white = wall &nbsp;|&nbsp; <span style="color:var(--orange);">▣</span> orange = tunnel</p>
             <button class="btn" onclick="startGame()">Init Game</button>
             <button class="btn" onclick="showLeaderboard()" style="margin-top: 10px; border-color: var(--dim); color: var(--dim);">High Scores</button>
         </div>
@@ -248,21 +249,21 @@
         const leaderboardScreen = document.getElementById("leaderboardScreen");
         
         // Game Variables
-        const gridSize = 20;
-        let tileCount = canvas.width / gridSize;
+        const gridSize = 16;
+        let tileCount;
         let snake = [];
         let food = { x: 10, y: 10 };
-        let dx = 0;
-        let dy = 0;
+        let dx = 0, dy = 0;
         let score = 0;
         let gameLoop;
         let gameActive = false;
+        let obstacles = [];   // { x, y }
+        let tunnels = [];     // pairs: [{ax,ay,bx,by}, ...]
 
-        // Resize handling for mobile responsiveness
+        // Resize — larger play area
         function resizeCanvas() {
-            let size = Math.min(window.innerWidth - 40, 400); // Max 400px
-            // Snap to nearest grid size to prevent fractional pixels
-            size = Math.floor(size / gridSize) * gridSize; 
+            let size = Math.min(window.innerWidth - 40, window.innerHeight - 220, 560);
+            size = Math.floor(size / gridSize) * gridSize;
             canvas.width = size;
             canvas.height = size;
             tileCount = canvas.width / gridSize;
@@ -270,7 +271,7 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // --- AUDIO SYNTHESIS (Retro Sounds) ---
+        // --- AUDIO ---
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
 
@@ -283,118 +284,212 @@
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-
             if (type === 'eat') {
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(400, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'tunnel') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
             } else if (type === 'die') {
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.5);
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
             }
+        }
+
+        // --- OBSTACLE + TUNNEL GENERATION ---
+        function generateLevel() {
+            obstacles = [];
+            tunnels = [];
+            const tc = tileCount;
+            const margin = 3;
+
+            // Fixed obstacle patterns — walls with gaps
+            // Horizontal wall top-third with gap
+            const wall1y = Math.floor(tc * 0.28);
+            const gap1 = Math.floor(tc * 0.35);
+            for (let x = margin; x < tc - margin; x++) {
+                if (x < gap1 || x > gap1 + 3) obstacles.push({ x, y: wall1y });
+            }
+
+            // Horizontal wall bottom-third with gap on other side
+            const wall2y = Math.floor(tc * 0.72);
+            const gap2 = Math.floor(tc * 0.55);
+            for (let x = margin; x < tc - margin; x++) {
+                if (x < gap2 || x > gap2 + 3) obstacles.push({ x, y: wall2y });
+            }
+
+            // Vertical wall left-centre with gap
+            const wall3x = Math.floor(tc * 0.3);
+            const gap3 = Math.floor(tc * 0.5);
+            for (let y = wall1y + 2; y < wall2y - 1; y++) {
+                if (y < gap3 - 1 || y > gap3 + 1) obstacles.push({ x: wall3x, y });
+            }
+
+            // Vertical wall right-centre with gap
+            const wall4x = Math.floor(tc * 0.7);
+            const gap4 = Math.floor(tc * 0.5);
+            for (let y = wall1y + 2; y < wall2y - 1; y++) {
+                if (y < gap4 - 1 || y > gap4 + 1) obstacles.push({ x: wall4x, y });
+            }
+
+            // Two tunnel pairs — entry/exit points on opposite sides of walls
+            // Tunnel A: left edge ↔ right edge (mid-height, wraps horizontally)
+            const tay = Math.floor(tc * 0.5);
+            tunnels.push({ ax: 0, ay: tay, bx: tc - 1, by: tay });
+
+            // Tunnel B: top edge ↔ bottom edge (mid-width, wraps vertically)
+            const tbx = Math.floor(tc * 0.5);
+            tunnels.push({ ax: tbx, ay: 0, bx: tbx, by: tc - 1 });
+        }
+
+        function isCellBlocked(x, y) {
+            return obstacles.some(o => o.x === x && o.y === y);
+        }
+
+        function checkTunnel(x, y) {
+            for (const t of tunnels) {
+                if (t.ax === x && t.ay === y) return { x: t.bx, y: t.by };
+                if (t.bx === x && t.by === y) return { x: t.ax, y: t.ay };
+            }
+            return null;
         }
 
         // --- CORE GAME ENGINE ---
         function startGame() {
-            initAudio(); // Initialize audio context on user interaction
+            initAudio();
             startScreen.classList.add("hidden");
             gameOverScreen.classList.add("hidden");
             leaderboardScreen.classList.add("hidden");
-            
-            // Reset game state
+            resizeCanvas();
+            generateLevel();
+
+            const mid = Math.floor(tileCount / 2);
             snake = [
-                { x: Math.floor(tileCount/2), y: Math.floor(tileCount/2) },
-                { x: Math.floor(tileCount/2)-1, y: Math.floor(tileCount/2) },
-                { x: Math.floor(tileCount/2)-2, y: Math.floor(tileCount/2) }
+                { x: mid,     y: mid },
+                { x: mid - 1, y: mid },
+                { x: mid - 2, y: mid }
             ];
             dx = 1; dy = 0;
             score = 0;
             document.getElementById("currentScore").innerText = score;
             placeFood();
             gameActive = true;
-            
-            if(gameLoop) clearInterval(gameLoop);
+            if (gameLoop) clearInterval(gameLoop);
             gameLoop = setInterval(update, 100);
         }
 
         function update() {
             if (!gameActive) return;
 
-            // Calculate new head position
-            const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+            let head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-            // Wall Collision
+            // Wall collision
             if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
                 return triggerGameOver();
             }
 
-            // Self Collision
+            // Obstacle collision
+            if (isCellBlocked(head.x, head.y)) {
+                return triggerGameOver();
+            }
+
+            // Tunnel check — teleport
+            const exit = checkTunnel(head.x, head.y);
+            if (exit) {
+                head = { x: exit.x, y: exit.y };
+                playSound('tunnel');
+            }
+
+            // Self collision
             for (let i = 0; i < snake.length; i++) {
                 if (head.x === snake[i].x && head.y === snake[i].y) {
                     return triggerGameOver();
                 }
             }
 
-            snake.unshift(head); // Add new head
+            snake.unshift(head);
 
-            // Check if food eaten
             if (head.x === food.x && head.y === food.y) {
                 score += 10;
                 document.getElementById("currentScore").innerText = score;
                 playSound('eat');
                 placeFood();
             } else {
-                snake.pop(); // Remove tail if no food eaten
+                snake.pop();
             }
 
             draw();
         }
 
         function draw() {
-            // Clear canvas
             ctx.fillStyle = "#0e0f0e";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Grid (Optional, adds to the aesthetic)
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
-            for(let i=0; i<tileCount; i++) {
+            // Grid
+            ctx.strokeStyle = "rgba(255,255,255,0.03)";
+            for (let i = 0; i < tileCount; i++) {
                 ctx.beginPath();
-                ctx.moveTo(i*gridSize, 0); ctx.lineTo(i*gridSize, canvas.height);
-                ctx.moveTo(0, i*gridSize); ctx.lineTo(canvas.width, i*gridSize);
+                ctx.moveTo(i * gridSize, 0); ctx.lineTo(i * gridSize, canvas.height);
+                ctx.moveTo(0, i * gridSize); ctx.lineTo(canvas.width, i * gridSize);
                 ctx.stroke();
             }
 
-            // Draw Food
-            ctx.fillStyle = "#FF6600"; // Orange
-            ctx.fillRect(food.x * gridSize + 1, food.y * gridSize + 1, gridSize - 2, gridSize - 2);
+            // Obstacles — white blocks
+            ctx.fillStyle = "#ffffff";
+            for (const o of obstacles) {
+                ctx.fillRect(o.x * gridSize + 1, o.y * gridSize + 1, gridSize - 2, gridSize - 2);
+            }
 
-            // Draw Snake
+            // Tunnels — glowing orange portals
+            for (const t of tunnels) {
+                // Entry
+                ctx.fillStyle = "rgba(255,102,0,0.25)";
+                ctx.fillRect(t.ax * gridSize, t.ay * gridSize, gridSize, gridSize);
+                ctx.strokeStyle = "#FF6600";
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(t.ax * gridSize + 1, t.ay * gridSize + 1, gridSize - 2, gridSize - 2);
+                // Exit
+                ctx.fillStyle = "rgba(255,102,0,0.25)";
+                ctx.fillRect(t.bx * gridSize, t.by * gridSize, gridSize, gridSize);
+                ctx.strokeStyle = "#FF6600";
+                ctx.strokeRect(t.bx * gridSize + 1, t.by * gridSize + 1, gridSize - 2, gridSize - 2);
+                ctx.lineWidth = 1;
+            }
+
+            // Food
+            ctx.fillStyle = "#FF6600";
+            ctx.fillRect(food.x * gridSize + 2, food.y * gridSize + 2, gridSize - 4, gridSize - 4);
+
+            // Snake
             snake.forEach((part, index) => {
-                ctx.fillStyle = index === 0 ? "#D4C4A8" : "#7a7a70"; // Cream head, dim body
+                ctx.fillStyle = index === 0 ? "#D4C4A8" : "#7a7a70";
                 ctx.fillRect(part.x * gridSize + 1, part.y * gridSize + 1, gridSize - 2, gridSize - 2);
             });
         }
 
         function placeFood() {
             let valid = false;
-            while(!valid) {
+            while (!valid) {
                 food.x = Math.floor(Math.random() * tileCount);
                 food.y = Math.floor(Math.random() * tileCount);
                 valid = true;
-                for(let part of snake) {
-                    if(part.x === food.x && part.y === food.y) valid = false;
+                if (isCellBlocked(food.x, food.y)) { valid = false; continue; }
+                for (const part of snake) {
+                    if (part.x === food.x && part.y === food.y) { valid = false; break; }
                 }
             }
         }
@@ -405,8 +500,6 @@
             playSound('die');
             document.getElementById("finalScoreDisplay").innerText = score;
             gameOverScreen.classList.remove("hidden");
-            
-            // Clear inputs
             document.getElementById('char1').value = '';
             document.getElementById('char2').value = '';
             document.getElementById('char3').value = '';
@@ -415,28 +508,25 @@
 
         // --- CONTROLS ---
         function changeDirection(newDx, newDy) {
-            // Prevent 180 degree turns
             if (dx !== 0 && newDx === -dx) return;
             if (dy !== 0 && newDy === -dy) return;
-            dx = newDx;
-            dy = newDy;
+            dx = newDx; dy = newDy;
         }
 
         document.addEventListener("keydown", (e) => {
-            if(!gameActive) return;
-            switch(e.key) {
+            if (!gameActive) return;
+            switch (e.key) {
                 case "ArrowUp":    changeDirection(0, -1); break;
-                case "ArrowDown":  changeDirection(0, 1); break;
+                case "ArrowDown":  changeDirection(0,  1); break;
                 case "ArrowLeft":  changeDirection(-1, 0); break;
-                case "ArrowRight": changeDirection(1, 0); break;
+                case "ArrowRight": changeDirection(1,  0); break;
             }
         });
 
-        // Mobile Button Listeners
-        document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection(0, -1); });
-        document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection(0, 1); });
-        document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection(-1, 0); });
-        document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); changeDirection(1, 0); });
+        document.getElementById('btn-up').addEventListener('touchstart',    (e) => { e.preventDefault(); changeDirection(0, -1); });
+        document.getElementById('btn-down').addEventListener('touchstart',   (e) => { e.preventDefault(); changeDirection(0,  1); });
+        document.getElementById('btn-left').addEventListener('touchstart',   (e) => { e.preventDefault(); changeDirection(-1, 0); });
+        document.getElementById('btn-right').addEventListener('touchstart',  (e) => { e.preventDefault(); changeDirection(1,  0); });
 
         // --- HIGH SCORES & UI ---
         function moveToNext(current, nextId, prevId) {
@@ -452,16 +542,11 @@
             const c2 = document.getElementById('char2').value.toUpperCase() || '-';
             const c3 = document.getElementById('char3').value.toUpperCase() || '-';
             const name = c1 + c2 + c3;
-
             let scores = JSON.parse(localStorage.getItem('dPaulSnakeScores')) || [];
-            scores.push({ name: name, score: score });
-            
-            // Sort descending and keep top 10
+            scores.push({ name, score });
             scores.sort((a, b) => b.score - a.score);
             scores = scores.slice(0, 10);
-            
             localStorage.setItem('dPaulSnakeScores', JSON.stringify(scores));
-            
             gameOverScreen.classList.add("hidden");
             showLeaderboard();
         }
@@ -470,12 +555,9 @@
             startScreen.classList.add("hidden");
             gameOverScreen.classList.add("hidden");
             leaderboardScreen.classList.remove("hidden");
-
             const list = document.getElementById("leaderboardList");
             list.innerHTML = '';
-            
             const scores = JSON.parse(localStorage.getItem('dPaulSnakeScores')) || [];
-            
             if (scores.length === 0) {
                 list.innerHTML = '<li style="justify-content:center; color:var(--dim);">No records found.</li>';
             } else {
