@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software — dPaul Technologies</title>
+    <style>
+        :root {
+            --bg:         #131413;
+            --bg2:        #1a1c1a;
+            --orange:     #FF6600;
+            --cream:      #D4C4A8;
+            --text:       #c8c8c0;
+            --dim:        #7a7a70;
+            --border:     rgba(255,102,0,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --gold:       #ffbb00;
+            --font-scale: 1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 110%;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAV ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(19,20,19,0.95);
+            border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--cream); transition: all 0.3s ease; }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;
+            padding: 24px 28px 0 0; gap: 0;
+            z-index: 1000;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); overflow-y: auto; }
+        .mobile-menu a {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 2.4rem; font-weight: 700;
+            color: rgba(212,196,168,0.25);
+            text-decoration: none; text-transform: lowercase;
+            letter-spacing: 0.02em; line-height: 1.05;
+            padding: 4px 10px; display: block;
+            transition: color 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
+        }
+        .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
+        .mobile-menu a.active { color: var(--orange); }
+
+        /* ── PAGE ── */
+        .page { padding: 0 16px 60px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        /* ── HERO ── */
+        .hero { padding: 32px 0 28px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.72rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+        .hero h1 { font-size: 2rem; line-height: 1.1; margin-bottom: 18px; color: #fff; font-weight: 900; letter-spacing: -0.02em; }
+        .hero h1 span { color: var(--orange); }
+        .hero p {
+            font-size: calc(0.95rem * var(--font-scale));
+            line-height: 1.8; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 14px;
+        }
+
+        /* ── PRODUCT BLOCK ── */
+        .product-block {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .product-frame {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            background: #0e0f0e;
+            margin-bottom: 28px;
+        }
+        .product-frame img {
+            width: 100%; height: auto; display: block; object-fit: cover;
+        }
+        .product-frame.portrait { aspect-ratio: 9/16; }
+        .product-frame.portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+        .product-eyebrow { font-size: 0.68rem; color: var(--orange); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 8px; }
+        .product-name { font-size: 2.2rem; font-weight: 900; color: #fff; letter-spacing: -0.02em; margin-bottom: 6px; line-height: 1.1; }
+        .product-tagline { font-size: calc(0.88rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.06em; margin-bottom: 20px; line-height: 1.6; }
+        .product-story { font-size: calc(0.92rem * var(--font-scale)); line-height: 1.9; color: var(--text); margin-bottom: 20px; }
+        .product-story em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
+
+        .feature-list { list-style: none; margin: 0 0 24px; }
+        .feature-list li {
+            font-size: calc(0.88rem * var(--font-scale)); color: var(--text);
+            padding: 7px 0 7px 16px; border-bottom: 1px solid var(--border-dim);
+            position: relative; line-height: 1.55;
+        }
+        .feature-list li:first-child { border-top: 1px solid var(--border-dim); }
+        .feature-list li::before { content: '›'; position: absolute; left: 0; color: var(--orange); }
+
+        .privacy-strip { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 24px; }
+        .privacy-tag {
+            font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 4px 10px; border: 1px solid var(--border-dim); color: var(--cream);
+        }
+        .privacy-tag.highlight { border-color: rgba(80,200,100,0.3); color: #50c864; background: rgba(80,200,100,0.06); }
+
+        /* ── BUY BUTTON ── */
+        .buy-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 24px; background: var(--orange); color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; text-decoration: none; border-radius: 3px;
+        }
+        .price-note { display: block; font-size: 0.72rem; color: var(--dim); letter-spacing: 0.08em; margin-top: 10px; }
+
+        /* ── PRO BLOCK ── */
+        .pro-block {
+            margin-top: 24px; padding: 18px 16px;
+            border: 1px solid #554400; border-radius: 4px;
+            background: rgba(255,187,0,0.04);
+        }
+        .pro-eyebrow { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+        .pro-name { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .pro-desc { font-size: calc(0.88rem * var(--font-scale)); color: var(--dim); line-height: 1.7; margin-bottom: 14px; }
+        .pro-feature-list { list-style: none; margin: 0 0 16px; }
+        .pro-feature-list li {
+            font-size: calc(0.85rem * var(--font-scale)); color: var(--text);
+            padding: 5px 0 5px 16px; position: relative;
+            border-bottom: 1px solid rgba(85,68,0,0.4); line-height: 1.5;
+        }
+        .pro-feature-list li:first-child { border-top: 1px solid rgba(85,68,0,0.4); }
+        .pro-feature-list li::before { content: '★'; position: absolute; left: 0; color: var(--gold); font-size: 0.6rem; top: 8px; }
+        .pro-buy-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; background: var(--gold); color: #000;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; text-decoration: none; border-radius: 3px;
+        }
+        .pro-price-note { display: block; font-size: 0.68rem; color: #776633; letter-spacing: 0.08em; margin-top: 8px; }
+
+        /* ── TRIAL BLOCK ── */
+        .trial-block {
+            margin-top: 20px; padding: 14px 16px;
+            border: 1px solid var(--border-dim); border-radius: 4px;
+            background: var(--bg2);
+        }
+        .trial-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+        .trial-desc { font-size: calc(0.88rem * var(--font-scale)); color: var(--dim); line-height: 1.7; }
+
+        /* ── COMPANY FOOTER ── */
+        .company-footer {
+            margin-top: 40px; padding: 28px 0;
+            border-top: 1px solid var(--border-dim);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .company-footer-block { display: flex; flex-direction: column; gap: 4px; }
+        .company-footer-label { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
+        .company-footer-val { font-size: 0.85rem; color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val a { color: var(--dim); text-decoration: none; }
+        .company-footer-note { font-size: 0.78rem; color: var(--dim); opacity: 0.6; line-height: 1.7; }
+
+        .footer-line {
+            margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68rem; letter-spacing: 0.14em;
+            color: var(--dim); text-transform: uppercase;
+        }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="m-about.html">info</a>
+    <a href="m-current.html">current</a>
+    <a href="m-design.html">design</a>
+    <a href="m-fun.html">fun</a>
+    <a href="m-merch.html">merch</a>
+    <a href="m-music.html">music</a>
+    <a href="m-services.html">services</a>
+    <a href="m-software.html" class="active">software</a>
+    <a href="m-synths.html">synths</a>
+    <a href="m-tools.html">tools</a>
+    <a href="m-video.html">video</a>
+</div>
+
+<div class="page">
+
+    <!-- HERO -->
+    <section class="hero reveal">
+        <div class="hero-label">// dPaul Technologies — Software</div>
+        <h1>Mac software.<br><span>Built to last.</span></h1>
+        <p>Paid tools built to a higher standard — more power, more control, runs natively on your Mac. Pay once, no subscription, free updates included.</p>
+    </section>
+
+    <!-- ── DUPE REMOVE ── -->
+    <div class="product-block reveal" id="software-dupe-remove">
+        <div class="product-frame portrait">
+            <img src="../../assets/dupe-remove.png" alt="Dupe Remove — Duplicate Image Cleaner for Mac">
+        </div>
+        <div class="product-eyebrow">// 01 — Image Deduplication</div>
+        <div class="product-name">Dupe Remove</div>
+        <p class="product-tagline">Find and remove duplicate photos. Fast, private, runs entirely on your Mac.</p>
+
+        <p class="product-story">If you shoot a lot of photos, you know the problem — hundreds of near-identical shots clogging up your drive. Dupe Remove finds them fast using <em>perceptual hashing</em>, groups them visually, and lets you decide what to keep. Nothing is deleted without your say-so.</p>
+
+        <ul class="feature-list">
+            <li>Detects exact and visually similar duplicates — not just identical files</li>
+            <li>Group review — see duplicates side by side before deleting anything</li>
+            <li>One-click keep or delete per group, or select individually</li>
+            <li>Export clean images directly to a folder of your choice</li>
+            <li>Adjustable sensitivity — strict matching or looser visual similarity</li>
+            <li>Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more</li>
+            <li>Up to 1,000 images per session</li>
+        </ul>
+
+        <div class="privacy-strip">
+            <span class="privacy-tag highlight">100% local</span>
+            <span class="privacy-tag">No subscription</span>
+            <span class="privacy-tag">Free updates</span>
+            <span class="privacy-tag">Mac only</span>
+            <span class="privacy-tag">30-day trial</span>
+        </div>
+
+        <div>
+            <a href="https://davidpaul2.gumroad.com/l/wfujsa" target="_blank" class="buy-btn">Buy Now — £19</a>
+            <span class="price-note">One-off payment · no subscription · macOS 10.15+</span>
+        </div>
+
+        <div class="trial-block">
+            <div class="trial-label">// Free Trial</div>
+            <p class="trial-desc">30-day trial included — no credit card required. Download and run it on your own images before you decide.</p>
+        </div>
+    </div>
+
+    <!-- ── HTML-LIVE ── -->
+    <div class="product-block reveal" id="software-html-live">
+        <div class="product-frame">
+            <img src="../../assets/html-live.png" alt="HTML-Live — Mac App">
+        </div>
+        <div class="product-frame">
+            <img src="../../assets/html-live-on-macbook.png" alt="HTML-Live running on a MacBook">
+        </div>
+        <div class="product-eyebrow">// 02 — Live HTML Editor</div>
+        <div class="product-name">HTML&#8209;Live</div>
+        <p class="product-tagline">Write HTML, see it live — no button to press, no delay. Now a native Mac app.</p>
+
+        <p class="product-story">A fast, distraction-free HTML editor and live preview tool for designers and developers. <em>No setup, no server, no dependencies</em> — just open and start building. Import your files, edit, and save directly back to disk.</p>
+
+        <ul class="feature-list">
+            <li>Real-time preview as you type — zero delay</li>
+            <li>Desktop, tablet and mobile preview modes</li>
+            <li>Import, edit and save files directly to disk</li>
+            <li>Find &amp; Replace with regex support</li>
+            <li>HTMLHint debug panel — errors and warnings highlighted live</li>
+            <li>Inspect mode — click elements in preview to jump to source</li>
+            <li>Selection highlight — see your selected code in the preview</li>
+            <li>Version rollback — restore any previous edit</li>
+            <li>Export as raw, formatted or minified HTML</li>
+            <li>Zoom controls &amp; font size adjustment</li>
+        </ul>
+
+        <div class="privacy-strip">
+            <span class="privacy-tag highlight">100% local</span>
+            <span class="privacy-tag">Native Mac app</span>
+            <span class="privacy-tag">Universal binary</span>
+            <span class="privacy-tag">No subscription</span>
+            <span class="privacy-tag">Free updates</span>
+            <span class="privacy-tag">macOS 10.12+</span>
+        </div>
+
+        <div>
+            <a href="https://davidpaul2.gumroad.com/l/ecxbqg" target="_blank" class="buy-btn">Get HTML&#8209;Live</a>
+            <span class="price-note">Pay what you wish · your support means everything · thank you.</span>
+        </div>
+
+        <div class="pro-block">
+            <div class="pro-eyebrow">// Pro Version</div>
+            <div class="pro-name">HTML&#8209;Live Pro</div>
+            <p class="pro-desc">Everything in the free version plus the features that make it a proper development environment.</p>
+            <ul class="pro-feature-list">
+                <li>File System folder browser sidebar</li>
+                <li>Git command reference panel</li>
+                <li>Companion shell scripts included</li>
+                <li>Universal binary — Intel &amp; Apple Silicon</li>
+            </ul>
+            <a href="https://davidpaul2.gumroad.com/l/ecxbqg" target="_blank" class="pro-buy-btn">Get Pro — £9</a>
+            <span class="pro-price-note">One-off · no subscription · free updates</span>
+        </div>
+    </div>
+
+    <footer class="company-footer reveal">
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company</div>
+            <div class="company-footer-val">CitiIT Limited</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Company No.</div>
+            <div class="company-footer-val">15811174</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">VAT No.</div>
+            <div class="company-footer-val">473 5892 49</div>
+        </div>
+        <div class="company-footer-block">
+            <div class="company-footer-label">Website</div>
+            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
+        </div>
+    </footer>
+
+    <div class="footer-line reveal">// dPaul Technologies — Software</div>
+
+</div><!-- /page -->
+
+<script>
+    /* ── MENU ── */
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
+    }
+
+    /* ── SCROLL REVEAL ── */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
