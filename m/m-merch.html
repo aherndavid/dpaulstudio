@@ -93,25 +93,6 @@
         .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
         .mobile-menu a.active { color: var(--orange); }
 
-        /* ── TICKER ── */
-        .ticker-wrap {
-            position: relative; width: 100%; background: #000; border-bottom: 2px solid #222;
-            overflow: hidden; padding: 10px 0; box-shadow: inset 0 0 20px rgba(0,0,0,1);
-        }
-        .ticker-track {
-            display: flex; gap: 40px; width: max-content; animation: ticker 60s linear infinite;
-            white-space: nowrap; align-items: center;
-        }
-        .ticker-track span {
-            font-family: 'VT323', monospace; font-size: 1.8rem; letter-spacing: 0.05em;
-            text-transform: uppercase; color: var(--orange);
-            text-shadow: 0 0 8px rgba(255,102,0,0.7);
-        }
-        .ticker-track .tick-dot { color: #444; margin: 0 6px; }
-        .ticker-bottom { border-bottom: none; border-top: 2px solid #222; }
-        .ticker-bottom span { color: var(--cream); text-shadow: 0 0 8px rgba(212,196,168,0.4); }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
         /* ── PAGE ── */
         .page { padding: 24px 16px 48px; position: relative; z-index: 1; }
 
@@ -902,17 +883,6 @@
 
 </div><!-- /page -->
 
-<div class="ticker-wrap ticker-bottom">
-    <div class="ticker-track">
-        <span>EST. 2024</span><span class="tick-dot">-</span>
-        <span>LET'S BUILD SOMETHING</span><span class="tick-dot">-</span>
-        <span>GET IN TOUCH</span><span class="tick-dot">-</span>
-        <span>EST. 2024</span><span class="tick-dot">-</span>
-        <span>LET'S BUILD SOMETHING</span><span class="tick-dot">-</span>
-        <span>GET IN TOUCH</span><span class="tick-dot">-</span>
-    </div>
-</div>
-
 <script>
     // ── MENU ──
     function toggleMenu() {
@@ -922,7 +892,6 @@
         btn.classList.toggle('active');
         const isOpen = menu.classList.contains('open');
         document.body.style.overflow = isOpen ? 'hidden' : 'auto';
-        document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
         document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
         document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
         document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
