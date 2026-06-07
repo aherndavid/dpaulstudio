@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dpaul.studio</title>
+    <meta name="description" content="dpaul.studio — web design, browser synthesisers, Electron apps, video production and IT services by David Paul Ahern.">
 
     <style>
         :root {
@@ -55,7 +56,7 @@
         }
 
         .wordmark {
-            font-size: clamp(4rem, 12vw, 10rem); 
+            font-size: clamp(4rem, 12vw, 10rem);
             font-weight: 700;
             line-height: 0.85;
             color: #FFFFFF;
@@ -84,7 +85,7 @@
 
         .nav-link {
             text-decoration: none;
-            color: rgba(212, 196, 168, 0.3);
+            color: rgba(212, 196, 168, 0.65);
             font-size: 2.2rem;
             font-weight: 700;
             text-transform: lowercase;
@@ -118,13 +119,11 @@
                 line-height: 1.09;
                 padding: 2px 8px;
             }
-            .mobile-hide { display: none;
-            }
         }
     </style>
 </head>
 <body>
-
+<main>
     <div id="brand-group">
         <div id="eq-container"></div>
         <div class="wordmark">
@@ -135,23 +134,22 @@
     <nav id="nav-sidebar">
         <ul class="nav-list">
             <li class="nav-item"><a href="m-about.html"    class="nav-link">about</a></li>
-            <li class="nav-item"><a href="-m-current.html"  class="nav-link">current</a></li>
+            <li class="nav-item"><a href="m-current.html"  class="nav-link">current</a></li>
             <li class="nav-item"><a href="m-design.html"   class="nav-link">design</a></li>
-             <li class="nav-item"><a href="m-fun.html"   class="nav-link">fun</a></li>
+            <li class="nav-item"><a href="m-fun.html"      class="nav-link">fun</a></li>
             <li class="nav-item"><a href="m-merch.html"    class="nav-link">merch</a></li>
-            <li class="nav-item mobile-hide"><a href="music.html" class="nav-link">music</a></li>
+            <li class="nav-item"><a href="m-music.html"    class="nav-link">music</a></li>
             <li class="nav-item"><a href="m-services.html" class="nav-link">services</a></li>
             <li class="nav-item"><a href="m-software.html" class="nav-link">software</a></li>
-            <li class="nav-item"><a href="m-synths.html" class="nav-link">synths</a></li>
+            <li class="nav-item"><a href="m-synths.html"   class="nav-link">synths</a></li>
             <li class="nav-item"><a href="m-tools.html"    class="nav-link">tools</a></li>
             <li class="nav-item"><a href="m-video.html"    class="nav-link">video</a></li>
-         
         </ul>
     </nav>
-
+</main>
     <script>
         const NUM_BANDS = 10;
-        const MAX_H     = 30; 
+        const MAX_H     = 30;
         const container = document.getElementById('eq-container');
         const levels    = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H + 5);
         const targets   = [...levels];
