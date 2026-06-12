@@ -679,7 +679,7 @@
             const entryDate = new Date(dateEl.textContent.trim());
             entryDate.setHours(0, 0, 0, 0);
             const diffDays  = Math.round((now - entryDate) / (1000 * 60 * 60 * 24));
-            const diffWeeks = Math.floor(diffDays / 7);
+            const diffWeeks = Math.round(diffDays / 7);
             const diffMonths = Math.floor(diffDays / 30);
             let label;
             if (diffDays === 0)        label = 'Today';
