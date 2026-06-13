@@ -37,7 +37,7 @@
             --border-dim: rgba(0,0,0,0.12);
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.05; }
+        html[data-theme="light"] body::after { opacity: 0.55; }
         html[data-theme="light"] .hero h1,
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
@@ -49,16 +49,19 @@
         html[data-theme="light"] .form-field input,
         html[data-theme="light"] .form-field textarea { color: #1a1610; }
 
-        html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
+        html[data-theme="light"] .tts-player { background: #FF6600; color: #000; border: 3px solid #000; }
+        html[data-theme="light"] .tts-label { font-weight: bold; color: #000; }
+        html[data-theme="light"] #ttsPause:not(.active),
+        html[data-theme="light"] #ttsStop:not(.active) { background: #FF6600 !important; color: #000 !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-btn,
         html[data-theme="light"] .tts-section-sel,
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
         html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #FF6600 !important; color: #fff !important; }
+        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #FF6600 !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: var(--dim); }
+        html[data-theme="light"] .tts-section-label { color: #000; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
@@ -83,7 +86,43 @@
         }
         html[data-theme="light"] .cv-link { border-color: #FF6600; color: #FF6600; }
         html[data-theme="light"] .cv-link:hover { background: #FF6600; color: #000; }
-        html[data-theme="light"] .studio-log-heading { color: #1a1610 !important; }
+        html[data-theme="light"] .tag { background: #FF6600; color: #000; border-color: #FF6600; }
+        html[data-theme="light"] .tag:hover { background: #FF6600; color: #000; border-color: #FF6600; }
+        html[data-theme="light"] .dp-post-btn { background: #FF6600 !important; color: #000 !important; border-color: #FF6600 !important; }
+        html[data-theme="light"] .dp-post-btn:hover { background: #FF6600 !important; color: #000 !important; }
+        html[data-theme="light"] .dp-post-btn.secondary { background: transparent !important; color: #FF6600 !important; border-color: #FF6600 !important; }
+        html[data-theme="light"] .dp-post-btn.secondary:hover { background: #FF6600 !important; color: #000 !important; }
+        html[data-theme="light"] .cv-strip {
+            background: rgba(0,0,0,0.75) !important;
+            border-color: rgba(0,0,0,0.85) !important;
+        }
+        html[data-theme="light"] .cv-strip p { color: #fff !important; }
+        html[data-theme="light"] .cv-strip p strong { color: #fff !important; }
+        html[data-theme="light"] .studio-log-heading { color: #fff !important; }
+        html[data-theme="light"] .studio-log-card {
+            background: #000 !important;
+            border-color: #000 !important;
+            pointer-events: none;
+        }
+        html[data-theme="light"] .studio-log-card * { color: #fff !important; }
+        html[data-theme="light"] .studio-log-card [style*="color: var(--orange)"],
+        html[data-theme="light"] .studio-log-card [style*="color:var(--orange)"] { color: #FF6600 !important; }
+
+        /* All cards/sections — semi-opaque black with white text in light mode */
+        html[data-theme="light"] .skill-card,
+        html[data-theme="light"] .portfolio-card {
+            background: rgba(0,0,0,0.75) !important;
+            border-color: rgba(0,0,0,0.85) !important;
+        }
+        html[data-theme="light"] .skill-card:hover,
+        html[data-theme="light"] .portfolio-card:hover {
+            background: rgba(0,0,0,0.75) !important;
+            border-color: rgba(0,0,0,0.85) !important;
+        }
+        html[data-theme="light"] .skill-card h3,
+        html[data-theme="light"] .skill-card p,
+        html[data-theme="light"] .portfolio-card h3,
+        html[data-theme="light"] .portfolio-card p { color: #fff !important; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -658,7 +697,7 @@
             <p>A running log of what's happening in the studio — day by day. Design work, client outreach, product launches, tools built. No polish, just progress.</p>
         </div>
 
-        <a href="current.html" style="
+        <a href="current.html" class="studio-log-card" style="
             display: inline-flex; align-items: center; gap: 20px;
             border: 1px solid var(--border); border-radius: 4px;
             padding: 28px 36px; background: var(--bg2);

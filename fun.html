@@ -16,27 +16,35 @@
 
         html[data-theme="light"] { --bg:#f1f1ef;--bg2:#e4e4e1;--orange:#1a1a1a;--cream:#3a352d;--text:#2e2a24;--dim:#8a8276;--border:rgba(26,26,26,0.35);--border-dim:rgba(0,0,0,0.12); }
         html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.05; }
+        html[data-theme="light"] body::after { opacity: 0.55; }
+        html[data-theme="light"] .cta-btn { background: #FF6600; color: #000; border: 2px solid #000; }
+        html[data-theme="light"] .cta-btn:hover { background: #ff8533; }
+        html[data-theme="light"] .launch-btn { background: #FF6600; color: #000; border: 2px solid #000; }
+        html[data-theme="light"] .launch-btn:hover { background: #ff8533; color: #000; border-color: #000; }
+        #playSnakeBtn { background: #FF6600; color: #000; border-color: #FF6600; }
+        #playSnakeBtn:hover { background: #ff8533; border-color: #ff8533; }
         html[data-theme="light"] .hero h1,
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
         html[data-theme="light"] .skill-card h3,
+        html[data-theme="light"] .tool-info h3,
+        html[data-theme="light"] .cta-block h2 { color: #1a1610; }
         html[data-theme="light"] .company-footer-val { color: #1a1610; }
         html[data-theme="light"] nav a.active { color: #fff; }
         html[data-theme="light"] .form-field input::placeholder,
         html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
         html[data-theme="light"] .form-field input,
         html[data-theme="light"] .form-field textarea { color: #1a1610; }
-        html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
+        html[data-theme="light"] .tts-player { background: #FF6600; color: #000; border: 3px solid #000; }
         html[data-theme="light"] .tts-btn,
         html[data-theme="light"] .tts-section-sel,
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
         html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #FF6600 !important; color: #fff !important; }
+        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #FF6600 !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: var(--dim); }
+        html[data-theme="light"] .tts-section-label { color: #000; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
@@ -269,7 +277,7 @@
             <div class="tool-sub">// 03 — Classic Game</div>
             <h3>Snake</h3>
             <p class="tool-story">The classic snake game — rebuilt from scratch in the browser. Pixelated, orange-on-black, keyboard and swipe controls. Eat, grow, don't die. No install, no account, runs anywhere.</p>
-            <a href="https://aherndavid.github.io/dpaulstudio/snake.html" target="_blank" class="launch-btn">Play Snake &#8594;</a>
+            <button class="launch-btn" id="playSnakeBtn" onclick="triggerSnakeFall()">Play Snake &#8594;</button>
         </div>
     </div>
 
@@ -349,5 +357,108 @@
     })();
 </script>
 <script src="share.js"></script>
+
+<!-- ── SNAKE FALL EFFECT ── -->
+<div id="snakeOverlay" style="
+    display:none; position:fixed; inset:0; background:#000; z-index:99999;
+    flex-direction:column; align-items:center; justify-content:center;
+">
+    <iframe id="snakeFrame"
+        src="https://aherndavid.github.io/dpaulstudio/snake.html"
+        style="border:none; border-radius:4px; transition: width 0.8s cubic-bezier(0.22,1,0.36,1), height 0.8s cubic-bezier(0.22,1,0.36,1);"
+        width="320" height="420">
+    </iframe>
+    <button onclick="reassemblePage()" style="
+        margin-top:24px; background:transparent; border:1px solid rgba(255,102,0,0.4);
+        color:rgba(255,102,0,0.7); font-family:'Courier New',monospace; font-size:0.85rem;
+        letter-spacing:0.15em; text-transform:uppercase; padding:8px 20px;
+        cursor:pointer; border-radius:3px; transition:all 0.2s;
+    " onmouseover="this.style.borderColor='#FF6600';this.style.color='#FF6600'"
+       onmouseout="this.style.borderColor='rgba(255,102,0,0.4)';this.style.color='rgba(255,102,0,0.7)'">
+        ← back to page
+    </button>
+</div>
+
+<style>
+@keyframes dp-fall {
+    0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--fall-x, 0px), 120vh) rotate(var(--fall-r, 15deg)); opacity: 0; }
+}
+@keyframes dp-rise {
+    0%   { transform: translate(var(--fall-x, 0px), 120vh) rotate(var(--fall-r, 15deg)); opacity: 0; }
+    100% { transform: translate(0,0) rotate(0deg); opacity: 1; }
+}
+.dp-falling  { animation: dp-fall var(--fall-dur, 0.6s) var(--fall-delay, 0s) cubic-bezier(0.55,0,1,0.45) forwards; }
+.dp-rising   { animation: dp-rise var(--fall-dur, 0.6s) var(--fall-delay, 0s) cubic-bezier(0,0.55,0.45,1) both; }
+</style>
+
+<script>
+function triggerSnakeFall() {
+    const targets = document.querySelectorAll('nav, .page > *, .font-nudge');
+    const total = targets.length;
+
+    targets.forEach((el, i) => {
+        const rx = (Math.random() - 0.5) * 60;
+        const rr = (Math.random() - 0.5) * 40;
+        const dur = 0.4 + Math.random() * 0.4;
+        const delay = i * 0.04;
+        el.style.setProperty('--fall-x', rx + 'px');
+        el.style.setProperty('--fall-r', rr + 'deg');
+        el.style.setProperty('--fall-dur', dur + 's');
+        el.style.setProperty('--fall-delay', delay + 's');
+        el.classList.add('dp-falling');
+    });
+
+    const totalDur = total * 40 + 600;
+
+    setTimeout(() => {
+        const overlay = document.getElementById('snakeOverlay');
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.4s';
+        requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+
+        // Expand iframe after it fades in
+        setTimeout(() => {
+            const frame = document.getElementById('snakeFrame');
+            const w = Math.min(window.innerWidth - 40, 800);
+            const h = Math.min(window.innerHeight - 100, 700);
+            frame.style.width = w + 'px';
+            frame.style.height = h + 'px';
+        }, 400);
+    }, totalDur);
+}
+
+function reassemblePage() {
+    const overlay = document.getElementById('snakeOverlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.style.display = 'none'; }, 400);
+
+    // Shrink iframe back before hiding
+    const frame = document.getElementById('snakeFrame');
+    frame.style.width = '320px';
+    frame.style.height = '420px';
+
+    const targets = document.querySelectorAll('nav, .page > *, .font-nudge');
+    const total = targets.length;
+
+    targets.forEach((el, i) => {
+        el.classList.remove('dp-falling');
+        const delay = i * 0.04;
+        el.style.setProperty('--fall-delay', delay + 's');
+        el.classList.add('dp-rising');
+    });
+
+    setTimeout(() => {
+        targets.forEach(el => {
+            el.classList.remove('dp-rising');
+            el.style.removeProperty('--fall-x');
+            el.style.removeProperty('--fall-r');
+            el.style.removeProperty('--fall-dur');
+            el.style.removeProperty('--fall-delay');
+        });
+    }, total * 40 + 700);
+}
+</script>
 </body>
 </html>

@@ -36,7 +36,7 @@
             --border-dim: rgba(0,0,0,0.12);
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.05; }
+        html[data-theme="light"] body::after { opacity: 0.55; }
         html[data-theme="light"] .hero h1,
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
@@ -48,16 +48,19 @@
         html[data-theme="light"] .form-field input,
         html[data-theme="light"] .form-field textarea { color: #1a1610; }
 
-        html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
+        html[data-theme="light"] .tts-player { background: #FF6600; color: #000; border: 3px solid #000; }
+        html[data-theme="light"] .tts-label { font-weight: bold; color: #000; }
+        html[data-theme="light"] #ttsPause:not(.active),
+        html[data-theme="light"] #ttsStop:not(.active) { background: #FF6600 !important; color: #000 !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-btn,
         html[data-theme="light"] .tts-section-sel,
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
         html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #FF6600 !important; color: #fff !important; }
+        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #FF6600 !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: var(--dim); }
+        html[data-theme="light"] .tts-section-label { color: #000; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
@@ -81,6 +84,7 @@
             filter: drop-shadow(0 0 3px var(--orange));
         }
         html[data-theme="light"] .log-day-label { color: #1a1610; }
+        html[data-theme="light"] .log-tag { background: #FF6600; color: #000; border-color: #FF6600; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 

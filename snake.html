@@ -24,10 +24,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
-            touch-action: none; /* Prevent scroll on swipe */
+            touch-action: none;
         }
 
         /* Grain Overlay */
@@ -40,14 +42,16 @@
 
         .header {
             text-align: center;
-            margin-bottom: 8px;
+            padding: 6px 0 4px;
             z-index: 10;
+            width: 100%;
+            flex-shrink: 0;
         }
 
         .header h1 {
             color: #fff;
             font-weight: 900;
-            font-size: 2rem;
+            font-size: 1.4rem;
             letter-spacing: -0.02em;
         }
 
@@ -66,9 +70,15 @@
             position: relative;
             background: var(--bg2);
             border: 1px solid var(--border);
-            border-radius: 4px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
             z-index: 10;
+            flex: 1 1 0;
+            width: 100%;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         canvas {
@@ -198,10 +208,11 @@
     <div class="header">
         <h1>dPaul <span>Snake</span></h1>
         <div class="score-display">SCORE: <span id="currentScore">0</span></div>
+        <div class="score-display" id="livesDisplay">LIVES: <span id="currentLives">♥ ♥ ♥</span></div>
     </div>
 
     <div class="game-wrapper">
-        <canvas id="gameCanvas" width="560" height="560"></canvas>
+        <canvas id="gameCanvas" width="700" height="700"></canvas>
 
         <div id="startScreen" class="overlay">
             <h2>System Ready</h2>
@@ -255,6 +266,7 @@
         let food = { x: 10, y: 10 };
         let dx = 0, dy = 0;
         let score = 0;
+        let lives = 3;
         let gameLoop;
         let gameActive = false;
         let obstacles = [];   // { x, y }
@@ -262,7 +274,9 @@
 
         // Resize — fill the screen
         function resizeCanvas() {
-            let size = Math.min(window.innerWidth - 16, window.innerHeight - 120);
+            const headerH = document.querySelector('.header')?.offsetHeight || 60;
+            const mobileH = document.querySelector('.mobile-controls')?.offsetHeight || 0;
+            let size = Math.min(window.innerWidth, window.innerHeight - headerH - mobileH - 8);
             size = Math.floor(size / gridSize) * gridSize;
             canvas.width = size;
             canvas.height = size;
@@ -385,7 +399,9 @@
             ];
             dx = 1; dy = 0;
             score = 0;
+            lives = 3;
             document.getElementById("currentScore").innerText = score;
+            updateLivesDisplay();
             placeFood();
             gameActive = true;
             if (gameLoop) clearInterval(gameLoop);
@@ -494,16 +510,49 @@
             }
         }
 
+        function updateLivesDisplay() {
+            const el = document.getElementById('currentLives');
+            if (!el) return;
+            el.innerHTML = '♥ '.repeat(lives).trim() + '♡ '.repeat(Math.max(0, 3 - lives)).trim();
+            el.style.color = lives === 1 ? '#ff3300' : 'var(--orange)';
+        }
+
         function triggerGameOver() {
-            gameActive = false;
-            clearInterval(gameLoop);
-            playSound('die');
-            document.getElementById("finalScoreDisplay").innerText = score;
-            gameOverScreen.classList.remove("hidden");
-            document.getElementById('char1').value = '';
-            document.getElementById('char2').value = '';
-            document.getElementById('char3').value = '';
-            setTimeout(() => document.getElementById('char1').focus(), 100);
+            lives--;
+            updateLivesDisplay();
+            if (lives > 0) {
+                // Flash the canvas red then respawn
+                gameActive = false;
+                clearInterval(gameLoop);
+                playSound('die');
+                canvas.style.transition = 'box-shadow 0.1s';
+                canvas.style.boxShadow = '0 0 0 4px #ff3300';
+                setTimeout(() => { canvas.style.boxShadow = ''; }, 400);
+                setTimeout(() => {
+                    // Respawn snake in safe top-left area, keep score
+                    snake.length = 0;
+                    // Use top-left area which is always clear of obstacles
+                    snake.push(
+                        { x: 5, y: 2 },
+                        { x: 4, y: 2 },
+                        { x: 3, y: 2 }
+                    );
+                    dx = 1; dy = 0;
+                    placeFood();
+                    gameActive = true;
+                    gameLoop = setInterval(update, 100);
+                }, 600);
+            } else {
+                gameActive = false;
+                clearInterval(gameLoop);
+                playSound('die');
+                document.getElementById("finalScoreDisplay").innerText = score;
+                gameOverScreen.classList.remove("hidden");
+                document.getElementById('char1').value = '';
+                document.getElementById('char2').value = '';
+                document.getElementById('char3').value = '';
+                setTimeout(() => document.getElementById('char1').focus(), 100);
+            }
         }
 
         // --- CONTROLS ---
