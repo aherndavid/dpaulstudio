@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Windsor Bike — News</title>
+  <meta name="description" content="Latest arrivals and stock updates from Windsor Bike, Windsor. New vintage and classic bicycles, spares and components.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Righteous&family=Lobster&family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Righteous&family=Lobster&family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap"></noscript>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #5B1FA0;
+      --tan: #C4A882;
+      --cream: #F5F0E8;
+      --ink: #1a1018;
+    }
+
+    body {
+      overflow-x: hidden;
+      background: #ffffff;
+      font-family: 'Libre Baskerville', serif;
+      color: var(--ink);
+    }
+
+    /* ── NAV ── */
+    .site-header {
+      background: var(--purple);
+      border-bottom: 4px solid var(--tan);
+      height: 80px;
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+    }
+
+    .header-inner {
+      padding: 0 3rem;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-right .logo-main {
+      font-family: 'Lobster', cursive;
+      font-size: 1.6rem;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+    }
+
+    .logo-right .logo-sub {
+      font-family: 'Righteous', cursive;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-top: 2px;
+    }
+
+    .main-nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.1rem;
+    }
+
+    .nav-link {
+      font-family: 'Righteous', cursive;
+      font-size: 1.45rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      padding: 0.45rem 0.7rem;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover { color: var(--tan); border-bottom-color: var(--tan); }
+    .nav-link.active { color: var(--tan); border-bottom-color: var(--tan); }
+
+    .nav-link.cta {
+      background: var(--tan);
+      color: var(--purple);
+      border-bottom: none;
+      margin-left: 0.75rem;
+      padding: 0.45rem 1.2rem;
+    }
+
+    .nav-link.cta:hover { background: #d9c4a3; }
+
+    .nav-toggle { display: none; }
+    /* ── PAGE ── */
+    .news-page {
+      background: var(--cream);
+      min-height: calc(100vh - 80px);
+      padding: 5rem 2rem 7rem;
+    }
+
+    .news-inner {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Page heading */
+    .news-heading {
+      font-family: 'Lobster', cursive;
+      font-size: 5.5rem;
+      color: var(--purple);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .news-subhead {
+      font-family: 'Righteous', cursive;
+      font-size: 0.8rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 4rem;
+    }
+
+    .news-feature-img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+      object-position: center 40%;
+      display: block;
+      margin-bottom: 3rem;
+      border-left: 6px solid var(--purple);
+    }
+
+    /* ── ENTRY ── */
+    .news-entry {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 0 3rem;
+      padding: 2.5rem 0;
+      border-top: 2px solid rgba(91,31,160,0.15);
+    }
+
+    .news-entry:last-child {
+      border-bottom: 2px solid rgba(91,31,160,0.15);
+    }
+
+    /* Date column */
+    .entry-date {
+      padding-top: 0.2rem;
+    }
+
+    .entry-day {
+      font-family: 'Lobster', cursive;
+      font-size: 3.5rem;
+      color: var(--purple);
+      line-height: 1;
+    }
+
+    .entry-month-year {
+      font-family: 'Righteous', cursive;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-top: 0.2rem;
+    }
+
+    /* Tag pill */
+    .entry-tag {
+      display: inline-block;
+      font-family: 'Righteous', cursive;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: var(--purple);
+      color: var(--cream);
+      padding: 0.2rem 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Body */
+    .entry-body {}
+
+    .entry-title {
+      font-family: 'Lobster', cursive;
+      font-size: 2rem;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+
+    .entry-copy {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--ink);
+      max-width: 620px;
+    }
+
+    /* Spec list inside an entry */
+    .entry-specs {
+      margin-top: 1.1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+    }
+
+    .entry-spec {
+      font-family: 'Righteous', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      color: var(--purple);
+    }
+
+    .entry-spec span {
+      color: var(--ink);
+      font-size: 0.85rem;
+    }
+
+    /* Enquire link */
+    .entry-link {
+      display: inline-block;
+      margin-top: 1.25rem;
+      font-family: 'Righteous', cursive;
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-decoration: none;
+      border-bottom: 2px solid var(--tan);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .entry-link:hover { color: var(--tan); border-color: var(--purple); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .logo-right .logo-main { font-size: 1.3rem; }
+    }
+
+    @media (max-width: 767px) {
+      .header-inner { padding: 0 1.25rem; }
+
+      .nav-toggle {
+        display: block;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      .nav-toggle span,
+      .nav-toggle span::before,
+      .nav-toggle span::after {
+        display: block;
+        width: 26px;
+        height: 2px;
+        background: var(--cream);
+        position: relative;
+        transition: all 0.25s;
+      }
+
+      .nav-toggle span::before,
+      .nav-toggle span::after {
+        content: '';
+        position: absolute;
+        left: 0;
+      }
+
+      .nav-toggle span::before { top: -8px; }
+      .nav-toggle span::after  { top:  8px; }
+
+      .main-nav {
+        display: none;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: var(--purple);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 1.5rem 1.5rem;
+        gap: 0.25rem;
+        border-bottom: 3px solid var(--tan);
+      }
+
+      .main-nav.open { display: flex; }
+
+      .nav-link { font-size: 1.2rem; width: 100%; }
+      .nav-link.cta { margin-left: 0; margin-top: 0.5rem; }
+
+      .logo-right .logo-main { font-size: 1.1rem; }
+      .logo-right .logo-sub  { font-size: 0.55rem; }
+
+      .news-heading { font-size: 3.5rem; }
+      .news-feature-img { height: 220px; }
+
+      .news-entry {
+        grid-template-columns: 1fr;
+        gap: 0.75rem 0;
+      }
+
+      .entry-day { font-size: 2.5rem; }
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      background: var(--ink);
+      border-top: 3px solid var(--tan);
+      padding: 1.25rem 3rem;
+      text-align: center;
+      font-family: 'Righteous', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      color: rgba(245,240,232,0.5);
+    }
+
+    .site-footer a {
+      color: var(--tan, #C4A882);
+      text-decoration: none;
+      opacity: 0.75;
+      transition: opacity 0.2s;
+    }
+
+    .site-footer a:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <button id="navToggle" class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html"         class="nav-link">Home</a>
+        <a href="current-bikes.html"  class="nav-link">Bikes for Sale</a>
+        <a href="spares.html"        class="nav-link">Spares</a>
+        <a href="servicing.html"     class="nav-link">Services</a>
+        <a href="clothing.html"      class="nav-link">Clothing</a>
+        <a href="news.html"          class="nav-link active">News</a>
+        <a href="contact.html"       class="nav-link cta">Contact</a>
+      </nav>
+      <a href="index.html" class="logo-right">
+        <span class="logo-main">Windsor Bike</span>
+        <span class="logo-sub">Last Century Cycling</span>
+      </a>
+    </div>
+  </header>
+
+  <section class="news-page">
+    <div class="news-inner">
+
+      <h1 class="news-heading">New<br>In.</h1>
+      <p class="news-subhead">Fresh arrivals &amp; stock updates</p>
+
+      <img src="assets/cyclist-4.webp" alt="Vintage cycling" class="news-feature-img">
+
+      <!-- ENTRY 1 -->
+      <article class="news-entry">
+        <div class="entry-date">
+          <div class="entry-day">04</div>
+          <div class="entry-month-year">June 2025</div>
+        </div>
+        <div class="entry-body">
+          <span class="entry-tag">New Arrival</span>
+          <h2 class="entry-title">Colnago Super — Campagnolo Super Record Throughout</h2>
+          <p class="entry-copy">
+            A beautifully original mid-seventies Colnago Super in deep celeste, retaining its full Campagnolo Super Record groupset. Pantographed brake levers, original saddle, box-section rims. Frame shows honest patina but no damage — rides as it looks. A serious collectors piece in complete, rideable condition.
+          </p>
+          <div class="entry-specs">
+            <div class="entry-spec">Frame &nbsp;<span>56cm c-t</span></div>
+            <div class="entry-spec">Year &nbsp;<span>c.1975</span></div>
+            <div class="entry-spec">Groupset &nbsp;<span>Campagnolo Super Record</span></div>
+            <div class="entry-spec">Condition &nbsp;<span>Original &amp; complete</span></div>
+          </div>
+          <a href="contact.html" class="entry-link">Enquire about this bike &rarr;</a>
+        </div>
+      </article>
+
+      <!-- ENTRY 2 -->
+      <article class="news-entry">
+        <div class="entry-date">
+          <div class="entry-day">21</div>
+          <div class="entry-month-year">May 2025</div>
+        </div>
+        <div class="entry-body">
+          <span class="entry-tag">New Arrival</span>
+          <h2 class="entry-title">De Rosa Professional — Ugo De Rosa–era Steel</h2>
+          <p class="entry-copy">
+            From the Milan workshop at its peak. A De Rosa Professional in the classic pearl white, Columbus SL tubing, fully lugged construction. Fitted with Campagnolo Nuovo Record and original Cinelli 1A stem. Frame geometry is fast and purposeful — this is a racing bicycle, not a museum piece.
+          </p>
+          <div class="entry-specs">
+            <div class="entry-spec">Frame &nbsp;<span>54cm c-c</span></div>
+            <div class="entry-spec">Year &nbsp;<span>c.1980</span></div>
+            <div class="entry-spec">Groupset &nbsp;<span>Campagnolo Nuovo Record</span></div>
+            <div class="entry-spec">Condition &nbsp;<span>Very good, lightly used</span></div>
+          </div>
+          <a href="contact.html" class="entry-link">Enquire about this bike &rarr;</a>
+        </div>
+      </article>
+
+      <!-- ENTRY 3 -->
+      <article class="news-entry">
+        <div class="entry-date">
+          <div class="entry-day">08</div>
+          <div class="entry-month-year">May 2025</div>
+        </div>
+        <div class="entry-body">
+          <span class="entry-tag">Spares In</span>
+          <h2 class="entry-title">Campagnolo Record Pista &amp; NOS Brake Levers</h2>
+          <p class="entry-copy">
+            A small collection of genuine NOS Campagnolo has come in this month — Record Pista track chainset in 165mm, a set of early Super Record brake levers still in wrappers, and a pair of early-style rear mechs. All priced fairly and available immediately. Call or email to discuss.
+          </p>
+          <a href="contact.html" class="entry-link">Ask about availability &rarr;</a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p>Windsor Bike &nbsp;|&nbsp; 11 St. Leonards Road, Windsor SL4 3BN</p>
+    <p><a href="terms.html">Terms &amp; Conditions</a></p>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const nav    = document.getElementById('mainNav');
+    if (toggle) {
+      toggle.addEventListener('click', () => nav.classList.toggle('open'));
+    }
+  </script>
+
+</body>
+</html>

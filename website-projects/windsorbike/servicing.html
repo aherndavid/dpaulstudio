@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Windsor Bike — Servicing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Lobster&family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #5B1FA0;
+      --tan: #C4A882;
+      --cream: #F5F0E8;
+      --ink: #1a1018;
+    }
+
+    body {
+      overflow-x: hidden;
+      background: #ffffff;
+      font-family: 'Libre Baskerville', serif;
+      color: var(--ink);
+    }
+
+        /* ── NAV ── */
+    .site-header {
+      background: var(--purple);
+      border-bottom: 4px solid var(--tan);
+      height: 80px;
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+    }
+
+    .header-inner {
+      padding: 0 3rem 0 3rem;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1;
+      text-decoration: none;
+      flex-shrink: 0;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+      width: auto;
+    }
+
+    .logo-right .logo-main {
+      font-family: 'Lobster', cursive;
+      font-size: 1.6rem;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+    }
+
+    .logo-right .logo-sub {
+      font-family: 'Righteous', cursive;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-top: 2px;
+    }
+
+    .main-nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.1rem;
+      margin-left: 0;
+    }
+
+    .nav-link {
+      font-family: 'Righteous', cursive;
+      font-size: 1.45rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      padding: 0.45rem 0.7rem;
+      border-bottom: 3px solid transparent;
+      border-left: none;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover { color: var(--tan); border-bottom-color: var(--tan); }
+    .nav-link.active { color: var(--tan); border-bottom-color: var(--tan); }
+
+    .nav-link.cta {
+      background: var(--tan);
+      color: var(--purple);
+      border-bottom: none;
+      border-left: none;
+      margin-left: 0.75rem;
+      margin-top: 0;
+      padding: 0.45rem 1.2rem;
+      width: auto;
+    }
+
+    .nav-link.cta:hover { background: #d9c4a3; }
+
+    /* ── PAGE ── */
+    .servicing-page {
+      background: var(--cream);
+      min-height: calc(100vh - 96px);
+      padding: 5rem 2rem 6rem;
+    }
+
+    .servicing-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .page-heading {
+      font-family: 'Lobster', cursive;
+      font-size: 5rem;
+      color: var(--purple);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subheading {
+      font-family: 'Righteous', cursive;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 4rem;
+    }
+
+    /* ── TWO COLUMN LAYOUT ── */
+    .servicing-layout {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    /* ── SERVICE PACKAGES ── */
+    .section-label {
+      font-family: 'Righteous', cursive;
+      font-size: 0.75rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .packages { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 4rem; }
+
+    .package-card {
+      background: #fff;
+      border: 2px solid rgba(91,31,160,0.1);
+      border-left: 6px solid var(--purple);
+      padding: 1.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .package-card:hover {
+      box-shadow: 0 8px 28px rgba(91,31,160,0.12);
+      transform: translateX(4px);
+    }
+
+    .package-card.featured {
+      border-left-color: var(--tan);
+      background: var(--purple);
+    }
+
+    .package-card.featured .package-name,
+    .package-card.featured .package-desc,
+    .package-card.featured .package-includes li { color: var(--cream); }
+
+    .package-card.featured .package-price { color: var(--tan); }
+
+    .package-card.featured .package-badge {
+      background: var(--tan);
+      color: var(--purple);
+    }
+
+    .package-info { flex: 1; }
+
+    .package-name-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .package-name {
+      font-family: 'Lobster', cursive;
+      font-size: 2rem;
+      color: var(--purple);
+      line-height: 1;
+    }
+
+    .package-badge {
+      font-family: 'Righteous', cursive;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: var(--purple);
+      color: var(--cream);
+      padding: 0.2rem 0.6rem;
+    }
+
+    .package-desc {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+
+    .package-includes {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .package-includes li {
+      font-family: 'Righteous', cursive;
+      font-size: 1rem;
+      color: var(--ink);
+      padding-left: 1.2rem;
+      position: relative;
+    }
+
+    .package-includes li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--tan);
+    }
+
+    .package-price-col {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .package-price {
+      font-family: 'Lobster', cursive;
+      font-size: 2.8rem;
+      color: var(--purple);
+      line-height: 1;
+    }
+
+    .package-price-note {
+      font-family: 'Righteous', cursive;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-top: 0.3rem;
+    }
+
+    /* ── INDIVIDUAL REPAIRS ── */
+    .repairs-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      margin-bottom: 4rem;
+    }
+
+    .repairs-table tr { border-bottom: 1px solid rgba(91,31,160,0.12); }
+    .repairs-table tr:first-child { border-top: 2px solid var(--purple); }
+
+    .repairs-table td {
+      font-family: 'Righteous', cursive;
+      font-size: 1.1rem;
+      padding: 0.75rem 0;
+      color: var(--ink);
+      vertical-align: top;
+    }
+
+    .repairs-table td:last-child {
+      text-align: right;
+      color: var(--purple);
+      font-size: 1.2rem;
+      white-space: nowrap;
+    }
+
+    .repair-note {
+      display: block;
+      font-family: 'Libre Baskerville', serif;
+      font-size: 0.78rem;
+      color: #888;
+      margin-top: 0.15rem;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 2.5rem; }
+
+    .sidebar-card {
+      background: #fff;
+      border: 2px solid rgba(91,31,160,0.1);
+      border-top: 5px solid var(--tan);
+      padding: 1.75rem;
+    }
+
+    .sidebar-title {
+      font-family: 'Lobster', cursive;
+      font-size: 1.8rem;
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+
+    .sidebar-body {
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+
+    .sidebar-link {
+      font-family: 'Righteous', cursive;
+      font-size: 1rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--purple);
+      text-decoration: none;
+      border-bottom: 2px solid var(--tan);
+      padding-bottom: 2px;
+    }
+
+    .sidebar-link:hover { color: var(--tan); }
+
+    .turnaround-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+    }
+
+    .turnaround-list li {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Righteous', cursive;
+      font-size: 1rem;
+      color: var(--ink);
+      border-bottom: 1px solid rgba(91,31,160,0.1);
+      padding-bottom: 0.5rem;
+    }
+
+    .turnaround-list li span:last-child { color: var(--purple); }
+
+    .disclaimer {
+      font-size: 0.8rem;
+      color: #888;
+      font-style: italic;
+      margin-top: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Desktop — hide hamburger */
+    .nav-toggle { display: none; }
+
+    /* ── RESPONSIVE ── */
+
+    /* Tablet — 768px to 1024px */
+    @media (max-width: 1024px) {
+      .header-inner {
+      padding: 0 3rem 0 3rem;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+      .nav-link {
+      font-family: 'Righteous', cursive;
+      font-size: 1.45rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-decoration: none;
+      padding: 0.45rem 0.7rem;
+      border-bottom: 3px solid transparent;
+      border-left: none;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+      .nav-link.cta {
+      background: var(--tan);
+      color: var(--purple);
+      border-bottom: none;
+      border-left: none;
+      margin-left: 0.75rem;
+      margin-top: 0;
+      padding: 0.45rem 1.2rem;
+      width: auto;
+    }
+      .logo-right .logo-main { font-size: 1.3rem; }
+
+      /* Index hero */
+      .hero-text { left: 3%; top: 5%; }
+      .hero-shop-name { font-size: clamp(3.5rem, 8vw, 6rem); }
+      .hero-title { font-size: clamp(2.2rem, 5vw, 4.5rem); }
+      .hero-img { left: 35%; height: 80%; }
+
+      /* Grids */
+      .bikes-grid { grid-template-columns: repeat(2, 1fr); }
+      .spares-grid { grid-template-columns: 1fr; }
+      .clothing-grid { grid-template-columns: 1fr; }
+      .servicing-layout { grid-template-columns: 1fr; }
+      .contact-wrap { grid-template-columns: 1fr; }
+    }
+
+    
+    @media (max-width: 767px) {
+      .header-inner { padding: 0 1.25rem; }
+
+      .logo-right .logo-main { font-size: 1.1rem; }
+      .logo-right .logo-sub  { font-size: 0.55rem; }
+
+      .nav-toggle {
+        display: block;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        flex-shrink: 0;
+      }
+
+      .nav-toggle span,
+      .nav-toggle span::before,
+      .nav-toggle span::after {
+        display: block;
+        width: 26px;
+        height: 2px;
+        background: var(--cream);
+        position: relative;
+        transition: all 0.25s;
+      }
+
+      .nav-toggle span::before,
+      .nav-toggle span::after {
+        content: '';
+        position: absolute;
+        left: 0;
+      }
+
+      .nav-toggle span::before { top: -8px; }
+      .nav-toggle span::after  { top:  8px; }
+
+      .main-nav {
+        display: none;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: var(--purple);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem 1.5rem 1.5rem;
+        gap: 0.25rem;
+        border-bottom: 3px solid var(--tan);
+        z-index: 99;
+      }
+
+      .main-nav.open { display: flex; }
+
+      .nav-link {
+        font-size: 1.2rem;
+        width: 100%;
+        border-bottom: none;
+        white-space: normal;
+        padding: 0.5rem 0;
+      }
+
+      .nav-link.cta {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: fit-content;
+        border-bottom: none;
+      }
+
+      .package-card {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.25rem;
+      }
+
+      .package-price-col {
+        text-align: left;
+      }
+
+      .package-name { font-size: 1.6rem; }
+      .package-price { font-size: 2.2rem; }
+
+      .servicing-page { padding: 3rem 1rem 5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <button id="navToggle" class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="current-bikes.html" class="nav-link">Current Bikes</a>
+        <a href="spares.html" class="nav-link">Spares</a>
+        <a href="servicing.html" class="nav-link active">Services</a>
+        <a href="clothing.html" class="nav-link">Clothing</a>
+        <a href="news.html"          class="nav-link">News</a>
+        <a href="contact.html"       class="nav-link cta">Contact</a>
+      </nav>
+      <a href="index.html" class="logo-right">
+        <span class="logo-main">Windsor Bike</span>
+        <span class="logo-sub">Last Century Cycling</span>
+      </a>
+    </div>
+  </header>
+
+  <section class="servicing-page">
+    <div class="servicing-inner">
+
+      <h1 class="page-heading">Servicing</h1>
+      <p class="page-subheading">Expert Care for Vintage Steel · Windsor's Classic Bicycle Workshop</p>
+
+      <div class="servicing-layout">
+
+        <!-- MAIN CONTENT -->
+        <div class="servicing-main">
+
+          <!-- SERVICE PACKAGES -->
+          <span class="section-label">Service Packages</span>
+          <div class="packages">
+
+            <div class="package-card">
+              <div class="package-info">
+                <div class="package-name-row">
+                  <h2 class="package-name">Bronze Service</h2>
+                </div>
+                <p class="package-desc">A quick health check and tune-up to keep your classic running smoothly between full services.</p>
+                <ul class="package-includes">
+                  <li>Safety inspection</li>
+                  <li>Brake adjustment &amp; pad check</li>
+                  <li>Gear indexing &amp; derailleur alignment</li>
+                  <li>Tyre pressure &amp; condition check</li>
+                  <li>Bolt torque check</li>
+                  <li>Basic clean &amp; lube</li>
+                </ul>
+              </div>
+              <div class="package-price-col">
+                <p class="package-price">£45</p>
+                <p class="package-price-note">Parts extra</p>
+              </div>
+            </div>
+
+            <div class="package-card featured">
+              <div class="package-info">
+                <div class="package-name-row">
+                  <h2 class="package-name">Silver Service</h2>
+                  <span class="package-badge">Most Popular</span>
+                </div>
+                <p class="package-desc">Our most popular full service. Everything in Bronze plus a thorough drivetrain clean and cable inspection.</p>
+                <ul class="package-includes">
+                  <li>Everything in Bronze</li>
+                  <li>Full drivetrain degrease &amp; regrease</li>
+                  <li>Cable &amp; housing inspection</li>
+                  <li>Wheel true (minor)</li>
+                  <li>Headset &amp; bottom bracket check</li>
+                  <li>Frame wipe-down &amp; polish</li>
+                </ul>
+              </div>
+              <div class="package-price-col">
+                <p class="package-price">£85</p>
+                <p class="package-price-note">Parts extra</p>
+              </div>
+            </div>
+
+            <div class="package-card">
+              <div class="package-info">
+                <div class="package-name-row">
+                  <h2 class="package-name">Gold Service</h2>
+                </div>
+                <p class="package-desc">A complete strip-down and rebuild. Ideal for a bike returning from storage or a new acquisition.</p>
+                <ul class="package-includes">
+                  <li>Everything in Silver</li>
+                  <li>Full strip-down &amp; clean</li>
+                  <li>All bearings overhauled &amp; regreased</li>
+                  <li>New cables &amp; housing fitted</li>
+                  <li>Wheel true (full)</li>
+                  <li>Chain wear check</li>
+                  <li>Full road test &amp; final adjustment</li>
+                </ul>
+              </div>
+              <div class="package-price-col">
+                <p class="package-price">£160</p>
+                <p class="package-price-note">Parts extra</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- INDIVIDUAL REPAIRS -->
+          <span class="section-label">Individual Repairs</span>
+          <table class="repairs-table">
+            <tr>
+              <td>Puncture repair
+                <span class="repair-note">Tube replacement priced separately</span>
+              </td>
+              <td>£10</td>
+            </tr>
+            <tr>
+              <td>Brake cable replacement
+                <span class="repair-note">Per cable, housing extra</span>
+              </td>
+              <td>£15</td>
+            </tr>
+            <tr>
+              <td>Gear cable replacement
+                <span class="repair-note">Per cable, housing extra</span>
+              </td>
+              <td>£15</td>
+            </tr>
+            <tr>
+              <td>Wheel true
+                <span class="repair-note">Minor spoke adjustment</span>
+              </td>
+              <td>£20</td>
+            </tr>
+            <tr>
+              <td>Bottom bracket overhaul
+                <span class="repair-note">Cup-and-cone or cartridge</span>
+              </td>
+              <td>£30</td>
+            </tr>
+            <tr>
+              <td>Headset overhaul
+                <span class="repair-note">Threaded or threadless</span>
+              </td>
+              <td>£25</td>
+            </tr>
+            <tr>
+              <td>Brake pad replacement
+                <span class="repair-note">Per pair, pads extra</span>
+              </td>
+              <td>£12</td>
+            </tr>
+            <tr>
+              <td>Chain replacement
+                <span class="repair-note">Chain not included</span>
+              </td>
+              <td>£15</td>
+            </tr>
+            <tr>
+              <td>Saddle &amp; seatpost fitting</td>
+              <td>£10</td>
+            </tr>
+            <tr>
+              <td>Bar tape wrap</td>
+              <td>£20</td>
+            </tr>
+            <tr>
+              <td>General labour
+                <span class="repair-note">Any work not listed above</span>
+              </td>
+              <td>£40/hr</td>
+            </tr>
+          </table>
+
+          <p class="disclaimer">All prices are for labour only unless stated. Parts and consumables are charged at cost. A free estimate will be provided before any work begins. Prices are a guide and may vary for unusual or heavily worn bicycles.</p>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Book a Service</h3>
+            <p class="sidebar-body">Drop in with your bike or get in touch to arrange a booking. We'll assess the condition and confirm the cost before any work starts.</p>
+            <a href="contact.html" class="sidebar-link">Contact Us</a>
+          </div>
+
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Turnaround Times</h3>
+            <ul class="turnaround-list">
+              <li><span>Bronze Service</span><span>Up to 14 days</span></li>
+              <li><span>Silver Service</span><span>Up to 7 days</span></li>
+              <li><span>Gold Service</span><span>Up to 2 days</span></li>
+              <li><span>Individual repairs</span><span>Same day</span></li>
+            </ul>
+          </div>
+
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Vintage Specialists</h3>
+            <p class="sidebar-body">We specialise in classic steel road and racing bicycles. Whether it's a 1970s Colnago, a 1980s Peugeot or a pre-war Raleigh — we know these machines inside out.</p>
+          </div>
+
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">Need Spares?</h3>
+            <p class="sidebar-body">We stock a wide range of period-correct components and hard-to-find parts for vintage bikes. Ask in store or browse our spares.</p>
+            <a href="spares.html" class="sidebar-link">View Spares</a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const nav    = document.querySelector('.main-nav');
+    if (toggle) {
+      toggle.addEventListener('click', () => nav.classList.toggle('open'));
+    }
+  </script>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>Windsor Bike &nbsp;|&nbsp; 11 St. Leonards Road, Windsor SL4 3BN</p>
+    <p><a href="terms.html">Terms &amp; Conditions</a></p>
+  </footer>
+
+  <style>
+    .site-footer {
+      background: var(--ink, #1a1018);
+      border-top: 3px solid var(--tan, #C4A882);
+      padding: 1.25rem 3rem;
+      text-align: center;
+      font-family: 'Righteous', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      color: rgba(245,240,232,0.5);
+    }
+
+    .site-footer a {
+      color: var(--tan, #C4A882);
+      text-decoration: none;
+      opacity: 0.75;
+      transition: opacity 0.2s;
+    }
+
+    .site-footer a:hover { opacity: 1; }
+  </style>
+</body>
+</html>
