@@ -13,6 +13,42 @@
     <title>Software — dPaul Technologies</title>
     <style>
         :root { --bg:#131413;--bg2:#1a1c1a;--orange:#FF6600;--cream:#D4C4A8;--text:#c8c8c0;--dim:#7a7a70;--border:rgba(255,102,0,0.25);--border-dim:rgba(255,255,255,0.07);--gold:#ffbb00;--font-scale:1; }
+
+        html[data-theme="light"] { --bg:#f1f1ef;--bg2:#e4e4e1;--orange:#1a1a1a;--cream:#3a352d;--text:#2e2a24;--dim:#8a8276;--border:rgba(26,26,26,0.35);--border-dim:rgba(0,0,0,0.12); }
+        html[data-theme="light"] body::before { opacity: 0.06; }
+        html[data-theme="light"] body::after { opacity: 0.05; }
+        html[data-theme="light"] .hero h1,
+        html[data-theme="light"] .section h2,
+        html[data-theme="light"] .portfolio-card h3,
+        html[data-theme="light"] .skill-card h3,
+        html[data-theme="light"] .company-footer-val { color: #1a1610; }
+        html[data-theme="light"] .hero h1 span { color: var(--orange); }
+        html[data-theme="light"] nav a.active { color: #fff; }
+        html[data-theme="light"] .form-field input::placeholder,
+        html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
+        html[data-theme="light"] .form-field input,
+        html[data-theme="light"] .form-field textarea { color: #1a1610; }
+        html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
+        html[data-theme="light"] .tts-btn,
+        html[data-theme="light"] .tts-section-sel,
+        html[data-theme="light"] .tts-voice-sel,
+        html[data-theme="light"] .tts-section-sel option,
+        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
+        html[data-theme="light"] .tts-btn.active { background: #FF6600 !important; color: #fff !important; }
+        html[data-theme="light"] .tts-progress,
+        html[data-theme="light"] .tts-speed-label,
+        html[data-theme="light"] .tts-section-label { color: var(--dim); }
+        html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
+        html[data-theme="light"] .font-nudge { background: var(--bg2); }
+        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
+        html[data-theme="light"] #dp-share-btn:hover,
+        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
+
+        .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'Courier New',Courier,monospace;width:32px;height:32px;cursor:pointer;border-radius:3px;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
+        .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
+        #bulbFilament1, #bulbFilament2 { transition: stroke 0.2s, filter 0.2s; }
+        html[data-theme="light"] #bulbFilament1,
+        html[data-theme="light"] #bulbFilament2 { stroke: var(--orange); filter: drop-shadow(0 0 3px var(--orange)); }
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background:var(--bg);color:var(--text);font-family:'Courier New',Courier,monospace;font-size:130%;min-height:100vh;overflow-x:hidden;}
         body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.35;}
@@ -160,6 +196,15 @@
     <a href="video.html">video</a>
     <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
+        <svg id="bulbIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.4 4.89 3.5 6.13V18a1 1 0 001 1h5a1 1 0 001-1v-2.87C17.6 13.89 19 11.61 19 9c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="1.5"/>
+            <line id="bulbFilament1" x1="10" y1="9" x2="14" y2="13" stroke="currentColor" stroke-width="1.5"/>
+            <line id="bulbFilament2" x1="14" y1="9" x2="10" y2="13" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="9" y1="22" x2="15" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    </button>
     <div id="nav-share-container"></div>
 </nav>
 
@@ -308,6 +353,11 @@
 </div>
 
 <script>
+    // THEME TOGGLE
+    function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);try{localStorage.setItem('dp-theme',theme);}catch(e){}}
+    function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';applyTheme(c==='light'?'dark':'light');}
+    try{const s=localStorage.getItem('dp-theme');if(s)applyTheme(s);}catch(e){}
+
     // EXPAND IMAGE
     let expandTimer=null;
     function expandImg(el){

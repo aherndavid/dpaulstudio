@@ -120,6 +120,23 @@
         .bio-text p { margin-bottom: 20px; font-size: 1.1rem; line-height: 1.7; }
         .bio-text strong { color: var(--orange); font-weight: normal; }
 
+        .lede {
+            font-size: 1rem; line-height: 1.7; color: var(--cream);
+            margin: 20px 0 0; padding-left: 14px;
+            border-left: 2px solid var(--orange);
+        }
+        .lede strong { color: var(--orange); font-weight: normal; }
+
+        .portfolio-card {
+            display: flex; flex-direction: column; gap: 12px;
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
+            padding: 20px; margin-top: 16px; text-decoration: none;
+        }
+        .portfolio-card .card-label { font-size: 0.7rem; color: var(--orange); letter-spacing: 0.1em; margin-bottom: 8px; }
+        .portfolio-card h3 { color: #fff; margin-bottom: 8px; font-size: 1.2rem; }
+        .portfolio-card p { font-size: 0.95rem; line-height: 1.6; }
+        .portfolio-card .arrow { color: var(--orange); font-size: 1.4rem; align-self: flex-end; }
+
         .photo-frame { width: 100%; aspect-ratio: 3/4; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
         .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -208,6 +225,13 @@
         <div class="hero-label">// Info</div>
         <h1>30 years in IT.<br>Still <span>building things.</span></h1>
 
+        <p class="lede">
+            <strong>CitiIT Limited</strong> is my registered trading company — IT consultancy
+            and web design. <strong>dpaul.studio</strong> is my creative portfolio: music,
+            software, synths, and design work outside of client projects. Same person,
+            two sides of the work.
+        </p>
+
         <div class="tts-player">
             <span class="tts-label">// Speak page</span>
             <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
@@ -264,7 +288,17 @@
                 <h3>Design & Motion</h3>
                 <p>Adobe Suite, Blender, and brand identity work. Static through to cinematic motion graphics.</p>
             </div>
-        </div>
+    </section>
+
+    <section class="section reveal">
+        <div class="section-label">// 02b — Concept Build</div>
+        <h2>An example of the work.</h2>
+        <a class="portfolio-card" href="../website-projects/windsorbike/index.html" target="_blank" rel="noopener">
+            <div class="card-label">// Local Business Site</div>
+            <h3>Windsor Bike — Last Century Cycling</h3>
+            <p>A concept site built for a vintage and classic racing bicycle business in Windsor — covering current stock, spares, servicing, clothing, and news.</p>
+            <div class="arrow">→</div>
+        </a>
     </section>
 
     <section class="section reveal" id="mobile-contact">
