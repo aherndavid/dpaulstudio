@@ -710,6 +710,46 @@
 
 
 
+        <!-- ── ENTRY: DREAM THREE VIDEO ── -->
+        <div class="log-entry reveal">
+            <div class="log-date-col">
+                <span class="log-date">09 Jun 2026</span>
+                <span class="log-day-label">Monday</span>
+                <div class="log-tags">
+                    <span class="log-tag">Video</span>
+                    <span class="log-tag">Carbonography</span>
+                    <span class="log-tag">Premiere Pro</span>
+                    <span class="log-tag">Design</span>
+                </div>
+            </div>
+            <div class="log-body">
+                <p>
+                    Finished and published the <em>Dream Three</em> promo video for
+                    <strong>Carbonography</strong> — the vehicle merch platform coming later this summer.
+                    The concept is straightforward: pick your dream three vehicles and wear them on a
+                    hoodie, t-shirt, or cap. The video captures that idea — three machines fading in
+                    one by one, scored to music.
+                </p>
+                <p>
+                    The three vehicles in the film are my son Logan's dream three: an <strong>R34 Skyline GT-R</strong>,
+                    a <strong>classic Datsun</strong>, and an <strong>MV Agusta F4 RR</strong>. Not a random
+                    selection — a statement of taste. That's the whole point of Carbonography.
+                    The machines that mean something to you, on the clothes you actually wear.
+                </p>
+                <p>
+                    Cut in Premiere Pro. The site isn't live yet but the video is on the
+                    <a href="video.html"
+                       style="color:var(--orange);text-decoration:none;border-bottom:1px solid rgba(255,102,0,0.3);padding-bottom:2px;">
+                        video page
+                    </a> — and
+                    <a href="https://www.carbonography.co.uk" target="_blank" rel="noopener"
+                       style="color:var(--orange);text-decoration:none;border-bottom:1px solid rgba(255,102,0,0.3);padding-bottom:2px;">
+                        carbonography.co.uk
+                    </a> is where it'll launch.
+                </p>
+            </div>
+        </div>
+
         <!-- ── ENTRY: HTML-LIVE LAUNCH ── -->
         <!-- ── ENTRY: DP-ONE MKVI RELEASE ── -->
         <div class="log-entry reveal">
@@ -1354,5 +1394,119 @@
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
+
+<!-- ── EMAIL SIGNUP POPUP ── -->
+<div id="dp-email-overlay" style="
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+    z-index:99999; align-items:center; justify-content:center;
+    backdrop-filter:blur(4px);
+">
+    <div style="
+        background:#131413; border:1px solid rgba(255,102,0,0.4);
+        border-radius:4px; padding:40px 44px; max-width:480px; width:90%;
+        position:relative; box-shadow:0 24px 64px rgba(0,0,0,0.7);
+        font-family:'Courier New',Courier,monospace;
+    ">
+        <button onclick="dpClosePopup()" style="
+            position:absolute; top:14px; right:18px; background:none; border:none;
+            color:rgba(255,255,255,0.35); font-size:1.4rem; cursor:pointer;
+            line-height:1; transition:color 0.15s;
+        " onmouseover="this.style.color='#FF6600'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">✕</button>
+
+        <div style="font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:#FF6600; margin-bottom:14px;">// Stay in the loop</div>
+        <div style="font-size:1.6rem; font-weight:900; color:#fff; margin-bottom:10px; letter-spacing:-0.02em;">New builds. Live updates.</div>
+        <p style="font-size:1rem; color:#7a7a70; line-height:1.7; margin-bottom:28px;">
+            Drop your email and I'll let you know when something new lands — tools, synths, merch, or anything worth seeing. No noise. No pitch.
+        </p>
+
+        <div id="dp-popup-form">
+            <input type="email" id="dp-popup-email" placeholder="your@email.com" style="
+                width:100%; box-sizing:border-box;
+                background:#1e201e; border:1px solid rgba(255,102,0,0.25);
+                color:#c8c8c0; font-family:'Courier New',Courier,monospace;
+                font-size:1rem; padding:12px 16px; border-radius:3px;
+                outline:none; margin-bottom:12px; transition:border-color 0.2s;
+            " onfocus="this.style.borderColor='#FF6600'" onblur="this.style.borderColor='rgba(255,102,0,0.25)'"
+               onkeydown="if(event.key==='Enter')dpSubmitEmail()">
+            <button onclick="dpSubmitEmail()" style="
+                width:100%; background:#FF6600; color:#000; border:none;
+                font-family:'Courier New',Courier,monospace; font-size:1rem;
+                font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
+                padding:13px; border-radius:3px; cursor:pointer; transition:background 0.2s;
+            " onmouseover="this.style.background='#ff8533'" onmouseout="this.style.background='#FF6600'">
+                Sign me up →
+            </button>
+        </div>
+
+        <div id="dp-popup-thanks" style="display:none; text-align:center; padding:16px 0;">
+            <div style="font-size:1.5rem; color:#FF6600; margin-bottom:8px;">✓</div>
+            <div style="color:#fff; font-size:1.1rem; font-weight:700;">You're in.</div>
+            <div style="color:#7a7a70; font-size:0.9rem; margin-top:6px;">I'll be in touch when something new drops.</div>
+        </div>
+
+        <p style="font-size:0.72rem; color:#4a4a44; margin-top:16px; margin-bottom:0; text-align:center; letter-spacing:0.05em;">
+            No spam. Unsubscribe any time.
+        </p>
+    </div>
+</div>
+
+<script>
+(function() {
+    // Show popup after 8 seconds, only once per session
+    if (!sessionStorage.getItem('dp-popup-seen')) {
+        setTimeout(() => {
+            const overlay = document.getElementById('dp-email-overlay');
+            overlay.style.display = 'flex';
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.4s';
+            requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+        }, 8000);
+    }
+
+    // Close on overlay click
+    document.getElementById('dp-email-overlay').addEventListener('click', function(e) {
+        if (e.target === this) dpClosePopup();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') dpClosePopup();
+    });
+})();
+
+function dpClosePopup() {
+    const overlay = document.getElementById('dp-email-overlay');
+    overlay.style.opacity = '0';
+    setTimeout(() => { overlay.style.display = 'none'; }, 400);
+    sessionStorage.setItem('dp-popup-seen', '1');
+}
+
+function dpSubmitEmail() {
+    const email = document.getElementById('dp-popup-email').value.trim();
+    if (!email || !email.includes('@')) {
+        document.getElementById('dp-popup-email').style.borderColor = '#cc3300';
+        setTimeout(() => {
+            document.getElementById('dp-popup-email').style.borderColor = 'rgba(255,102,0,0.25)';
+        }, 1000);
+        return;
+    }
+    fetch('https://formspree.io/f/xaqawnwv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email: email, message: 'Sign me up for updates' })
+    }).then(res => {
+        if (res.ok) {
+            document.getElementById('dp-popup-form').style.display = 'none';
+            document.getElementById('dp-popup-thanks').style.display = 'block';
+            sessionStorage.setItem('dp-popup-seen', '1');
+            setTimeout(dpClosePopup, 3000);
+        } else {
+            alert('Something went wrong — please try again.');
+        }
+    }).catch(() => {
+        alert('Something went wrong — please try again.');
+    });
+}
+</script>
 </body>
 </html>
