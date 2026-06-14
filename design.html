@@ -121,15 +121,15 @@
         nav {
             position: sticky; top: 0; z-index: 100;
             background: var(--bg); border-bottom: 1px solid var(--border);
-            padding: 0 56px; display: flex; align-items: center; gap: 4px; height: 72px;
+            padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
         }
         nav a {
-            font-family: 'Courier New', Courier, monospace; font-size: 1.4rem;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem;
             color: var(--cream); font-weight: bold; text-decoration: none;
-            display: inline-block; min-width: 160px; white-space: nowrap; text-align: center;
+            display: inline-block; min-width: 0; white-space: nowrap; text-align: center;
             border: 1px solid transparent; border-radius: 3px;
             letter-spacing: 0.05em; transition: none;
-            text-transform: lowercase; box-sizing: border-box; padding: 10px 4px;
+            text-transform: lowercase; box-sizing: border-box; padding: 10px 12px;
         }
         nav a:hover  { border-color: var(--orange); color: var(--orange); }
         nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
@@ -298,7 +298,7 @@
     <a href="merch.html" data-i18n="nav_merch">merch</a>
     <a href="music.html" data-i18n="nav_music">music</a>
     <a href="services.html" data-i18n="nav_services">services</a>
-    <a href="software.html" data-i18n="nav_software">software</a>
+    <a href="software.html">software</a>
     <a href="synths.html" data-i18n="nav_synths">synths</a>
     <a href="tools.html" data-i18n="nav_tools">tools</a>
     <a href="video.html" data-i18n="nav_video">video</a>
@@ -313,13 +313,6 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <!-- lang-switcher removed: body copy not fully translated
-    <div id="lang-switcher">
-        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
-        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
-        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
-    </div>
-    -->
     <div id="nav-share-container"></div>
 </nav>
 

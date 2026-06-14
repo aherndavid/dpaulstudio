@@ -73,8 +73,8 @@
         .font-nudge-dismiss{background:none;border:none;color:var(--dim);font-family:'Courier New',Courier,monospace;font-size:.65rem;cursor:pointer;letter-spacing:.1em;text-align:right;padding:0;}
         .font-nudge-dismiss:hover{color:var(--orange);}
 
-        nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;gap:4px;height:72px;}
-        nav a{font-family:'Courier New',Courier,monospace;font-size:1.4rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:160px;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:3px;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 4px;}
+        nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:2px;height:72px;}
+        nav a{font-family:'Courier New',Courier,monospace;font-size:1.1rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:0;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:3px;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 12px;}
         nav a:hover{border-color:var(--orange);color:var(--orange);}
         nav a.active{background:var(--orange);color:#000;border-color:var(--orange);}
         .nav-spacer{flex:1;}
@@ -238,17 +238,17 @@
 </div>
 
 <nav>
-    <a href="about.html">about</a>
-    <a href="current.html">current</a>
-    <a href="design.html">design</a>
+    <a href="about.html" data-i18n="nav_about">about</a>
+    <a href="current.html" data-i18n="nav_current">current</a>
+    <a href="design.html" data-i18n="nav_design">design</a>
     <a href="fun.html">fun</a>
-    <a href="merch.html">merch</a>
-    <a href="music.html">music</a>
-    <a href="services.html">services</a>
+    <a href="merch.html" data-i18n="nav_merch">merch</a>
+    <a href="music.html" data-i18n="nav_music">music</a>
+    <a href="services.html" data-i18n="nav_services">services</a>
     <a href="software.html">software</a>
-    <a href="synths.html">synths</a>
-    <a href="tools.html" class="active">tools</a>
-    <a href="video.html">video</a>
+    <a href="synths.html" data-i18n="nav_synths">synths</a>
+    <a href="tools.html" class="active" data-i18n="nav_tools">tools</a>
+    <a href="video.html" data-i18n="nav_video">video</a>
     <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
