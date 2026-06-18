@@ -558,13 +558,7 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-    // PARALLAX
-    const cover = document.getElementById('albumCover');
-    window.addEventListener('scroll', () => {
-        if (window.innerWidth > 760 && cover) {
-            cover.style.transform = `translateY(${window.scrollY * 0.15}px)`;
-        }
-    });
+    // PARALLAX removed
 
     // TTS
     const synth = window.speechSynthesis;
