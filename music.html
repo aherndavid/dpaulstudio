@@ -3,7 +3,7 @@
 <head>
     <script>
   if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    // Find the current filename (e.g., 'design.html')
+    // Find the curnnt filename (e.g., 'design.html')
     var path = window.location.pathname.split("/").pop();
     // If we're at the root, default to index.html
     if (path === "") path = "index.html";
@@ -102,7 +102,7 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* Renaissance CD background image */
+        /* aissance CD background image */
         body::after {
             content: '';
             position: fixed;
@@ -110,7 +110,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('../assets/renaissance-cd-cover.jpg');
+            background-image: url('../assets/renaissance-cd-cover.webp');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
@@ -393,7 +393,7 @@
             <div style="display: flex; justify-content: center; width: 100%;">
                 <a href="https://aherndavid.github.io/dpaulstudio/renaissance-launcher.html" target="_blank" class="album-link">
                     <div class="album-cover" id="albumCover">
-                        <img src="../assets/renaissance-cover.jpg" alt="Renaissance Cover">
+                        <img src="../assets/renaissance-cover.webp" alt="Renaissance Cover">
                         <div class="click-hint" data-i18n="music_click_hint">// Click to enjoy</div>
                     </div>
                 </a>
