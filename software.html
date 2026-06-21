@@ -95,6 +95,12 @@
         .product-body p{font-size:calc(1.1rem * var(--font-scale));line-height:1.9;color:var(--text);margin-bottom:20px;}
         .product-body strong{color:var(--cream);font-weight:normal;}
         .product-body em{color:var(--orange);font-style:normal;}
+
+        .webp-split{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;margin-bottom:28px;}
+        .webp-split-text p:last-child{margin-bottom:0;}
+        @media(max-width:900px){
+            .webp-split{grid-template-columns:1fr;gap:24px;}
+        }
         @media(max-width:900px){
             .product-block{grid-template-columns:1fr;}
             .product-date-col{padding-right:0;padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid var(--border-dim);}
@@ -218,10 +224,51 @@
         <p>Tools built to a higher standard — more power, more control, runs natively on your Mac. Some are paid, some are free. All built from scratch.</p>
     </section>
 
+    <!-- ── WEBP CONVERTER ── -->
+    <div class="product-block reveal" id="software-webp-converter">
+        <div class="product-date-col">
+            <span class="product-eyebrow-col">Released June 20, 2026</span>
+            <span class="product-title-col">WebP Converter</span>
+            <div class="product-tags">
+                <span class="product-tag">Software</span>
+                <span class="product-tag">Mac App</span>
+                <span class="product-tag">Images</span>
+                <span class="product-tag">Free</span>
+            </div>
+        </div>
+        <div class="product-body">
+            <div class="webp-split">
+                <div class="webp-split-text">
+                    <p>
+                        Batch convert your image library to WebP — smaller files, faster load times, zero uploads.
+                    </p>
+                    <p>
+                        Every image on the web should be a WebP — it's the format browsers were built for. <em>Drag in a folder of images</em>, set a quality level, and batch convert the lot in seconds, right on your Mac. <strong>No uploads, no accounts, no cloud</strong> — everything happens locally, and the results screen shows exactly how much space you've saved per file.
+                    </p>
+                </div>
+                <div class="webp-split-video">
+                    <video src="assets/webp-converter.mp4" autoplay loop muted playsinline
+                           style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:4px;display:block;"></video>
+                </div>
+            </div>
+            <ul class="feature-list">
+                <li>Batch convert entire folders — PNG, JPG, GIF, TIFF and more</li>
+                <li>Adjustable compression quality with real-time file size comparison</li>
+                <li>Add prefix, suffix, or auto-numbering to output filenames</li>
+                <li>Download individually or as a single zip — no cloud, fully offline</li>
+                <li>Native Apple Silicon — built for M1, M2, M3 and M4 Macs</li>
+                <li>Requires macOS 12 or later</li>
+            </ul>
+            <div>
+                <a href="https://github.com/aherndavid/dpaulstudio/releases/download/v1.6.0/WebP-Converter-v1.6.0.zip" target="_blank" class="buy-btn">Download Free</a>
+                <span class="price-note">Free forever &middot; Apple Silicon (M1 / M2 / M3 / M4) &middot; macOS 12 or later</span>
+            </div>
+        </div>
+    </div>
+
     <!-- ── DUPE REMOVE ── -->
     <div class="product-block reveal" id="software-dupe-remove">
         <div class="product-date-col">
-            <span class="product-eyebrow-col">// 01</span>
             <span class="product-title-col">Dupe Remove</span>
             <div class="product-tags">
                 <span class="product-tag">Software</span>
@@ -251,7 +298,6 @@
     <!-- ── HTML-LIVE ── -->
     <div class="product-block reveal" id="software-html-live">
         <div class="product-date-col">
-            <span class="product-eyebrow-col">// 02</span>
             <span class="product-title-col">HTML&#8209;Live</span>
             <div class="product-tags">
                 <span class="product-tag">Software</span>
@@ -281,7 +327,6 @@
     <!-- ── DP-ONE MKVI ── -->
     <div class="product-block reveal" id="software-dp-one">
         <div class="product-date-col">
-            <span class="product-eyebrow-col">// 03</span>
             <span class="product-title-col">DP&#8209;ONE MKVI</span>
             <div class="product-tags">
                 <span class="product-tag">Synthesiser</span>
@@ -326,42 +371,6 @@
             <div>
                 <a href="https://davidpaul2.gumroad.com/l/fycixk" target="_blank" class="buy-btn">Download Free</a>
                 <span class="price-note">Free forever &middot; Apple Silicon (M1 / M2 / M3) &middot; macOS 12 or later</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ── WEBP CONVERTER ── -->
-    <div class="product-block reveal" id="software-webp-converter">
-        <div class="product-date-col">
-            <span class="product-eyebrow-col">// 04</span>
-            <span class="product-title-col">WebP Converter</span>
-            <div class="product-tags">
-                <span class="product-tag">Software</span>
-                <span class="product-tag">Mac App</span>
-                <span class="product-tag">Images</span>
-                <span class="product-tag">Free</span>
-            </div>
-        </div>
-        <div class="product-body">
-            <p>
-                Batch convert your image library to WebP — smaller files, faster load times, zero uploads.
-            </p>
-            <p>
-                Every image on the web should be a WebP — it's the format browsers were built for. <em>Drag in a folder of images</em>, set a quality level, and batch convert the lot in seconds, right on your Mac. <strong>No uploads, no accounts, no cloud</strong> — everything happens locally, and the results screen shows exactly how much space you've saved per file.
-            </p>
-            <video src="assets/webp-converter.mp4" autoplay loop muted playsinline
-                   style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:4px;margin-top:4px;margin-bottom:28px;display:block;"></video>
-            <ul class="feature-list">
-                <li>Batch convert entire folders — PNG, JPG, GIF, TIFF and more</li>
-                <li>Adjustable compression quality with real-time file size comparison</li>
-                <li>Add prefix, suffix, or auto-numbering to output filenames</li>
-                <li>Download individually or as a single zip — no cloud, fully offline</li>
-                <li>Native Apple Silicon — built for M1, M2, M3 and M4 Macs</li>
-                <li>Requires macOS 12 or later</li>
-            </ul>
-            <div>
-                <a href="https://github.com/aherndavid/dpaulstudio/releases/download/v1.6.0/WebP-Converter-v1.6.0.zip" target="_blank" class="buy-btn">Download Free</a>
-                <span class="price-note">Free forever &middot; Apple Silicon (M1 / M2 / M3 / M4) &middot; macOS 12 or later</span>
             </div>
         </div>
     </div>
