@@ -366,6 +366,9 @@
             transition: background 0.2s, color 0.2s, transform 0.15s; flex-shrink: 0;
         }
         .cv-link:hover { background: var(--orange); color: #000; transform: translateY(-1px); }
+        .cv-strip-dual { align-items: center; }
+        .cv-link-group { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+        @media (max-width: 480px) { .cv-link-group { width: 100%; } .cv-link-group .cv-link { flex: 1; text-align: center; } }
 
         .mobile-view-footer { margin-top: 80px; text-align: center; padding: 40px 0; border-top: 1px solid var(--border-dim); }
         .mobile-toggle { font-size: 0.8rem; color: var(--dim); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -748,9 +751,12 @@
         <div class="contact-split">
             <div class="contact-info">
                 <p data-i18n="about_contact_p">For a <strong>free 30-minute consultation</strong> to find out how I can help you with your next project — fill in the form or reach out directly.</p>
-                <div class="cv-strip">
-                    <p data-i18n="cv_strip_p"><strong>Agencies</strong> can download a copy of my current CV.</p>
-                    <a href="../assets/cv/cv.html" target="_blank" class="cv-link" data-i18n="cv_link">Download CV</a>
+                <div class="cv-strip cv-strip-dual">
+                    <p data-i18n="cv_strip_p"><strong>Agencies</strong> can download a copy of my current CV — a focused IT Infrastructure version, or the full version covering creative technology work too.</p>
+                    <div class="cv-link-group">
+                        <a href="../assets/cv/cv-it.html" target="_blank" class="cv-link" data-i18n="cv_link_it">IT Infrastructure CV</a>
+                        <a href="../assets/cv/cv.html" target="_blank" class="cv-link" data-i18n="cv_link_full">Full / Creative CV</a>
+                    </div>
                 </div>
             </div>
 
