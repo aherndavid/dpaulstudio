@@ -223,6 +223,9 @@
         /* ── PROCESS ── */
         .process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
         .process-card { background: var(--bg2); border: 1px solid var(--border); padding: 22px 20px; border-radius: 6px; }
+        a.process-card { transition: border-color 0.2s ease, background 0.2s ease; }
+        a.process-card:hover { border-color: var(--orange); background: rgba(255,102,0,0.06); }
+        a.process-card h3 { color: var(--orange) !important; }
         .card-label { font-size: 0.78rem; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
         
         .outcome-strip {
@@ -433,8 +436,42 @@
         </div>
     </section>
 
+<section class="section reveal"
+         id="music-listen"
+         data-post-section
+         data-post-title="dPaul Studio — Listen Now">
+    <div class="section-label">// 03 — Out Now</div>
+    <h2>I Wait For Skylar (Chaos Mix)</h2>
+    <p class="section-intro">A dance cut built around a bassline pulled straight from a <strong style="color:var(--orange)">90's Korg M1</strong> — that unmistakable slap bass patch that soundtracked a whole era of house and dance records. Out now on iTunes, YouTube Music, and all the leading streaming platforms.</p>
+
+    <div class="split">
+        <div style="display: flex; justify-content: center; width: 100%;">
+            <img src="assets/i-wait-for-skylar-square.webp" alt="I Wait For Skylar (Chaos Mix) — cover art"
+                 style="width:100%; max-width:320px; aspect-ratio:1/1; object-fit:cover; border:1px solid var(--border); border-radius:4px;">
+        </div>
+
+        <div class="process-grid" style="grid-template-columns:1fr; margin-top:0;">
+            <a href="https://music.apple.com/gb/album/i-wait-for-skylar-chaos-mix/6786213023?i=6786213024"
+               target="_blank" rel="noopener" class="process-card" style="text-decoration:none; display:block;">
+                <div class="card-label">// Apple Music</div>
+                <h3 style="color:#fff; font-weight:700; margin-bottom:4px;">Listen on iTunes &#8594;</h3>
+            </a>
+            <a href="http://url2734.distrokid.com/ls/click?upn=u001.a0grtTtFNGObbwv02PitCBD0hhptL0BTFhOwF9TaDJHC9tlG5lkfYb9kFMplF6sRoxsU4KZlq195jnQPAK9e0kMz-2B-2BbU1tneK4-2FJXBozlbhIYK7RW8UfzGnuVw-2BE8i8WB6EvlvofYcmSNkyHy1zrFhq-2FGqTO8zIuJK9L1-2FnGDfk-3DQal1_syXCvRBUDlnC3ymG9HBLJNZa8kAboE6aU3SApRNiK-2BK7sHGM0a59PPEl542TCdHxM-2FpUlEGBpC-2F-2FuZFj0heKXpOW-2Fid8nO16n4fDKWkrtCJvwjVl8jguJlDpViXGaDdR2QmhedgdXmYfxPNwPTp6XUh95kLdR-2Fxl-2B6F03yTGNmyUCi9wcZ-2BuibH8nFs5OJHvlMOufVsKX7uns1GiWGRJKw-3D-3D"
+               target="_blank" rel="noopener" class="process-card" style="text-decoration:none; display:block;">
+                <div class="card-label">// All Platforms</div>
+                <h3 style="color:#fff; font-weight:700; margin-bottom:4px;">Listen Everywhere &#8594;</h3>
+            </a>
+            <a href="https://www.youtube.com/watch?v=2FyASRoJwmM&list=OLAK5uy_mbvJ20mfLOcOD1-V8RQQFLF1SKL-ie9P0"
+               target="_blank" rel="noopener" class="process-card" style="text-decoration:none; display:block;">
+                <div class="card-label">// YouTube Music</div>
+                <h3 style="color:#fff; font-weight:700; margin-bottom:4px;">Listen on YouTube Music &#8594;</h3>
+            </a>
+        </div>
+    </div>
+</section>
+
 <section class="section reveal" id="music-contact">
-    <div class="section-label" data-i18n="music_contact_label">// 03 — Project Inquiry</div>
+    <div class="section-label" data-i18n="music_contact_label">// 04 — Project Inquiry</div>
     <h2 data-i18n="music_cta_h2">Want something built?</h2>
     <p data-i18n="music_cta_p">Custom audio players or interactive archives for your music project.</p>
 

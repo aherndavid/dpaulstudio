@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dpaul.studio — eq</title>
+
+    <style>
+        :root {
+            --bg:      #0F1010;
+            --orange:  #FF6600;
+            --cream:   #D4C4A8;
+        }
+
+        *, *::before, *::after {
+            margin: 0; padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%; height: 100%;
+            background-color: var(--bg);
+            background-image: url("assets/desk-phone.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-blend-mode: luminosity;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            color: var(--cream);
+        }
+
+        body { position: relative; }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 16, 16, 0.85);
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* ── PORTRAIT EQ STAGE ── */
+        #eq-stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: clamp(6px, 1.6vw, 16px);
+            width: min(80vw, 480px);
+            height: min(55vh, 480px);
+        }
+
+        .eq-bar {
+            width: 100%;
+            max-width: 40px;
+            background: var(--orange);
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 0 24px rgba(255, 102, 0, 0.35);
+            transition: height 0.1s ease;
+            flex: 1 1 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="eq-stage"></div>
+
+    <!-- EQ animation -->
+    <script>
+        const NUM_BANDS = 10;
+        const container = document.getElementById('eq-stage');
+        const MAX_H = () => container.clientHeight;
+
+        const levels  = Array.from({ length: NUM_BANDS }, () => Math.random() * MAX_H() * 0.6 + MAX_H() * 0.1);
+        const targets = [...levels];
+        const bars    = [];
+
+        for (let i = 0; i < NUM_BANDS; i++) {
+            const b = document.createElement('div');
+            b.className = 'eq-bar';
+            b.style.height = levels[i] + 'px';
+            container.appendChild(b);
+            bars.push(b);
+        }
+
+        (function animate() {
+            const max = MAX_H();
+            for (let i = 0; i < NUM_BANDS; i++) {
+                if (Math.random() < 0.08) targets[i] = Math.random() * max * 0.85 + max * 0.1;
+                levels[i] += (targets[i] - levels[i]) * 0.12;
+                bars[i].style.height = levels[i].toFixed(1) + 'px';
+            }
+            requestAnimationFrame(animate);
+        })();
+    </script>
+</body>
+</html>
