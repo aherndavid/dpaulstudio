@@ -2,472 +2,217 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>David Ahern — CV</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap');
+
   :root {
-    --navy: #1B2A4A;
-    --red: #C8102E;
-    --cream: #F5F0E8;
-    --mid: #666666;
-    --light: #EDEBE3;
-    --ink: #1a1a1a;
+    --bg: #f7f3ea;
+    --ink: #1c2333;
+    --red: #b23a2e;
+    --line: #d9d2c1;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { box-sizing: border-box; }
 
   body {
-    background: var(--cream);
+    background: var(--bg);
     color: var(--ink);
-    font-family: 'DM Mono', monospace;
-    font-size: 19px;
-    line-height: 1.7;
-  }
-
-  /* Grain overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.4;
-  }
-
-  .page {
-    max-width: 860px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 780px;
     margin: 0 auto;
-    padding: 60px 60px 80px;
-    position: relative;
-  }
-
-  /* Print button */
-  .print-btn {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    background: var(--navy);
-    color: var(--cream);
-    border: none;
-    padding: 10px 20px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: background 0.2s;
-    z-index: 100;
-  }
-  .print-btn:hover { background: var(--red); }
-
-  /* Header — left aligned, matching original */
-  header {
-    border-bottom: 3px solid var(--navy);
-    padding-bottom: 24px;
-    margin-bottom: 36px;
-    animation: fadeUp 0.6s ease both;
-    text-align: left;
+    padding: 48px 24px 80px;
   }
 
   h1 {
-    font-family: 'Special Elite', serif;
-    font-size: 52px;
-    color: var(--navy);
-    letter-spacing: -0.01em;
-    line-height: 1;
-    margin-bottom: 6px;
+    font-family: 'Special Elite', cursive;
+    font-size: 34px;
+    color: var(--ink);
+    margin: 0 0 4px;
+    letter-spacing: 0.5px;
   }
 
   .subtitle {
-    font-size: 14px;
     color: var(--red);
-    letter-spacing: 0.05em;
-    margin-bottom: 14px;
-    font-weight: 500;
+    font-weight: 700;
+    margin: 0 0 6px;
   }
 
   .contact {
-    font-size: 11.5px;
-    color: var(--mid);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 0;
-    align-items: center;
+    font-size: 13px;
+    margin: 0 0 32px;
   }
 
-  .contact a {
-    color: var(--mid);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-  .contact a:hover { color: var(--red); }
-  .contact span.dot { margin: 0 10px; color: #bbb; }
-
-  /* Sections */
-  section {
-    margin-bottom: 36px;
-    animation: fadeUp 0.6s ease both;
-  }
-
-  section:nth-child(2) { animation-delay: 0.1s; }
-  section:nth-child(3) { animation-delay: 0.15s; }
-  section:nth-child(4) { animation-delay: 0.2s; }
-  section:nth-child(5) { animation-delay: 0.25s; }
-  section:nth-child(6) { animation-delay: 0.3s; }
-  section:nth-child(7) { animation-delay: 0.35s; }
-  section:nth-child(8) { animation-delay: 0.4s; }
+  .contact a { color: var(--ink); }
 
   h2 {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.18em;
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    color: var(--navy);
-    border-bottom: 2px solid var(--red);
+    color: var(--red);
+    border-bottom: 1px solid var(--line);
     padding-bottom: 6px;
-    margin-bottom: 18px;
+    margin: 40px 0 16px;
   }
 
-  /* Profile */
-  .profile p {
+  h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 20px 0 2px;
+  }
+
+  .role-meta {
     font-size: 13px;
-    line-height: 1.8;
-    color: #2a2a2a;
-    max-width: 720px;
+    color: var(--red);
+    margin: 0 0 8px;
   }
 
-  /* Skills grid */
-  .skills-grid {
+  p { margin: 0 0 12px; }
+
+  ul { margin: 0 0 12px; padding-left: 20px; }
+  li { margin-bottom: 8px; }
+
+  .matrix-row {
     display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 2px;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    margin-bottom: 14px;
   }
 
-  .skill-label {
-    background: var(--light);
-    padding: 8px 12px;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--navy);
-    letter-spacing: 0.02em;
-    display: flex;
-    align-items: flex-start;
-    padding-top: 10px;
-  }
-
-  .skill-value {
-    background: white;
-    padding: 8px 14px 8px 16px;
-    font-size: 12px;
-    color: #333;
-    line-height: 1.6;
-    border-left: 2px solid var(--light);
-  }
-
-  /* Jobs */
-  .job { margin-bottom: 24px; }
-
-  .job-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-bottom: 6px;
-  }
-
-  .job-title {
-    font-weight: 500;
+  .matrix-label {
+    font-weight: 700;
+    color: var(--red);
     font-size: 13px;
-    color: var(--navy);
   }
 
-  .job-company {
-    font-size: 11.5px;
-    color: var(--mid);
-    margin-left: 8px;
+  .divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 8px 0 8px;
   }
 
-  .job-dates {
-    font-size: 11px;
-    color: var(--mid);
+  .quote {
     font-style: italic;
-    white-space: nowrap;
+    border-left: 2px solid var(--red);
+    padding-left: 14px;
+    margin: 10px 0 16px;
+    font-size: 14px;
   }
 
-  .job ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .job ul li {
-    font-size: 12.5px;
-    padding: 2px 0 2px 18px;
-    position: relative;
-    color: #2a2a2a;
-    line-height: 1.65;
-  }
-
-  .job ul li::before {
-    content: '—';
-    position: absolute;
-    left: 0;
-    color: var(--red);
-    font-size: 11px;
-  }
-
-  /* Achievements list (outside .job) */
-  .achievements ul,
-  .availability ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .achievements ul li,
-  .availability ul li {
-    font-size: 12.5px;
-    padding: 2px 0 2px 18px;
-    position: relative;
-    color: #2a2a2a;
-    line-height: 1.65;
-    margin-bottom: 4px;
-  }
-
-  .achievements ul li::before,
-  .availability ul li::before {
-    content: '—';
-    position: absolute;
-    left: 0;
-    color: var(--red);
-    font-size: 11px;
-  }
-
-  /* Testimonial */
-  .testimonial {
-    margin-top: 10px;
-    padding: 12px 18px;
-    background: #fff;
-    border-left: 3px solid var(--red);
-    font-style: italic;
-    font-size: 12px;
-    color: var(--navy);
-    line-height: 1.7;
-  }
-
-  .testimonial-author {
-    display: block;
-    text-align: right;
-    font-style: normal;
-    font-weight: 500;
-    color: var(--red);
-    font-size: 11px;
-    margin-top: 6px;
-  }
-
-  /* Availability text */
-  .availability p {
-    font-size: 12.5px;
-    color: #2a2a2a;
-    line-height: 1.7;
-  }
-
-  .availability p a {
-    color: var(--red);
-    text-decoration: none;
-  }
-
-  /* Footer */
   footer {
     margin-top: 48px;
-    padding-top: 20px;
-    border-top: 1px solid #ccc;
-    font-size: 10.5px;
-    color: #aaa;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  footer a { color: #aaa; text-decoration: none; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @media print {
-    body { background: white; font-size: 11px; }
-    body::before { display: none; }
-    .print-btn { display: none; }
-    .page { padding: 20px 30px; max-width: 100%; }
-    section, header { animation: none; }
-    h1 { font-size: 36px; }
-    .job { page-break-inside: avoid; }
-  }
-
-  @media (max-width: 600px) {
-    .page { padding: 30px 24px; }
-    h1 { font-size: 36px; }
-    .skills-grid { grid-template-columns: 1fr; }
-    .job-header { flex-direction: column; }
+    font-size: 12px;
+    color: var(--ink);
+    opacity: 0.7;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
   }
 </style>
 </head>
 <body>
 
-<button class="print-btn" onclick="window.print()">⬇ Print / Save PDF</button>
+<h1>DAVID AHERN</h1>
+<p class="subtitle">Creative Technologist — AI-Directed Development — IT Infrastructure Specialist</p>
+<p class="contact">
+  Maidenhead, UK &nbsp;·&nbsp; 07304 088384 &nbsp;·&nbsp;
+  <a href="mailto:davidpaulahern@gmail.com">davidpaulahern@gmail.com</a> &nbsp;·&nbsp;
+  <a href="https://www.dpaul.studio">www.dpaul.studio</a> &nbsp;·&nbsp;
+  <a href="https://www.behance.net/dpaulstudio">Behance</a> &nbsp;·&nbsp;
+  CitiIT Limited (<a href="https://citiit.uk">citiit.uk</a>)
+</p>
 
-<div class="page">
+<h2>Professional Profile</h2>
+<p>
+A Creative Technologist and IT Infrastructure Specialist with 35 years of systems experience across global banking, luxury retail operations, and headquarters relocations. I use AI-assisted development tools to design and ship working web applications and browser-native utilities, directing the build process and troubleshooting issues with a solid working understanding of the underlying code. Currently pivoting from enterprise IT into creative technology — combining decades of systems and infrastructure judgement with modern AI-assisted front-end development and digital brand work.
+</p>
 
-  <!-- HEADER — left aligned, Special Elite 52px navy -->
-  <header>
-    <h1>DAVID AHERN</h1>
-    <p class="subtitle">Creative Technologist &nbsp;&mdash;&nbsp; Full-Stack Solutions Builder &nbsp;&mdash;&nbsp; IT Infrastructure Specialist</p>
-    <div class="contact">
-      <span>Maidenhead, UK</span>
-      <span class="dot">·</span>
-      <a href="tel:07304088384">07304 088384</a>
-      <span class="dot">·</span>
-      <a href="mailto:davidpaulahern@gmail.com">davidpaulahern@gmail.com</a>
-      <span class="dot">·</span>
-      <a href="https://www.dpaul.studio" target="_blank">www.dpaul.studio</a>
-      <span class="dot">·</span>
-      <span>CitiIT Limited (<a href="https://citiit.uk" target="_blank">citiit.uk</a>)</span>
-    </div>
-  </header>
+<h2>Technical Core Matrix</h2>
 
-  <!-- PROFILE -->
-  <section class="profile">
-    <h2>Professional Profile</h2>
-    <p>A multi-disciplinary Creative Technologist, Web Solutions Architect, and IT Infrastructure Specialist with 35 years of core systems experience across global banking, luxury retail operations, and critical headquarters relocations. Proven capacity to transition complex engineering logic into non-templated, lightweight web applications and browser-native tools. Expert at coordinating technical lifecycles under an independent limited company banner, combining high-scrutiny document compliance, front-end automation pipelines, and cinematic production values to deliver custom software that solves precise commercial operational challenges. Currently pivoting into Creative Technology, merging decades of IT logic with modern front-end design, AI-assisted coding, and digital brand storytelling — bridging the gap between technical infrastructure and creative output.</p>
-  </section>
-
-  <!-- SKILLS -->
-  <section>
-    <h2>Technical Core Matrix</h2>
-    <div class="skills-grid">
-      <div class="skill-label">Front-End Architecture</div>
-      <div class="skill-value">Vanilla JavaScript (ES6+), Clean HTML5 Canvas Construction, Semantic CSS3 Layouts, Responsive Interface UI Breakpoints, Hardware-to-Web Audio API Synthesiser Implementations, Readymag (Expert), interactive UI components, UI/UX for MIDI-web integration.</div>
-
-      <div class="skill-label">Web Utilities &amp; Ops</div>
-      <div class="skill-value">File System Access API, Array Manipulation, Local State Management, Git Automation Panels, GitHub Pages &amp; Netlify CI/CD Deployment Architectures, Client-Side Session Local Cache Security, Supabase (Auth &amp; Database).</div>
-
-      <div class="skill-label">Automation &amp; Cloud</div>
-      <div class="skill-value">AI-Assisted Contextual Coding Patterns (Claude / GPT Integration), Automated Speech Synthesis Integration (Google Cloud TTS), Document Workflow Parsing Logic, Structured API Integrations, Automated Workflow Logic.</div>
-
-      <div class="skill-label">Media &amp; Creative</div>
-      <div class="skill-value">Cinematic 4K Showreel Production (Widescreen 16:9 &amp; Mobile Portrait 9:16 Platform Cuts), Sony Cine Capture, Adobe Premiere Pro (Advanced), Adobe Photoshop, After Effects, Logic Pro X, Sound Design &amp; Dynamic Audio Signal Visualisation.</div>
-
-      <div class="skill-label">Compliance &amp; Docs</div>
-      <div class="skill-value">Institutional Document Architecture, Adobe Acrobat Pro Engineering, Optical Character Recognition (OCR) Text Layer Cleaning, Sequential Institutional Bates Numbering Systems.</div>
-
-      <div class="skill-label">Enterprise Infrastructure</div>
-      <div class="skill-value">IT Service Management (ITSM), VIP/C-Level Support Frameworks, Legacy Shift Mainframe Systems (IBM System 38, AS400 Disaster Recovery), ServiceNow, Active Directory, Azure, Google Cloud (GCP), Google Workspace, Fleet MDM, Windows 10/11, macOS.</div>
-    </div>
-  </section>
-
-  <!-- EXPERIENCE -->
-  <section>
-    <h2>Professional Experience</h2>
-
-    <!-- CitiIT / dPaul.studio — listed first as primary current role -->
-    <div class="job">
-      <div class="job-header">
-        <div><span class="job-title">Director &amp; Creative Technologist</span><span class="job-company">CitiIT Limited — Trading as dPaul.studio</span></div>
-        <span class="job-dates">2023 — Present</span>
-      </div>
-      <ul>
-        <li><strong>Bespoke Platform Architecture:</strong> Conceived, coded, and launched Autofacts.uk, an independent prestige vehicle marketplace utilising automated AI specification parsing, model-provenance matching, multi-device cinematic 4K video playback blocks, and a direct lead-routing communication pipeline.</li>
-        <li><strong>Browser Engine Utility Engineering:</strong> Developed Dupe Remove (v1.0), a high-performance browser-native image array de-duplication utility using customisable match-level thresholds alongside full data session purges for client-side privacy.</li>
-        <li><strong>Application Scaling &amp; Tooling:</strong> Iterated the development of HTML-Live (v1.7), a standalone responsive code preview sandbox mapping integrated Desktop, Tablet, and Mobile viewport testing scopes with zero-latency preview processing.</li>
-        <li><strong>Synthesiser Engineering:</strong> Self-engineered and shipped a custom 32-step MIDI Synthesiser with sequence patterns, leveraging vanilla Web Audio APIs, real-time FFT decibel mapping, and Netlify for rapid deployment and version control.</li>
-        <li><strong>Supabase Integration:</strong> Architected interactive tools using Supabase for user data persistence and pattern memory across browser sessions.</li>
-        <li><strong>Contract Freelance Consultancy:</strong> Deliver strategic technology alignment and template-free custom digital presences to small enterprises throughout London and Berkshire, protecting operational business continuity.</li>
-      </ul>
-    </div>
-
-    <!-- Kering -->
-    <div class="job">
-      <div class="job-header">
-        <div><span class="job-title">IT Service Manager (Kering Corporate Office Relocation)</span><span class="job-company">Creed / Kering Beauty, London</span></div>
-        <span class="job-dates">Jul 2024 — Feb 2025</span>
-      </div>
-      <ul>
-        <li>Led the high-stakes on-site deployment and corporate user data migration for the 16th floor of the Aldersgate headquarters under tight execution windows, achieving zero data loss.</li>
-        <li>Managed and supervised engineering workflows and remote support loops protecting critical uptime for high-end luxury boutique storefronts across Central London using ServiceNow.</li>
-        <li>Commended explicitly by senior luxury brand management for seamless infrastructure execution, meticulous data privacy care, and white-glove VIP executive support delivery.</li>
-      </ul>
-      <div class="testimonial">
-        "David, we wanted to thank you so much for all the time spent together and all the hard work you've put in to make sure that we're all migrated safely. We really loved working with you."
-        <span class="testimonial-author">— Headquarters Relocation Review, Kering Beauty London</span>
-      </div>
-    </div>
-
-    <!-- BMI -->
-    <div class="job">
-      <div class="job-header">
-        <div><span class="job-title">On-Site Infrastructure &amp; VIP Support Consultant</span><span class="job-company">BMI Group, London / Reading</span></div>
-        <span class="job-dates">Sep 2019 — Feb 2024</span>
-      </div>
-      <ul>
-        <li>Coordinated continuous multi-site IT business continuity protocols for an internal infrastructure cluster protecting enterprise operations under high-pressure conditions, managing a team of 5.</li>
-        <li>Managed structural corporate teardowns, asset collections, and hardware refreshes — including the full systematic operational decommissioning of the Piccadilly headquarters.</li>
-        <li>Maintained 100% IT continuity throughout the pandemic, scaling Mobile Device Management (MDM) fleets and ensuring complete data access continuity across distributed remote deployments.</li>
-      </ul>
-    </div>
-
-    <!-- OUP -->
-    <div class="job">
-      <div class="job-header">
-        <div><span class="job-title">Onsite IT Manager</span><span class="job-company">Oxford University Press, Kettering</span></div>
-        <span class="job-dates">2017 — 2019</span>
-      </div>
-      <ul>
-        <li>Provided 1st and 2nd line support leadership and technical coaching for frontline desktop support engineering teams within a legacy-rich computing environment.</li>
-      </ul>
-    </div>
-
-    <!-- Banking -->
-    <div class="job">
-      <div class="job-header">
-        <div><span class="job-title">Banking IT Operations Support Specialist</span><span class="job-company">Santander, Citibank, NatWest</span></div>
-        <span class="job-dates">1990 — 2012</span>
-      </div>
-      <ul>
-        <li>Administered institutional disaster recovery transitions, active network tracking, and batch computing processes throughout City of London global banking nodes.</li>
-        <li>Gained extensive structural familiarity with high-availability mainframe architectures, managing legacy IBM System 38 and AS400 frameworks across central banking data loops.</li>
-        <li>Maintained a spotless reputation delivering elite operational support frameworks for top-tier C-level global banking executives.</li>
-      </ul>
-    </div>
-
-  </section>
-
-  <!-- ACHIEVEMENTS -->
-  <section class="achievements">
-    <h2>Selected Professional Achievements</h2>
-    <ul>
-      <li><strong>Zero-Loss Migration:</strong> Successfully migrated the 16th floor of Aldersgate (Kering Beauty) with zero data loss, earning a formal commendation from luxury brand senior management.</li>
-      <li><strong>Browser-Native Tooling:</strong> Self-engineered and shipped custom browser-based synthesiser engines and audio processing units leveraging vanilla Web Audio APIs and real-time FFT decibel mapping.</li>
-      <li><strong>Cinematic Automotive Media:</strong> Built a premium automotive platform presence, scaling self-produced cinematic 4K video showcases and high-fidelity content to over 220+ subscribers on the AutoFacts YouTube channel.</li>
-      <li><strong>Full-Stack Product Launch:</strong> Independently conceived, designed, and deployed Autofacts.uk — a prestige vehicle marketplace with AI-assisted specification parsing, cinematic media, and automated lead routing.</li>
-      <li><strong>Spotless Executive Reputation:</strong> Maintained an untarnished career track record delivering elite operational support frameworks for top-tier C-level global banking executives and luxury sector directors across 35 years.</li>
-    </ul>
-  </section>
-
-  <!-- AVAILABILITY -->
-  <section class="availability">
-    <h2>Availability &amp; Portfolio References</h2>
-    <p>Immediately available for London-based freelance, B2B corporate contract, permanent, or creative front-end technology roles. Full portfolio case files, functional application links, and verified institutional references are available immediately upon inquiry via <strong>CitiIT Limited</strong> — <a href="https://citiit.uk" target="_blank">citiit.uk</a> &nbsp;&bull;&nbsp; <a href="https://www.dpaul.studio" target="_blank">www.dpaul.studio</a></p>
-  </section>
-
-  <footer>
-    <span>David Ahern — CV — May 2026</span>
-    <span><a href="https://www.dpaul.studio">www.dpaul.studio</a></span>
-  </footer>
-
+<div class="matrix-row">
+  <div class="matrix-label">Front-End Development<br>(AI-Directed)</div>
+  <div>Build and ship responsive web interfaces (HTML5, CSS3, JavaScript) using AI-assisted coding tools (Claude, Gemini); working knowledge of code sufficient to direct changes, identify bugs, and evaluate output quality. Readymag, interactive UI components, UI/UX for MIDI-web integration.</div>
 </div>
+
+<div class="matrix-row">
+  <div class="matrix-label">Web Utilities & Ops</div>
+  <div>Git version control, GitHub Pages & Netlify CI/CD deployment, Supabase (Auth & Database), File System Access API — configured and managed via AI-directed development.</div>
+</div>
+
+<div class="matrix-row">
+  <div class="matrix-label">Automation & AI Tooling</div>
+  <div>Practical, daily use of AI coding assistants to prototype, debug, and iterate; strong instinct for spotting where AI-generated code is wrong, inefficient, or insecure, drawing on infrastructure background. Automated Speech Synthesis Integration (Google Cloud TTS), document workflow parsing logic.</div>
+</div>
+
+<div class="matrix-row">
+  <div class="matrix-label">Media & Creative</div>
+  <div>Cinematic 4K showreel production (widescreen 16:9 & mobile portrait 9:16 platform cuts), Sony Cine capture, Adobe Premiere Pro (Advanced), Adobe Photoshop, After Effects, Logic Pro X, sound design & dynamic audio signal visualisation.</div>
+</div>
+
+<div class="matrix-row">
+  <div class="matrix-label">Compliance & Docs</div>
+  <div>Institutional document architecture, Adobe Acrobat Pro engineering, OCR text layer cleaning, sequential institutional Bates numbering systems.</div>
+</div>
+
+<div class="matrix-row">
+  <div class="matrix-label">Enterprise Infrastructure</div>
+  <div>IT Service Management (ITSM), VIP/C-level support frameworks, legacy mainframe systems (IBM System 38, AS400 disaster recovery), ServiceNow, Active Directory, Azure, Google Cloud (GCP), Google Workspace, fleet MDM, Windows 10/11, macOS.</div>
+</div>
+
+<h2>Professional Experience</h2>
+
+<h3>Director & Creative Technologist</h3>
+<p class="role-meta">CitiIT Limited — Trading as dPaul.studio &nbsp;·&nbsp; 2023 — Present</p>
+<ul>
+  <li><strong>Bespoke Platform Architecture:</strong> Directed the design and AI-assisted development of Autofacts.uk, an independent prestige vehicle marketplace with automated AI specification parsing, model-provenance matching, multi-device cinematic 4K video playback, and lead-routing.</li>
+  <li><strong>Browser Engine Utility Engineering:</strong> Directed the build of Dupe Remove (v1.0), a browser-native image array de-duplication utility using customisable match-level thresholds and full data session purges for client-side privacy.</li>
+  <li><strong>Application Scaling & Tooling:</strong> Directed iterative development of HTML-Live (v1.7), a standalone responsive code preview sandbox covering Desktop, Tablet, and Mobile viewport testing.</li>
+  <li><strong>Synthesiser Engineering:</strong> Designed and shipped a custom 32-step MIDI synthesiser with sequence patterns, using AI-directed development against Web Audio APIs, real-time FFT decibel mapping, deployed via Netlify.</li>
+  <li><strong>Supabase Integration:</strong> Directed the build of interactive tools using Supabase for user data persistence and pattern memory across browser sessions.</li>
+  <li><strong>Contract Freelance Consultancy:</strong> Deliver strategic technology alignment and custom digital presences to small enterprises throughout London and Berkshire, protecting operational business continuity.</li>
+</ul>
+
+<h3>IT Service Manager (Kering Corporate Office Relocation)</h3>
+<p class="role-meta">Creed / Kering Beauty, London &nbsp;·&nbsp; Jul 2024 — Feb 2025</p>
+<p class="quote">"David, we wanted to thank you so much for all the time spent together and all the hard work you've put in to make sure that we're all migrated safely. We really loved working with you."<br>— Headquarters Relocation Review, Kering Beauty London</p>
+
+<h3>On-Site Infrastructure & VIP Support Consultant</h3>
+<p class="role-meta">BMI Group, London / Reading &nbsp;·&nbsp; Sep 2019 — Feb 2024</p>
+
+<h3>Onsite IT Manager</h3>
+<p class="role-meta">Oxford University Press, Kettering &nbsp;·&nbsp; 2017 — 2019</p>
+
+<h3>Banking IT Operations Support Specialist</h3>
+<p class="role-meta">Santander, Citibank, NatWest &nbsp;·&nbsp; 1990 — 2012</p>
+
+<h2>Selected Professional Achievements</h2>
+<ul>
+  <li>Led the high-stakes on-site deployment and corporate user data migration for the 16th floor of the Aldersgate headquarters under tight execution windows, achieving zero data loss.</li>
+  <li>Managed and supervised engineering workflows and remote support loops protecting critical uptime for high-end luxury boutique storefronts across Central London using ServiceNow.</li>
+  <li>Commended explicitly by senior luxury brand management for seamless infrastructure execution, meticulous data privacy care, and VIP executive support delivery.</li>
+  <li>Coordinated continuous multi-site IT business continuity protocols for an internal infrastructure cluster protecting enterprise operations under high-pressure conditions, managing a team of 5.</li>
+  <li>Managed structural corporate teardowns, asset collections, and hardware refreshes — including the full systematic operational decommissioning of the Piccadilly headquarters.</li>
+  <li>Maintained 100% IT continuity throughout the pandemic, scaling Mobile Device Management (MDM) fleets and ensuring complete data access continuity across distributed remote deployments.</li>
+  <li>Provided 1st and 2nd line support leadership and technical coaching for frontline desktop support engineering teams within a legacy-rich computing environment.</li>
+  <li>Administered institutional disaster recovery transitions, active network tracking, and batch computing processes throughout City of London global banking nodes.</li>
+  <li>Gained extensive structural familiarity with high-availability mainframe architectures, managing legacy IBM System 38 and AS400 frameworks across central banking data loops.</li>
+  <li>Maintained a strong reputation delivering operational support frameworks for top-tier C-level global banking executives.</li>
+  <li><strong>Zero-Loss Migration:</strong> Successfully migrated the 16th floor of Aldersgate (Kering Beauty) with zero data loss, earning a formal commendation from luxury brand senior management.</li>
+  <li><strong>Browser-Native Tooling:</strong> Directed the build and shipping of custom browser-based synthesiser engines and audio processing units, using Web Audio APIs and real-time FFT decibel mapping.</li>
+  <li><strong>Cinematic Automotive Media:</strong> Built a premium automotive platform presence, scaling self-produced cinematic 4K video showcases to 220+ subscribers on the AutoFacts YouTube channel.</li>
+  <li><strong>Full-Stack Product Launch:</strong> Directed the conception, design, and AI-assisted deployment of Autofacts.uk — a prestige vehicle marketplace with AI-assisted specification parsing, cinematic media, and automated lead routing.</li>
+</ul>
+
+<h2>Availability & Portfolio References</h2>
+<p>
+Immediately available for London-based freelance, B2B corporate contract, permanent, or creative technology roles. Full portfolio case files, functional application links, and verified institutional references are available immediately upon inquiry via CitiIT Limited — <a href="https://citiit.uk">citiit.uk</a> &nbsp;·&nbsp; <a href="https://www.dpaul.studio">www.dpaul.studio</a>
+</p>
+
+<footer>
+David Ahern — CV — July 2026 — www.dpaul.studio
+</footer>
+
 </body>
 </html>
