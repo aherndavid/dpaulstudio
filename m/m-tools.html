@@ -138,10 +138,17 @@
 
         /* NEW: Specific size for the VU image */
         .img-vu {
-         width: 70% !important;  /* This makes it 30% smaller than the 100% default */
+         width: 62% !important;  /* slightly smaller, matched against TTS below */
          display: block;         /* Allows centering */
          margin-left: auto;      /* Centers the image */
          margin-right: auto;     /* Centers the image */
+}
+        /* NEW: Specific size for the TTS image, matched to the VU render above */
+        .img-tts {
+         width: 92% !important;
+         display: block;
+         margin-left: auto;
+         margin-right: auto;
 }
         .visual-caption { font-size: 0.7rem; color: var(--dim); text-align: center; text-transform: uppercase; margin-bottom: 24px; }
 
@@ -223,7 +230,7 @@
         </ul>
 
         <img src="../assets/vu-3d.webp" alt="VU 3D render" class="tool-render-img img-vu">
-        <p class="visual-caption">3D Render — The VU as hardware</p>
+        <p class="visual-caption">3D render</p>
         
         <a href="../tools/vu/vu-mobile.html" class="launch-btn">Launch VU Meter</a>
     </section>
@@ -240,8 +247,8 @@
             <li><span class="spec-key">Engine</span><span class="spec-val">AI Voice Models</span></li>
         </ul>
 
-        <img src="../assets/tts.webp" alt="TTS 3D render" class="tool-render-img">
-        <p class="visual-caption">3D Render — TTS Engine Hardware</p>
+        <img src="../assets/tts.webp" alt="TTS 3D render" class="tool-render-img img-tts">
+        <p class="visual-caption">3D render</p>
         
         <a href="../tools/tts/tts-mobile.html" class="launch-btn">Launch TTS Engine</a>
     </section>
