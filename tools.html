@@ -113,8 +113,10 @@
         .instrument-visual{position:sticky;top:100px;}
         .tool-render-img{width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 24px 40px rgba(0,0,0,.6));border-radius:4px;display:block;}
         .img-large{width:130% !important;margin-left:-15% !important;}
-        .img-small{width:75% !important;margin-left:12.5% !important;}
+        .img-small{width:65% !important;margin-left:17.5% !important;}
         .visual-caption{font-size:calc(1.066rem * var(--font-scale));color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:14px;text-align:center;}
+        .vu-visual{margin-top:-28px;}
+        .tts-visual{margin-top:-10px;}
 
         /* TOOL BLOCKS (from dev-tools.html) */
         .tool-block{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;padding:72px 0;border-bottom:1px solid var(--border);}
@@ -319,9 +321,9 @@
                 </ul>
                 <a href="../vu-launcher-desktop.html" target="_blank" class="launch-btn">Launch VU Meter &#8594;</a>
             </div>
-            <div class="instrument-visual">
+            <div class="instrument-visual vu-visual">
                 <img src="../assets/vu-3d.webp" alt="dPaul VU Meter" class="tool-render-img img-small">
-                <p class="visual-caption">3D render — the VU meter as a physical device</p>
+                <p class="visual-caption">3D render</p>
             </div>
         </div>
     </div>
@@ -341,9 +343,9 @@
                 </ul>
                 <a href="../tts-launcher-desktop.html" target="_blank" class="launch-btn">Launch TTS Engine &#8594;</a>
             </div>
-            <div class="instrument-visual">
-                <img src="../assets/tts-render.png" alt="dPaul TTS" class="tool-render-img">
-                <p class="visual-caption">3D render — the TTS engine as a physical device</p>
+            <div class="instrument-visual tts-visual">
+                <img src="../assets/tts-render.png" alt="dPaul TTS" class="tool-render-img img-large">
+                <p class="visual-caption">3D render</p>
             </div>
         </div>
     </div>
