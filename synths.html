@@ -251,6 +251,8 @@
             border-radius: 3px; transition: all 0.2s;
         }
         .launch-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
+        .launch-btn.secondary { border-color: var(--cream); color: var(--cream); }
+        .launch-btn.secondary:hover { background: var(--cream); color: #000; transform: translateY(-2px); }
         .instrument-visual { position: sticky; top: 100px; }
         .synth-3d-img { width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.6)); transition: opacity 0.8s ease-in-out; }
         .visual-caption { font-size: calc(1.066rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 14px; text-align: center; }
@@ -729,10 +731,10 @@
          data-post-section
          data-post-title="DP-ONE MKVI — Standalone Mac Synthesiser">
         <div class="instrument-eyebrow">// 04 - The Rebuild</div>
-        <div class="instrument-name">DP-ONE MKVI <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">Standalone Mac App</span></div>
+        <div class="instrument-name">DP-ONE MKVI <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">Browser &amp; Mac App</span></div>
         <div class="instrument-body" style="margin-bottom: 40px;">
             <div>
-                <p class="instrument-story" style="margin-bottom:16px;">The MKVI is the version that stepped off the browser and became a real application. Built from the ground up as a native Mac app using Electron and the Web Audio API, it installs and runs like any other piece of studio software — no browser tab, no internet connection required, no setup beyond dragging it to Applications.</p>
+                <p class="instrument-story" style="margin-bottom:16px;">The MKVI is available two ways. Play it instantly right here in the browser — free, no install, no account. Or download it as a native Mac app, built with Electron on top of the same Web Audio engine, that installs and runs like any other piece of studio software — no browser tab, no internet connection required, no setup beyond dragging it to Applications.</p>
                 <p class="instrument-story" style="margin-bottom:16px;">Three synth engines — SuperSaw, Moog Bass, and FM Lead — feed through a full seven-mode filter bank with LFO, envelope, drive, chorus, BPM-locked echo, and convolution reverb. A seven-track drum sequencer runs alongside a dual bass sequencer with six engine types: Sub Bass, Acid 303, Slap Bass, Rubber, Reese, and Click Bass. Play live over the running sequencer from the 37-key on-screen keyboard or any connected USB MIDI keyboard.</p>
                 <p class="instrument-story" style="margin-bottom:16px;">Audio output routes directly into Logic Pro, Ableton, or GarageBand via <strong style="color:var(--cream);">BlackHole</strong> — a free virtual audio driver that creates a low-latency pipe between the MKVI and your DAW. Set BlackHole as your Mac's output, arm a track in your DAW, and record the MKVI as a live audio source. Patterns can also be exported as standard MIDI files and imported straight into any DAW as editable regions, with drums on Ch10, bass lines on Ch2 and Ch3, and the synth on Ch1.</p>
                 <img src="../assets/dp-one-large.webp" alt="DP-ONE MKVI — 3D render" style="width:100%;max-width:100%;border-radius:4px;margin-bottom:28px;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,0.7));">
@@ -751,8 +753,11 @@
                     <span class="skill-tag">AI bass generator</span>
                     <span class="skill-tag">3 preset slots · JSON export</span>
                 </div>
-                <a href="../dpone/dpone-mkvi.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block; margin-bottom:12px;">Launch DP-ONE MKVI</a>
-                <p style="font-size:calc(1.066rem * var(--font-scale)); color:var(--dim); letter-spacing:0.08em; margin-top:8px;">Free forever &nbsp;·&nbsp; runs in browser &nbsp;·&nbsp; no install &nbsp;·&nbsp; no account required</p>
+                <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+                    <a href="../dpone/dpone-mkvi.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block;">Launch in Browser</a>
+                    <a href="https://davidpaul2.gumroad.com/l/fycixk" target="_blank" rel="noopener noreferrer" class="launch-btn secondary" style="display:inline-block;">Download for Mac</a>
+                </div>
+                <p style="font-size:calc(1.066rem * var(--font-scale)); color:var(--dim); letter-spacing:0.08em; margin-top:8px;">Browser: free forever &nbsp;·&nbsp; no install &nbsp;·&nbsp; no account required &nbsp;&nbsp;|&nbsp;&nbsp; Mac app: native Electron build, available on Gumroad</p>
             </div>
             <div class="instrument-visual">
                 <img src="../assets/dpone-mkvi.webp" alt="DP-ONE MKVI — 3D render" class="synth-3d-img" style="border-radius: 4px; filter: drop-shadow(0 24px 40px rgba(0,0,0,0.7));">
