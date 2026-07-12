@@ -892,13 +892,68 @@
             </div>
             <div style="display:flex; align-items:center; gap:16px; margin-top:6px; flex-wrap:wrap;">
                 <button class="btn btn-sm" id="arpOnBtn" onclick="toggleArp()">ARP ON</button>
+                <button class="btn btn-sm" id="arpHoldBtn" onclick="toggleHold()">ARP HOLD</button>
                 <div class="arp-pattern-btns filter-mode-btns">
                     <button class="fbtn active" id="arp-up"      onclick="setArpPattern('up')">UP</button>
                     <button class="fbtn"        id="arp-down"    onclick="setArpPattern('down')">DOWN</button>
                     <button class="fbtn"        id="arp-updown"  onclick="setArpPattern('updown')">UP / DOWN</button>
                     <button class="fbtn"        id="arp-random"  onclick="setArpPattern('random')">RANDOM</button>
                 </div>
-                <span class="lbl" style="font-size:7px;color:#555;max-width:260px;line-height:1.5;">Patterns only differ with 2+ notes active — hold a chord (multi-touch or MIDI), or turn on NOTE LATCH and click keys one at a time to build one up.</span>
+                <span class="lbl" style="font-size:7px;color:#555;max-width:260px;line-height:1.5;">Patterns only differ with 2+ notes active — turn on ARP HOLD and click white or black keys one at a time to build up a chord, instead of needing to hold them all down at once.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         ROW 3.6 — DRUM FX (per-drum reverb sends)
+    ══════════════════════════════════════════════ -->
+    <div class="row-arp">
+        <div class="inset ctrl-section" style="flex:1;">
+            <div class="ctrl-section-title">
+                <span class="lbl lbl-gold">Drum FX — Reverb Send</span>
+            </div>
+            <div class="knob-row" style="gap:14px; margin-top:6px; flex-wrap:wrap;">
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxKickVal">0%</div>
+                    <div class="knob knob-sm" id="fxKickKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">KICK</span>
+                </div>
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxSnareVal">0%</div>
+                    <div class="knob knob-sm" id="fxSnareKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">SNARE</span>
+                </div>
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxHatVal">0%</div>
+                    <div class="knob knob-sm" id="fxHatKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">HAT</span>
+                </div>
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxTomVal">0%</div>
+                    <div class="knob knob-sm" id="fxTomKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">TOM</span>
+                </div>
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxRimVal">0%</div>
+                    <div class="knob knob-sm" id="fxRimKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">RIM</span>
+                </div>
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxShakerVal">0%</div>
+                    <div class="knob knob-sm" id="fxShakerKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">SHAKER</span>
+                </div>
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxClapVal">0%</div>
+                    <div class="knob knob-sm" id="fxClapKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">CLAP</span>
+                </div>
+                <div class="knob-wrap">
+                    <div class="knob-readout" style="width:40px;font-size:7px;" id="fxCrashVal">0%</div>
+                    <div class="knob knob-sm" id="fxCrashKnob"></div>
+                    <span class="lbl" style="font-size:6.5px;">CRASH</span>
+                </div>
+                <span class="lbl" style="font-size:7px;color:#555;max-width:180px;line-height:1.5;">Each drum sends independently into the shared reverb — mix per-sound ambience without touching the others.</span>
             </div>
         </div>
     </div>
@@ -957,6 +1012,7 @@ let reverbConv, reverbMix, anal;
 // Filter LFO
 let filterLFO, filterLFOGain;
 let drumGains = {};
+let drumReverbSend = {};
 let audioReady = false;
 
 // Filter state
@@ -1039,6 +1095,12 @@ function initAudio() {
         drumGains[d] = audioCtx.createGain();
         drumGains[d].gain.value = 0.75;
         drumGains[d].connect(masterGain);
+
+        // Per-drum FX send — independent reverb amount for each drum voice
+        drumReverbSend[d] = audioCtx.createGain();
+        drumReverbSend[d].gain.value = 0;
+        drumGains[d].connect(drumReverbSend[d]);
+        drumReverbSend[d].connect(reverbConv);
     });
 
     // Hide gain knob initially (not needed for LP/HP/BP/Notch)
@@ -1513,6 +1575,8 @@ function changeOctave(d) {
 function toggleHold() {
     isHold = !isHold;
     document.getElementById('holdBtn').classList.toggle('active', isHold);
+    const arpHoldBtn = document.getElementById('arpHoldBtn');
+    if (arpHoldBtn) arpHoldBtn.classList.toggle('active', isHold);
     if (!isHold) { arpMemory = Array.from(heldNotes).sort((a,b)=>a-b); arpStep = 0; }
 }
 
@@ -1704,6 +1768,16 @@ function initKnobs() {
     setupKnob('kickVol',   0, 1.5, 0.8, v => drumGains.kick.gain.value = v,  null, ()=>'');
     setupKnob('snareVol',  0, 1.5, 0.5, v => drumGains.snare.gain.value = v, null, ()=>'');
     setupKnob('hatVol',    0, 1.5, 0.3, v => drumGains.hat.gain.value = v,   null, ()=>'');
+
+    // ── Per-drum FX sends (reverb) ──
+    setupKnob('fxKickKnob',   0, 1, 0, v => drumReverbSend.kick.gain.value   = v, 'fxKickVal',   v => Math.round(v*100)+'%');
+    setupKnob('fxSnareKnob',  0, 1, 0, v => drumReverbSend.snare.gain.value  = v, 'fxSnareVal',  v => Math.round(v*100)+'%');
+    setupKnob('fxHatKnob',    0, 1, 0, v => drumReverbSend.hat.gain.value    = v, 'fxHatVal',    v => Math.round(v*100)+'%');
+    setupKnob('fxTomKnob',    0, 1, 0, v => drumReverbSend.tom.gain.value    = v, 'fxTomVal',    v => Math.round(v*100)+'%');
+    setupKnob('fxRimKnob',    0, 1, 0, v => drumReverbSend.rim.gain.value    = v, 'fxRimVal',    v => Math.round(v*100)+'%');
+    setupKnob('fxShakerKnob', 0, 1, 0, v => drumReverbSend.shaker.gain.value = v, 'fxShakerVal', v => Math.round(v*100)+'%');
+    setupKnob('fxClapKnob',   0, 1, 0, v => drumReverbSend.clap.gain.value   = v, 'fxClapVal',   v => Math.round(v*100)+'%');
+    setupKnob('fxCrashKnob',  0, 1, 0, v => drumReverbSend.crash.gain.value  = v, 'fxCrashVal',  v => Math.round(v*100)+'%');
 }
 
 // Pre-fill display values before audio context is created
@@ -1714,7 +1788,10 @@ const preInit = [
     ['fenvAmtVal','0 Hz'],    ['fenvDecVal','0.10 s'],
     ['atkVal','10 ms'],       ['relVal','0.30 s'],
     ['driveVal','0 %'],       ['detuneVal','0 ct'],
-    ['chorusVal','0 %'],      ['delayVal','0 %'],     ['reverbVal','0 %']
+    ['chorusVal','0 %'],      ['delayVal','0 %'],     ['reverbVal','0 %'],
+    ['fxKickVal','0%'],       ['fxSnareVal','0%'],    ['fxHatVal','0%'],
+    ['fxTomVal','0%'],        ['fxRimVal','0%'],      ['fxShakerVal','0%'],
+    ['fxClapVal','0%'],       ['fxCrashVal','0%']
 ];
 preInit.forEach(([id, v]) => { const el = document.getElementById(id); if (el) el.textContent = v; });
 
