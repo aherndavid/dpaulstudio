@@ -25,6 +25,17 @@
             --font-scale: 1;
         }
 
+        .mkvi-slideshow { position: relative; width: 100%; margin-top: 24px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+        .mkvi-slideshow img { width: 100%; display: block; animation: mkviSlideshow 10s infinite; }
+        .mkvi-slideshow img:nth-child(2) { position: absolute; top: 0; left: 0; animation-delay: -5s; }
+        @keyframes mkviSlideshow {
+            0%   { opacity: 1; }
+            42%  { opacity: 1; }
+            50%  { opacity: 0; }
+            92%  { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
         html[data-theme="light"] {
             --bg:      #f1f1ef;
             --bg2:     #e4e4e1;
@@ -744,8 +755,10 @@
                     pattern gets bounced offline and downloaded, muted tracks respected, ready to drag into
                     Logic, Ableton, or any DAW.
                 </p>
-                <img src="../assets/dpone-update.webp" alt="DP-ONE MKVI — 3D render"
-                     style="width:100%; max-width:100%; border:1px solid var(--border); border-radius:4px; margin-top:24px; display:block;">
+                <div class="mkvi-slideshow">
+                    <img src="../assets/dpone-update.webp" alt="DP-ONE MKVI — 3D render">
+                    <img src="../assets/dpone-update-2.webp" alt="DP-ONE MKVI — 3D render alternate view">
+                </div>
                 <p style="margin-top:24px;">
                     Pushed a round of updates to <em>DP-ONE MKVI</em> based on actual studio use — the kind
                     of small, practical fixes that only show up once you're playing an instrument rather than
