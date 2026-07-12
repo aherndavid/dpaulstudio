@@ -29,9 +29,10 @@
             background: #0a0a0a;
             background-image: radial-gradient(ellipse at 50% 35%, #181818 0%, #050505 100%);
             min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+            display: flex; justify-content: center; align-items: flex-start;
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            overflow: hidden;
+            overflow-y: auto; overflow-x: hidden;
+            padding: 24px 0;
         }
 
         /* ══════════════════════════════════════════════
@@ -219,7 +220,7 @@
             grid-template-columns: 1fr 300px 86px;
             gap: 10px;
             /* Fixed height so it doesn't stretch */
-            height: 148px;
+            height: 190px;
         }
 
         /* Sequencer */
@@ -263,7 +264,7 @@
             flex: 1;
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(7, 1fr);
+            grid-template-rows: repeat(9, 1fr);
             gap: 3px 6px;
         }
         .seq-step {
@@ -388,6 +389,14 @@
             display: flex; flex-direction: column; gap: 3px;
         }
         .lfo-shape-btns .fbtn { font-size: 10px; padding: 3px 7px; }
+
+        /* ═══════════════════════════════════════════════
+           ROW 3.5 — ARPEGGIATOR
+        ═══════════════════════════════════════════════ */
+        .row-arp {
+            display: flex; gap: 10px; align-items: stretch;
+        }
+        .arp-pattern-btns .fbtn { font-size: 8px; padding: 4px 10px; }
 
         /* ═══════════════════════════════════════════════
            ROW 4 — PIANO ROW
@@ -625,7 +634,11 @@
 
                 <div class="sep" style="height:20px;align-self:center;"></div>
 
-                <button class="btn btn-sm" id="holdBtn" onclick="toggleHold()">ARP HOLD</button>
+                <button class="btn btn-sm" id="holdBtn" onclick="toggleHold()">NOTE LATCH</button>
+
+                <div class="sep" style="height:20px;align-self:center;"></div>
+
+                <button class="btn btn-sm" id="exportWavBtn" onclick="exportDrumWav()">EXPORT DRUM WAV</button>
             </div>
         </div>
 
@@ -670,6 +683,14 @@
                 <div class="seq-label-row">
                     <span class="lbl">Shaker</span>
                     <button class="mute-btn" onclick="toggleMute(5, this)">M</button>
+                </div>
+                <div class="seq-label-row">
+                    <span class="lbl">Clap</span>
+                    <button class="mute-btn" onclick="toggleMute(6, this)">M</button>
+                </div>
+                <div class="seq-label-row">
+                    <span class="lbl">Crash</span>
+                    <button class="mute-btn" onclick="toggleMute(7, this)">M</button>
                 </div>
                 <div class="seq-label-row">
                     <span class="lbl" style="color:#3a994a;">Synth</span>
@@ -862,6 +883,27 @@
     </div>
 
     <!-- ══════════════════════════════════════════════
+         ROW 3.5 — ARPEGGIATOR
+    ══════════════════════════════════════════════ -->
+    <div class="row-arp">
+        <div class="inset ctrl-section" style="flex:1;">
+            <div class="ctrl-section-title">
+                <span class="lbl lbl-gold">Arpeggiator</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px; margin-top:6px; flex-wrap:wrap;">
+                <button class="btn btn-sm" id="arpOnBtn" onclick="toggleArp()">ARP ON</button>
+                <div class="arp-pattern-btns filter-mode-btns">
+                    <button class="fbtn active" id="arp-up"      onclick="setArpPattern('up')">UP</button>
+                    <button class="fbtn"        id="arp-down"    onclick="setArpPattern('down')">DOWN</button>
+                    <button class="fbtn"        id="arp-updown"  onclick="setArpPattern('updown')">UP / DOWN</button>
+                    <button class="fbtn"        id="arp-random"  onclick="setArpPattern('random')">RANDOM</button>
+                </div>
+                <span class="lbl" style="font-size:7px;color:#555;max-width:260px;line-height:1.5;">Patterns only differ with 2+ notes active — hold a chord (multi-touch or MIDI), or turn on NOTE LATCH and click keys one at a time to build one up.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
          ROW 4 — PIANO ROW
          [ joystick ] [ keyboard ] [ octave ]
     ══════════════════════════════════════════════ -->
@@ -993,7 +1035,7 @@ function initAudio() {
     reverbConv.buffer = buildReverb(2.2, 3); reverbMix.gain.value = 0;
     waveshaper.curve = makeDriveCurve(0);
 
-    ['kick','snare','hat','tom','rim','shaker'].forEach(d => {
+    ['kick','snare','hat','tom','rim','shaker','clap','crash'].forEach(d => {
         drumGains[d] = audioCtx.createGain();
         drumGains[d].gain.value = 0.75;
         drumGains[d].connect(masterGain);
@@ -1085,11 +1127,12 @@ let isPlaying   = false, bpm = 120, currentStep = 0, nextStepTime = 0, timerID;
 let stepLen     = 8;
 let heldNotes   = new Set(), arpMemory = [], arpStep = 0;
 let octaveOffset = 0, pitchBend = 1.0, isHold = false;
+let arpOn = false, arpPattern = 'up', arpTimerID = null, arpNextTime = 0, arpIndex = 0;
 let attackTime  = 0.01, releaseTime = 0.3;
 let synthEngine = 'supersaw';
 let activeVoices = 0;
 let detuneAmt   = 0; // extra cents of global detune spread
-let drumMuted = [false, false, false, false, false, false]; // kick, snare, hat, tom, rim, shaker
+let drumMuted = [false, false, false, false, false, false, false, false]; // kick, snare, hat, tom, rim, shaker, clap, crash
 function toggleMute(i, btn) {
     drumMuted[i] = !drumMuted[i];
     btn.classList.toggle('active', drumMuted[i]);
@@ -1106,13 +1149,15 @@ const sequence = [
     [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
 ];
 
 const seqGrid = document.getElementById('seqGrid');
-for (let r = 0; r < 7; r++) {
+for (let r = 0; r < 9; r++) {
     for (let s = 0; s < 16; s++) {
         const cell = document.createElement('div');
-        cell.className = `seq-step${r === 6 ? ' synth-row' : ''}${sequence[r][s] ? ' on' : ''}`;
+        cell.className = `seq-step${r === 8 ? ' synth-row' : ''}${sequence[r][s] ? ' on' : ''}`;
         cell.id = `step-${r}-${s}`;
         cell.style.display = s < 8 ? '' : 'none';
         cell.onclick = () => { sequence[r][s] ^= 1; cell.classList.toggle('on'); };
@@ -1122,7 +1167,7 @@ for (let r = 0; r < 7; r++) {
 function setStepLen(len) {
     stepLen = len;
     ['s8','s16'].forEach(id => document.getElementById(id).classList.toggle('active', id === `s${len}`));
-    for (let r = 0; r < 7; r++)
+    for (let r = 0; r < 9; r++)
         for (let s = 0; s < 16; s++)
             document.getElementById(`step-${r}-${s}`).style.display = s < len ? '' : 'none';
     seqGrid.style.gridTemplateColumns = `repeat(${len}, 1fr)`;
@@ -1132,56 +1177,186 @@ setStepLen(8);
 // ═══════════════════════════════════════════════════════
 // DRUM SYNTHS
 // ═══════════════════════════════════════════════════════
-function playKick(t) {
-    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+function playKick(t, ctx = audioCtx, gain = drumGains.kick) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
     o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(0.01, t + 0.45);
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1.4, t + 0.004); g.gain.exponentialRampToValueAtTime(0.01, t + 0.45);
-    o.connect(g); g.connect(drumGains.kick); o.start(t); o.stop(t + 0.45);
+    o.connect(g); g.connect(gain); o.start(t); o.stop(t + 0.45);
     // click
-    const c = audioCtx.createOscillator(), cg = audioCtx.createGain();
+    const c = ctx.createOscillator(), cg = ctx.createGain();
     c.frequency.value = 1400; cg.gain.setValueAtTime(0.4, t); cg.gain.exponentialRampToValueAtTime(0.001, t + 0.015);
-    c.connect(cg); cg.connect(drumGains.kick); c.start(t); c.stop(t + 0.02);
+    c.connect(cg); cg.connect(gain); c.start(t); c.stop(t + 0.02);
 }
-function playSnare(t) {
-    const o = audioCtx.createOscillator(), og = audioCtx.createGain();
+function playSnare(t, ctx = audioCtx, gain = drumGains.snare) {
+    const o = ctx.createOscillator(), og = ctx.createGain();
     o.frequency.setValueAtTime(200, t);
     og.gain.setValueAtTime(0.6, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
-    o.connect(og); og.connect(drumGains.snare); o.start(t); o.stop(t + 0.14);
-    const n = audioCtx.createBufferSource(), ng = audioCtx.createGain();
-    const b = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.14, audioCtx.sampleRate);
+    o.connect(og); og.connect(gain); o.start(t); o.stop(t + 0.14);
+    const n = ctx.createBufferSource(), ng = ctx.createGain();
+    const b = ctx.createBuffer(1, ctx.sampleRate * 0.14, ctx.sampleRate);
     const d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     n.buffer = b; ng.gain.setValueAtTime(0.9, t); ng.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
-    n.connect(ng); ng.connect(drumGains.snare); n.start(t); n.stop(t + 0.14);
+    n.connect(ng); ng.connect(gain); n.start(t); n.stop(t + 0.14);
 }
-function playHat(t) {
+function playHat(t, ctx = audioCtx, gain = drumGains.hat) {
     [8000, 10000, 12000, 15000].forEach(f => {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        const o = ctx.createOscillator(), g = ctx.createGain();
         o.type = 'square'; o.frequency.value = f;
         g.gain.setValueAtTime(0.1, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-        o.connect(g); g.connect(drumGains.hat); o.start(t); o.stop(t + 0.05);
+        o.connect(g); g.connect(gain); o.start(t); o.stop(t + 0.05);
     });
 }
-function playShaker(t) {
+function playShaker(t, ctx = audioCtx, gain = drumGains.shaker) {
     const dur = 0.09;
-    const n = audioCtx.createBufferSource();
-    const b = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
+    const n = ctx.createBufferSource();
+    const b = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
     const d = b.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     n.buffer = b;
-    const bp = audioCtx.createBiquadFilter();
+    const bp = ctx.createBiquadFilter();
     bp.type = 'bandpass'; bp.frequency.value = 7000; bp.Q.value = 0.9;
-    const g = audioCtx.createGain();
+    const g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(0.55, t + 0.008);
     g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-    n.connect(bp); bp.connect(g); g.connect(drumGains.shaker);
+    n.connect(bp); bp.connect(g); g.connect(gain);
     n.start(t); n.stop(t + dur);
 }
-function playPerc(t, freq, gainNode) {
-    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+function playPerc(t, freq, gainNode, ctx = audioCtx) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
     o.frequency.setValueAtTime(freq, t); o.frequency.exponentialRampToValueAtTime(freq * 0.4, t + 0.12);
     g.gain.setValueAtTime(0.65, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
     o.connect(g); g.connect(gainNode); o.start(t); o.stop(t + 0.15);
+}
+function playClap(t, ctx = audioCtx, gain = drumGains.clap) {
+    // Three quick noise bursts to simulate multiple hands, then a slightly longer body
+    [0, 0.01, 0.02].forEach((o, i) => {
+        const dur = 0.06;
+        const n = ctx.createBufferSource();
+        const b = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+        const d = b.getChannelData(0);
+        for (let j = 0; j < d.length; j++) d[j] = Math.random() * 2 - 1;
+        n.buffer = b;
+        const bp = ctx.createBiquadFilter();
+        bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = 1.2;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t + o);
+        g.gain.exponentialRampToValueAtTime(0.5, t + o + 0.005);
+        g.gain.exponentialRampToValueAtTime(0.001, t + o + dur);
+        n.connect(bp); bp.connect(g); g.connect(gain);
+        n.start(t + o); n.stop(t + o + dur);
+    });
+    const tailDur = 0.15, tailStart = t + 0.03;
+    const n2 = ctx.createBufferSource();
+    const b2 = ctx.createBuffer(1, ctx.sampleRate * tailDur, ctx.sampleRate);
+    const d2 = b2.getChannelData(0);
+    for (let j = 0; j < d2.length; j++) d2[j] = Math.random() * 2 - 1;
+    n2.buffer = b2;
+    const bp2 = ctx.createBiquadFilter();
+    bp2.type = 'bandpass'; bp2.frequency.value = 1200; bp2.Q.value = 0.7;
+    const g2 = ctx.createGain();
+    g2.gain.setValueAtTime(0.0001, tailStart);
+    g2.gain.exponentialRampToValueAtTime(0.45, tailStart + 0.005);
+    g2.gain.exponentialRampToValueAtTime(0.001, tailStart + tailDur);
+    n2.connect(bp2); bp2.connect(g2); g2.connect(gain);
+    n2.start(tailStart); n2.stop(tailStart + tailDur);
+}
+function playCrash(t, ctx = audioCtx, gain = drumGains.crash) {
+    const dur = 1.6;
+    const n = ctx.createBufferSource();
+    const b = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+    const d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    n.buffer = b;
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 5000;
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 9000; bp.Q.value = 0.5;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.5, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    n.connect(hp); hp.connect(bp); bp.connect(g); g.connect(gain);
+    n.start(t); n.stop(t + dur);
+}
+
+// ═══════════════════════════════════════════════════════
+// DRUM PATTERN → WAV EXPORT
+// ═══════════════════════════════════════════════════════
+async function exportDrumWav() {
+    initAudio();
+    const exportBtn = document.getElementById('exportWavBtn');
+    const originalLabel = exportBtn.textContent;
+    exportBtn.textContent = 'RENDERING…';
+    exportBtn.disabled = true;
+    try {
+        const stepDur   = 60 / bpm / 2;         // eighth-note duration, matches the live scheduler
+        const patternDur = stepDur * stepLen;
+        const tail       = 1.8;                  // let the longest decay (crash) ring out fully
+        const totalDur   = patternDur + tail;
+        const sr = audioCtx.sampleRate;
+        const offlineCtx = new OfflineAudioContext(2, Math.ceil(totalDur * sr), sr);
+
+        const offlineMaster = offlineCtx.createGain();
+        offlineMaster.gain.value = masterGain ? masterGain.gain.value : 0.45;
+        offlineMaster.connect(offlineCtx.destination);
+
+        const offlineDrumGains = {};
+        ['kick','snare','hat','tom','rim','shaker','clap','crash'].forEach(d => {
+            offlineDrumGains[d] = offlineCtx.createGain();
+            offlineDrumGains[d].gain.value = drumGains[d] ? drumGains[d].gain.value : 0.75;
+            offlineDrumGains[d].connect(offlineMaster);
+        });
+
+        for (let step = 0; step < stepLen; step++) {
+            const t = step * stepDur;
+            if (sequence[0][step] && !drumMuted[0]) playKick(t, offlineCtx, offlineDrumGains.kick);
+            if (sequence[1][step] && !drumMuted[1]) playSnare(t, offlineCtx, offlineDrumGains.snare);
+            if (sequence[2][step] && !drumMuted[2]) playHat(t, offlineCtx, offlineDrumGains.hat);
+            if (sequence[3][step] && !drumMuted[3]) playPerc(t, 120, offlineDrumGains.tom, offlineCtx);
+            if (sequence[4][step] && !drumMuted[4]) playPerc(t, 900, offlineDrumGains.rim, offlineCtx);
+            if (sequence[5][step] && !drumMuted[5]) playShaker(t, offlineCtx, offlineDrumGains.shaker);
+            if (sequence[6][step] && !drumMuted[6]) playClap(t, offlineCtx, offlineDrumGains.clap);
+            if (sequence[7][step] && !drumMuted[7]) playCrash(t, offlineCtx, offlineDrumGains.crash);
+        }
+
+        const rendered = await offlineCtx.startRendering();
+        const blob = audioBufferToWavBlob(rendered);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `dpaul-mkvi-drum-pattern-${bpm}bpm.wav`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    } finally {
+        exportBtn.textContent = originalLabel;
+        exportBtn.disabled = false;
+    }
+}
+function audioBufferToWavBlob(buffer) {
+    const numChan = buffer.numberOfChannels;
+    const len = buffer.length * numChan * 2 + 44;
+    const arrBuf = new ArrayBuffer(len);
+    const view = new DataView(arrBuf);
+    const writeStr = (offset, str) => { for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); };
+    writeStr(0, 'RIFF'); view.setUint32(4, 36 + buffer.length * numChan * 2, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+    view.setUint16(22, numChan, true); view.setUint32(24, buffer.sampleRate, true);
+    view.setUint32(28, buffer.sampleRate * numChan * 2, true);
+    view.setUint16(32, numChan * 2, true); view.setUint16(34, 16, true);
+    writeStr(36, 'data'); view.setUint32(40, buffer.length * numChan * 2, true);
+    let pos = 44;
+    const channels = [];
+    for (let ch = 0; ch < numChan; ch++) channels.push(buffer.getChannelData(ch));
+    for (let i = 0; i < buffer.length; i++) {
+        for (let ch = 0; ch < numChan; ch++) {
+            let sample = Math.max(-1, Math.min(1, channels[ch][i]));
+            sample = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
+            view.setInt16(pos, sample, true); pos += 2;
+        }
+    }
+    return new Blob([arrBuf], { type: 'audio/wav' });
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1234,7 +1409,7 @@ function playSynth(t, freq) {
 function scheduler() {
     while (nextStepTime < audioCtx.currentTime + 0.1) {
         document.querySelectorAll('.seq-step').forEach(s => s.classList.remove('playing'));
-        for (let r = 0; r < 7; r++) {
+        for (let r = 0; r < 9; r++) {
             const el = document.getElementById(`step-${r}-${currentStep}`);
             if (el) el.classList.add('playing');
         }
@@ -1244,7 +1419,9 @@ function scheduler() {
         if (sequence[3][currentStep] && !drumMuted[3]) playPerc(nextStepTime, 120, drumGains.tom);
         if (sequence[4][currentStep] && !drumMuted[4]) playPerc(nextStepTime, 900, drumGains.rim);
         if (sequence[5][currentStep] && !drumMuted[5]) playShaker(nextStepTime);
-        if (sequence[6][currentStep] && arpMemory.length > 0) {
+        if (sequence[6][currentStep] && !drumMuted[6]) playClap(nextStepTime);
+        if (sequence[7][currentStep] && !drumMuted[7]) playCrash(nextStepTime);
+        if (sequence[8][currentStep] && arpMemory.length > 0) {
             playSynth(nextStepTime, arpMemory[arpStep % arpMemory.length] * Math.pow(2, octaveOffset));
             arpStep++;
         }
@@ -1252,6 +1429,61 @@ function scheduler() {
         currentStep = (currentStep + 1) % stepLen;
     }
     timerID = setTimeout(scheduler, 25);
+}
+
+// ═══════════════════════════════════════════════════════
+// ARPEGGIATOR — runs on its own clock, independent of the
+// drum transport, so it works whether the pattern is
+// playing or stopped.
+// ═══════════════════════════════════════════════════════
+function getArpOrder() {
+    const notes = arpMemory; // already sorted ascending
+    if (notes.length === 0) return [];
+    switch (arpPattern) {
+        case 'down':    return notes.slice().reverse();
+        case 'updown': {
+            if (notes.length < 3) return notes;
+            const down = notes.slice(1, -1).reverse();
+            return notes.concat(down);
+        }
+        case 'random':  return notes; // index chosen randomly per-step below
+        case 'up':
+        default:        return notes;
+    }
+}
+function arpScheduler() {
+    while (arpNextTime < audioCtx.currentTime + 0.1) {
+        if (arpOn && arpMemory.length > 0) {
+            let freq;
+            if (arpPattern === 'random') {
+                freq = arpMemory[Math.floor(Math.random() * arpMemory.length)];
+            } else {
+                const order = getArpOrder();
+                freq = order[arpIndex % order.length];
+                arpIndex++;
+            }
+            playSynth(arpNextTime, freq * Math.pow(2, octaveOffset));
+        }
+        arpNextTime += (60.0 / bpm / 2);
+    }
+    arpTimerID = setTimeout(arpScheduler, 25);
+}
+function toggleArp() {
+    initAudio(); audioCtx.resume();
+    arpOn = !arpOn;
+    document.getElementById('arpOnBtn').classList.toggle('active', arpOn);
+    if (arpOn) {
+        arpIndex = 0; arpNextTime = audioCtx.currentTime;
+        if (!arpTimerID) arpScheduler();
+    } else if (arpTimerID) {
+        clearTimeout(arpTimerID); arpTimerID = null;
+    }
+}
+function setArpPattern(p) {
+    arpPattern = p;
+    arpIndex = 0;
+    ['up','down','updown','random'].forEach(n =>
+        document.getElementById(`arp-${n}`).classList.toggle('active', n === p));
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1316,7 +1548,7 @@ function noteOn(f, el) {
     if (isHold) { if (!arpMemory.includes(f)) { arpMemory.push(f); arpMemory.sort((a,b)=>a-b); } }
     else { arpMemory = Array.from(heldNotes).sort((a,b)=>a-b); }
     arpStep = 0;
-    if (!isPlaying) playSynth(audioCtx.currentTime, f * Math.pow(2, octaveOffset));
+    if (!arpOn) playSynth(audioCtx.currentTime, f * Math.pow(2, octaveOffset));
     if (el) {
         el.classList.add('playing');
         document.getElementById('noteDisplay').textContent = el.dataset.note || '—';
@@ -1571,7 +1803,7 @@ function onMidiMessage(e) {
             arpMemory = Array.from(heldNotes).sort((a,b)=>a-b);
         }
         arpStep = 0;
-        if (!isPlaying) playSynth(audioCtx.currentTime, freq * Math.pow(2, octaveOffset));
+        if (!arpOn) playSynth(audioCtx.currentTime, freq * Math.pow(2, octaveOffset));
         // Light up keyboard key if visible
         highlightMidiKey(freq, true);
     }
