@@ -397,6 +397,19 @@
             display: flex; gap: 10px; align-items: stretch;
         }
         .arp-pattern-btns .fbtn { font-size: 8px; padding: 4px 10px; }
+        .info-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+            background: #1a1a1a; border: 1px solid #333; color: #777;
+            font-size: 9px; font-family: 'Courier New', monospace; font-weight: 700;
+            font-style: italic; cursor: pointer; user-select: none;
+        }
+        .info-btn:hover { background: #262626; color: #ccc; border-color: #555; }
+        .info-text {
+            display: none; font-size: 7px; color: #666; line-height: 1.5;
+            max-width: 320px; margin-top: 8px; flex-basis: 100%;
+        }
+        .info-text.show { display: block; }
 
         /* ═══════════════════════════════════════════════
            ROW 4 — PIANO ROW
@@ -714,6 +727,15 @@
         <div class="inset mixer-panel">
             <span class="lbl lbl-gold" style="font-size:7px;letter-spacing:2px;">MIXER</span>
             <div class="knob-wrap">
+                <div class="knob knob-sm" id="synthVol"></div>
+                <span class="lbl" style="font-size:7px;color:var(--orange);">SYNTH</span>
+            </div>
+            <div class="knob-wrap">
+                <div class="knob knob-sm" id="drumVol"></div>
+                <span class="lbl" style="font-size:7px;color:var(--orange);">DRUMS</span>
+            </div>
+            <div class="sep" style="width:20px;align-self:center;"></div>
+            <div class="knob-wrap">
                 <div class="knob knob-sm" id="kickVol"></div>
                 <span class="lbl" style="font-size:7px;">BD</span>
             </div>
@@ -899,7 +921,8 @@
                     <button class="fbtn"        id="arp-updown"  onclick="setArpPattern('updown')">UP / DOWN</button>
                     <button class="fbtn"        id="arp-random"  onclick="setArpPattern('random')">RANDOM</button>
                 </div>
-                <span class="lbl" style="font-size:7px;color:#555;max-width:260px;line-height:1.5;">Patterns only differ with 2+ notes active — turn on ARP HOLD and click white or black keys one at a time to build up a chord, instead of needing to hold them all down at once.</span>
+                <span class="info-btn" onclick="toggleInfo('arpInfo')" title="More info">i</span>
+                <div class="info-text" id="arpInfo">Patterns only differ with 2+ notes active — turn on ARP HOLD and click white or black keys one at a time to build up a chord, instead of needing to hold them all down at once.</div>
             </div>
         </div>
     </div>
@@ -953,7 +976,8 @@
                     <div class="knob knob-sm" id="fxCrashKnob"></div>
                     <span class="lbl" style="font-size:6.5px;">CRASH</span>
                 </div>
-                <span class="lbl" style="font-size:7px;color:#555;max-width:180px;line-height:1.5;">Each drum sends independently into the shared reverb — mix per-sound ambience without touching the others.</span>
+                <span class="info-btn" onclick="toggleInfo('drumFxInfo')" title="More info">i</span>
+                <div class="info-text" id="drumFxInfo">Each drum sends independently into the shared reverb — mix per-sound ambience without touching the others.</div>
             </div>
         </div>
     </div>
@@ -1005,7 +1029,7 @@
 // ═══════════════════════════════════════════════════════
 // AUDIO ENGINE
 // ═══════════════════════════════════════════════════════
-let audioCtx, masterGain, mainFilter, hpFilter, waveshaper;
+let audioCtx, masterGain, synthMaster, drumMaster, mainFilter, hpFilter, waveshaper;
 let chorusDelay, chorusMix, chorusLFO, chorusLFOGain;
 let tapDelay, tapFeedback, tapMix;
 let reverbConv, reverbMix, anal;
@@ -1028,6 +1052,8 @@ function initAudio() {
 
     audioCtx   = new (window.AudioContext || window.webkitAudioContext)();
     masterGain = audioCtx.createGain();
+    synthMaster = audioCtx.createGain(); synthMaster.gain.value = 1;
+    drumMaster  = audioCtx.createGain(); drumMaster.gain.value  = 1;
     mainFilter = audioCtx.createBiquadFilter();   // main switchable filter
     hpFilter   = audioCtx.createBiquadFilter();   // always-on HP sidechain
     waveshaper = audioCtx.createWaveShaper();
@@ -1054,22 +1080,25 @@ function initAudio() {
     masterGain.gain.value = 0.45;
     anal.fftSize = 1024;
 
-    // Synth chain: hp → mainFilter → waveshaper → (dry + chorus + delay + reverb) → master → anal → out
+    // Synth chain: hp → mainFilter → waveshaper → (dry + chorus + delay) → synthMaster → master → anal → out
+    // Reverb return is a shared bus (fed by both synth and drums) and goes straight to master.
     hpFilter.connect(mainFilter);
     mainFilter.connect(waveshaper);
 
-    waveshaper.connect(masterGain);
+    waveshaper.connect(synthMaster);
     waveshaper.connect(chorusDelay);
     chorusDelay.connect(chorusMix);
-    chorusMix.connect(masterGain);
+    chorusMix.connect(synthMaster);
     waveshaper.connect(tapDelay);
     tapDelay.connect(tapFeedback);
     tapFeedback.connect(tapDelay);
     tapDelay.connect(tapMix);
-    tapMix.connect(masterGain);
+    tapMix.connect(synthMaster);
     waveshaper.connect(reverbConv);
     reverbConv.connect(reverbMix);
     reverbMix.connect(masterGain);
+    synthMaster.connect(masterGain);
+    drumMaster.connect(masterGain);
     masterGain.connect(anal);
     anal.connect(audioCtx.destination);
 
@@ -1094,7 +1123,7 @@ function initAudio() {
     ['kick','snare','hat','tom','rim','shaker','clap','crash'].forEach(d => {
         drumGains[d] = audioCtx.createGain();
         drumGains[d].gain.value = 0.75;
-        drumGains[d].connect(masterGain);
+        drumGains[d].connect(drumMaster);
 
         // Per-drum FX send — independent reverb amount for each drum voice
         drumReverbSend[d] = audioCtx.createGain();
@@ -1547,6 +1576,10 @@ function setArpPattern(p) {
     ['up','down','updown','random'].forEach(n =>
         document.getElementById(`arp-${n}`).classList.toggle('active', n === p));
 }
+function toggleInfo(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('show');
+}
 
 // ═══════════════════════════════════════════════════════
 // TRANSPORT & CONTROLS
@@ -1765,6 +1798,8 @@ function initKnobs() {
         'reverbVal', v => Math.round(v/0.7*100)+' %');
 
     // ── Drum mixer ──
+    setupKnob('synthVol',  0, 1.5, 0.67, v => synthMaster.gain.value = v,     null, ()=>'');
+    setupKnob('drumVol',   0, 1.5, 0.67, v => drumMaster.gain.value  = v,     null, ()=>'');
     setupKnob('kickVol',   0, 1.5, 0.8, v => drumGains.kick.gain.value = v,  null, ()=>'');
     setupKnob('snareVol',  0, 1.5, 0.5, v => drumGains.snare.gain.value = v, null, ()=>'');
     setupKnob('hatVol',    0, 1.5, 0.3, v => drumGains.hat.gain.value = v,   null, ()=>'');
