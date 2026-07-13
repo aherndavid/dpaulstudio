@@ -648,35 +648,13 @@
         </div>
     </div>
 
-    <section class="ai-fail-section reveal" id="synths-ai-fail"
-             data-post-section
-             data-post-title="When AI Gets It Wrong — dPaul Studio">
-        <div class="section-label" data-i18n="synths_ai_fail_label">// When AI gets it wrong</div>
-        <div class="two-col-grid" style="margin-top: 40px;">
-            <div class="ai-fail-main">
-                <p class="learning-body">Something I learned early on - and had to learn the hard way - is recognising when AI is wrong. A generated design can look exactly like a synthesiser: professional layout, labelled controls, convincing colour scheme. And it can have absolutely no understanding of what a synthesiser actually needs to do.</p>
-                <p class="learning-body" style="margin-top:16px;">The example here is a generated MKIV design. At a glance it's convincing. Look closer and it falls apart: a large empty panel with no function, a pitch/filter section with a single knob, mixer controls floating with no relationship to the signal chain, a keyboard awkwardly isolated in a corner. It's a picture of a synthesiser, not a synthesiser.</p>
-                <p class="learning-body" style="margin-top:16px;">Catching this requires genuine understanding of what's being built - which controls belong together and why, what signal flow looks like, where a player's hands actually need to reach. That critical eye is what separates someone who uses AI from someone who works with it. It's a skill that develops through breaking things and knowing why they broke.</p>
-            </div>
-            <div class="ai-fail-visual">
-                <div class="ai-fail-frame">
-                    <img src="../assets/ai-fail.webp" alt="AI-generated synth design with nonsensical layout" class="ai-fail-img" id="ai-fail-img-01">
-                    <div class="ai-fail-caption"><span class="ai-fail-tag" data-i18n="tag_ai_generated">AI generated</span>What happens when you rely heavily on AI :(</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <div class="instrument reveal" id="synths-mkiii-mkiv"
          data-post-section
          data-post-title="DPAUL Station MKIII & MKIV — The Middle Versions">
         <div class="instrument-eyebrow" data-i18n="mkiii_eyebrow">// 02-03 - The Middle Versions</div>
         <div class="instrument-name">DPAUL Station MKIII &amp; MKIV <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">PolyDrum · 37 Keys · Silver Edition</span></div>
-        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII is where the project changed shape. Up to this point it had been a keyboard instrument - something you played note by note. Adding a sequencer and drum machine turned it into something that could run on its own, generating rhythm and melody without anyone touching it. That shift in thinking is what pushed everything forward.</p>
-        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII introduced an 8-step sequencer with four independent rows - kick, snare, hi-hat, and a synth voice - each with its own pattern. A drum mixer handled the balance between them, a BPM control set the pace, and the quad-voice synth engine from the MKII carried over, now driven by the sequencer rather than just the keyboard. Getting the Web Audio scheduler to stay tight at different tempos turned out to be one of the trickier problems in the whole project - timing in a browser is less predictable than it looks.</p>
-        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">One experiment that came and went was a sampler - the ability to load local audio files and trigger them from the keyboard. It worked, but it was limited to short samples and it pulled the instrument in the wrong direction. Adding files in advance felt clumsy; the whole point was something anyone could pick up and play immediately, without preparation. The sampler came out. Knowing what to remove turned out to be as important as knowing what to add.</p>
-        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">By the MKIV the instrument had grown considerably. The keyboard expanded to 37 keys with full pointer event handling - slide between notes, hold multiple keys at once, no glitches. A pitch wheel arrived for real-time expression. The arpeggiator gained a Hold mode, so a chord could be latched and left cycling while both hands were free. The drum section expanded to six rows, and the oscilloscope switched to a green phosphor display - because at a certain point the way something looks becomes part of what it's for.</p>
-        <p class="instrument-story" style="max-width:820px; margin-bottom:28px;">One of the more visible changes at this stage was switching the colour scheme from black to silver. The original dark panels had a certain industrial feel, but the silver version gave it a cleaner, more professional finish - closer to the kind of hardware workstation it was increasingly starting to resemble. That silver MKIV became the reference point for the next phase: turning the HTML interface into something that looked like a real physical object.</p>
+        <p class="instrument-story" style="max-width:820px; margin-bottom:16px;">The MKIII is where the project changed shape — from a keyboard instrument you played note by note into something that could run on its own. An 8-step sequencer arrived with four independent rows (kick, snare, hi-hat, synth), a drum mixer, and BPM control, all driven by the same quad-voice engine from the MKII. A sampler was tried and cut — loading files in advance broke the whole point of an instrument anyone could pick up and play immediately.</p>
+        <p class="instrument-story" style="max-width:820px; margin-bottom:28px;">By the MKIV the keyboard had grown to 37 keys with full pointer-event handling, a pitch wheel arrived for real-time expression, the arpeggiator gained a Hold mode, the drum section expanded to six rows, and the oscilloscope switched to green phosphor. The colour scheme moved from black to silver too — a cleaner, more professional finish that made it look increasingly like real hardware.</p>
         <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 40px;">
             <span class="skill-tag">8-step sequencer</span>
             <span class="skill-tag">Kick · Snare · Hi-Hat · Tom · Rim · Synth rows</span>
@@ -689,22 +667,6 @@
             <span class="skill-tag">Silver colour scheme</span>
             <span class="skill-tag">Sampler (removed)</span>
         </div>
-        <div class="inset-render">
-            <div class="inset-render-label" data-i18n="mkiv_render_label">// The Silver MKIV — rendered as hardware</div>
-            <div class="two-col-grid">
-                <div>
-                    <p class="instrument-story" style="margin-bottom: 16px;">Once the silver colour scheme was in place, the question became: what would this look like as a real instrument on a studio desk? A screenshot of the finished HTML interface was taken and fed into an AI image generator - the start of a process that turned out to be considerably more involved than expected.</p>
-                    <p class="instrument-story" style="margin-bottom: 16px;">Early attempts were rough. One prompt produced a carbon fibre finish that came out looking exactly like a chessboard. Others got the proportions wrong or placed controls with no logic to their position. The lettering was a persistent problem - labels would come out blurred, misspelled, or with letters missing entirely. What you put in is broadly what you get back, but it took several rounds to understand what that actually meant in practice.</p>
-                    <p class="instrument-story" style="margin-bottom: 16px;">The approach that worked was using AI to construct the image prompt itself - asking it to generate a detailed, well-structured description of a realistic hardware synthesiser based on the screenshot, with very specific instructions about material finish, lighting, and - critically - text accuracy. Feeding that engineered prompt into the image tool produced far more predictable results. The silver render you see here came from that process, using two different AI tools at different stages.</p>
-                    <p class="instrument-story" style="margin-bottom: 16px;">There's a stray element visible in the bottom-right corner that shouldn't be there - a reminder that the AI renders what the prompt suggests, not what makes sense for the instrument. Catching that kind of thing requires knowing the instrument well enough to spot what's wrong. Which is, again, the whole point.</p>
-                    <div class="origin-footnote" style="margin-top: 20px;"><strong>// The render process:</strong> Screenshot the working HTML UI → ask AI to generate a detailed prompt describing a real hardware instrument based on it → refine with specific instructions on text accuracy, material and lighting → iterate → use two different AI tools at key stages for best results.</div>
-                </div>
-                <div class="ai-fail-frame" style="align-self: start; padding-top: 8px;">
-                    <img src="../assets/dp-one-3d.webp" alt="DPAUL Station MKIV Silver Edition - AI-generated 3D hardware render" style="width:100%; height:auto; display:block; border-radius: 3px;">
-                    <div class="ai-fail-caption"><span class="ai-fail-tag" data-i18n="tag_ai_rendered">AI rendered</span>The MKIV in silver - generated from a screenshot of the working HTML interface using a carefully engineered prompt. Note the stray element bottom-right: a reminder that the AI renders what the prompt describes, not what makes sense for the instrument.</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="instrument reveal" id="synths-rebuild"
@@ -715,10 +677,8 @@
         <div class="instrument-name" style="font-size: clamp(1.6rem, 3vw, 2.4rem);">Strip it back.<br><em style="color:var(--orange); font-style:normal;">Build it right.</em></div>
         <div style="display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start;">
             <div>
-                <p class="instrument-story" style="margin-bottom: 16px;">After the MKIV the codebase had become a layered accumulation of fixes on top of fixes. Each problem had been solved in isolation, and it showed. Everything worked - but only just, and only because six months of patches were holding it together. At a certain point continuing to patch stops making sense. The right call was to go back to zero.</p>
-                <p class="instrument-story" style="margin-bottom: 16px;">The MkV is a complete rebuild - started from a very basic single-voice synth and rebuilt one feature at a time, with nothing added until the previous thing was genuinely understood. The knowledge built up over those six months made all the difference: knowing exactly what to ask for, which architectural decisions would cause problems later, and which features were worth carrying across and which weren't. The rebuild took two to three days. The understanding that made it possible took six months.</p>
-                <p class="instrument-story" style="margin-bottom: 16px;">Two different AI tools were used across different stages of the rebuild. Switching between them at key points - rather than committing to one throughout - produced noticeably better results. Different tools have different strengths, and knowing when to move between them is its own skill.</p>
-                <p class="instrument-story" style="margin-bottom: 28px;">The MkV is also still in progress - and that's deliberate. The way this work tends to go is across several projects at once. At any given time there are usually five or six things running in parallel: if an idea isn't flowing on one, there's always something else to move to. Things get noted down, set aside, and returned to when the time feels right. It's a working method that suits the way ideas actually arrive - not in a straight line, but in waves. The synth continues on that same basis.</p>
+                <p class="instrument-story" style="margin-bottom: 16px;">After the MKIV the codebase had become a layered accumulation of fixes on top of fixes — everything worked, but only because six months of patches were holding it together. At a certain point continuing to patch stops making sense. The right call was to go back to zero: a complete rebuild, starting from a basic single-voice synth and adding nothing until the previous thing was genuinely understood.</p>
+                <p class="instrument-story" style="margin-bottom: 28px;">The rebuild itself took two to three days. The six months of knowledge that made it possible — knowing what to ask for, which decisions would cause problems later, what was worth carrying across — is what actually took the time. It's still an ongoing project, running alongside several others at once, picked up and set aside as ideas arrive.</p>
             </div>
             <div style="position: sticky; top: 100px;">
                 <img src="../assets/dpone-mki-lif-off.webp" alt="DPAUL Synth MKI lift off" class="synth-3d-img" style="border-radius: 4px; margin-bottom: 24px;">
@@ -729,17 +689,17 @@
 
     <div class="instrument reveal" id="synths-mkv"
          data-post-section
-         data-post-title="DP-ONE MKVI — Browser &amp; Mac Synthesiser">
-        <div class="instrument-eyebrow">// 04 - The Rebuild</div>
-        <div class="instrument-name">DP-ONE MKVI <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">Browser &amp; Mac App</span></div>
+         data-post-title="DP-EVOLUTION — Browser &amp; Mac Synthesiser">
+        <div class="instrument-eyebrow">// 04 - From MKVI to DP-Evolution</div>
+        <div class="instrument-name">DP-EVOLUTION <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">Browser &amp; Mac App</span></div>
         <div class="instrument-body" style="margin-bottom: 40px;">
             <div>
-                <p class="instrument-story" style="margin-bottom:16px;">The MKVI is available two ways. Play it instantly right here in the browser — free, no install, no account. Or download it as a native Mac app, built with Electron on top of the same Web Audio engine, that installs and runs like any other piece of studio software — no browser tab, no internet connection required, no setup beyond dragging it to Applications.</p>
+                <p class="instrument-story" style="margin-bottom:16px;">This one shipped as DP-ONE MKVI and grew enough — a full drum kit, an arpeggiator, per-drum FX, an AI bass generator — that it earned its own name: <strong style="color:var(--cream);">DP-Evolution</strong>. Same rebuilt engine from the MkV, several rounds of real-world use on top. It's available two ways: play it instantly right here in the browser — free, no install, no account — or download it as a native Mac app, built with Electron on the same Web Audio engine, that installs and runs like any other piece of studio software.</p>
                 <p class="instrument-story" style="margin-bottom:16px;">Three synth engines — SuperSaw, Moog Bass, and FM Lead — feed through a full seven-mode filter bank with LFO, envelope, drive, chorus, BPM-locked echo, and convolution reverb. A nine-track drum sequencer — kick, snare, hat, tom, rim, shaker, clap, crash, plus a synth track — runs alongside a dual bass sequencer with six engine types: Sub Bass, Acid 303, Slap Bass, Rubber, Reese, and Click Bass. Play live over the running sequencer from the 37-key on-screen keyboard or any connected USB MIDI keyboard — notes now sound instantly whether the pattern is playing or not.</p>
                 <p class="instrument-story" style="margin-bottom:16px;">Pitch bend runs through a <strong style="color:var(--cream);">ribbon controller</strong> — slide to bend, and it holds exactly where you leave it rather than snapping back to centre. A built-in <strong style="color:var(--cream);">arpeggiator</strong> sits alongside it: flip ARP on and held notes cycle through four patterns — Up, Down, Up/Down, and Random — synced to BPM and running independently of the drum transport, so it works whether the pattern is playing or stopped.</p>
                 <video src="../assets/dpone-promo-vid.mp4" autoplay muted loop playsinline poster="../assets/dp-one-large.webp" style="width:100%;max-width:100%;border-radius:4px;margin-bottom:28px;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,0.7));"></video>
-                <p class="instrument-story" style="margin-bottom:16px;">Every one of the nine drum tracks has its own <strong style="color:var(--cream);">mute button</strong>, so any sound can be dropped in or out live without erasing its pattern. And patterns can be rendered straight to a <strong style="color:var(--cream);">WAV file</strong> — hit Export, and the current drum pattern is bounced offline (muted tracks respected) and downloaded, ready to drag into a DAW.</p>
-                <p class="instrument-story" style="margin-bottom:16px;">Audio output also routes directly into Logic Pro, Ableton, or GarageBand via <strong style="color:var(--cream);">BlackHole</strong> — a free virtual audio driver that creates a low-latency pipe between the MKVI and your DAW. Set BlackHole as your Mac's output, arm a track in your DAW, and record the MKVI as a live audio source. Patterns can also be exported as standard MIDI files and imported straight into any DAW as editable regions, with drums on Ch10, bass lines on Ch2 and Ch3, and the synth on Ch1.</p>
+                <p class="instrument-story" style="margin-bottom:16px;">Every one of the nine drum tracks has its own <strong style="color:var(--cream);">reverb, delay, and shape send</strong> — independent per-drum FX, plus a mute button so any sound can be dropped in or out live without erasing its pattern. Patterns can be rendered straight to a <strong style="color:var(--cream);">WAV file</strong> too — hit Export, and the current drum pattern is bounced offline (muted tracks respected) and downloaded, ready to drag into a DAW.</p>
+                <p class="instrument-story" style="margin-bottom:16px;">Audio output also routes directly into Logic Pro, Ableton, or GarageBand via <strong style="color:var(--cream);">BlackHole</strong> — a free virtual audio driver that creates a low-latency pipe between DP-Evolution and your DAW. Set BlackHole as your Mac's output, arm a track in your DAW, and record it as a live audio source. Patterns can also be exported as standard MIDI files and imported straight into any DAW as editable regions, with drums on Ch10, bass lines on Ch2 and Ch3, and the synth on Ch1.</p>
                 <p class="instrument-story" style="margin-bottom:28px;">An AI bass generator is built in — describe a line in plain English and Claude programs all the steps automatically, choosing the engine and pattern to match. Three preset slots hold complete machine states: BPM, all drum and bass patterns, engine choice, and every knob value. Export and import as JSON to back up or share patches.</p>
                 <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 40px;">
                     <span class="skill-tag">SuperSaw · Moog Bass · FM Lead</span>
@@ -749,7 +709,7 @@
                     <span class="skill-tag">Arpeggiator · 4 patterns</span>
                     <span class="skill-tag">Chorus · Echo · Reverb</span>
                     <span class="skill-tag">9-track drum sequencer · 8 or 16 steps</span>
-                    <span class="skill-tag">Per-drum mute buttons</span>
+                    <span class="skill-tag">Per-drum mute + reverb/delay/shape sends</span>
                     <span class="skill-tag">Dual bass sequencer · 6 engines</span>
                     <span class="skill-tag">37-key keyboard · USB MIDI</span>
                     <span class="skill-tag">Drum pattern → WAV export</span>
@@ -759,7 +719,7 @@
                     <span class="skill-tag">3 preset slots · JSON export</span>
                 </div>
                 <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-                    <a href="../dpone/dpone-mkvi.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block;">Launch in Browser</a>
+                    <a href="../dpone/dp-evo.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block;">Launch in Browser</a>
                     <a href="https://davidpaul2.gumroad.com/l/fycixk" target="_blank" rel="noopener noreferrer" class="launch-btn secondary" style="display:inline-block;">Download for Mac</a>
                 </div>
                 <p style="font-size:calc(1.066rem * var(--font-scale)); color:var(--dim); letter-spacing:0.08em; margin-top:8px;">Browser: free forever &nbsp;·&nbsp; no install &nbsp;·&nbsp; no account required &nbsp;&nbsp;|&nbsp;&nbsp; Mac app: native Electron build, available on Gumroad</p>
