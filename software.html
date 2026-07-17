@@ -124,7 +124,7 @@
         .privacy-tag.highlight{border-color:rgba(80,200,100,.3);color:#50c864;background:rgba(80,200,100,.06);}
 
         /* BUY BUTTON */
-        .buy-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:#FF6600;color:#000;font-family:'Courier New',Courier,monospace;font-size:1.17rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:3px;transition:background .2s,transform .15s;margin-right:12px;}
+        .buy-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:230px;padding:13px 28px;background:#FF6600;color:#000;font-family:'Courier New',Courier,monospace;font-size:1.01rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:3px;white-space:nowrap;transition:background .2s,transform .15s;margin-right:12px;}
         .buy-btn:hover{background:#ff8533;transform:translateY(-2px);}
         .buy-btn-secondary{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:none;color:var(--orange);font-family:'Courier New',Courier,monospace;font-size:1.066rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--orange);border-radius:3px;transition:background .2s,color .2s,transform .15s;}
         .buy-btn-secondary:hover{background:var(--orange);color:#000;transform:translateY(-2px);}
@@ -254,22 +254,20 @@
                         <li>Requires macOS 12 or later</li>
                         <li><strong>Pro adds:</strong> batch convert video too (MP4, MOV &rarr; WebM), mixed into the same image batch, with its own adjustable bitrate</li>
                     </ul>
-                    <div class="tier-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-                        <div style="border:1px solid var(--border);border-radius:4px;padding:16px;">
+                    <div class="tier-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:stretch;">
+                        <div style="border:1px solid var(--border);border-radius:4px;padding:16px;display:flex;flex-direction:column;">
                             <div style="font-weight:600;margin-bottom:4px;">Standard &mdash; Free</div>
                             <div style="font-size:0.9em;color:var(--text-muted,#888);margin-bottom:12px;">Images only</div>
-                            <a href="https://davidpaul2.gumroad.com/l/dnldth" target="_blank" class="buy-btn">Download Free</a>
+                            <a href="https://davidpaul2.gumroad.com/l/dnldth" target="_blank" class="buy-btn" style="margin-top:auto;margin-right:0;">Download Free</a>
                         </div>
-                        <div style="border:1px solid var(--border);border-radius:4px;padding:16px;">
+                        <div style="border:1px solid var(--border);border-radius:4px;padding:16px;display:flex;flex-direction:column;">
                             <div style="font-weight:600;margin-bottom:4px;">Pro &mdash; £19.99</div>
                             <div style="font-size:0.9em;color:var(--text-muted,#888);margin-bottom:12px;">Images + video, one-off payment</div>
-                            <a href="https://davidpaul2.gumroad.com/l/dnldth" target="_blank" class="buy-btn">Get Pro</a>
+                            <a href="https://davidpaul2.gumroad.com/l/dnldth" target="_blank" class="buy-btn" style="margin-top:auto;margin-right:0;">Get Pro</a>
                         </div>
                     </div>
                     <div>
-                        <span class="price-note">Both tiers on one listing &middot; Apple Silicon only &middot; macOS 12 or later &middot; no subscriptions, ever</span>
-                        <span class="price-note">Pro v3.0: video conversion now preserves full audio.</span>
-                        <span class="price-note">macOS may say the app is &ldquo;damaged&rdquo; on first open &mdash; this is normal. <a href="assets/Web_Media_Converter_Installation_Guide.pdf" target="_blank" style="color:var(--orange);text-decoration:underline;">Read the install guide first</a> to fix it in 10 seconds.</span>
+                        <span class="price-note"><strong>IMPORTANT: READ BEFORE INSTALLING</strong> — <a href="assets/Web_Media_Converter_Installation_Guide.pdf" target="_blank" style="color:var(--orange);text-decoration:underline;">Read the install guide first</a> to fix it in 10 seconds.</span>
                     </div>
                 </div>
                 <div class="webp-split-video">
