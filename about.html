@@ -88,9 +88,6 @@
         html[data-theme="light"] .cv-link:hover { background: #FF6600; color: #000; }
         html[data-theme="light"] .tag { background: #FF6600; color: #000; border-color: #FF6600; }
         html[data-theme="light"] .tag:hover { background: #FF6600; color: #000; border-color: #FF6600; }
-        html[data-theme="light"] .share-page-btn { border-color: #000; color: #000; }
-        html[data-theme="light"] .share-page-btn:hover { border-color: #FF6600; color: #FF6600; }
-        html[data-theme="light"] .share-page-status { color: #FF6600; }
         html[data-theme="light"] .dp-post-btn { background: #FF6600 !important; color: #000 !important; border-color: #FF6600 !important; }
         html[data-theme="light"] .dp-post-btn:hover { background: #FF6600 !important; color: #000 !important; }
         html[data-theme="light"] .dp-post-btn.secondary { background: transparent !important; color: #FF6600 !important; border-color: #FF6600 !important; }
@@ -325,18 +322,6 @@
         .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
         .tag { font-size: 0.95rem; letter-spacing: 0.1em; padding: 5px 12px; border: 1px solid var(--border); border-radius: 2px; color: var(--cream); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
         .tag:hover { border-color: var(--orange); color: var(--orange); }
-
-        .share-page-wrap { display: flex; align-items: center; gap: 14px; margin-top: 24px; flex-wrap: wrap; }
-        .share-page-btn {
-            font-size: 0.95rem; letter-spacing: 0.1em; padding: 9px 18px;
-            border: 1px solid var(--border); border-radius: 2px;
-            background: transparent; color: var(--cream); text-transform: uppercase;
-            font-family: 'Courier New', Courier, monospace; cursor: pointer;
-            transition: border-color 0.2s, color 0.2s;
-        }
-        .share-page-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .share-page-status { font-size: 0.85rem; color: var(--orange); letter-spacing: 0.05em; opacity: 0; transition: opacity 0.2s; }
-        .share-page-status.visible { opacity: 1; }
 
         .contact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
         .contact-info p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; color: var(--text); margin-bottom: 14px; }
@@ -641,10 +626,6 @@
                 <p data-i18n="about_bio_p2">Throughout that time, I've always had a creative life running alongside the technical one. Music has been a constant — producing original tracks using hardware synthesisers, drum machines and keys, with two of my productions available on iTunes and a back catalogue on SoundCloud.</p>
                 <p data-i18n="about_bio_p3">I believe we're at a remarkable moment. The tools available today — professional software, AI, accessible hardware — would have been unimaginable 20 years ago. I see AI the same way I saw the internet arriving in the mid-90s: a shift that ultimately opens doors. <strong>It's a tool, not a replacement for human creativity.</strong></p>
                 <p data-i18n="about_bio_p4">Today I'm moving deliberately towards <strong>web development</strong> — combining the technical precision I've built over a career with the creative instinct I've never stopped developing.</p>
-                <div class="share-page-wrap">
-                    <button class="share-page-btn" id="sharePageBtn" onclick="sharePage()">&#128279; Share This Page</button>
-                    <span class="share-page-status" id="sharePageStatus"></span>
-                </div>
             </div>
             <div>
                 <div class="photo-frame">
@@ -817,31 +798,6 @@
 </div><!-- /page -->
 
 <script>
-    // ── SHARE PAGE ──
-    function sharePage() {
-        const url = window.location.href;
-        const statusEl = document.getElementById('sharePageStatus');
-        const showStatus = (msg) => {
-            if (!statusEl) return;
-            statusEl.textContent = msg;
-            statusEl.classList.add('visible');
-            setTimeout(() => statusEl.classList.remove('visible'), 2500);
-        };
-        if (navigator.share) {
-            navigator.share({ title: document.title, url: url }).catch(() => {});
-        } else if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(url).then(() => showStatus('Link copied')).catch(() => showStatus('Could not copy link'));
-        } else {
-            const temp = document.createElement('input');
-            temp.value = url;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand('copy');
-            document.body.removeChild(temp);
-            showStatus('Link copied');
-        }
-    }
-
     // ── THEME TOGGLE ──
     function applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);

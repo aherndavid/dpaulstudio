@@ -157,7 +157,25 @@
       justify-content: flex-end; 
       padding: 12px 20px 16px; 
       border-top: 1px solid rgba(255, 255, 255, 0.06); 
+      flex-wrap: wrap;
     }
+
+    #dp-social-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 0 20px 16px;
+    }
+
+    .dp-social-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #111312; border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #c8c8c0; font-family: 'Courier New', Courier, monospace;
+      font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 8px 12px; cursor: pointer; border-radius: 3px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .dp-social-btn:hover { border-color: #FF6600; color: #FF6600; }
 
     .dp-action-btn { 
       background: transparent; 
@@ -227,6 +245,16 @@
             <textarea id="dp-post-text" spellcheck="false"></textarea>
           </div>
         </div>
+        <div id="dp-social-row">
+          <button class="dp-social-btn" onclick="dpPostGenerator.postTo('twitter')">Post to X</button>
+          <button class="dp-social-btn" onclick="dpPostGenerator.postTo('facebook')">Post to Facebook</button>
+          <button class="dp-social-btn" onclick="dpPostGenerator.postTo('linkedin')">Post to LinkedIn</button>
+          <button class="dp-social-btn" onclick="dpPostGenerator.postTo('whatsapp')">Post to WhatsApp</button>
+          <button class="dp-social-btn" onclick="dpPostGenerator.postTo('email')">Email</button>
+        </div>
+        <div id="dp-social-note" style="padding: 0 20px 10px; font-size: 0.68rem; color: #5a5a52; letter-spacing: 0.03em; line-height: 1.6;">
+          X, WhatsApp &amp; Email open with the caption pre-filled. Facebook &amp; LinkedIn only accept a link — copy the text first and paste it once their window opens.
+        </div>
         <div id="dp-modal-footer">
           <button class="dp-action-btn" onclick="dpPostGenerator.regenerate()">Regenerate</button>
           <button class="dp-action-btn primary" id="dp-copy-btn" onclick="dpPostGenerator.copy()">Copy Text</button>
@@ -284,13 +312,43 @@
       });
     },
 
+    postTo(platform) {
+      const text = document.getElementById('dp-post-text').value;
+      const url = `https://dpaul.studio${window.location.pathname.replace('index.html', '').replace('.html', '')}${state.sectionId ? '#' + state.sectionId : ''}`;
+      const encodedText = encodeURIComponent(text);
+      const encodedUrl = encodeURIComponent(url);
+      let shareUrl = '';
+
+      switch (platform) {
+        case 'twitter':
+          shareUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+          break;
+        case 'facebook':
+          // Facebook's sharer only reliably accepts the URL — it pulls its own preview text from the page itself
+          shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+          break;
+        case 'linkedin':
+          // LinkedIn's share endpoint no longer accepts prefilled text either — just the URL
+          shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+          break;
+        case 'whatsapp':
+          shareUrl = `https://wa.me/?text=${encodedText}`;
+          break;
+        case 'email':
+          shareUrl = `mailto:?subject=${encodeURIComponent(state.title)}&body=${encodedText}`;
+          window.location.href = shareUrl;
+          return;
+        default:
+          return;
+      }
+      window.open(shareUrl, '_blank', 'width=600,height=650,noopener,noreferrer');
+    },
+
     async _generate() {
       const url = `dpaul.studio${window.location.pathname.replace('index.html', '').replace('.html', '')}${state.sectionId ? '#' + state.sectionId : ''}`;
 
-      // Intent-based prompting
-      const modeInstruction = state.mode === 'shoutout'
-        ? `This is a "SHOUT OUT" post. Start the post with an empty placeholder like "[Insert your own comment here...]" followed by a line break. Then, write a supportive recommendation about the project that transitions naturally from the user's comment.`
-        : `This is a "DISCOVERY" post. Write in a third-party discovery voice (e.g., "just came across this", "impressive work"). The post should be self-contained and ready to publish immediately.`;
+      // Discovery-voice prompting (shoutout mode removed — discovery is the only mode now)
+      const modeInstruction = `Write in a third-party discovery voice (e.g., "just came across this", "impressive work"). The post should be self-contained and ready to publish immediately.`;
 
       const prompt = `Write a ${state.platform} post for dpaul.studio. 
 ${modeInstruction}
@@ -338,19 +396,13 @@ ${url}
       const container = document.createElement('div');
       container.className = 'dp-btn-group';
 
-      // Button 1: Share Discovery
+      // Button: Share Discovery
       const btnDisc = document.createElement('button');
       btnDisc.className = 'dp-post-btn';
       btnDisc.innerHTML = '<span class="dp-btn-dot"></span> // share discovery';
       btnDisc.onclick = () => dpPostGenerator.open(content, title, section, 'discovery');
 
-      // Button 2: Shout Out
-      const btnShout = document.createElement('button');
-      btnShout.className = 'dp-post-btn secondary';
-      btnShout.innerHTML = '<span class="dp-btn-dot"></span> // shout out';
-      btnShout.onclick = () => dpPostGenerator.open(content, title, section, 'shoutout');
-
-      container.append(btnDisc, btnShout);
+      container.append(btnDisc);
       section.appendChild(container);
     });
   });
