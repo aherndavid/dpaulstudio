@@ -375,6 +375,9 @@
             .timeline { grid-template-columns: 1fr 1fr; }
             .learning-grid { grid-template-columns: 1fr; }
             .font-nudge { bottom: 16px; right: 16px; }
+            #synths-mkv video { float: none !important; width: 100% !important; max-width: 100% !important; margin: 0 0 24px !important; }
+            .evo-split-row { flex-direction: column !important; }
+            .evo-split-row video { width: 100% !important; flex: 0 0 auto !important; }
         }
         @media (max-width: 480px) {
             .timeline { grid-template-columns: 1fr; }
@@ -480,6 +483,52 @@
             <span class="tts-progress" id="ttsProgress"></span>
         </div>
     </section>
+
+    <div class="instrument reveal" id="synths-mkv"
+         data-post-section
+         data-post-title="DP-EVOLUTION — Browser &amp; Mac Synthesiser">
+        <div class="instrument-eyebrow">// 04 - From MKVI to DP-Evolution</div>
+        <div class="instrument-name">DP-EVOLUTION <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">Browser &amp; Mac App</span></div>
+        <div style="margin-bottom: 40px;">
+            <p class="instrument-story" style="margin-bottom:16px;">This one shipped as DP-ONE MKVI and grew enough — a full drum kit, an arpeggiator, per-drum FX, an AI bass generator — that it earned its own name: <strong style="color:var(--cream);">DP-Evolution</strong>. Same rebuilt engine from the MkV, several rounds of real-world use on top. It's available two ways: play it instantly right here in the browser — free, no install, no account — or download it as a native Mac app, built with Electron on the same Web Audio engine, that installs and runs like any other piece of studio software.</p>
+
+            <div style="display:flex; gap:40px; align-items:flex-start; margin-bottom:16px;" class="evo-split-row">
+                <video src="../assets/evo-promo-v2.webm" autoplay muted loop playsinline poster="../assets/dp-one-large.webp" style="width:50%;flex:0 0 50%;border-radius:4px;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,0.7));"></video>
+                <div style="flex:1;">
+                    <p class="instrument-story">Three synth engines — SuperSaw, Moog Bass, and FM Lead — feed through a full seven-mode filter bank with LFO, envelope, drive, chorus, BPM-locked echo, and convolution reverb. A nine-track drum sequencer — kick, snare, hat, tom, rim, shaker, clap, crash, plus a synth track — runs alongside a dual bass sequencer with six engine types: Sub Bass, Acid 303, Slap Bass, Rubber, Reese, and Click Bass.</p>
+                </div>
+            </div>
+
+            <p class="instrument-story" style="margin-bottom:16px;">Play live over the running sequencer from the 37-key on-screen keyboard or any connected USB MIDI keyboard — notes now sound instantly whether the pattern is playing or not. Pitch bend runs through a <strong style="color:var(--cream);">ribbon controller</strong> — slide to bend, and it holds exactly where you leave it rather than snapping back to centre.</p>
+            <p class="instrument-story" style="margin-bottom:16px;">A built-in <strong style="color:var(--cream);">arpeggiator</strong> sits alongside the ribbon: flip ARP on and held notes cycle through four patterns — Up, Down, Up/Down, and Random — synced to BPM and running independently of the drum transport, so it works whether the pattern is playing or stopped.</p>
+            <p class="instrument-story" style="margin-bottom:16px;">Every one of the nine drum tracks has its own <strong style="color:var(--cream);">reverb, delay, and shape send</strong> — independent per-drum FX, plus a mute button so any sound can be dropped in or out live without erasing its pattern. Patterns can be rendered straight to a <strong style="color:var(--cream);">WAV file</strong> too — hit Export, and the current drum pattern is bounced offline (muted tracks respected) and downloaded, ready to drag into a DAW.</p>
+            <p class="instrument-story" style="margin-bottom:16px;">Audio output also routes directly into Logic Pro, Ableton, or GarageBand via <strong style="color:var(--cream);">BlackHole</strong> — a free virtual audio driver that creates a low-latency pipe between DP-Evolution and your DAW. Set BlackHole as your Mac's output, arm a track in your DAW, and record it as a live audio source. Patterns can also be exported as standard MIDI files and imported straight into any DAW as editable regions, with drums on Ch10, bass lines on Ch2 and Ch3, and the synth on Ch1.</p>
+            <p class="instrument-story" style="margin-bottom:28px;">An AI bass generator is built in — describe a line in plain English and Claude programs all the steps automatically, choosing the engine and pattern to match. Three preset slots hold complete machine states: BPM, all drum and bass patterns, engine choice, and every knob value. Export and import as JSON to back up or share patches.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 40px;">
+                <span class="skill-tag">SuperSaw · Moog Bass · FM Lead</span>
+                <span class="skill-tag">7-mode filter bank</span>
+                <span class="skill-tag">LFO + envelope mod</span>
+                <span class="skill-tag">Ribbon controller · sticky pitch bend</span>
+                <span class="skill-tag">Arpeggiator · 4 patterns</span>
+                <span class="skill-tag">Chorus · Echo · Reverb</span>
+                <span class="skill-tag">9-track drum sequencer · 8 or 16 steps</span>
+                <span class="skill-tag">Per-drum mute + reverb/delay/shape sends</span>
+                <span class="skill-tag">Dual bass sequencer · 6 engines</span>
+                <span class="skill-tag">37-key keyboard · USB MIDI</span>
+                <span class="skill-tag">Drum pattern → WAV export</span>
+                <span class="skill-tag">BlackHole DAW routing</span>
+                <span class="skill-tag">MIDI export · 4 channels</span>
+                <span class="skill-tag">AI bass generator</span>
+                <span class="skill-tag">3 preset slots · JSON export</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+                <a href="../dpone/dp-evo.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block;">Launch in Browser</a>
+                <a href="https://davidpaul2.gumroad.com/l/fycixk" target="_blank" rel="noopener noreferrer" class="launch-btn secondary" style="display:inline-block;">Download for Mac</a>
+            </div>
+            <p style="font-size:calc(1.066rem * var(--font-scale)); color:var(--dim); letter-spacing:0.08em; margin-top:8px;">Browser: free forever &nbsp;·&nbsp; no install &nbsp;·&nbsp; no account required &nbsp;&nbsp;|&nbsp;&nbsp; Mac app: native Electron build, available on Gumroad</p>
+        </div>
+    </div>
+
 
     <section class="process-section reveal" id="synths-process"
              data-post-section
@@ -682,48 +731,6 @@
             </div>
             <div style="position: sticky; top: 100px;">
                 <img src="../assets/dpone-mki-lif-off.webp" alt="DPAUL Synth MKI lift off" class="synth-3d-img" style="border-radius: 4px;">
-            </div>
-        </div>
-    </div>
-
-    <div class="instrument reveal" id="synths-mkv"
-         data-post-section
-         data-post-title="DP-EVOLUTION — Browser &amp; Mac Synthesiser">
-        <div class="instrument-eyebrow">// 04 - From MKVI to DP-Evolution</div>
-        <div class="instrument-name">DP-EVOLUTION <span style="color:var(--dim); font-size:1.2rem; font-weight:400; letter-spacing:0;">Browser &amp; Mac App</span></div>
-        <div class="instrument-body" style="margin-bottom: 40px;">
-            <div>
-                <p class="instrument-story" style="margin-bottom:16px;">This one shipped as DP-ONE MKVI and grew enough — a full drum kit, an arpeggiator, per-drum FX, an AI bass generator — that it earned its own name: <strong style="color:var(--cream);">DP-Evolution</strong>. Same rebuilt engine from the MkV, several rounds of real-world use on top. It's available two ways: play it instantly right here in the browser — free, no install, no account — or download it as a native Mac app, built with Electron on the same Web Audio engine, that installs and runs like any other piece of studio software.</p>
-                <p class="instrument-story" style="margin-bottom:16px;">Three synth engines — SuperSaw, Moog Bass, and FM Lead — feed through a full seven-mode filter bank with LFO, envelope, drive, chorus, BPM-locked echo, and convolution reverb. A nine-track drum sequencer — kick, snare, hat, tom, rim, shaker, clap, crash, plus a synth track — runs alongside a dual bass sequencer with six engine types: Sub Bass, Acid 303, Slap Bass, Rubber, Reese, and Click Bass. Play live over the running sequencer from the 37-key on-screen keyboard or any connected USB MIDI keyboard — notes now sound instantly whether the pattern is playing or not.</p>
-                <p class="instrument-story" style="margin-bottom:16px;">Pitch bend runs through a <strong style="color:var(--cream);">ribbon controller</strong> — slide to bend, and it holds exactly where you leave it rather than snapping back to centre. A built-in <strong style="color:var(--cream);">arpeggiator</strong> sits alongside it: flip ARP on and held notes cycle through four patterns — Up, Down, Up/Down, and Random — synced to BPM and running independently of the drum transport, so it works whether the pattern is playing or stopped.</p>
-                <video src="../assets/evo-promo-v2.webm" autoplay muted loop playsinline poster="../assets/dp-one-large.webp" style="width:100%;max-width:100%;border-radius:4px;margin-bottom:28px;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,0.7));"></video>
-                <p class="instrument-story" style="margin-bottom:16px;">Every one of the nine drum tracks has its own <strong style="color:var(--cream);">reverb, delay, and shape send</strong> — independent per-drum FX, plus a mute button so any sound can be dropped in or out live without erasing its pattern. Patterns can be rendered straight to a <strong style="color:var(--cream);">WAV file</strong> too — hit Export, and the current drum pattern is bounced offline (muted tracks respected) and downloaded, ready to drag into a DAW.</p>
-                <p class="instrument-story" style="margin-bottom:16px;">Audio output also routes directly into Logic Pro, Ableton, or GarageBand via <strong style="color:var(--cream);">BlackHole</strong> — a free virtual audio driver that creates a low-latency pipe between DP-Evolution and your DAW. Set BlackHole as your Mac's output, arm a track in your DAW, and record it as a live audio source. Patterns can also be exported as standard MIDI files and imported straight into any DAW as editable regions, with drums on Ch10, bass lines on Ch2 and Ch3, and the synth on Ch1.</p>
-                <p class="instrument-story" style="margin-bottom:28px;">An AI bass generator is built in — describe a line in plain English and Claude programs all the steps automatically, choosing the engine and pattern to match. Three preset slots hold complete machine states: BPM, all drum and bass patterns, engine choice, and every knob value. Export and import as JSON to back up or share patches.</p>
-                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 40px;">
-                    <span class="skill-tag">SuperSaw · Moog Bass · FM Lead</span>
-                    <span class="skill-tag">7-mode filter bank</span>
-                    <span class="skill-tag">LFO + envelope mod</span>
-                    <span class="skill-tag">Ribbon controller · sticky pitch bend</span>
-                    <span class="skill-tag">Arpeggiator · 4 patterns</span>
-                    <span class="skill-tag">Chorus · Echo · Reverb</span>
-                    <span class="skill-tag">9-track drum sequencer · 8 or 16 steps</span>
-                    <span class="skill-tag">Per-drum mute + reverb/delay/shape sends</span>
-                    <span class="skill-tag">Dual bass sequencer · 6 engines</span>
-                    <span class="skill-tag">37-key keyboard · USB MIDI</span>
-                    <span class="skill-tag">Drum pattern → WAV export</span>
-                    <span class="skill-tag">BlackHole DAW routing</span>
-                    <span class="skill-tag">MIDI export · 4 channels</span>
-                    <span class="skill-tag">AI bass generator</span>
-                    <span class="skill-tag">3 preset slots · JSON export</span>
-                </div>
-                <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-                    <a href="../dpone/dp-evo.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block;">Launch in Browser</a>
-                    <a href="https://davidpaul2.gumroad.com/l/fycixk" target="_blank" rel="noopener noreferrer" class="launch-btn secondary" style="display:inline-block;">Download for Mac</a>
-                </div>
-                <p style="font-size:calc(1.066rem * var(--font-scale)); color:var(--dim); letter-spacing:0.08em; margin-top:8px;">Browser: free forever &nbsp;·&nbsp; no install &nbsp;·&nbsp; no account required &nbsp;&nbsp;|&nbsp;&nbsp; Mac app: native Electron build, available on Gumroad</p>
-            </div>
-            <div class="instrument-visual">
             </div>
         </div>
     </div>
