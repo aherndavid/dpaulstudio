@@ -1496,6 +1496,32 @@
         if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
     } catch(e) {}
 
+    // ── AUTO DATE LABELS ──
+    (function() {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        document.querySelectorAll('.log-entry').forEach(entry => {
+            const dateEl  = entry.querySelector('.log-date');
+            const labelEl = entry.querySelector('.log-day-label');
+            if (!dateEl || !labelEl) return;
+            const entryDate = new Date(dateEl.textContent.trim());
+            entryDate.setHours(0, 0, 0, 0);
+            const diffDays  = Math.round((now - entryDate) / (1000 * 60 * 60 * 24));
+            const diffWeeks = Math.round(diffDays / 7);
+            const diffMonths = (now.getFullYear() - entryDate.getFullYear()) * 12 + (now.getMonth() - entryDate.getMonth());
+            let label;
+            if (diffDays === 0)        label = 'Today';
+            else if (diffDays === 1)   label = 'Yesterday';
+            else if (diffDays < 7)     label = diffDays + ' days ago';
+            else if (diffWeeks === 1)  label = 'Last week';
+            else if (diffWeeks < 5)    label = diffWeeks + ' weeks ago';
+            else if (diffMonths === 1) label = 'Last month';
+            else if (diffMonths < 12)  label = diffMonths + ' months ago';
+            else                       label = 'Over a year ago';
+            labelEl.textContent = label;
+        });
+    })();
+
     // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
