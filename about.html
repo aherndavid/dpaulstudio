@@ -10,30 +10,32 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>About — dPaul Technologies</title>
     
 
     <style>
         :root {
-            --bg:      #131413;
-            --bg2:     #1a1c1a;
-            --orange:  #FF6600;
-            --cream:   #D4C4A8;
-            --text:    #c8c8c0;
-            --dim:     #7a7a70;
-            --border:  rgba(255,102,0,0.25);
+            --bg:      #171717;
+            --bg2:     #1e1e1e;
+            --orange:  #e6432a;
+            --cream:   #f4f3ef;
+            --text:    #a8a6a0;
+            --dim:     #8f8d87;
+            --border:  rgba(230,67,42,0.25);
             --border-dim: rgba(255,255,255,0.07);
             --font-scale: 1;
         }
 
         html[data-theme="light"] {
-            --bg:      #f1f1ef;
-            --bg2:     #e4e4e1;
-            --orange:  #1a1a1a;
-            --cream:   #3a352d;
-            --text:    #2e2a24;
-            --dim:     #8a8276;
-            --border:  rgba(26,26,26,0.35);
+            --bg:      #f4f3ef;
+            --bg2:     #e8e6e0;
+            --orange:  #171717;
+            --cream:   #2b2b28;
+            --text:    #262421;
+            --dim:     #8f8d87;
+            --border:  rgba(23,23,23,0.35);
             --border-dim: rgba(0,0,0,0.12);
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
@@ -42,27 +44,27 @@
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
         html[data-theme="light"] .skill-card h3,
-        html[data-theme="light"] .company-footer-val { color: #1a1610; }
+        html[data-theme="light"] .company-footer-val { color: #171310; }
         html[data-theme="light"] nav a.active { color: #fff; }
         html[data-theme="light"] .form-field input::placeholder,
         html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
         html[data-theme="light"] .form-field input,
-        html[data-theme="light"] .form-field textarea { color: #1a1610; }
+        html[data-theme="light"] .form-field textarea { color: #171310; }
 
-        html[data-theme="light"] .tts-player { background: #FF6600; color: #000; border: 3px solid #000; }
+        html[data-theme="light"] .tts-player { background: #e6432a; color: #000; border: 3px solid #000; }
         html[data-theme="light"] .tts-label { font-weight: bold; color: #000; }
         html[data-theme="light"] #ttsPause:not(.active),
-        html[data-theme="light"] #ttsStop:not(.active) { background: #FF6600 !important; color: #000 !important; border-color: #000 !important; }
+        html[data-theme="light"] #ttsStop:not(.active) { background: #e6432a !important; color: #000 !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-btn,
         html[data-theme="light"] .tts-section-sel,
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #FF6600 !important; border-color: #000 !important; }
+        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
+        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #e6432a !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
         html[data-theme="light"] .tts-section-label { color: #000; }
-        html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
+        html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
         html[data-theme="light"] #dp-share-btn:hover,
@@ -72,8 +74,8 @@
         /* ── THEME TOGGLE ── */
         .theme-toggle {
             background: none; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius:0; font-size: 1rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.15s;
             margin-right: 15px;
         }
@@ -84,14 +86,14 @@
             stroke: var(--orange);
             filter: drop-shadow(0 0 3px var(--orange));
         }
-        html[data-theme="light"] .cv-link { border-color: #FF6600; color: #FF6600; }
-        html[data-theme="light"] .cv-link:hover { background: #FF6600; color: #000; }
-        html[data-theme="light"] .tag { background: #FF6600; color: #000; border-color: #FF6600; }
-        html[data-theme="light"] .tag:hover { background: #FF6600; color: #000; border-color: #FF6600; }
-        html[data-theme="light"] .dp-post-btn { background: #FF6600 !important; color: #000 !important; border-color: #FF6600 !important; }
-        html[data-theme="light"] .dp-post-btn:hover { background: #FF6600 !important; color: #000 !important; }
-        html[data-theme="light"] .dp-post-btn.secondary { background: transparent !important; color: #FF6600 !important; border-color: #FF6600 !important; }
-        html[data-theme="light"] .dp-post-btn.secondary:hover { background: #FF6600 !important; color: #000 !important; }
+        html[data-theme="light"] .cv-link { border-color: #e6432a; color: #e6432a; }
+        html[data-theme="light"] .cv-link:hover { background: #e6432a; color: #000; }
+        html[data-theme="light"] .tag { background: #e6432a; color: #000; border-color: #e6432a; }
+        html[data-theme="light"] .tag:hover { background: #e6432a; color: #000; border-color: #e6432a; }
+        html[data-theme="light"] .dp-post-btn { background: #e6432a !important; color: #000 !important; border-color: #e6432a !important; }
+        html[data-theme="light"] .dp-post-btn:hover { background: #e6432a !important; color: #000 !important; }
+        html[data-theme="light"] .dp-post-btn.secondary { background: transparent !important; color: #e6432a !important; border-color: #e6432a !important; }
+        html[data-theme="light"] .dp-post-btn.secondary:hover { background: #e6432a !important; color: #000 !important; }
         html[data-theme="light"] .cv-strip {
             background: rgba(0,0,0,0.75) !important;
             border-color: rgba(0,0,0,0.85) !important;
@@ -106,7 +108,7 @@
         }
         html[data-theme="light"] .studio-log-card * { color: #fff !important; }
         html[data-theme="light"] .studio-log-card [style*="color: var(--orange)"],
-        html[data-theme="light"] .studio-log-card [style*="color:var(--orange)"] { color: #FF6600 !important; }
+        html[data-theme="light"] .studio-log-card [style*="color:var(--orange)"] { color: #e6432a !important; }
 
         /* All cards/sections — semi-opaque black with white text in light mode */
         html[data-theme="light"] .skill-card,
@@ -129,7 +131,7 @@
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             font-size: 130%;
             min-height: 100vh;
             overflow-x: hidden;
@@ -160,7 +162,7 @@
         .font-nudge {
             position: fixed; bottom: 24px; right: 24px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
-            border-radius: 4px; padding: 12px 16px;
+            border-radius:0; padding: 12px 16px;
             display: flex; flex-direction: column; gap: 8px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
         }
@@ -168,15 +170,15 @@
         .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
         .font-btn {
             background: #222; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius:0; font-size: 1rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.15s;
         }
         .font-btn:hover { border-color: var(--orange); color: var(--orange); }
         .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
         .font-nudge-dismiss {
             background: none; border: none; color: var(--dim);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            font-family:'JetBrains Mono', monospace; font-size: 0.65rem;
             cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
         }
         .font-nudge-dismiss:hover { color: var(--orange); }
@@ -187,10 +189,10 @@
             padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
         }
         nav a {
-            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem;
+            font-family:'JetBrains Mono', monospace; font-size: 1.1rem;
             color: var(--cream); font-weight: bold; text-decoration: none;
             display: inline-block; min-width: 0; white-space: nowrap; text-align: center;
-            border: 1px solid transparent; border-radius: 3px;
+            border: 1px solid transparent; border-radius:0;
             letter-spacing: 0.05em; transition: none;
             text-transform: lowercase; box-sizing: border-box; padding: 10px 12px;
         }
@@ -207,14 +209,14 @@
         }
         .nav-eq-bar {
             width: 3px; background: var(--orange);
-            transition: height 0.1s ease; border-radius: 1px;
+            transition: height 0.1s ease; border-radius:0;
         }
 
         /* ── LANGUAGE SWITCHER ── */
         #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
         .lang-btn {
             background: none; border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35); font-family: 'Courier New', Courier, monospace;
+            color: rgba(255,255,255,0.35); font-family:'JetBrains Mono', monospace;
             font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
             cursor: pointer; transition: all 0.2s; text-transform: uppercase;
         }
@@ -230,15 +232,15 @@
             letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
         }
         .hero h1 {
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'Anton', sans-serif; text-transform:uppercase;
             font-size: clamp(3.12rem, 5.5vw, 5.46rem);
-            font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px;
-            letter-spacing: -0.02em;
+            font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 28px;
+            letter-spacing: 0;
         }
         .hero h1 span { color: var(--orange); }
 
         .tts-player {
-            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            background: var(--bg2); border: 1px solid var(--border); border-radius:0;
             padding: 16px 20px; margin: 32px 0 0;
             display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
         }
@@ -246,8 +248,8 @@
         .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .tts-btn {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
-            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            font-family:'JetBrains Mono', monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius:0;
             transition: all 0.15s; white-space: nowrap;
         }
         .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
@@ -257,7 +259,7 @@
         .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
         .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
         .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
-        .tts-speed { -webkit-appearance: none; appearance: none; width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer; }
+        .tts-speed { -webkit-appearance: none; appearance: none; width: 90px; height: 4px; background: var(--border-dim); border-radius:0; outline: none; cursor: pointer; }
         .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
         .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
         .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
@@ -265,23 +267,23 @@
         .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
         .tts-section-sel, .tts-voice-sel {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
-            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+            font-family:'JetBrains Mono', monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius:0; cursor: pointer; outline: none;
         }
         .tts-section-sel { max-width: 200px; }
         .tts-voice-sel  { max-width: 240px; }
         .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
         .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
-        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+        .tts-highlight { background: rgba(230,67,42,0.15); outline: 1px solid rgba(230,67,42,0.3); border-radius:0; transition: background 0.3s; }
 
         .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
         .section-label { font-size: 1.04rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
-        .section h2 { font-family: 'Courier New', Courier, monospace; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; margin-bottom: 40px; letter-spacing: -0.02em; }
+        .section h2 { font-family:'Anton', sans-serif; text-transform:uppercase; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 400; color: #fff; margin-bottom: 40px; letter-spacing: 0; }
 
         .bio-split { display: grid; grid-template-columns: 1fr 320px; gap: 56px; align-items: start; }
         .bio-text p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); margin-bottom: 18px; }
         .bio-text p strong { color: var(--orange); font-weight: normal; }
-        .bio-text a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,102,0,0.3); transition: border-color 0.2s; }
+        .bio-text a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(230,67,42,0.3); transition: border-color 0.2s; }
         .bio-text a:hover { border-color: var(--orange); }
 
         .lede {
@@ -293,19 +295,19 @@
 
         .portfolio-card {
             display: flex; align-items: center; gap: 20px;
-            background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
+            background: var(--bg2); border: 1px solid var(--border); border-radius:0;
             padding: 24px 28px; margin-top: 24px; text-decoration: none;
             transition: border-color 0.2s, background 0.2s;
         }
         .portfolio-card:hover { border-color: var(--orange); background: #1e201e; }
         .portfolio-card-text { flex: 1; }
         .portfolio-card .card-label { font-size: 0.936rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
-        .portfolio-card h3 { font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .portfolio-card h3 { font-family:'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
         .portfolio-card p { font-size: 1.05rem; line-height: 1.75; color: var(--text); }
         .portfolio-card .arrow { color: var(--orange); font-size: 1.8rem; flex-shrink: 0; line-height: 1; }
 
         .photo-frame {
-            width: 100%; aspect-ratio: 3/4; border: 1px solid var(--border); border-radius: 4px;
+            width: 100%; aspect-ratio: 3/4; border: 1px solid var(--border); border-radius:0;
             overflow: hidden; background: #0e0f0e; position: sticky; top: 72px; transition: border-color 0.2s;
         }
         .photo-frame:hover { border-color: var(--orange); }
@@ -313,28 +315,28 @@
         .photo-frame:hover img { filter: grayscale(0%); }
 
         .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
-        .skill-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 20px 18px; transition: border-color 0.2s; }
+        .skill-card { background: var(--bg2); border: 1px solid var(--border); border-radius:0; padding: 20px 18px; transition: border-color 0.2s; }
         .skill-card:hover { border-color: var(--orange); }
         .skill-card .card-label { font-size: 0.936rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
-        .skill-card h3 { font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .skill-card h3 { font-family:'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
         .skill-card p { font-size: 1.05rem; line-height: 1.75; color: var(--text); }
 
         .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-        .tag { font-size: 0.95rem; letter-spacing: 0.1em; padding: 5px 12px; border: 1px solid var(--border); border-radius: 2px; color: var(--cream); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
+        .tag { font-size: 0.95rem; letter-spacing: 0.1em; padding: 5px 12px; border: 1px solid var(--border); border-radius:0; color: var(--cream); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
         .tag:hover { border-color: var(--orange); color: var(--orange); }
 
         .contact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
         .contact-info p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; color: var(--text); margin-bottom: 14px; }
         .contact-info p strong { color: var(--orange); font-weight: normal; }
-        .contact-info a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,102,0,0.3); transition: border-color 0.2s; }
+        .contact-info a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(230,67,42,0.3); transition: border-color 0.2s; }
         .contact-info a:hover { border-color: var(--orange); }
 
         .contact-form { display: flex; flex-direction: column; gap: 12px; }
         .form-field { display: flex; flex-direction: column; gap: 4px; }
         .form-field label { font-size: 0.95rem; letter-spacing: 0.15em; color: var(--orange); text-transform: uppercase; }
         .form-field input, .form-field textarea {
-            background: transparent; border: 1px solid var(--border); border-radius: 3px; padding: 10px 14px;
-            color: #fff; font-family: 'Courier New', Courier, monospace; font-size: 1rem; outline: none; transition: border-color 0.2s; width: 100%;
+            background: transparent; border: 1px solid var(--border); border-radius:0; padding: 10px 14px;
+            color: #fff; font-family:'JetBrains Mono', monospace; font-size: 1rem; outline: none; transition: border-color 0.2s; width: 100%;
         }
         .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(200,200,192,0.3); }
         .form-field input:focus, .form-field textarea:focus { border-color: var(--orange); }
@@ -342,27 +344,27 @@
 
         .send-btn {
             padding: 13px; background: transparent; border: 1px solid var(--orange); color: var(--orange);
-            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem; letter-spacing: 0.2em;
-            text-transform: uppercase; cursor: pointer; border-radius: 3px;
+            font-family:'JetBrains Mono', monospace; font-size: 1.014rem; letter-spacing: 0.2em;
+            text-transform: uppercase; cursor: pointer; border-radius:0;
             transition: background 0.2s, color 0.2s, transform 0.15s; margin-top: 4px;
         }
         .send-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
         .send-btn:active { transform: translateY(0); }
         .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        .form-success { display: none; padding: 20px; border: 1px solid var(--orange); border-radius: 4px; text-align: center; font-size: 1.014rem; color: var(--orange); letter-spacing: 0.1em; }
-        .form-error { display: none; padding: 12px 16px; border: 1px solid #cc3300; border-radius: 4px; font-size: 0.95rem; color: #cc3300; letter-spacing: 0.05em; margin-top: 8px; }
+        .form-success { display: none; padding: 20px; border: 1px solid var(--orange); border-radius:0; text-align: center; font-size: 1.014rem; color: var(--orange); letter-spacing: 0.1em; }
+        .form-error { display: none; padding: 12px 16px; border: 1px solid #cc3300; border-radius:0; font-size: 0.95rem; color: #cc3300; letter-spacing: 0.05em; margin-top: 8px; }
 
         .cv-strip {
-            margin-top: 32px; padding: 18px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            margin-top: 32px; padding: 18px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius:0;
             display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
         }
         .cv-strip p { font-size: 1.014rem; color: var(--text); line-height: 1.6; }
         .cv-strip p strong { color: #fff; font-weight: normal; }
         .cv-link {
             display: inline-block; padding: 8px 20px; border: 1px solid var(--orange); color: var(--orange);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem; letter-spacing: 0.12em;
-            text-transform: uppercase; text-decoration: none; border-radius: 3px; white-space: nowrap;
+            font-family:'JetBrains Mono', monospace; font-size: 0.936rem; letter-spacing: 0.12em;
+            text-transform: uppercase; text-decoration: none; border-radius:0; white-space: nowrap;
             transition: background 0.2s, color 0.2s, transform 0.15s; flex-shrink: 0;
         }
         .cv-link:hover { background: var(--orange); color: #000; transform: translateY(-1px); }
@@ -392,7 +394,7 @@
         /* ── FIX 2: Business Card CSS ── */
         .card-intro {
             color: var(--cream);
-            font-family: 'Courier New', monospace;
+            font-family:'JetBrains Mono', monospace;
             margin-bottom: 40px;
             opacity: 0.75;
         }
@@ -421,12 +423,12 @@
         .flip-card-back img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .flip-card-back { transform: rotateY(180deg); }
         .flip-hint {
-            font-family: 'Courier New', monospace; font-size: 0.75rem;
+            font-family:'JetBrains Mono', monospace; font-size: 0.75rem;
             color: var(--orange); letter-spacing: 0.08em; opacity: 0.6;
         }
         .card-downloads { display: flex; gap: 16px; flex-wrap: wrap; }
         .dl-btn {
-            font-family: 'Courier New', monospace; font-size: 0.85rem;
+            font-family:'JetBrains Mono', monospace; font-size: 0.85rem;
             color: var(--orange); border: 1px solid var(--orange);
             padding: 8px 20px; text-decoration: none;
             letter-spacing: 0.1em; transition: background 0.2s, color 0.2s;
@@ -442,7 +444,7 @@
         }
         .gallery-item {
             position: relative; overflow: hidden;
-            border: 1px solid var(--border); border-radius: 4px;
+            border: 1px solid var(--border); border-radius:0;
             aspect-ratio: 4/3; cursor: pointer;
             background: var(--bg2);
             transition: border-color 0.2s;
@@ -476,7 +478,7 @@
         .lightbox-img {
             max-width: 90vw; max-height: 88vh;
             object-fit: contain; border: 1px solid var(--border);
-            border-radius: 4px;
+            border-radius:0;
             transform: scale(0.95);
             transition: transform 0.25s ease;
         }
@@ -485,7 +487,7 @@
             position: absolute; top: 24px; right: 32px;
             font-size: 2rem; color: var(--cream); cursor: pointer;
             background: none; border: none;
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             line-height: 1; transition: color 0.15s;
         }
         .lightbox-close:hover { color: var(--orange); }
@@ -498,9 +500,9 @@
         .lightbox-prev, .lightbox-next {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: none; border: 1px solid var(--border);
-            color: var(--cream); font-family: 'Courier New', Courier, monospace;
+            color: var(--cream); font-family:'JetBrains Mono', monospace;
             font-size: 1.2rem; padding: 12px 16px; cursor: pointer;
-            border-radius: 3px; transition: all 0.15s;
+            border-radius:0; transition: all 0.15s;
         }
         .lightbox-prev { left: 24px; }
         .lightbox-next { right: 24px; }
@@ -672,14 +674,14 @@
 
         <a href="current.html" class="studio-log-card" style="
             display: inline-flex; align-items: center; gap: 20px;
-            border: 1px solid var(--border); border-radius: 4px;
+            border: 1px solid var(--border); border-radius:0;
             padding: 28px 36px; background: var(--bg2);
             text-decoration: none; transition: border-color 0.2s, background 0.2s;
             max-width: 640px; width: 100%;
-        " onmouseover="this.style.borderColor='var(--orange)';this.style.background='#1e201e'" onmouseout="this.style.borderColor='rgba(255,102,0,0.25)';this.style.background='var(--bg2)'">
+        " onmouseover="this.style.borderColor='var(--orange)';this.style.background='#1e201e'" onmouseout="this.style.borderColor='rgba(230,67,42,0.25)';this.style.background='var(--bg2)'">
             <div style="flex: 1;">
                 <div style="font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px;">// Live log</div>
-                <div class="studio-log-heading" style="font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: -0.01em; margin-bottom: 8px;">Studio Log — 2026</div>
+                <div class="studio-log-heading" style="font-family:'Anton',sans-serif; text-transform:uppercase; font-size: 1.5rem; font-weight: 400; color: #fff; letter-spacing: 0; margin-bottom: 8px;">Studio Log — 2026</div>
                 <div style="font-size: calc(1.04rem * var(--font-scale)); color: var(--dim); line-height: 1.6;">Client work, new builds, launches and learning — updated as it happens.</div>
             </div>
             <div style="color: var(--orange); font-size: 1.8rem; flex-shrink: 0; line-height: 1;">→</div>

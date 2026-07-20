@@ -10,18 +10,20 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Software — dPaul Technologies</title>
     <style>
-        :root { --bg:#131413;--bg2:#1a1c1a;--orange:#FF6600;--cream:#D4C4A8;--text:#c8c8c0;--dim:#7a7a70;--border:rgba(255,102,0,0.25);--border-dim:rgba(255,255,255,0.07);--gold:#ffbb00;--font-scale:1; }
+        :root { --bg:#171717;--bg2:#1e1e1e;--orange:#e6432a;--cream:#f4f3ef;--text:#a8a6a0;--dim:#8f8d87;--border:rgba(230,67,42,0.25);--border-dim:rgba(255,255,255,0.07);--gold:#c98a3d;--font-scale:1; }
 
-        html[data-theme="light"] { --bg:#f1f1ef;--bg2:#e4e4e1;--orange:#1a1a1a;--cream:#3a352d;--text:#2e2a24;--dim:#8a8276;--border:rgba(26,26,26,0.35);--border-dim:rgba(0,0,0,0.12); }
+        html[data-theme="light"] { --bg:#f4f3ef;--bg2:#e8e6e0;--orange:#171717;--cream:#2b2b28;--text:#262421;--dim:#8f8d87;--border:rgba(23,23,23,0.35);--border-dim:rgba(0,0,0,0.12); }
         html[data-theme="light"] body::before { opacity: 0.06; }
         html[data-theme="light"] body::after { opacity: 0.05; }
         html[data-theme="light"] .hero h1,
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
         html[data-theme="light"] .skill-card h3,
-        html[data-theme="light"] .company-footer-val { color: #1a1610; }
+        html[data-theme="light"] .company-footer-val { color: #171310; }
         html[data-theme="light"] .product-title-col { color: #000; }
         html[data-theme="light"] .product-eyebrow-col { color: #000; }
         html[data-theme="light"] .hero h1 span { color: var(--orange); }
@@ -29,49 +31,49 @@
         html[data-theme="light"] .form-field input::placeholder,
         html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
         html[data-theme="light"] .form-field input,
-        html[data-theme="light"] .form-field textarea { color: #1a1610; }
+        html[data-theme="light"] .form-field textarea { color: #171310; }
         html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
         html[data-theme="light"] .tts-btn,
         html[data-theme="light"] .tts-section-sel,
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #FF6600 !important; color: #fff !important; }
+        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
+        html[data-theme="light"] .tts-btn.active { background: #e6432a !important; color: #fff !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
         html[data-theme="light"] .tts-section-label { color: var(--dim); }
-        html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
+        html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
         html[data-theme="light"] #dp-share-btn:hover,
         html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
-        .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'Courier New',Courier,monospace;width:32px;height:32px;cursor:pointer;border-radius:3px;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
+        .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
         .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
         #bulbFilament1, #bulbFilament2 { transition: stroke 0.2s, filter 0.2s; }
         html[data-theme="light"] #bulbFilament1,
         html[data-theme="light"] #bulbFilament2 { stroke: var(--orange); filter: drop-shadow(0 0 3px var(--orange)); }
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:var(--bg);color:var(--text);font-family:'Courier New',Courier,monospace;font-size:130%;min-height:100vh;overflow-x:hidden;}
+        body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono', monospace;font-size:130%;min-height:100vh;overflow-x:hidden;}
         body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.35;}
         body::after{content:'';position:fixed;top:72px;left:0;right:0;bottom:0;background-image:url('assets/code.webp');background-size:cover;background-position:center top;background-repeat:no-repeat;opacity:.06;pointer-events:none;z-index:-1;}
 
-        .font-nudge{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .3s;}
+        .font-nudge{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--bg2);border:1px solid var(--border);border-radius:0;padding:12px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .3s;}
         .font-nudge-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);}
         .font-nudge-controls{display:flex;align-items:center;gap:8px;}
-        .font-btn{background:#222;border:1px solid var(--border-dim);color:var(--cream);font-family:'Courier New',Courier,monospace;width:32px;height:32px;cursor:pointer;border-radius:3px;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+        .font-btn{background:#222;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
         .font-btn:hover{border-color:var(--orange);color:var(--orange);}
         .font-size-indicator{font-size:.7rem;color:var(--dim);letter-spacing:.1em;min-width:32px;text-align:center;}
-        .font-nudge-dismiss{background:none;border:none;color:var(--dim);font-family:'Courier New',Courier,monospace;font-size:.65rem;cursor:pointer;letter-spacing:.1em;text-align:right;padding:0;}
+        .font-nudge-dismiss{background:none;border:none;color:var(--dim);font-family:'JetBrains Mono', monospace;font-size:.65rem;cursor:pointer;letter-spacing:.1em;text-align:right;padding:0;}
         .font-nudge-dismiss:hover{color:var(--orange);}
 
         nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:2px;height:72px;}
-        nav a{font-family:'Courier New',Courier,monospace;font-size:1.1rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:0;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:3px;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 12px;}
+        nav a{font-family:'JetBrains Mono', monospace;font-size:1.1rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:0;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:0;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 12px;}
         nav a:hover{border-color:var(--orange);color:var(--orange);}
         nav a.active{background:var(--orange);color:#000;border-color:var(--orange);}
         .nav-spacer{flex:1;}
         #nav-eq-container{display:flex;align-items:flex-end;gap:2px;height:22px;margin:0 24px;padding-bottom:2px;}
-        .nav-eq-bar{width:3px;background:var(--orange);transition:height 0.1s ease;border-radius:1px;}
+        .nav-eq-bar{width:3px;background:var(--orange);transition:height 0.1s ease;border-radius:0;}
         #nav-share-container{min-width:130px;display:flex;align-items:center;justify-content:flex-end;}
 
         .page{max-width:1400px;margin:0 auto;padding:0 56px 120px;position:relative;z-index:1;}
@@ -79,7 +81,7 @@
         /* HERO */
         .hero{padding:64px 0 56px;border-bottom:1px solid var(--border);}
         .hero-label{font-size:1.17rem;color:var(--orange);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
-        .hero h1{font-size:clamp(2.86rem,5.5vw,5.2rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:20px;}
+        .hero h1{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(2.86rem,5.5vw,5.2rem);font-weight:400;color:#fff;line-height:1.05;margin-bottom:20px;}
         .hero h1 span{color:var(--orange);}
         .hero p{font-size:calc(1.365rem * var(--font-scale));line-height:1.9;max-width:640px;color:var(--text);}
 
@@ -88,7 +90,7 @@
         .product-date-col{padding-right:48px;padding-top:4px;position:relative;}
         .product-date-col::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:var(--border-dim);}
         .product-eyebrow-col{font-size:.78rem;letter-spacing:.2em;color:var(--orange);text-transform:uppercase;display:block;margin-bottom:8px;}
-        .product-title-col{font-size:1.5rem;font-weight:900;color:#fff;line-height:1.1;display:block;}
+        .product-title-col{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.5rem;font-weight:400;color:#fff;line-height:1.1;display:block;}
         .product-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:16px;}
         .product-tag{font-size:.62rem;letter-spacing:.1em;padding:2px 8px;border:1px solid var(--border-dim);color:var(--dim);text-transform:uppercase;}
         .product-body{padding-left:48px;}
@@ -109,10 +111,10 @@
         }
 
         .product-eyebrow{font-size:1.04rem;color:var(--orange);letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px;}
-        .product-name{font-size:clamp(2.4rem,3.5vw,3.6rem);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:6px;line-height:1.1;}
+        .product-name{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(2.4rem,3.5vw,3.6rem);font-weight:400;color:#fff;letter-spacing:0;margin-bottom:6px;line-height:1.1;}
         .product-tagline{font-size:calc(1.17rem * var(--font-scale));color:var(--dim);letter-spacing:.08em;margin-bottom:28px;line-height:1.6;}
         .product-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);margin-bottom:20px;}
-        .product-story em{color:var(--cream);font-style:normal;border-bottom:1px solid rgba(212,196,168,.3);}
+        .product-story em{color:var(--cream);font-style:normal;border-bottom:1px solid rgba(244,243,239,.3);}
 
         .feature-list{list-style:none;margin:0 0 28px;}
         .feature-list li{font-size:calc(1.04rem * var(--font-scale));color:var(--text);padding:8px 0 8px 18px;border-bottom:1px solid var(--border-dim);position:relative;line-height:1.6;}
@@ -120,23 +122,23 @@
         .feature-list li::before{content:'›';position:absolute;left:0;color:var(--orange);}
 
         .privacy-strip{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;}
-        .privacy-tag{font-size:calc(.884rem * var(--font-scale));letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border-dim);border-radius:2px;color:var(--cream);}
+        .privacy-tag{font-size:calc(.884rem * var(--font-scale));letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border-dim);border-radius:0;color:var(--cream);}
         .privacy-tag.highlight{border-color:rgba(80,200,100,.3);color:#50c864;background:rgba(80,200,100,.06);}
 
         /* BUY BUTTON */
-        .buy-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:230px;padding:13px 28px;background:#FF6600;color:#000;font-family:'Courier New',Courier,monospace;font-size:1.01rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:3px;white-space:nowrap;transition:background .2s,transform .15s;margin-right:12px;}
-        .buy-btn:hover{background:#ff8533;transform:translateY(-2px);}
-        .buy-btn-secondary{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:none;color:var(--orange);font-family:'Courier New',Courier,monospace;font-size:1.066rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--orange);border-radius:3px;transition:background .2s,color .2s,transform .15s;}
+        .buy-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:230px;padding:13px 28px;background:#e6432a;color:#000;font-family:'JetBrains Mono', monospace;font-size:1.01rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:0;white-space:nowrap;transition:background .2s,transform .15s;margin-right:12px;}
+        .buy-btn:hover{background:#f0654a;transform:translateY(-2px);}
+        .buy-btn-secondary{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:none;color:var(--orange);font-family:'JetBrains Mono', monospace;font-size:1.066rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--orange);border-radius:0;transition:background .2s,color .2s,transform .15s;}
         .buy-btn-secondary:hover{background:var(--orange);color:#000;transform:translateY(-2px);}
         .price-note{display:block;font-size:calc(.884rem * var(--font-scale));color:var(--dim);letter-spacing:.1em;margin-top:12px;}
 
         /* TRIAL BLOCK */
-        .trial-block{margin-top:28px;padding:18px 20px;border:1px solid var(--border-dim);border-radius:4px;background:var(--bg2);max-width:480px;}
+        .trial-block{margin-top:28px;padding:18px 20px;border:1px solid var(--border-dim);border-radius:0;background:var(--bg2);max-width:480px;}
         .trial-label{font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
         .trial-desc{font-size:calc(1rem * var(--font-scale));color:var(--dim);line-height:1.7;}
 
         /* PRO BLOCK (html-live pro) */
-        .pro-block{margin-top:28px;padding:22px 24px;border:1px solid #554400;border-radius:4px;background:rgba(255,187,0,0.04);}
+        .pro-block{margin-top:28px;padding:22px 24px;border:1px solid #554400;border-radius:0;background:rgba(255,187,0,0.04);}
         .pro-eyebrow{font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
         .pro-name{font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;}
         .pro-desc{font-size:calc(1rem * var(--font-scale));color:var(--dim);line-height:1.7;margin-bottom:16px;}
@@ -144,7 +146,7 @@
         .pro-feature-list li{font-size:calc(.98rem * var(--font-scale));color:var(--text);padding:5px 0 5px 18px;position:relative;border-bottom:1px solid rgba(85,68,0,.4);line-height:1.5;}
         .pro-feature-list li:first-child{border-top:1px solid rgba(85,68,0,.4);}
         .pro-feature-list li::before{content:'★';position:absolute;left:0;color:var(--gold);font-size:.7rem;top:8px;}
-        .pro-buy-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--gold);color:#000;font-family:'Courier New',Courier,monospace;font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:3px;transition:background .2s,transform .15s;}
+        .pro-buy-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--gold);color:#000;font-family:'JetBrains Mono', monospace;font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:0;transition:background .2s,transform .15s;}
         .pro-buy-btn:hover{background:#ffdd55;transform:translateY(-2px);}
         .pro-price-note{font-size:.88rem;color:#776633;letter-spacing:.08em;margin-left:12px;vertical-align:middle;}
 
@@ -152,7 +154,7 @@
         .img-expand-wrap{cursor:zoom-in;position:relative;}
         .img-expand-wrap img{transition:transform .35s cubic-bezier(.4,0,.2,1),box-shadow .35s;}
         .img-expand-wrap.expanded{cursor:zoom-out;position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);}
-        .img-expand-wrap.expanded img{max-width:90vw;max-height:90vh;width:auto;height:auto;box-shadow:0 0 80px rgba(0,0,0,.8);border-radius:6px;}
+        .img-expand-wrap.expanded img{max-width:90vw;max-height:90vh;width:auto;height:auto;box-shadow:0 0 80px rgba(0,0,0,.8);border-radius:0;}
 
         /* REVEAL */
         .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease;}
@@ -227,7 +229,7 @@
     <!-- ── WEBP / MEDIA CONVERTER ── -->
     <div class="product-block reveal" id="software-webp-converter" data-post-section data-post-title="dPaul Studio — Web Media Converter">
         <div class="product-date-col">
-            <span class="product-eyebrow-col">Released June 20, 2026 &middot; Pro added July 14, 2026 &middot; v3.1 &mdash; July 18, 2026</span>
+            <span class="product-eyebrow-col">Released June 15, 2026</span>
             <span class="product-title-col">Web Media Converter</span>
             <div class="product-tags">
                 <span class="product-tag">Software</span>
@@ -255,25 +257,22 @@
                         <li><strong>Pro adds:</strong> batch convert video too (MP4, MOV &rarr; WebM), mixed into the same image batch, with its own adjustable bitrate</li>
                     </ul>
                     <div class="tier-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;align-items:stretch;">
-                        <div style="border:1px solid var(--border);border-radius:4px;padding:16px;">
+                        <div style="border:1px solid var(--border);border-radius:0;padding:16px;">
                             <div style="font-weight:600;margin-bottom:4px;">Standard &mdash; Free</div>
                             <div style="font-size:0.9em;color:var(--text-muted,#888);">Images only</div>
                         </div>
-                        <div style="border:1px solid var(--border);border-radius:4px;padding:16px;">
+                        <div style="border:1px solid var(--border);border-radius:0;padding:16px;">
                             <div style="font-weight:600;margin-bottom:4px;">Pro &mdash; £19.99</div>
                             <div style="font-size:0.9em;color:var(--text-muted,#888);">Images + video, one-off payment</div>
                         </div>
                     </div>
                     <div>
-                        <a href="https://davidpaul2.gumroad.com/l/dnldth" target="_blank" class="buy-btn" style="margin-right:0;">Get Web Media Converter</a>
-                    </div>
-                    <div style="margin-top:16px;">
-                        <span class="price-note"><strong>IMPORTANT: READ BEFORE INSTALLING</strong> — <a href="assets/Web_Media_Converter_Installation_Guide.pdf" target="_blank" style="color:var(--orange);text-decoration:underline;">Read the install guide first</a> to fix it in 10 seconds.</span>
+                        <a href="https://www.dpaul-software.uk" target="_blank" class="buy-btn" style="margin-right:0;">Visit Web Media Converter site</a>
                     </div>
                 </div>
                 <div class="webp-split-video">
                     <video autoplay loop muted playsinline
-                           style="width:100%;max-width:320px;aspect-ratio:9/16;object-fit:cover;border:1px solid var(--border);border-radius:4px;display:block;margin:0 auto;">
+                           style="width:100%;max-width:320px;aspect-ratio:9/16;object-fit:cover;border:1px solid var(--border);border-radius:0;display:block;margin:0 auto;">
                         <source src="assets/wbc-v1.webm" type="video/webm">
                     </video>
                 </div>
@@ -302,7 +301,7 @@
                 Detects exact and visually similar duplicates. Group review side by side. Adjustable sensitivity. Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more. Up to 1,000 images per session. <strong>100% local — nothing leaves your Mac.</strong>
             </p>
             <img src="../assets/dupe-remove-one.webp" alt="Dupe Remove — Duplicate Image Cleaner for Mac"
-                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:4px;margin-top:4px;margin-bottom:28px;display:block;">
+                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:0;margin-top:4px;margin-bottom:28px;display:block;">
             <div>
                 <a href="https://davidpaul2.gumroad.com/l/wfujsa" target="_blank" class="buy-btn">Buy Now — £19</a>
                 <span class="price-note">One-off payment &middot; no subscription &middot; macOS 10.15+ &middot; 30-day trial included</span>
@@ -331,7 +330,7 @@
                 Built entirely with vanilla JavaScript. Real-time preview, desktop/tablet/mobile modes, Find &amp; Replace with regex, HTMLHint debug panel, Inspect mode, version rollback, and export as raw, formatted or minified HTML.
             </p>
             <img src="../assets/html-live-on-macbook.webp" alt="HTML Live running on a MacBook"
-                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:4px;margin-top:4px;margin-bottom:28px;display:block;">
+                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:0;margin-top:4px;margin-bottom:28px;display:block;">
             <div>
                 <a href="https://github.com/aherndavid/dpaulstudio/releases/download/v2.1.0/HTML.Live.Preview-2.1.0-universal.dmg" target="_blank" class="buy-btn">Get HTML&#8209;Live</a>
                 <span class="price-note">Pay what you wish &middot; your support means everything &middot; thank you.</span>

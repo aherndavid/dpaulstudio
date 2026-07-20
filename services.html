@@ -10,29 +10,31 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Services — CitiIT Limited</title>
 
     <style>
         :root {
-            --bg:      #131413;
-            --bg2:     #1a1c1a;
-            --orange:  #FF6600;
-            --cream:   #D4C4A8;
-            --text:    #c8c8c0;
-            --dim:     #7a7a70;
-            --border:  rgba(255,102,0,0.25);
+            --bg:      #171717;
+            --bg2:     #1e1e1e;
+            --orange:  #e6432a;
+            --cream:   #f4f3ef;
+            --text:    #a8a6a0;
+            --dim:     #8f8d87;
+            --border:  rgba(230,67,42,0.25);
             --border-dim: rgba(255,255,255,0.07);
             --font-scale: 1;
         }
 
         html[data-theme="light"] {
-            --bg:      #f1f1ef;
-            --bg2:     #e4e4e1;
-            --orange:  #1a1a1a;
-            --cream:   #3a352d;
-            --text:    #2e2a24;
-            --dim:     #8a8276;
-            --border:  rgba(26,26,26,0.35);
+            --bg:      #f4f3ef;
+            --bg2:     #e8e6e0;
+            --orange:  #171717;
+            --cream:   #2b2b28;
+            --text:    #262421;
+            --dim:     #8f8d87;
+            --border:  rgba(23,23,23,0.35);
             --border-dim: rgba(0,0,0,0.12);
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
@@ -41,56 +43,56 @@
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
         html[data-theme="light"] .skill-card h3,
-        html[data-theme="light"] .company-footer-val { color: #1a1610; }
+        html[data-theme="light"] .company-footer-val { color: #171310; }
         html[data-theme="light"] .hero h1 em { color: var(--orange); }
         /* Hero sits over a photo background — keep light text regardless of theme */
         html[data-theme="light"] .hero h1 { color: #fff; }
-        html[data-theme="light"] .hero h1 em { color: #FF6600; }
+        html[data-theme="light"] .hero h1 em { color: #e6432a; }
         html[data-theme="light"] .hero-intro { color: #e8e4da; }
-        html[data-theme="light"] .hero-label { color: #FF6600; }
-        html[data-theme="light"] .cta-heading { color: #1a1610; }
+        html[data-theme="light"] .hero-label { color: #e6432a; }
+        html[data-theme="light"] .cta-heading { color: #171310; }
         html[data-theme="light"] .section-title { color: #fff !important; }
-        html[data-theme="light"] .section-eyebrow { color: #FF6600 !important; }
+        html[data-theme="light"] .section-eyebrow { color: #e6432a !important; }
         html[data-theme="light"] .service-section .hero-intro { color: #fff !important; }
         html[data-theme="light"] .addon-table td,
         html[data-theme="light"] .addon-table th,
         html[data-theme="light"] .addon-table td.addon-desc { color: #fff !important; }
         html[data-theme="light"] .pricing-card,
         html[data-theme="light"] .terms-block { background: rgba(241,241,239,0.75); backdrop-filter: blur(2px); }
-        html[data-theme="light"] .featured-badge { background: #FF6600; color: #000; }
-        html[data-theme="light"] .card-price { color: #1a1610; }
+        html[data-theme="light"] .featured-badge { background: #e6432a; color: #000; }
+        html[data-theme="light"] .card-price { color: #171310; }
         html[data-theme="light"] nav a.active { color: #fff; }
         html[data-theme="light"] .form-field input::placeholder,
         html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
         html[data-theme="light"] .form-field input,
-        html[data-theme="light"] .form-field textarea { color: #1a1610; }
+        html[data-theme="light"] .form-field textarea { color: #171310; }
         html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
         html[data-theme="light"] .tts-btn,
         html[data-theme="light"] .tts-section-sel,
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #FF6600 !important; color: #fff !important; }
+        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
+        html[data-theme="light"] .tts-btn.active { background: #e6432a !important; color: #fff !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
         html[data-theme="light"] .tts-section-label { color: var(--dim); }
-        html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
+        html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         /* Nav background stays dark in both themes — keep these elements legible against it */
-        html[data-theme="light"] .nav-eq-bar { background: #FF6600; }
-        html[data-theme="light"] .theme-toggle { color: #D4C4A8; }
-        html[data-theme="light"] .theme-toggle:hover { border-color: #FF6600; color: #FF6600; }
+        html[data-theme="light"] .nav-eq-bar { background: #e6432a; }
+        html[data-theme="light"] .theme-toggle { color: #f4f3ef; }
+        html[data-theme="light"] .theme-toggle:hover { border-color: #e6432a; color: #e6432a; }
         html[data-theme="light"] #bulbFilament1,
-        html[data-theme="light"] #bulbFilament2 { stroke: #FF6600; filter: drop-shadow(0 0 3px #FF6600); }
+        html[data-theme="light"] #bulbFilament2 { stroke: #e6432a; filter: drop-shadow(0 0 3px #e6432a); }
         html[data-theme="light"] #dp-share-btn { color: rgba(255,255,255,0.45); }
         html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: #FF6600; border-color: #FF6600; }
+        html[data-theme="light"] #dp-share-btn.open { color: #e6432a; border-color: #e6432a; }
 
         /* ── THEME TOGGLE ── */
         .theme-toggle {
             background: none; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius:0; font-size: 1rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.15s;
             margin-right: 15px;
         }
@@ -108,7 +110,7 @@
             background: var(--bg) url('assets/desk-2.webp') no-repeat center center fixed;
             background-size: cover;
             color: var(--text);
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             font-size: 130%;
             min-height: 100vh;
             overflow-x: hidden;
@@ -137,10 +139,10 @@
             padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
         }
         nav a {
-            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem; color: var(--cream);
+            font-family:'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--cream);
             font-weight: bold; text-decoration: none;
             display: inline-block; min-width: 0; white-space: nowrap; text-align: center;
-            border: 1px solid transparent; border-radius: 3px;
+            border: 1px solid transparent; border-radius:0;
             letter-spacing: 0.05em; transition: none;
             text-transform: lowercase; box-sizing: border-box; padding: 10px 12px;
         }
@@ -155,7 +157,7 @@
         }
         .nav-eq-bar {
             width: 3px; background: var(--orange);
-            transition: height 0.1s ease; border-radius: 1px;
+            transition: height 0.1s ease; border-radius:0;
         }
 
         #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
@@ -165,7 +167,7 @@
         .lang-btn {
             background: none; border: 1px solid rgba(255,255,255,0.18);
             color: rgba(255,255,255,0.35);
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             font-size: 0.7rem; font-weight: 700;
             letter-spacing: 0.12em; padding: 4px 8px;
             cursor: pointer; transition: color 0.2s, border-color 0.2s;
@@ -184,13 +186,13 @@
             margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
         }
         .hero-label::after { content: ''; display: block; width: 48px; height: 1px; background: var(--orange); opacity: 0.5; }
-        .hero h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; letter-spacing: -0.02em; }
+        .hero h1 { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 28px; letter-spacing: 0; }
         .hero h1 em { color: var(--orange); font-style: normal; }
         .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); max-width: 660px; border-left: 2px solid var(--orange); padding-left: 20px; margin-top: 8px; }
 
         /* TTS Player */
         .tts-player {
-            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            background: var(--bg2); border: 1px solid var(--border); border-radius:0;
             padding: 16px 20px; margin: 32px 0 0;
             display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
         }
@@ -198,8 +200,8 @@
         .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .tts-btn {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; font-size: 1.014rem;
-            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius: 3px;
+            font-family:'JetBrains Mono', monospace; font-size: 1.014rem;
+            letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius:0;
             transition: all 0.15s; white-space: nowrap;
         }
         .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
@@ -211,7 +213,7 @@
         .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
         .tts-speed {
             -webkit-appearance: none; appearance: none;
-            width: 90px; height: 4px; background: var(--border-dim); border-radius: 2px; outline: none; cursor: pointer;
+            width: 90px; height: 4px; background: var(--border-dim); border-radius:0; outline: none; cursor: pointer;
         }
         .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
         .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
@@ -220,19 +222,19 @@
         .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
         .tts-section-sel, .tts-voice-sel {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.936rem;
-            padding: 5px 10px; border-radius: 3px; cursor: pointer; outline: none;
+            font-family:'JetBrains Mono', monospace; font-size: 0.936rem;
+            padding: 5px 10px; border-radius:0; cursor: pointer; outline: none;
         }
         .tts-section-sel { max-width: 200px; }
         .tts-voice-sel  { max-width: 240px; }
         .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
         .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
-        .tts-highlight { background: rgba(255,102,0,0.15); outline: 1px solid rgba(255,102,0,0.3); border-radius: 2px; transition: background 0.3s; }
+        .tts-highlight { background: rgba(230,67,42,0.15); outline: 1px solid rgba(230,67,42,0.3); border-radius:0; transition: background 0.3s; }
 
         /* Section structure */
         .service-section { padding: 80px 0; border-bottom: 1px solid var(--border); }
         .section-eyebrow { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
-        .section-title { font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 900; color: #fff; letter-spacing: -0.02em; margin-bottom: 40px; }
+        .section-title { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 400; color: #fff; letter-spacing: 0; margin-bottom: 40px; }
 
         /* Single column pricing layout */
         .pricing-single-col {
@@ -305,8 +307,9 @@
 
         .card-label { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
         .card-price {
-            font-size: clamp(2.2rem, 3.5vw, 3.2rem); font-weight: 900; color: #fff;
-            letter-spacing: -0.02em; line-height: 1; margin-bottom: 6px;
+            font-family:'Anton',sans-serif;
+            font-size: clamp(2.2rem, 3.5vw, 3.2rem); font-weight: 400; color: #fff;
+            letter-spacing: 0; line-height: 1; margin-bottom: 6px;
         }
         .card-price span { font-size: 1rem; font-weight: 400; color: var(--dim); letter-spacing: 0.05em; }
         .card-total { font-size: calc(0.91rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.12em; margin-bottom: 28px; }
@@ -374,15 +377,15 @@
         }
         .cta-copy { flex: 1; }
         .cta-label { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
-        .cta-heading { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 16px; }
+        .cta-heading { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 400; color: #fff; line-height: 1.2; margin-bottom: 16px; }
         .cta-text { font-size: calc(1.17rem * var(--font-scale)); line-height: 1.85; color: var(--text); max-width: 520px; }
         .cta-actions { display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
         .cta-btn {
             display: inline-block; padding: 14px 36px;
             border: 1px solid var(--orange); color: var(--orange);
-            font-family: 'Courier New', Courier, monospace; font-size: 1.066rem;
+            font-family:'JetBrains Mono', monospace; font-size: 1.066rem;
             letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
-            border-radius: 3px; transition: all 0.2s; cursor: pointer; background: transparent;
+            border-radius:0; transition: all 0.2s; cursor: pointer; background: transparent;
         }
         .cta-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
         .cta-btn.secondary { border-color: var(--border-dim); color: var(--dim); }
@@ -392,7 +395,7 @@
             display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0;
         }
         .cta-stat { text-align: center; }
-        .cta-stat-num { font-size: 3rem; font-weight: 900; color: var(--orange); line-height: 1; }
+        .cta-stat-num { font-family:'Anton',sans-serif; font-size: 3rem; font-weight: 400; color: var(--orange); line-height: 1; }
         .cta-stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-top: 4px; }
         .cta-divider { width: 1px; height: 40px; background: var(--border-dim); }
 
@@ -401,22 +404,22 @@
             display: inline-flex; align-items: center; gap: 10px;
             margin-top: 28px; padding: 14px 28px;
             background: var(--orange); color: #000;
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             font-size: 0.9rem; font-weight: 700;
             letter-spacing: 0.18em; text-transform: uppercase;
-            text-decoration: none; border-radius: 3px;
+            text-decoration: none; border-radius:0;
             transition: all 0.2s; border: none; cursor: pointer;
         }
-        .stripe-btn:hover { background: #ff8533; transform: translateY(-2px); }
+        .stripe-btn:hover { background: #f0654a; transform: translateY(-2px); }
         .stripe-btn svg { flex-shrink: 0; }
         .addon-stripe-btn {
             display: inline-flex; align-items: center; gap: 8px;
             padding: 8px 16px; background: transparent;
             border: 1px solid var(--orange); color: var(--orange);
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             font-size: 0.78rem; font-weight: 700;
             letter-spacing: 0.15em; text-transform: uppercase;
-            text-decoration: none; border-radius: 3px;
+            text-decoration: none; border-radius:0;
             transition: all 0.15s; white-space: nowrap;
         }
         .addon-stripe-btn:hover { background: var(--orange); color: #000; }

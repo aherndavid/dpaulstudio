@@ -8,19 +8,21 @@
     // If we're at the root, default to index.html
     if (path === "") path = "index.html";
     // Send them to the exact same page but inside the /m/ folder
-    window.location.replace('m/' + path);
+    window.location.replace('m-' + path);
   }
 </script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>dpaul.studio</title>
 
     <style>
         :root {
-            --bg:      #0F1010;
-            --orange:  #FF6600;
-            --cream:   #D4C4A8;
+            --bg:      #161616;
+            --orange:  #e6432a;
+            --cream:   #f4f3ef;
         }
 
         *, *::before, *::after {
@@ -37,7 +39,7 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-blend-mode: luminosity;
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             overflow: hidden;
             color: var(--cream);
         }
@@ -81,11 +83,12 @@
         }
 
         .wordmark {
+            font-family:'Anton', sans-serif;
             font-size: clamp(5.5rem, 16vw, 14rem);
-            font-weight: 700;
+            font-weight: 400;
             line-height: 0.85;
             color: #FFFFFF;
-            letter-spacing: -0.05em;
+            letter-spacing: 0;
             text-transform: lowercase;
         }
 

@@ -10,29 +10,31 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Merch — dPaul Technologies</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:      #131413;
-            --bg2:     #1a1c1a;
-            --orange:  #FF6600;
-            --cream:   #D4C4A8;
-            --text:    #c8c8c0;
-            --dim:     #7a7a70;
-            --border:  rgba(255,102,0,0.25);
+            --bg:      #171717;
+            --bg2:     #1e1e1e;
+            --orange:  #e6432a;
+            --cream:   #f4f3ef;
+            --text:    #a8a6a0;
+            --dim:     #8f8d87;
+            --border:  rgba(230,67,42,0.25);
             --border-dim: rgba(255,255,255,0.07);
             --font-scale: 1;
         }
 
         html[data-theme="light"] {
-            --bg:      #f1f1ef;
-            --bg2:     #e4e4e1;
-            --orange:  #1a1a1a;
-            --cream:   #3a352d;
-            --text:    #2e2a24;
-            --dim:     #8a8276;
-            --border:  rgba(26,26,26,0.35);
+            --bg:      #f4f3ef;
+            --bg2:     #e8e6e0;
+            --orange:  #171717;
+            --cream:   #2b2b28;
+            --text:    #262421;
+            --dim:     #8f8d87;
+            --border:  rgba(23,23,23,0.35);
             --border-dim: rgba(0,0,0,0.12);
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
@@ -43,36 +45,36 @@
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
         html[data-theme="light"] .skill-card h3,
-        html[data-theme="light"] .company-footer-val { color: #1a1610; }
+        html[data-theme="light"] .company-footer-val { color: #171310; }
         html[data-theme="light"] .hero-text h1 em { color: var(--orange); }
         html[data-theme="light"] nav a.active { color: #fff; }
         html[data-theme="light"] .form-field input::placeholder,
         html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
         html[data-theme="light"] .form-field input,
-        html[data-theme="light"] .form-field textarea { color: #1a1610; }
+        html[data-theme="light"] .form-field textarea { color: #171310; }
         html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
         html[data-theme="light"] .tts-btn,
         html[data-theme="light"] .tts-section-sel,
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #FF6600 !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #FF6600 !important; color: #fff !important; }
+        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
+        html[data-theme="light"] .tts-btn.active { background: #e6432a !important; color: #fff !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
         html[data-theme="light"] .tts-section-label { color: var(--dim); }
-        html[data-theme="light"] .font-btn { background: #000 !important; color: #FF6600 !important; border-color: #000; }
+        html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
         html[data-theme="light"] #dp-share-btn:hover,
         html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
-        html[data-theme="light"] .btn-buy { background: #FF6600; color: #000; border-color: #FF6600; }
+        html[data-theme="light"] .btn-buy { background: #e6432a; color: #000; border-color: #e6432a; }
         html[data-theme="light"] .btn-buy:hover { background: #e55a00; }
 
         /* ── THEME TOGGLE ── */
         .theme-toggle {
             background: none; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius:0; font-size: 1rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.15s;
             margin-right: 15px;
         }
@@ -83,15 +85,15 @@
             stroke: var(--orange);
             filter: drop-shadow(0 0 3px var(--orange));
         }
-        html[data-theme="light"] .product-name { color: #1a1610; }
-        html[data-theme="light"] .product-name em { color: #FF6600; }
+        html[data-theme="light"] .product-name { color: #171310; }
+        html[data-theme="light"] .product-name em { color: #e6432a; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
             font-size: 130%;
             min-height: 100vh;
             overflow-x: hidden;
@@ -123,10 +125,10 @@
             padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
         }
         nav a {
-            font-family: 'Courier New', Courier, monospace; font-size: 1.1rem;
+            font-family:'JetBrains Mono', monospace; font-size: 1.1rem;
             color: var(--cream); font-weight: bold; text-decoration: none;
             display: inline-block; min-width: 0; white-space: nowrap; text-align: center;
-            border: 1px solid transparent; border-radius: 3px;
+            border: 1px solid transparent; border-radius:0;
             letter-spacing: 0.05em; transition: none;
             text-transform: lowercase; box-sizing: border-box; padding: 10px 12px;
         }
@@ -140,12 +142,12 @@
             display: flex; align-items: flex-end; gap: 2px;
             height: 22px; margin: 0 24px; padding-bottom: 2px;
         }
-        .nav-eq-bar { width: 3px; background: var(--orange); transition: height 0.1s ease; border-radius: 1px; }
+        .nav-eq-bar { width: 3px; background: var(--orange); transition: height 0.1s ease; border-radius:0; }
 
         #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
         .lang-btn {
             background: none; border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35); font-family: 'Courier New', Courier, monospace;
+            color: rgba(255,255,255,0.35); font-family:'JetBrains Mono', monospace;
             font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
             cursor: pointer; transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
         }
@@ -156,7 +158,7 @@
         .font-nudge {
             position: fixed; bottom: 24px; right: 24px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
-            border-radius: 4px; padding: 12px 16px;
+            border-radius:0; padding: 12px 16px;
             display: flex; flex-direction: column; gap: 8px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
         }
@@ -164,15 +166,15 @@
         .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
         .font-btn {
             background: #222; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family: 'Courier New', Courier, monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius: 3px; font-size: 1rem;
+            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius:0; font-size: 1rem;
             display: flex; align-items: center; justify-content: center; transition: all 0.15s;
         }
         .font-btn:hover { border-color: var(--orange); color: var(--orange); }
         .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
         .font-nudge-dismiss {
             background: none; border: none; color: var(--dim);
-            font-family: 'Courier New', Courier, monospace; font-size: 0.65rem;
+            font-family:'JetBrains Mono', monospace; font-size: 0.65rem;
             cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
         }
         .font-nudge-dismiss:hover { color: var(--orange); }
@@ -182,7 +184,7 @@
 
         .hero-text { padding: 64px 0 56px; border-bottom: 1px solid var(--border); max-width: 1000px; }
         .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; }
-        .hero-text h1 { font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 900; color: #fff; line-height: 1.08; margin-bottom: 28px; }
+        .hero-text h1 { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 28px; }
         .hero-text h1 em { color: var(--orange); font-style: normal; }
         .hero-intro {
             font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95;
@@ -193,12 +195,12 @@
         /* ── SHIPPING BANNER ── */
         .shipping-banner {
             display: flex; align-items: center; gap: 16px;
-            padding: 16px 24px; border: 1px solid rgba(255,102,0,0.2);
-            background: rgba(255,102,0,0.04); margin: 40px 0 0;
+            padding: 16px 24px; border: 1px solid rgba(230,67,42,0.2);
+            background: rgba(230,67,42,0.04); margin: 40px 0 0;
         }
         .shipping-banner .ship-icon { color: var(--orange); font-size: 1rem; letter-spacing: 0.1em; flex-shrink: 0; }
         .shipping-banner p { font-size: 0.82rem; letter-spacing: 0.12em; color: var(--cream); text-transform: uppercase; line-height: 1.6; }
-        .shipping-banner a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(255,102,0,0.4); }
+        .shipping-banner a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(230,67,42,0.4); }
         .shipping-banner a:hover { border-color: var(--orange); }
 
         /* ── COLLECTION ── */
@@ -212,7 +214,7 @@
             margin-bottom: 48px;
             transition: border-color 0.3s;
         }
-        .product-row:hover { border-color: rgba(255,102,0,0.5); }
+        .product-row:hover { border-color: rgba(230,67,42,0.5); }
         .product-row.reverse { direction: rtl; }
         .product-row.reverse > * { direction: ltr; }
 
@@ -242,12 +244,12 @@
             content: ''; position: absolute; inset: -4px;
             border: 1px solid transparent; transition: border-color 0.2s;
         }
-        .colour-btn.active::after { border-color: rgba(255,102,0,0.4); }
+        .colour-btn.active::after { border-color: rgba(230,67,42,0.4); }
 
         .product-num {
             position: absolute; top: 20px; left: 20px;
             font-family: 'VT323', monospace; font-size: 1.4rem;
-            color: rgba(255,102,0,0.5); letter-spacing: 0.1em; z-index: 2;
+            color: rgba(230,67,42,0.5); letter-spacing: 0.1em; z-index: 2;
         }
 
         .product-info-col {
@@ -259,7 +261,7 @@
         .product-row.reverse .product-info-col { border-left: none; border-right: 1px solid var(--border); }
 
         .product-tag { font-size: 0.72rem; letter-spacing: 0.28em; color: var(--orange); text-transform: uppercase; margin-bottom: 20px; }
-        .product-name { font-size: clamp(1.8rem, 2.5vw, 2.6rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.01em; }
+        .product-name { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(1.8rem, 2.5vw, 2.6rem); font-weight: 400; color: #fff; line-height: 1.1; margin-bottom: 12px; letter-spacing: 0; }
         .product-name em { color: var(--orange); font-style: normal; }
         .product-price { font-size: 1.5rem; color: var(--cream); letter-spacing: 0.08em; margin-bottom: 32px; }
         .product-price span { font-size: 0.75rem; color: var(--dim); letter-spacing: 0.2em; margin-left: 8px; text-transform: uppercase; }
@@ -273,7 +275,7 @@
             cursor: pointer; transition: all 0.15s; text-transform: uppercase;
         }
         .size-pill:hover { border-color: var(--orange); color: var(--cream); }
-        .size-pill.selected { border-color: var(--orange); color: var(--orange); background: rgba(255,102,0,0.06); }
+        .size-pill.selected { border-color: var(--orange); color: var(--orange); background: rgba(230,67,42,0.06); }
 
         /* spec list */
         .spec-list { list-style: none; margin-bottom: 36px; flex: 1; }
@@ -291,7 +293,7 @@
         .btn-buy {
             display: block; text-align: center; text-decoration: none;
             background: var(--orange); color: #000;
-            padding: 16px 24px; font-family: 'Courier New', Courier, monospace;
+            padding: 16px 24px; font-family:'JetBrains Mono', monospace;
             font-size: 0.82rem; font-weight: 700; letter-spacing: 0.25em;
             text-transform: uppercase; transition: background 0.2s, transform 0.1s;
             border: 1px solid var(--orange);
@@ -305,8 +307,8 @@
         }
 
         .btn-size-guide {
-            background: none; border: 1px solid rgba(255,102,0,0.25);
-            color: var(--dim); font-family: 'Courier New', Courier, monospace;
+            background: none; border: 1px solid rgba(230,67,42,0.25);
+            color: var(--dim); font-family:'JetBrains Mono', monospace;
             font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
             padding: 10px 24px; cursor: pointer; transition: all 0.2s; text-align: center;
         }
@@ -320,7 +322,7 @@
         }
         .modal-overlay.open { display: flex; }
         .modal-box {
-            background: #131413; border: 1px solid rgba(255,102,0,0.35);
+            background: #171717; border: 1px solid rgba(230,67,42,0.35);
             max-width: 520px; width: 100%;
             animation: modalIn 0.25s ease;
         }
@@ -333,22 +335,22 @@
         .modal-close {
             background: none; border: none; cursor: pointer; color: #000;
             font-size: 1.1rem; line-height: 1; padding: 0 2px; opacity: 0.75;
-            font-family: 'Courier New', Courier, monospace;
+            font-family:'JetBrains Mono', monospace;
         }
         .modal-close:hover { opacity: 1; }
         .modal-body { padding: 28px 28px 32px; }
-        .modal-sub { font-size: 0.75rem; letter-spacing: 0.12em; color: rgba(122,122,112,0.8); text-transform: uppercase; margin-bottom: 24px; border-left: 2px solid rgba(255,102,0,0.4); padding-left: 10px; }
+        .modal-sub { font-size: 0.75rem; letter-spacing: 0.12em; color: rgba(122,122,112,0.8); text-transform: uppercase; margin-bottom: 24px; border-left: 2px solid rgba(230,67,42,0.4); padding-left: 10px; }
         .size-table { width: 100%; border-collapse: collapse; }
         .size-table th {
             text-align: left; padding: 10px 14px; font-size: 0.7rem;
             letter-spacing: 0.22em; color: var(--orange); text-transform: uppercase;
-            border-bottom: 1px solid rgba(255,102,0,0.3); font-weight: 700;
+            border-bottom: 1px solid rgba(230,67,42,0.3); font-weight: 700;
         }
         .size-table th:not(:first-child) { text-align: center; }
         .size-table td { padding: 10px 14px; font-size: 0.88rem; color: var(--text); border-bottom: 1px solid rgba(255,255,255,0.04); }
         .size-table td:first-child { color: var(--cream); font-weight: 700; letter-spacing: 0.1em; }
         .size-table td:not(:first-child) { text-align: center; }
-        .size-table tr:nth-child(even) td { background: rgba(255,102,0,0.03); }
+        .size-table tr:nth-child(even) td { background: rgba(230,67,42,0.03); }
 
         /* ── COMPANY FOOTER ── */
         .company-footer {
@@ -380,19 +382,19 @@
             display: flex; gap: 6px; z-index: 2;
         }
         .view-btn {
-            padding: 4px 10px; font-family: 'Courier New', Courier, monospace;
+            padding: 4px 10px; font-family:'JetBrains Mono', monospace;
             font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
             border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.4);
             background: rgba(0,0,0,0.5); cursor: pointer; transition: all 0.15s;
         }
-        .view-btn.active { border-color: var(--orange); color: var(--orange); background: rgba(255,102,0,0.08); }
+        .view-btn.active { border-color: var(--orange); color: var(--orange); background: rgba(230,67,42,0.08); }
         .view-btn:hover { border-color: rgba(255,255,255,0.4); color: var(--cream); }
         .view-btn.active:hover { border-color: var(--orange); color: var(--orange); }
 
         /* ── LIMITED EDITION BADGE ── */
         .limited-badge {
             display: inline-flex; align-items: center; gap: 8px;
-            border: 1px solid rgba(255,102,0,0.4); padding: 6px 14px;
+            border: 1px solid rgba(230,67,42,0.4); padding: 6px 14px;
             font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
             color: var(--orange); margin-bottom: 20px;
         }
