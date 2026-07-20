@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Design — dPaul Technologies (Mobile)</title>
+    
+    <style>
+        /* ── THEME VARIABLES ── */
+        :root {
+            --bg:      #171717;
+            --bg2:     #1e1e1e;
+            --orange:  #e6432a;
+            --cream:   #f4f3ef;
+            --text:    #a8a6a0;
+            --dim:     #8f8d87;
+            --border:  rgba(230,67,42,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+        }
+
+        html[data-theme="light"] {
+            --bg:      #f4f3ef;
+            --bg2:     #e8e6e0;
+            --orange:  #171717;
+            --cream:   #2b2b28;
+            --text:    #262421;
+            --dim:     #8f8d87;
+            --border:  rgba(23,23,23,0.35);
+            --border-dim: rgba(0,0,0,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 110%; 
+            margin: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scanline Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── MOBILE HAMBURGER NAV ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(23, 23, 23, 0.95); border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        html[data-theme="light"] #mobile-nav-container { background: rgba(244, 243, 239, 0.95); }
+
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px; 
+            background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;
+            padding: 24px 28px 0 0; gap: 0;
+            z-index: 1000;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); overflow-y: auto; }
+        .mobile-menu a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4rem; font-weight: 700;
+            color: rgba(212,196,168,0.25);
+            text-decoration: none; text-transform: lowercase;
+            letter-spacing: 0.02em; line-height: 1.05;
+            padding: 4px 10px; display: block;
+            transition: color 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
+        }
+        .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
+        .mobile-menu a.active { color: var(--orange); }
+
+        /* ── TICKER SYSTEM ── */
+        .ticker-wrap {
+            background: #000; border-bottom: 1px solid #222;
+            overflow: hidden; padding: 30px 0;
+        }
+        .ticker-track {
+            display: flex; gap: 40px; width: max-content;
+            animation: ticker 40s linear infinite;
+            will-change: transform;
+        }
+        .ticker-track span {
+            font-family: 'Anton', sans-serif; font-size: 1.8rem;
+            color: var(--orange); text-transform: uppercase; font-weight: 400;
+        }
+        .ticker-bottom { border-bottom: none; border-top: 1px solid #222; }
+        .ticker-bottom span { color: var(--cream); }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ── CONTENT ── */
+        .page { padding: 0 20px 80px; }
+
+        .hero-text { padding: 40px 0; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero-text h1 { font-family: 'Anton', sans-serif; font-size: 2.2rem; line-height: 1.1; margin-bottom: 24px; color: #fff; font-weight: 400; text-transform: uppercase; }
+        .hero-text h1 em { color: var(--orange); font-style: normal; }
+        
+        .hero-intro { 
+            font-size: 1.1rem; line-height: 1.7; color: var(--text); 
+            border-left: 2px solid var(--orange); padding-left: 16px; margin-bottom: 20px;
+        }
+
+        /* TTS PLAYER (Mobile Optimized) */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin-top: 24px; display: flex; flex-direction: column; gap: 12px;
+        }
+        .tts-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-voice-sel { 
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
+            padding: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; width: 100%;
+        }
+
+        /* ── BILLBOARD SHOWCASE ── */
+        .billboard-wrap { width: 100%; margin: 40px 0; }
+        .screen-chrome {
+            background: #0e0f0e; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .chrome-bar {
+            background: #111; padding: 10px; display: flex; align-items: center; gap: 6px;
+            border-bottom: 1px solid rgba(230,67,42,0.1);
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot-r { background: #ff5f57; } .dot-y { background: #febc2e; } .dot-g { background: #28c840; }
+        
+        .screen-video { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
+        .screen-video video { width: 100%; height: 100%; object-fit: cover; }
+        
+        .chrome-status {
+            background: #0e0f0e; padding: 10px; display: flex; justify-content: space-between;
+            font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .status-left { color: var(--cream); }
+        .status-right { color: var(--orange); }
+
+        .footer-toggle { text-align: center; padding: 40px 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+
+        /* REVEAL */
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="m-about.html">about</a>
+    <a href="m-current.html">current</a>
+    <a href="m-design.html" class="active">design</a>
+    <a href="m-fun.html">fun</a>
+    <a href="m-merch.html">merch</a>
+    <a href="m-music.html">music</a>
+    <a href="m-services.html">services</a>
+    <a href="m-software.html">software</a>
+    <a href="m-synths.html">synths</a>
+    <a href="m-tools.html">tools</a>
+    <a href="m-video.html">video</a>
+</div>
+
+<div class="ticker-wrap">
+    <div class="ticker-track">
+        <span>LOGO DESIGN</span><span>-</span><span>ANIMATION</span><span>-</span>
+        <span>BRAND IDENTITY</span><span>-</span><span>MOTION GRAPHICS</span><span>-</span>
+        <span>LOGO DESIGN</span><span>-</span><span>ANIMATION</span><span>-</span>
+        <span>BRAND IDENTITY</span><span>-</span><span>MOTION GRAPHICS</span><span>-</span>
+    </div>
+</div>
+
+<div class="page">
+    <div class="hero-text reveal" data-post-section data-post-title="dPaul Studio — Design Services">
+        <div class="hero-label">// Design Services</div>
+        <h1>Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
+        
+        <p class="hero-intro">
+            Whether you need a static or animated logo for email signatures, labels, posters, or videos — I can help you create designs that make your brand stand out.
+        </p>
+        <p class="hero-intro">
+            Every design starts with a conversation. From concept through to final delivery, the process is straightforward and built around what you actually need.
+        </p>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
+            <div class="tts-controls">
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="billboard-wrap reveal">
+        <div class="screen-chrome">
+            <div class="chrome-bar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+                <div class="chrome-url">dpaul.studio — design showcase</div>
+            </div>
+            <div class="screen-video">
+                <video id="vid1" autoplay muted playsinline>
+                    <source src="../assets/video/traffic-narrator-with-sound.mp4" type="video/mp4">
+                </video>
+                <video id="vid2" muted playsinline style="display:none;">
+                    <source src="../assets/video/orange-porsche-with-sound.mp4" type="video/mp4">
+                </video>
+                <video id="vid3" muted playsinline style="display:none;">
+                    <source src="../assets/video/autofacts-white-gold-logo.mp4" type="video/mp4">
+                </video>
+                <video id="vid4" muted playsinline style="display:none;">
+                    <source src="../assets/video/motion-wheels-part-1.mp4" type="video/mp4">
+                </video>
+                <video id="vid5" muted playsinline style="display:none;">
+                    <source src="../assets/video/motion-wheels-part-2.mp4" type="video/mp4">
+                </video>
+                <video id="vid6" muted playsinline style="display:none;">
+                    <source src="../assets/video/computer-screen.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="chrome-status">
+                <span class="status-left">dPaul Billboard</span>
+                <span class="status-right" id="videoTitle">Traffic Narrator</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ticker-wrap ticker-bottom">
+    <div class="ticker-track">
+        <span>EST. 2024</span><span>-</span><span>AVAILABLE FOR PROJECTS 2026</span><span>-</span>
+        <span>EST. 2024</span><span>-</span><span>AVAILABLE FOR PROJECTS 2026</span><span>-</span>
+    </div>
+</div>
+
+<script>
+    // ── MENU LOGIC ──
+        function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
+    }
+
+    // ── VIDEO PLAYLIST ──
+    const vids = [
+        { id: 'vid1', title: 'Traffic Narrator' },
+        { id: 'vid2', title: 'Orange Porsche' },
+        { id: 'vid3', title: 'Autofacts Logo' },
+        { id: 'vid4', title: 'Autofacts Logo' },
+        { id: 'vid5', title: 'Autofacts Logo' }
+    ];
+    let currentVid = 0;
+
+    function playNext() {
+        document.getElementById(vids[currentVid].id).style.display = 'none';
+        currentVid = (currentVid + 1) % vids.length;
+        const next = document.getElementById(vids[currentVid].id);
+        next.style.display = 'block';
+        next.play();
+        document.getElementById('videoTitle').innerText = vids[currentVid].title;
+    }
+    
+    vids.forEach(v => {
+        const el = document.getElementById(v.id);
+        if (el) el.addEventListener('ended', playNext);
+    });
+
+    // ── REVEAL ANIMATION ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ── TTS ENGINE ──
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        if (!sel) return;
+        sel.innerHTML = '';
+        voices.filter(v => v.lang.startsWith('en')).forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
+        });
+        selectedVoice = voices[0];
+    }
+
+    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
+    
+    window.ttsPlay = () => {
+        synth.cancel();
+        const header = document.querySelector('h1');
+        const intro = document.querySelector('.hero-intro');
+        const text = (header ? header.innerText : "") + ". " + (intro ? intro.innerText : "");
+        const utter = new SpeechSynthesisUtterance(text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        synth.speak(utter);
+    };
+
+    window.ttsStop = () => synth.cancel();
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
+</script>
+
+<script src="post-generator.js"></script>
+
+</body>
+</html>
