@@ -1,377 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Software — dPaul Technologies</title>
     <style>
-        :root { --bg:#171717;--bg2:#1e1e1e;--orange:#e6432a;--cream:#f4f3ef;--text:#a8a6a0;--dim:#8f8d87;--border:rgba(230,67,42,0.25);--border-dim:rgba(255,255,255,0.07);--gold:#c98a3d;--font-scale:1; }
-
-        html[data-theme="light"] { --bg:#f4f3ef;--bg2:#e8e6e0;--orange:#171717;--cream:#2b2b28;--text:#262421;--dim:#8f8d87;--border:rgba(23,23,23,0.35);--border-dim:rgba(0,0,0,0.12); }
-        html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.05; }
-        html[data-theme="light"] .hero h1,
-        html[data-theme="light"] .section h2,
-        html[data-theme="light"] .portfolio-card h3,
-        html[data-theme="light"] .skill-card h3,
-        html[data-theme="light"] .company-footer-val { color: #171310; }
-        html[data-theme="light"] .product-title-col { color: #000; }
-        html[data-theme="light"] .product-eyebrow-col { color: #000; }
-        html[data-theme="light"] .hero h1 span { color: var(--orange); }
-        html[data-theme="light"] nav a.active { color: #fff; }
-        html[data-theme="light"] .form-field input::placeholder,
-        html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
-        html[data-theme="light"] .form-field input,
-        html[data-theme="light"] .form-field textarea { color: #171310; }
-        html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
-        html[data-theme="light"] .tts-btn,
-        html[data-theme="light"] .tts-section-sel,
-        html[data-theme="light"] .tts-voice-sel,
-        html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #e6432a !important; color: #fff !important; }
-        html[data-theme="light"] .tts-progress,
-        html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: var(--dim); }
-        html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
-
-        .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
-        .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
-        #bulbFilament1, #bulbFilament2 { transition: stroke 0.2s, filter 0.2s; }
-        html[data-theme="light"] #bulbFilament1,
-        html[data-theme="light"] #bulbFilament2 { stroke: var(--orange); filter: drop-shadow(0 0 3px var(--orange)); }
-        *{margin:0;padding:0;box-sizing:border-box;}h1,h2,h3{overflow-wrap:break-word;word-break:break-word;}
-        body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono', monospace;font-size:130%;min-height:100vh;overflow-x:hidden;}
-        body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.35;}
-        body::after{content:'';position:fixed;top:72px;left:0;right:0;bottom:0;background-image:url('assets/code.webp');background-size:cover;background-position:center top;background-repeat:no-repeat;opacity:.06;pointer-events:none;z-index:-1;}
-
-        .font-nudge{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--bg2);border:1px solid var(--border);border-radius:0;padding:12px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .3s;}
-        .font-nudge-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);}
-        .font-nudge-controls{display:flex;align-items:center;gap:8px;}
-        .font-btn{background:#222;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-        .font-btn:hover{border-color:var(--orange);color:var(--orange);}
-        .font-size-indicator{font-size:.7rem;color:var(--dim);letter-spacing:.1em;min-width:32px;text-align:center;}
-        .font-nudge-dismiss{background:none;border:none;color:var(--dim);font-family:'JetBrains Mono', monospace;font-size:.65rem;cursor:pointer;letter-spacing:.1em;text-align:right;padding:0;}
-        .font-nudge-dismiss:hover{color:var(--orange);}
-
-        nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:2px;height:72px;}
-        nav a{font-family:'JetBrains Mono', monospace;font-size:1.1rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:0;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:0;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 12px;}
-        nav a:hover{border-color:var(--orange);color:var(--orange);}
-        nav a.active{background:var(--orange);color:#000;border-color:var(--orange);}
-        .nav-spacer{flex:1;}
-        /* ── MOBILE NAV TOGGLE ── */
-        .nav-toggle {
-            display: none;
-            background: none; border: 1px solid var(--border-dim); color: var(--cream);
-            width: 36px; height: 36px; flex-shrink: 0; cursor: pointer; border-radius: 0;
-            align-items: center; justify-content: center; margin-right: 10px;
-        }
-        .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
-        .nav-toggle-bars { position: relative; width: 18px; height: 2px; background: currentColor; }
-        .nav-toggle-bars::before, .nav-toggle-bars::after {
-            content: ''; position: absolute; left: 0; width: 18px; height: 2px; background: currentColor;
-        }
-        .nav-toggle-bars::before { top: -6px; }
-        .nav-toggle-bars::after { top: 6px; }
-
-        .nav-links { display: flex; align-items: center; gap: 2px; }
-
-        @media (max-width: 1340px) {
-            nav { position: relative; }
-            .nav-toggle { display: flex; }
-            #nav-eq-container { display: none; }
-            .nav-links {
-                display: none;
-                position: absolute; top: 100%; left: 0; right: 0;
-                flex-direction: column; align-items: stretch; gap: 0;
-                background: var(--bg); border-bottom: 1px solid var(--border);
-                max-height: calc(100vh - 72px); overflow-y: auto;
-                padding: 8px 16px 16px; z-index: 200;
-            }
-            .nav-links.open { display: flex; }
-            .nav-links a {
-                width: 100%; text-align: left; padding: 14px 8px;
-                border-bottom: 1px solid var(--border-dim); font-size: 1.05rem;
-            }
-            .nav-links a:last-child { border-bottom: none; }
+        :root {
+            --bg:      #171717;
+            --bg2:     #1e1e1e;
+            --orange:  #e6432a;
+            --cream:   #f4f3ef;
+            --text:    #a8a6a0;
+            --dim:     #8f8d87;
+            --border:  rgba(230,67,42,0.25);
+            --border-dim: rgba(255,255,255,0.07);
+            --gold:       #ffbb00;
+            --font-scale: 1;
         }
 
-        #nav-eq-container{display:flex;align-items:flex-end;gap:2px;height:22px;margin:0 24px;padding-bottom:2px;}
-        .nav-eq-bar{width:3px;background:var(--orange);transition:height 0.1s ease;border-radius:0;}
-        #nav-share-container{min-width:130px;display:flex;align-items:center;justify-content:flex-end;}
-
-        .page{max-width:1400px;margin:0 auto;padding:0 56px 120px;position:relative;z-index:1;}
-
-        /* HERO */
-        .hero{padding:64px 0 56px;border-bottom:1px solid var(--border);}
-        .hero-label{font-size:1.17rem;color:var(--orange);letter-spacing:.2em;text-transform:uppercase;margin-bottom:16px;}
-        .hero h1{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(2.86rem,5.5vw,5.2rem);font-weight:400;color:#fff;line-height:1.05;margin-bottom:20px;}
-        .hero h1 span{color:var(--orange);}
-        .hero p{font-size:calc(1.365rem * var(--font-scale));line-height:1.9;max-width:640px;color:var(--text);}
-
-        /* PRODUCT BLOCKS */
-        .product-block{display:grid;grid-template-columns:220px 1fr;gap:0;padding:52px 0;border-bottom:1px solid var(--border-dim);}
-        .product-date-col{padding-right:48px;padding-top:4px;position:relative;}
-        .product-date-col::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:var(--border-dim);}
-        .product-eyebrow-col{font-size:.78rem;letter-spacing:.2em;color:var(--orange);text-transform:uppercase;display:block;margin-bottom:8px;}
-        .product-title-col{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.5rem;font-weight:400;color:#fff;line-height:1.1;display:block;}
-        .product-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:16px;}
-        .product-tag{font-size:.62rem;letter-spacing:.1em;padding:2px 8px;border:1px solid var(--border-dim);color:var(--dim);text-transform:uppercase;}
-        .product-body{padding-left:48px;}
-        .product-body p{font-size:calc(1.1rem * var(--font-scale));line-height:1.9;color:var(--text);margin-bottom:20px;}
-        .product-body strong{color:var(--cream);font-weight:normal;}
-        .product-body em{color:var(--orange);font-style:normal;}
-
-        .webp-split{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;margin-bottom:28px;}
-        .webp-split-text p:last-child{margin-bottom:0;}
-        @media(max-width:900px){
-            .webp-split{grid-template-columns:minmax(0,1fr);gap:24px;}
-        }
-        @media(max-width:900px){
-            .product-block{grid-template-columns:minmax(0,1fr);}
-            .product-date-col{padding-right:0;padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid var(--border-dim);}
-            .product-date-col::after{display:none;}
-            .product-body{padding-left:0;}
+        html[data-theme="light"] {
+            --bg:      #f4f3ef;
+            --bg2:     #e8e6e0;
+            --orange:  #171717;
+            --cream:   #2b2b28;
+            --text:    #262421;
+            --dim:     #8f8d87;
+            --border:  rgba(23,23,23,0.35);
+            --border-dim: rgba(0,0,0,0.12);
         }
 
-        .product-eyebrow{font-size:1.04rem;color:var(--orange);letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px;}
-        .product-name{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(2.4rem,3.5vw,3.6rem);font-weight:400;color:#fff;letter-spacing:0;margin-bottom:6px;line-height:1.1;}
-        .product-tagline{font-size:calc(1.17rem * var(--font-scale));color:var(--dim);letter-spacing:.08em;margin-bottom:28px;line-height:1.6;}
-        .product-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);margin-bottom:20px;}
-        .product-story em{color:var(--cream);font-style:normal;border-bottom:1px solid rgba(244,243,239,.3);}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .feature-list{list-style:none;margin:0 0 28px;}
-        .feature-list li{font-size:calc(1.04rem * var(--font-scale));color:var(--text);padding:8px 0 8px 18px;border-bottom:1px solid var(--border-dim);position:relative;line-height:1.6;}
-        .feature-list li:first-child{border-top:1px solid var(--border-dim);}
-        .feature-list li::before{content:'›';position:absolute;left:0;color:var(--orange);}
-
-        .privacy-strip{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;}
-        .privacy-tag{font-size:calc(.884rem * var(--font-scale));letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--border-dim);border-radius:0;color:var(--cream);}
-        .privacy-tag.highlight{border-color:rgba(80,200,100,.3);color:#50c864;background:rgba(80,200,100,.06);}
-
-        /* BUY BUTTON */
-        .buy-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:230px;padding:13px 28px;background:#e6432a;color:#000;font-family:'JetBrains Mono', monospace;font-size:1.01rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:0;white-space:nowrap;transition:background .2s,transform .15s;margin-right:12px;}
-        .buy-btn:hover{background:#f0654a;transform:translateY(-2px);}
-        .buy-btn-secondary{display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:none;color:var(--orange);font-family:'JetBrains Mono', monospace;font-size:1.066rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--orange);border-radius:0;transition:background .2s,color .2s,transform .15s;}
-        .buy-btn-secondary:hover{background:var(--orange);color:#000;transform:translateY(-2px);}
-        .price-note{display:block;font-size:calc(.884rem * var(--font-scale));color:var(--dim);letter-spacing:.1em;margin-top:12px;}
-
-        /* TRIAL BLOCK */
-        .trial-block{margin-top:28px;padding:18px 20px;border:1px solid var(--border-dim);border-radius:0;background:var(--bg2);max-width:480px;}
-        .trial-label{font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-        .trial-desc{font-size:calc(1rem * var(--font-scale));color:var(--dim);line-height:1.7;}
-
-        /* PRO BLOCK (html-live pro) */
-        .pro-block{margin-top:28px;padding:22px 24px;border:1px solid #554400;border-radius:0;background:rgba(255,187,0,0.04);}
-        .pro-eyebrow{font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
-        .pro-name{font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:8px;}
-        .pro-desc{font-size:calc(1rem * var(--font-scale));color:var(--dim);line-height:1.7;margin-bottom:16px;}
-        .pro-feature-list{list-style:none;margin:0 0 18px;}
-        .pro-feature-list li{font-size:calc(.98rem * var(--font-scale));color:var(--text);padding:5px 0 5px 18px;position:relative;border-bottom:1px solid rgba(85,68,0,.4);line-height:1.5;}
-        .pro-feature-list li:first-child{border-top:1px solid rgba(85,68,0,.4);}
-        .pro-feature-list li::before{content:'★';position:absolute;left:0;color:var(--gold);font-size:.7rem;top:8px;}
-        .pro-buy-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--gold);color:#000;font-family:'JetBrains Mono', monospace;font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:0;transition:background .2s,transform .15s;}
-        .pro-buy-btn:hover{background:#ffdd55;transform:translateY(-2px);}
-        .pro-price-note{font-size:.88rem;color:#776633;letter-spacing:.08em;margin-left:12px;vertical-align:middle;}
-
-        /* EXPAND IMAGE */
-        .img-expand-wrap{cursor:zoom-in;position:relative;}
-        .img-expand-wrap img{transition:transform .35s cubic-bezier(.4,0,.2,1),box-shadow .35s;}
-        .img-expand-wrap.expanded{cursor:zoom-out;position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);}
-        .img-expand-wrap.expanded img{max-width:90vw;max-height:90vh;width:auto;height:auto;box-shadow:0 0 80px rgba(0,0,0,.8);border-radius:0;}
-
-        /* REVEAL */
-        .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease;}
-        .reveal.visible{opacity:1;transform:none;}
-
-        /* COMPANY FOOTER */
-        .company-footer{margin-top:48px;padding:32px 0;border-top:1px solid var(--border-dim);display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start;max-width:960px;}
-        .company-footer-block{display:flex;flex-direction:column;gap:6px;}
-        .company-footer-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--orange);}
-        .company-footer-val{font-size:.91rem;color:var(--dim);letter-spacing:.05em;}
-        .company-footer-val a{color:var(--dim);text-decoration:none;}
-        .company-footer-val a:hover{color:var(--orange);}
-        .company-footer-note{font-size:.84rem;color:var(--dim);opacity:.6;max-width:520px;line-height:1.7;}
-        .footer-line{margin-top:80px;padding-top:32px;padding-bottom:0;font-size:.85rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;border-top:1px solid var(--border);}
-
-        @media(max-width:900px){
-            .product-block{grid-template-columns:minmax(0,1fr);gap:40px;}
-            .product-block.flip{direction:ltr;}
-            .buy-btn{white-space:normal;text-align:center;}
-            nav{padding:0 16px;}
-            nav a{padding:5px 8px;font-size:1rem;min-width:unset;}
-            .page{padding:0 24px 80px;}
-            .font-nudge{bottom:16px;right:16px;}
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 110%;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAV ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(23, 23, 23, 0.95);
+            border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        html[data-theme="light"] #mobile-nav-container { background: rgba(244, 243, 239, 0.95); }
+
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span { display: block; width: 100%; height: 2px; background: var(--cream); transition: all 0.3s ease; }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;
+            padding: 24px 28px 0 0; gap: 0;
+            z-index: 1000;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); overflow-y: auto; }
+        .mobile-menu a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4rem; font-weight: 700;
+            color: rgba(212,196,168,0.25);
+            text-decoration: none; text-transform: lowercase;
+            letter-spacing: 0.02em; line-height: 1.05;
+            padding: 4px 10px; display: block;
+            transition: color 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
+        }
+        .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
+        .mobile-menu a.active { color: var(--orange); }
+
+        /* ── PAGE ── */
+        .page { padding: 0 16px 60px; max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+
+        /* ── HERO ── */
+        .hero { padding: 32px 0 28px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.72rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+        .hero h1 { font-family: 'Anton', sans-serif; font-size: 2rem; line-height: 1.1; margin-bottom: 18px; color: #fff; font-weight: 400; text-transform: uppercase; }
+        .hero h1 span { color: var(--orange); }
+        .hero p {
+            font-size: calc(0.95rem * var(--font-scale));
+            line-height: 1.8; color: var(--text);
+            border-left: 2px solid var(--orange); padding-left: 14px;
+        }
+
+        /* ── PRODUCT BLOCK ── */
+        .product-block {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .product-frame {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            background: #0e0f0e;
+            margin-bottom: 28px;
+        }
+        .product-frame img {
+            width: 100%; height: auto; display: block; object-fit: cover;
+        }
+        .product-frame.portrait { aspect-ratio: 9/16; }
+        .product-frame.portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+        .product-eyebrow { font-size: 0.68rem; color: var(--orange); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 8px; }
+        .product-name { font-family: 'Anton', sans-serif; font-size: 2.2rem; font-weight: 400; color: #fff; margin-bottom: 6px; line-height: 1.1; text-transform: uppercase; }
+        .product-tagline { font-size: calc(0.88rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.06em; margin-bottom: 20px; line-height: 1.6; }
+        .product-story { font-size: calc(0.92rem * var(--font-scale)); line-height: 1.9; color: var(--text); margin-bottom: 20px; }
+        .product-story em { color: var(--cream); font-style: normal; border-bottom: 1px solid rgba(212,196,168,0.3); }
+
+        .feature-list { list-style: none; margin: 0 0 24px; }
+        .feature-list li {
+            font-size: calc(0.88rem * var(--font-scale)); color: var(--text);
+            padding: 7px 0 7px 16px; border-bottom: 1px solid var(--border-dim);
+            position: relative; line-height: 1.55;
+        }
+        .feature-list li:first-child { border-top: 1px solid var(--border-dim); }
+        .feature-list li::before { content: '›'; position: absolute; left: 0; color: var(--orange); }
+
+        .privacy-strip { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 24px; }
+        .privacy-tag {
+            font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 4px 10px; border: 1px solid var(--border-dim); color: var(--cream);
+        }
+        .privacy-tag.highlight { border-color: rgba(80,200,100,0.3); color: #50c864; background: rgba(80,200,100,0.06); }
+
+        /* ── BUY BUTTON ── */
+        .buy-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 24px; background: var(--orange); color: #000;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; text-decoration: none; border-radius: 3px;
+        }
+        .price-note { display: block; font-size: 0.72rem; color: var(--dim); letter-spacing: 0.08em; margin-top: 10px; }
+
+        /* ── PRO BLOCK ── */
+        .pro-block {
+            margin-top: 24px; padding: 18px 16px;
+            border: 1px solid #554400; border-radius: 4px;
+            background: rgba(255,187,0,0.04);
+        }
+        .pro-eyebrow { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+        .pro-name { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .pro-desc { font-size: calc(0.88rem * var(--font-scale)); color: var(--dim); line-height: 1.7; margin-bottom: 14px; }
+        .pro-feature-list { list-style: none; margin: 0 0 16px; }
+        .pro-feature-list li {
+            font-size: calc(0.85rem * var(--font-scale)); color: var(--text);
+            padding: 5px 0 5px 16px; position: relative;
+            border-bottom: 1px solid rgba(85,68,0,0.4); line-height: 1.5;
+        }
+        .pro-feature-list li:first-child { border-top: 1px solid rgba(85,68,0,0.4); }
+        .pro-feature-list li::before { content: '★'; position: absolute; left: 0; color: var(--gold); font-size: 0.6rem; top: 8px; }
+        .pro-buy-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; background: var(--gold); color: #000;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; text-decoration: none; border-radius: 3px;
+        }
+        .pro-price-note { display: block; font-size: 0.68rem; color: #776633; letter-spacing: 0.08em; margin-top: 8px; }
+
+        /* ── TRIAL BLOCK ── */
+        .trial-block {
+            margin-top: 20px; padding: 14px 16px;
+            border: 1px solid var(--border-dim); border-radius: 4px;
+            background: var(--bg2);
+        }
+        .trial-label { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+        .trial-desc { font-size: calc(0.88rem * var(--font-scale)); color: var(--dim); line-height: 1.7; }
+
+        /* ── COMPANY FOOTER ── */
+        .company-footer {
+            margin-top: 40px; padding: 28px 0;
+            border-top: 1px solid var(--border-dim);
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .company-footer-block { display: flex; flex-direction: column; gap: 4px; }
+        .company-footer-label { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
+        .company-footer-val { font-size: 0.85rem; color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val a { color: var(--dim); text-decoration: none; }
+        .company-footer-note { font-size: 0.78rem; color: var(--dim); opacity: 0.6; line-height: 1.7; }
+
+        .footer-line {
+            margin-top: 40px; padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68rem; letter-spacing: 0.14em;
+            color: var(--dim); text-transform: uppercase;
+        }
+
+        /* ── EXPAND IMAGE ── */
+        .img-expand-wrap { cursor: zoom-in; }
+        .img-expand-wrap.expanded {
+            cursor: zoom-out; position: fixed; inset: 0; z-index: 9000;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.88);
+        }
+        .img-expand-wrap.expanded img {
+            max-width: 95vw; max-height: 90vh;
+            width: auto; height: auto;
+            border-radius: 4px; box-shadow: 0 0 60px rgba(0,0,0,0.8);
+        }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="font-nudge" id="fontNudge">
-    <div class="font-nudge-label">Text too small?</div>
-    <div class="font-nudge-controls">
-        <button class="font-btn" onclick="adjustFont(-1)">A&#8722;</button>
-        <span class="font-size-indicator" id="fontIndicator">100%</span>
-        <button class="font-btn" onclick="adjustFont(1)">A+</button>
+<!-- ── NAV ── -->
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
     </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
 </div>
 
-<nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
-        <span class="nav-toggle-bars"></span>
-    </button>
-    <div class="nav-links" id="navLinks">
-    <a href="about.html" data-i18n="nav_about">about</a>
-    <a href="current.html" data-i18n="nav_current">current</a>
-    <a href="design.html" data-i18n="nav_design">design</a>
-    <a href="fun.html">fun</a>
-    <a href="merch.html" data-i18n="nav_merch">merch</a>
-    <a href="music.html" data-i18n="nav_music">music</a>
-    <a href="services.html" data-i18n="nav_services">services</a>
-    <a href="software.html" class="active">software</a>
-    <a href="synths.html" data-i18n="nav_synths">synths</a>
-    <a href="tools.html" data-i18n="nav_tools">tools</a>
-    <a href="video.html" data-i18n="nav_video">video</a>
-    </div>
-    <div class="nav-spacer"></div>
-    <div id="nav-eq-container"></div>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
-        <svg id="bulbIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.4 4.89 3.5 6.13V18a1 1 0 001 1h5a1 1 0 001-1v-2.87C17.6 13.89 19 11.61 19 9c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="1.5"/>
-            <line id="bulbFilament1" x1="10" y1="9" x2="14" y2="13" stroke="currentColor" stroke-width="1.5"/>
-            <line id="bulbFilament2" x1="14" y1="9" x2="10" y2="13" stroke="currentColor" stroke-width="1.5"/>
-            <line x1="9" y1="22" x2="15" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-    </button>
-    <div id="nav-share-container"></div>
-</nav>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="m-about.html">about</a>
+    <a href="m-current.html">current</a>
+    <a href="m-design.html">design</a>
+    <a href="m-fun.html">fun</a>
+    <a href="m-merch.html">merch</a>
+    <a href="m-music.html">music</a>
+    <a href="m-services.html">services</a>
+    <a href="m-software.html" class="active">software</a>
+    <a href="m-synths.html">synths</a>
+    <a href="m-tools.html">tools</a>
+    <a href="m-video.html">video</a>
+</div>
 
 <div class="page">
 
+    <!-- HERO -->
     <section class="hero reveal">
         <div class="hero-label">// dPaul Technologies — Software</div>
         <h1>Mac software.<br><span>Built to last.</span></h1>
-        <p>Tools built to a higher standard — more power, more control, runs natively on your Mac. Some are paid, some are free. All built from scratch.</p>
+        <p>Paid tools built to a higher standard — more power, more control, runs natively on your Mac. Pay once, no subscription, free updates included.</p>
     </section>
 
-    <!-- ── WEBP / MEDIA CONVERTER ── -->
-    <div class="product-block reveal" id="software-webp-converter" data-post-section data-post-title="dPaul Studio — Web Media Converter">
-        <div class="product-date-col">
-            <span class="product-eyebrow-col">Released June 15, 2026</span>
-            <span class="product-title-col">Web Media Converter</span>
-            <div class="product-tags">
-                <span class="product-tag">Software</span>
-                <span class="product-tag">Mac App</span>
-                <span class="product-tag">Images + Video</span>
-                <span class="product-tag">Free &amp; Pro</span>
-            </div>
+    <!-- ── MEDIA CONVERTER ── -->
+    <div class="product-block reveal" id="software-webp-converter">
+        <div class="product-frame portrait">
+            <video autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block;">
+                <source src="../assets/wbc-v1.webm" type="video/webm">
+            </video>
         </div>
-        <div class="product-body">
-            <div class="webp-split">
-                <div class="webp-split-text">
-                    <p>
-                        Batch convert your image library to WebP &mdash; and, with Pro, your video library to WebM. Smaller files, faster load times, zero uploads.
-                    </p>
-                    <p>
-                        Every image and video on the web should be WebP and WebM &mdash; the formats browsers were built for. <em>Select a folder</em>, set a quality level, and batch convert the lot in seconds, right on your Mac. <strong>No uploads, no accounts, no cloud</strong> — everything happens locally, and the results screen shows exactly how much space you've saved per file.
-                    </p>
-                    <ul class="feature-list">
-                        <li>Batch convert entire folders — PNG, JPG, GIF and more</li>
-                        <li>Adjustable compression quality with real-time file size comparison</li>
-                        <li>Add prefix, suffix, or auto-numbering to output filenames</li>
-                        <li>Download individually or as a single zip — no cloud, fully offline</li>
-                        <li>Native Apple Silicon &mdash; built for M1, M2, M3, and M4 Macs</li>
-                        <li>Requires macOS 12 or later</li>
-                        <li><strong>Pro adds:</strong> batch convert video too (MP4, MOV &rarr; WebM), mixed into the same image batch, with its own adjustable bitrate</li>
-                    </ul>
-                    <div class="tier-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;align-items:stretch;">
-                        <div style="border:1px solid var(--border);border-radius:0;padding:16px;">
-                            <div style="font-weight:600;margin-bottom:4px;">Standard &mdash; Free</div>
-                            <div style="font-size:0.9em;color:var(--text-muted,#888);">Images only</div>
-                        </div>
-                        <div style="border:1px solid var(--border);border-radius:0;padding:16px;">
-                            <div style="font-weight:600;margin-bottom:4px;">Pro &mdash; £19.99</div>
-                            <div style="font-size:0.9em;color:var(--text-muted,#888);">Images + video, one-off payment</div>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="https://www.dpaul-software.uk" target="_blank" class="buy-btn" style="margin-right:0;">Visit Web Media Converter site</a>
-                    </div>
-                </div>
-                <div class="webp-split-video">
-                    <video autoplay loop muted playsinline
-                           style="width:100%;max-width:320px;aspect-ratio:9/16;object-fit:cover;border:1px solid var(--border);border-radius:0;display:block;margin:0 auto;">
-                        <source src="assets/wbc-v1.webm" type="video/webm">
-                    </video>
-                </div>
-            </div>
+        <div class="product-eyebrow">Released June 20, 2026 &middot; Pro added July 14, 2026 &middot; v3.1 &mdash; July 18, 2026</div>
+        <div class="product-name">Web Media Converter</div>
+        <p class="product-tagline">Just released — v3.1. Batch convert images to WebP for free, and with Pro, video to WebM too — smaller files, faster load times, zero uploads.</p>
+
+        <p class="product-story">Every image and video on the web should be WebP and WebM — the formats browsers were built for. Select a folder, set a quality level, and batch convert the lot in seconds, right on your Mac. No uploads, no accounts, no cloud.</p>
+
+        <ul class="feature-list">
+            <li>Batch convert entire folders — PNG, JPG, GIF and more</li>
+            <li>Adjustable compression quality with real-time file size comparison</li>
+            <li>Add prefix, suffix, or auto-numbering to output filenames</li>
+            <li>Download individually or as a single zip — no cloud, fully offline</li>
+            <li>Native Apple Silicon &mdash; built for M1, M2, M3, and M4 Macs</li>
+            <li><strong>Pro adds:</strong> batch convert video too (MP4, MOV &rarr; WebM), mixed into the same image batch</li>
+        </ul>
+
+        <div class="privacy-strip">
+            <span class="privacy-tag highlight">Standard — Free</span>
+            <span class="privacy-tag highlight">Pro — £19.99</span>
+            <span class="privacy-tag">Apple Silicon only</span>
+            <span class="privacy-tag">macOS 12+</span>
+            <span class="privacy-tag">100% local</span>
         </div>
+
     </div>
 
     <!-- ── DUPE REMOVE ── -->
-    <div class="product-block reveal" id="software-dupe-remove" data-post-section data-post-title="dPaul Studio — Dupe Remove">
-        <div class="product-date-col">
-            <span class="product-title-col">Dupe Remove</span>
-            <div class="product-tags">
-                <span class="product-tag">Software</span>
-                <span class="product-tag">Mac App</span>
-                <span class="product-tag">Images</span>
-            </div>
+    <div class="product-block reveal" id="software-dupe-remove">
+        <div class="product-frame">
+            <img src="../../assets/dupe-remove-one.webp" alt="Dupe Remove — Duplicate Image Cleaner for Mac" style="width:100%;height:auto;display:block;">
         </div>
-        <div class="product-body">
-            <p>
-                Find and remove duplicate photos. Fast, private, runs entirely on your Mac.
-            </p>
-            <p>
-                If you shoot a lot of photos, you know the problem — hundreds of near-identical shots clogging up your drive. <em>Dupe Remove</em> finds them fast using <strong>perceptual hashing</strong>, groups them visually, and lets you decide what to keep. Nothing is deleted without your say-so.
-            </p>
-            <p>
-                Detects exact and visually similar duplicates. Group review side by side. Adjustable sensitivity. Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more. Up to 1,000 images per session. <strong>100% local — nothing leaves your Mac.</strong>
-            </p>
-            <img src="../assets/dupe-remove-one.webp" alt="Dupe Remove — Duplicate Image Cleaner for Mac"
-                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:0;margin-top:4px;margin-bottom:28px;display:block;">
-            <div>
-                <a href="https://davidpaul2.gumroad.com/l/wfujsa" target="_blank" class="buy-btn">Buy Now — £19</a>
-                <span class="price-note">One-off payment &middot; no subscription &middot; macOS 10.15+ &middot; 30-day trial included</span>
-            </div>
+        <div class="product-eyebrow">Image Deduplication</div>
+        <div class="product-name">Dupe Remove</div>
+        <p class="product-tagline">Find and remove duplicate photos. Fast, private, runs entirely on your Mac.</p>
+
+        <p class="product-story">If you shoot a lot of photos, you know the problem — hundreds of near-identical shots clogging up your drive. Dupe Remove finds them fast using <em>perceptual hashing</em>, groups them visually, and lets you decide what to keep. Nothing is deleted without your say-so.</p>
+
+        <ul class="feature-list">
+            <li>Detects exact and visually similar duplicates — not just identical files</li>
+            <li>Group review — see duplicates side by side before deleting anything</li>
+            <li>One-click keep or delete per group, or select individually</li>
+            <li>Export clean images directly to a folder of your choice</li>
+            <li>Adjustable sensitivity — strict matching or looser visual similarity</li>
+            <li>Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more</li>
+            <li>Up to 1,000 images per session</li>
+        </ul>
+
+        <div class="privacy-strip">
+            <span class="privacy-tag highlight">100% local</span>
+            <span class="privacy-tag">No subscription</span>
+            <span class="privacy-tag">Free updates</span>
+            <span class="privacy-tag">Mac only</span>
+            <span class="privacy-tag">30-day trial</span>
         </div>
+
     </div>
 
     <!-- ── HTML-LIVE ── -->
-    <div class="product-block reveal" id="software-html-live" data-post-section data-post-title="dPaul Studio — HTML-Live">
-        <div class="product-date-col">
-            <span class="product-title-col">HTML&#8209;Live</span>
-            <div class="product-tags">
-                <span class="product-tag">Software</span>
-                <span class="product-tag">Dev Tools</span>
-                <span class="product-tag">JavaScript</span>
-            </div>
+    <div class="product-block reveal" id="software-html-live">
+        <div class="product-frame">
+            <img src="../../assets/html-live-on-macbook.webp" alt="HTML-Live running on a MacBook" style="width:100%;height:auto;display:block;">
         </div>
-        <div class="product-body">
-            <p>
-                Write HTML, see it live — no button to press, no delay. Now a native Mac app.
-            </p>
-            <p>
-                A fast, distraction-free HTML editor and live preview tool for designers and developers. <em>No setup, no server, no dependencies</em> — just open and start building. Import your files, edit, and save directly back to disk. <strong>Full syntax support, live reload on every keystroke, and a reset control</strong> to wipe back to a clean slate.
-            </p>
-            <p>
-                Built entirely with vanilla JavaScript. Real-time preview, desktop/tablet/mobile modes, Find &amp; Replace with regex, HTMLHint debug panel, Inspect mode, version rollback, and export as raw, formatted or minified HTML.
-            </p>
-            <img src="../assets/html-live-on-macbook.webp" alt="HTML Live running on a MacBook"
-                 style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:0;margin-top:4px;margin-bottom:28px;display:block;">
-            <div>
-                <a href="https://github.com/aherndavid/dpaulstudio/releases/download/v2.1.0/HTML.Live.Preview-2.1.0-universal.dmg" target="_blank" class="buy-btn">Get HTML&#8209;Live</a>
-                <span class="price-note">Pay what you wish &middot; your support means everything &middot; thank you.</span>
-            </div>
+        <div class="product-eyebrow">Live HTML Editor</div>
+        <div class="product-name">HTML&#8209;Live</div>
+        <p class="product-tagline">Write HTML, see it live — no button to press, no delay. Now a native Mac app.</p>
+
+        <p class="product-story">A fast, distraction-free HTML editor and live preview tool for designers and developers. <em>No setup, no server, no dependencies</em> — just open and start building. Import your files, edit, and save directly back to disk.</p>
+
+        <ul class="feature-list">
+            <li>Real-time preview as you type — zero delay</li>
+            <li>Desktop, tablet and mobile preview modes</li>
+            <li>Import, edit and save files directly to disk</li>
+            <li>Find &amp; Replace with regex support</li>
+            <li>HTMLHint debug panel — errors and warnings highlighted live</li>
+            <li>Inspect mode — click elements in preview to jump to source</li>
+            <li>Selection highlight — see your selected code in the preview</li>
+            <li>Version rollback — restore any previous edit</li>
+            <li>Export as raw, formatted or minified HTML</li>
+            <li>Zoom controls &amp; font size adjustment</li>
+        </ul>
+
+        <div class="privacy-strip">
+            <span class="privacy-tag highlight">100% local</span>
+            <span class="privacy-tag">Native Mac app</span>
+            <span class="privacy-tag">Universal binary</span>
+            <span class="privacy-tag">No subscription</span>
+            <span class="privacy-tag">Free updates</span>
+            <span class="privacy-tag">macOS 10.12+</span>
         </div>
+
     </div>
 
     <footer class="company-footer reveal">
@@ -396,43 +388,45 @@
 
     <div class="footer-line reveal">// dPaul Technologies — Software</div>
 
-</div>
+</div><!-- /page -->
 
 <script>
-    // THEME TOGGLE
-    function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);try{localStorage.setItem('dp-theme',theme);}catch(e){}}
-    function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';applyTheme(c==='light'?'dark':'light');}
-    try{const s=localStorage.getItem('dp-theme');if(s)applyTheme(s);}catch(e){}
-
-    // EXPAND IMAGE
-    let expandTimer=null;
-    function expandImg(el){
-        if(el.classList.contains('expanded'))return collapseImg(el);
+    /* ── EXPAND IMAGE ── */
+    let expandTimer = null;
+    function expandImg(el) {
+        if (el.classList.contains('expanded')) return collapseImg(el);
         el.classList.add('expanded');
         clearTimeout(expandTimer);
-        expandTimer=setTimeout(()=>collapseImg(el),3000);
+        expandTimer = setTimeout(() => collapseImg(el), 3000);
     }
-    function collapseImg(el){
+    function collapseImg(el) {
         el.classList.remove('expanded');
         clearTimeout(expandTimer);
     }
 
-    // NAV EQ
-    (function(){const NUM_BARS=8,MAX_H=20,container=document.getElementById('nav-eq-container');if(!container)return;const levels=Array.from({length:NUM_BARS},()=>Math.random()*MAX_H),targets=[...levels],bars=[];for(let i=0;i<NUM_BARS;i++){const b=document.createElement('div');b.className='nav-eq-bar';container.appendChild(b);bars.push(b);}function animateEQ(){for(let i=0;i<NUM_BARS;i++){if(Math.random()<0.1)targets[i]=Math.random()*MAX_H+2;levels[i]+=(targets[i]-levels[i])*0.15;bars[i].style.height=levels[i]+'px';}requestAnimationFrame(animateEQ);}animateEQ();})();
+    /* ── MENU ── */
+    function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
+    }
 
-    // FONT NUDGE
-    const fontScaleLevels=[1,1.15,1.3,1.5,1.7];let fontScaleIndex=0;const indicators=['100%','115%','130%','150%','170%'];
-    function applyFontScale(){document.documentElement.style.setProperty('--font-scale',fontScaleLevels[fontScaleIndex]);document.getElementById('fontIndicator').textContent=indicators[fontScaleIndex];try{localStorage.setItem('dp-font-scale',fontScaleIndex);}catch(e){}}
-    function adjustFont(dir){fontScaleIndex=Math.max(0,Math.min(fontScaleLevels.length-1,fontScaleIndex+dir));applyFontScale();}
-    function dismissNudge(){document.getElementById('fontNudge').style.opacity='0';document.getElementById('fontNudge').style.pointerEvents='none';try{localStorage.setItem('dp-nudge-dismissed','1');}catch(e){}}
-    try{const saved=localStorage.getItem('dp-font-scale');if(saved!==null){fontScaleIndex=parseInt(saved);applyFontScale();}if(localStorage.getItem('dp-nudge-dismissed')==='1'){dismissNudge();}}catch(e){}
-
-    // REVEAL
-    const revealEls=document.querySelectorAll('.reveal');
-    const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.08});
-    revealEls.forEach(el=>observer.observe(el));
+    /* ── SCROLL REVEAL ── */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
-<script src="share.js"></script>
-<script src="post-generator.js"></script>
+
 </body>
 </html>

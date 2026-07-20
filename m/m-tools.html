@@ -1,496 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <title>Tools — dPaul Technologies</title>
+    <title>Tools — dPaul Technologies (Mobile)</title>
+    
     <style>
-        :root { --bg:#171717;--bg2:#1e1e1e;--orange:#e6432a;--cream:#f4f3ef;--text:#a8a6a0;--dim:#8f8d87;--border:rgba(230,67,42,0.25);--border-dim:rgba(255,255,255,0.07);--font-scale:1; }
-
-        html[data-theme="light"] { --bg:#f4f3ef;--bg2:#e8e6e0;--orange:#171717;--cream:#2b2b28;--text:#262421;--dim:#8f8d87;--border:rgba(23,23,23,0.35);--border-dim:rgba(0,0,0,0.12); }
-        html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.55; }
-        html[data-theme="light"] .hero h1,
-        html[data-theme="light"] .section h2,
-        html[data-theme="light"] .portfolio-card h3,
-        html[data-theme="light"] .skill-card h3,
-        html[data-theme="light"] .tool-info h3,
-        html[data-theme="light"] .company-footer-val { color: #171310; }
-        html[data-theme="light"] .hero h1 em { color: var(--orange); }
-        html[data-theme="light"] nav a.active { color: #fff; }
-        html[data-theme="light"] .form-field input::placeholder,
-        html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
-        html[data-theme="light"] .form-field input,
-        html[data-theme="light"] .form-field textarea { color: #171310; }
-        html[data-theme="light"] .tts-player { background: #e6432a; color: #000; border: 3px solid #000; }
-        html[data-theme="light"] .tts-label { font-weight: bold; color: #000; }
-        html[data-theme="light"] #ttsPause:not(.active),
-        html[data-theme="light"] #ttsStop:not(.active) { background: #e6432a !important; color: #000 !important; border-color: #000 !important; }
-        html[data-theme="light"] .tts-btn,
-        html[data-theme="light"] .tts-section-sel,
-        html[data-theme="light"] .tts-voice-sel,
-        html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #e6432a !important; border-color: #000 !important; }
-        html[data-theme="light"] .tts-progress,
-        html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: #000; }
-        html[data-theme="light"] .section-divider-desc { color: #171310 !important; }
-        html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
-
-        .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
-        .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
-        #bulbFilament1, #bulbFilament2 { transition: stroke 0.2s, filter 0.2s; }
-        html[data-theme="light"] #bulbFilament1,
-        html[data-theme="light"] #bulbFilament2 { stroke: var(--orange); filter: drop-shadow(0 0 3px var(--orange)); }
-        html[data-theme="light"] .cta-block h2 { color: #171310; }
-        html[data-theme="light"] .cta-btn { background: #e6432a; color: #000; }
-        html[data-theme="light"] .cta-btn:hover { background: #f0654a; }
-        html[data-theme="light"] .instrument-name { color: #171310; }
-        html[data-theme="light"] .launch-btn { background: #e6432a; color: #000; border-color: #e6432a; }
-        html[data-theme="light"] .launch-btn:hover { background: #f0654a; color: #000; }
-        *{margin:0;padding:0;box-sizing:border-box;}h1,h2,h3{overflow-wrap:break-word;word-break:break-word;}
-        body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono', monospace;font-size:130%;min-height:100vh;overflow-x:hidden;}
-        body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.35;}
-        body::after{content:'';position:fixed;top:72px;left:0;right:0;bottom:0;background-image:url('../assets/tools.jpg');background-size:cover;background-position:center top;background-repeat:no-repeat;opacity:.08;pointer-events:none;z-index:-1;}
-
-        .font-nudge{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--bg2);border:1px solid var(--border);border-radius:0;padding:12px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .3s;}
-        .font-nudge-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);}
-        .font-nudge-controls{display:flex;align-items:center;gap:8px;}
-        .font-btn{background:#222;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-        .font-btn:hover{border-color:var(--orange);color:var(--orange);}
-        .font-size-indicator{font-size:.7rem;color:var(--dim);letter-spacing:.1em;min-width:32px;text-align:center;}
-        .font-nudge-dismiss{background:none;border:none;color:var(--dim);font-family:'JetBrains Mono', monospace;font-size:.65rem;cursor:pointer;letter-spacing:.1em;text-align:right;padding:0;}
-        .font-nudge-dismiss:hover{color:var(--orange);}
-
-        nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:2px;height:72px;}
-        nav a{font-family:'JetBrains Mono', monospace;font-size:1.1rem;color:var(--cream);font-weight:bold;text-decoration:none;display:inline-block;min-width:0;white-space:nowrap;text-align:center;border:1px solid transparent;border-radius:0;letter-spacing:.05em;transition:none;text-transform:lowercase;box-sizing:border-box;padding:10px 12px;}
-        nav a:hover{border-color:var(--orange);color:var(--orange);}
-        nav a.active{background:var(--orange);color:#000;border-color:var(--orange);}
-        .nav-spacer{flex:1;}
-        /* ── MOBILE NAV TOGGLE ── */
-        .nav-toggle {
-            display: none;
-            background: none; border: 1px solid var(--border-dim); color: var(--cream);
-            width: 36px; height: 36px; flex-shrink: 0; cursor: pointer; border-radius: 0;
-            align-items: center; justify-content: center; margin-right: 10px;
-        }
-        .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
-        .nav-toggle-bars { position: relative; width: 18px; height: 2px; background: currentColor; }
-        .nav-toggle-bars::before, .nav-toggle-bars::after {
-            content: ''; position: absolute; left: 0; width: 18px; height: 2px; background: currentColor;
-        }
-        .nav-toggle-bars::before { top: -6px; }
-        .nav-toggle-bars::after { top: 6px; }
-
-        .nav-links { display: flex; align-items: center; gap: 2px; }
-
-        @media (max-width: 1340px) {
-            nav { position: relative; }
-            .nav-toggle { display: flex; }
-            #nav-eq-container { display: none; }
-            .nav-links {
-                display: none;
-                position: absolute; top: 100%; left: 0; right: 0;
-                flex-direction: column; align-items: stretch; gap: 0;
-                background: var(--bg); border-bottom: 1px solid var(--border);
-                max-height: calc(100vh - 72px); overflow-y: auto;
-                padding: 8px 16px 16px; z-index: 200;
-            }
-            .nav-links.open { display: flex; }
-            .nav-links a {
-                width: 100%; text-align: left; padding: 14px 8px;
-                border-bottom: 1px solid var(--border-dim); font-size: 1.05rem;
-            }
-            .nav-links a:last-child { border-bottom: none; }
+        /* ── THEME VARIABLES ── */
+        :root {
+            --bg:      #171717;
+            --bg2:     #1e1e1e;
+            --orange:  #e6432a;
+            --cream:   #f4f3ef;
+            --text:    #a8a6a0;
+            --dim:     #8f8d87;
+            --border:  rgba(230,67,42,0.25);
+            --border-dim: rgba(255,255,255,0.07);
         }
 
-        #nav-eq-container{display:flex;align-items:flex-end;gap:2px;height:22px;margin:0 24px;padding-bottom:2px;}
-        .nav-eq-bar{width:3px;background:var(--orange);transition:height 0.1s ease;border-radius:0;}
-        #nav-share-container{min-width:130px;display:flex;align-items:center;justify-content:flex-end;}
-
-        .page{max-width:1440px;margin:0 auto;padding:0 56px 120px;position:relative;z-index:1;}
-
-        /* HERO */
-        .hero{padding:80px 0 72px;border-bottom:1px solid var(--border);max-width:1000px;}
-        .hero-label{font-size:1.04rem;color:var(--orange);letter-spacing:.25em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
-        .hero-label::after{content:'';display:block;width:48px;height:1px;background:var(--orange);opacity:.5;}
-        .hero h1{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(3.12rem,5.5vw,5.46rem);font-weight:400;color:#fff;line-height:1.05;margin-bottom:28px;letter-spacing:0;}
-        .hero h1 em{color:var(--orange);font-style:normal;}
-        .hero-intro{font-size:calc(1.365rem * var(--font-scale));line-height:1.95;color:var(--text);max-width:660px;border-left:2px solid var(--orange);padding-left:20px;margin-top:8px;}
-
-        /* SECTION DIVIDER */
-        .section-divider{padding:56px 0 0;margin-bottom:0;}
-        .section-divider-label{font-size:1.17rem;color:var(--orange);letter-spacing:.22em;text-transform:uppercase;margin-bottom:8px;}
-        .section-divider-desc{font-size:calc(1.1rem * var(--font-scale));color:var(--dim);line-height:1.7;max-width:560px;border-bottom:1px solid var(--border);padding-bottom:40px;}
-
-        /* INSTRUMENT BLOCKS (from tools.html) */
-        .instrument{padding:80px 0;border-bottom:1px solid var(--border);}
-        .instrument-eyebrow{font-size:1.17rem;color:var(--orange);letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
-        .instrument-name{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(2.6rem,4vw,3.9rem);font-weight:400;color:#fff;letter-spacing:0;margin-bottom:40px;}
-        .instrument-body{display:grid;grid-template-columns:1fr 300px;gap:64px;align-items:start;}
-        .spec-list{list-style:none;margin:24px 0 32px;}
-        .spec-list li{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-dim);font-size:calc(1.17rem * var(--font-scale));}
-        .spec-list li:first-child{border-top:1px solid var(--border-dim);}
-        .spec-key{color:var(--dim);}
-        .spec-val{color:var(--cream);}
-        .instrument-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);}
-        .instrument-story + .instrument-story{margin-top:16px;}
-        .instrument-visual{position:sticky;top:100px;}
-        .tool-render-img{width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 24px 40px rgba(0,0,0,.6));border-radius:0;display:block;}
-        .img-large{width:169% !important;margin-left:-34.5% !important;}
-        #tools-tts .instrument-body{grid-template-columns:1fr 420px;}
-        #tools-tts .instrument-story{max-width:440px;}
-        #tools-vu .instrument-body{grid-template-columns:1fr 420px;}
-        #tools-vu .instrument-story{max-width:440px;}
-        .img-small{width:65% !important;margin-left:17.5% !important;}
-        @media(max-width:1700px){
-            .img-large,.img-small{width:100% !important;margin-left:0 !important;}
+        html[data-theme="light"] {
+            --bg:      #f4f3ef;
+            --bg2:     #e8e6e0;
+            --orange:  #171717;
+            --cream:   #2b2b28;
+            --text:    #262421;
+            --dim:     #8f8d87;
+            --border:  rgba(23,23,23,0.35);
+            --border-dim: rgba(0,0,0,0.12);
         }
-        .visual-caption{font-size:calc(1.066rem * var(--font-scale));color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:14px;text-align:center;}
-        .vu-visual{margin-top:-28px;}
-        .tts-visual{margin-top:-10px;}
 
-        /* TOOL BLOCKS (from dev-tools.html) */
-        .tool-block{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;padding:72px 0;border-bottom:1px solid var(--border);}
-        .tool-block.flip{direction:rtl;}
-        .tool-block.flip > *{direction:ltr;}
-        .tool-visual{display:flex;justify-content:center;align-items:start;}
-        .tool-frame{width:100%;max-width:840px;border:1px solid var(--border);border-radius:0;overflow:hidden;background:#0e0f0e;transition:border-color .2s;}
-        .tool-frame:hover{border-color:var(--orange);}
-        .tool-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);margin-bottom:16px;}
-        .tool-story em{color:var(--cream);font-style:normal;border-bottom:1px solid rgba(244,243,239,.3);}
-        .spec-list-bullets{list-style:none;margin:20px 0 0;}
-        .spec-list-bullets li{font-size:calc(1.04rem * var(--font-scale));color:var(--text);padding:7px 0 7px 16px;border-bottom:1px solid var(--border-dim);position:relative;line-height:1.6;}
-        .spec-list-bullets li:first-child{border-top:1px solid var(--border-dim);}
-        .spec-list-bullets li::before{content:'›';position:absolute;left:0;color:var(--orange);}
-        .tool-info h3{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.82rem;font-weight:400;color:#fff;margin-bottom:6px;}
-        .tool-sub{font-size:1.066rem;letter-spacing:.18em;color:var(--orange);text-transform:uppercase;margin-bottom:20px;}
-        .screenshot-gallery{display:flex;flex-direction:column;gap:24px;position:sticky;top:100px;}
-        .screenshot-label{font-size:.936rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-        .screenshot-img{width:100%;height:auto;display:block;border-radius:0;border:1px solid var(--border-dim);transition:border-color .2s;}
-        .screenshot-img:hover{border-color:var(--orange);}
-        .screenshot-caption{font-size:calc(1.014rem * var(--font-scale));color:var(--dim);letter-spacing:.08em;margin-top:6px;}
-        .status-badge{display:inline-block;font-size:.884rem;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border-radius:0;margin-left:10px;vertical-align:middle;}
-        .status-badge.live{background:rgba(80,200,100,.12);color:#50c864;border:1px solid rgba(80,200,100,.25);}
-        .status-badge.wip{background:rgba(230,67,42,.1);color:var(--orange);border:1px solid var(--border);}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* LAUNCH / BUY BUTTONS */
-        .launch-btn{display:inline-block;margin-top:28px;padding:11px 28px;border:1px solid var(--orange);color:var(--orange);font-family:'JetBrains Mono', monospace;font-size:1.066rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border-radius:0;transition:all .2s;}
-        .launch-btn:hover{background:var(--orange);color:#000;transform:translateY(-2px);}
-
-        /* BMC BLOCK */
-        .bmc-block{margin-top:28px;padding:20px 22px;border:1px solid var(--border-dim);border-radius:0;background:var(--bg2);display:flex;align-items:center;gap:20px;max-width:560px;}
-        .bmc-text{flex:1;}
-        .bmc-label{font-size:.91rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-        .bmc-desc{font-size:1rem;line-height:1.7;color:var(--dim);}
-        .bmc-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#FFDD00;color:#000;font-family:'JetBrains Mono', monospace;font-size:1.04rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:0;white-space:nowrap;transition:background .2s,transform .15s;flex-shrink:0;}
-        .bmc-btn:hover{background:#ffe633;transform:translateY(-2px);}
-
-        /* SKILLS STRIP */
-        .skills-strip{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0;}
-        .skill-tag{font-size:calc(1.105rem * var(--font-scale));letter-spacing:.1em;text-transform:uppercase;color:var(--cream);border:1px solid var(--border-dim);border-radius:0;padding:6px 14px;transition:border-color .2s,color .2s;}
-        .skill-tag:hover{border-color:var(--orange);color:var(--orange);}
-
-        /* LEARNING SECTION */
-        .learning-section{padding:80px 0 72px;border-bottom:1px solid var(--border);}
-        .section-label{font-size:1.17rem;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:40px;}
-        .learning-grid{display:grid;grid-template-columns:1fr 340px;gap:64px;align-items:start;}
-        .learning-body{font-size:calc(1.235rem * var(--font-scale));line-height:2;color:var(--text);}
-        .learning-body + .learning-body{margin-top:20px;}
-        .aside-label{font-size:1.105rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:14px;}
-        .aside-text{font-size:calc(1.196rem * var(--font-scale));line-height:1.85;color:var(--text);}
-        .aside-block + .aside-block{margin-top:28px;}
-
-        /* CTA */
-        .cta-block{padding:72px 0 0;text-align:center;}
-        .cta-block h2{font-size:clamp(1.82rem,3.2vw,2.6rem);color:#fff;margin-bottom:14px;}
-        .cta-block p{font-size:calc(1.144rem * var(--font-scale));color:var(--text);margin-bottom:32px;}
-        .cta-btn{display:inline-block;padding:14px 36px;background:var(--orange);color:#000;font-family:'JetBrains Mono', monospace;font-size:1.235rem;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;border-radius:0;transition:background .2s,transform .15s;}
-        .cta-btn:hover{background:#f0654a;transform:translateY(-2px);}
-
-        /* REVEAL */
-        .reveal{opacity:0;transform:translateY(20px);transition:all .6s ease;}
-        .reveal.visible{opacity:1;transform:none;}
-
-        /* COMPANY FOOTER */
-        .company-footer{margin-top:48px;padding:32px 0;border-top:1px solid var(--border-dim);display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start;max-width:960px;}
-        .company-footer-block{display:flex;flex-direction:column;gap:6px;}
-        .company-footer-label{font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--orange);}
-        .company-footer-val{font-size:.91rem;color:var(--dim);letter-spacing:.05em;}
-        .company-footer-val a{color:var(--dim);text-decoration:none;}
-        .company-footer-val a:hover{color:var(--orange);}
-        .company-footer-note{font-size:.84rem;color:var(--dim);opacity:.6;max-width:520px;line-height:1.7;}
-        .footer-line{margin-top:80px;padding-top:32px;padding-bottom:0;font-size:.85rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;border-top:1px solid var(--border);}
-
-        /* TTS */
-        .tts-player{background:var(--bg2);border:1px solid var(--border);border-radius:0;padding:16px 20px;margin:32px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px;max-width:960px;}
-        .tts-label{font-size:.91rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);white-space:nowrap;}
-        .tts-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-        .tts-btn{background:#1e201e;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;font-size:1.014rem;letter-spacing:.1em;padding:7px 16px;cursor:pointer;border-radius:0;transition:all .15s;white-space:nowrap;}
-        .tts-btn:hover{border-color:var(--orange);color:var(--orange);}
-        .tts-btn.active{background:var(--orange);color:#000;border-color:var(--orange);font-weight:bold;}
-        .tts-btn:disabled{opacity:.3;cursor:not-allowed;}
-        .tts-btn.stop-btn:hover{border-color:#cc3300;color:#cc3300;}
-        .tts-sep{width:1px;height:24px;background:var(--border-dim);margin:0 4px;}
-        .tts-speed-wrap{display:flex;align-items:center;gap:8px;}
-        .tts-speed-label{font-size:.884rem;color:var(--dim);letter-spacing:.1em;white-space:nowrap;}
-        .tts-speed{-webkit-appearance:none;appearance:none;width:90px;height:4px;background:var(--border-dim);border-radius:0;outline:none;cursor:pointer;}
-        .tts-speed::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--orange);border-radius:50%;cursor:pointer;}
-        .tts-speed::-moz-range-thumb{width:14px;height:14px;background:var(--orange);border:none;border-radius:50%;cursor:pointer;}
-        .tts-speed-val{font-size:.884rem;color:var(--cream);letter-spacing:.05em;min-width:28px;}
-        .tts-section-wrap{display:flex;align-items:center;gap:8px;}
-        .tts-section-label{font-size:.884rem;color:var(--dim);letter-spacing:.1em;white-space:nowrap;}
-        .tts-section-sel,.tts-voice-sel{background:#1e201e;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;font-size:.936rem;padding:5px 10px;border-radius:0;cursor:pointer;outline:none;}
-        .tts-section-sel{max-width:200px;}
-        .tts-voice-sel{max-width:240px;}
-        .tts-section-sel:focus,.tts-voice-sel:focus{border-color:var(--orange);}
-        .tts-progress{font-size:.884rem;color:var(--dim);letter-spacing:.08em;white-space:nowrap;margin-left:auto;}
-        .tts-highlight{background:rgba(230,67,42,.15);outline:1px solid rgba(230,67,42,.3);border-radius:0;transition:background .3s;}
-
-        @media(max-width:900px){
-            .instrument-body,.learning-grid{grid-template-columns:minmax(0,1fr);}
-            #tools-tts .instrument-body,#tools-vu .instrument-body{grid-template-columns:minmax(0,1fr);}
-            .instrument-visual{position:relative;top:0;margin-top:40px;}
-            .tool-block{grid-template-columns:minmax(0,1fr);gap:32px;}
-            .tool-block.flip{direction:ltr;}
-            .screenshot-gallery{position:relative;top:0;}
-            nav{padding:0 16px;}
-            nav a{padding:5px 8px;font-size:1rem;min-width:unset;}
-            .page{padding:0 24px 80px;}
-            .bmc-block{flex-direction:column;align-items:flex-start;}
-            .font-nudge{bottom:16px;right:16px;}
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 110%; 
+            margin: 0;
+            line-height: 1.7;
+            overflow-x: hidden;
         }
+
+        /* Scanline Overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.3;
+        }
+
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(23, 23, 23, 0.95); border-bottom: 1px solid var(--border);
+            height: 64px;
+        }
+        html[data-theme="light"] #mobile-nav-container { background: rgba(244, 243, 239, 0.95); }
+
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
+        }
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
+        }
+        .burger span {
+            display: block; width: 100%; height: 2px; 
+            background: var(--cream);
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
+
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;
+            padding: 24px 28px 0 0; gap: 0;
+            z-index: 1000;
+        }
+        .mobile-menu.open { height: calc(100vh - 64px); overflow-y: auto; }
+        .mobile-menu a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4rem; font-weight: 700;
+            color: rgba(212,196,168,0.25);
+            text-decoration: none; text-transform: lowercase;
+            letter-spacing: 0.02em; line-height: 1.05;
+            padding: 4px 10px; display: block;
+            transition: color 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
+        }
+        .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
+        .mobile-menu a.active { color: var(--orange); }
+
+        /* ── PAGE CONTENT ── */
+        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
+
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-family: 'Anton', sans-serif; font-size: 2rem; line-height: 1.1; margin-bottom: 24px; color: #fff; font-weight: 400; text-transform: uppercase; }
+        .hero h1 em { color: var(--orange); font-style: normal; }
+        .hero-intro { font-size: 1.1rem; border-left: 2px solid var(--orange); padding-left: 16px; margin-bottom: 24px; }
+
+        /* TTS PLAYER (Mobile Optimized) */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
+        }
+        .tts-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-btn.active { background: var(--orange); color: #000; }
+        .tts-voice-sel { 
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
+            padding: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; width: 100%;
+        }
+        .tts-highlight { background: rgba(230,67,42,0.2); border-radius: 2px; }
+
+        /* TOOL BLOCKS */
+        .instrument { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .instrument-eyebrow { font-size: 0.75rem; color: var(--orange); text-transform: uppercase; margin-bottom: 8px; }
+        .instrument-name { font-family: 'Anton', sans-serif; font-size: 1.6rem; color: #fff; font-weight: 400; margin-bottom: 24px; text-transform: uppercase; }
+        .instrument-story { font-size: 1.05rem; margin-bottom: 24px; }
+        
+        /* Specs */
+        .spec-list { list-style: none; margin: 24px 0; background: var(--bg2); padding: 12px; border-radius: 4px; }
+        .spec-list li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-dim); font-size: 0.9rem; }
+        .spec-list li:last-child { border-bottom: none; }
+        .spec-key { color: var(--dim); text-transform: uppercase; font-size: 0.75rem; }
+        .spec-val { color: var(--cream); text-align: right; }
+
+        /* Existing class for all images */
+        .tool-render-img { 
+         width: 100%; 
+         height: auto; 
+         border-radius: 4px; 
+         filter: drop-shadow(0 15px 30px rgba(0,0,0,0.5)); 
+         margin-bottom: 12px; 
+}
+
+        /* Specific size for the VU image */
+        .img-vu {
+         width: 62% !important;  
+         display: block;         
+         margin-left: auto;      
+         margin-right: auto;     
+}
+        /* Specific size for the TTS image */
+        .img-tts {
+         width: 92% !important;
+         display: block;
+         margin-left: auto;
+         margin-right: auto;
+}
+        .visual-caption { font-size: 0.7rem; color: var(--dim); text-align: center; text-transform: uppercase; margin-bottom: 24px; }
+
+        .launch-btn { 
+            display: block; padding: 16px; border: 1px solid var(--orange); 
+            color: var(--orange); text-decoration: none; font-size: 0.85rem; 
+            text-transform: uppercase; letter-spacing: 0.1em; border-radius: 3px; 
+            text-align: center; font-weight: bold; margin-bottom: 32px;
+        }
+
+        /* PHILOSOPHY */
+        .learning-section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .learning-body { font-size: 1.05rem; margin-bottom: 24px; }
+        
+        .aside-block { background: rgba(230,67,42,0.05); padding: 24px; border-radius: 4px; margin-top: 32px; border: 1px solid var(--border-dim); }
+        .aside-label { font-size: 0.75rem; color: var(--orange); text-transform: uppercase; margin-bottom: 12px; }
+        .aside-text { font-size: 0.95rem; color: var(--text); }
+
+        .footer-toggle { text-align: center; padding: 60px 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="font-nudge" id="fontNudge">
-    <div class="font-nudge-label">Text too small?</div>
-    <div class="font-nudge-controls">
-        <button class="font-btn" onclick="adjustFont(-1)">A&#8722;</button>
-        <span class="font-size-indicator" id="fontIndicator">100%</span>
-        <button class="font-btn" onclick="adjustFont(1)">A+</button>
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
     </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
 </div>
 
-<nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
-        <span class="nav-toggle-bars"></span>
-    </button>
-    <div class="nav-links" id="navLinks">
-    <a href="about.html" data-i18n="nav_about">about</a>
-    <a href="current.html" data-i18n="nav_current">current</a>
-    <a href="design.html" data-i18n="nav_design">design</a>
-    <a href="fun.html">fun</a>
-    <a href="merch.html" data-i18n="nav_merch">merch</a>
-    <a href="music.html" data-i18n="nav_music">music</a>
-    <a href="services.html" data-i18n="nav_services">services</a>
-    <a href="software.html">software</a>
-    <a href="synths.html" data-i18n="nav_synths">synths</a>
-    <a href="tools.html" class="active" data-i18n="nav_tools">tools</a>
-    <a href="video.html" data-i18n="nav_video">video</a>
-    </div>
-    <div class="nav-spacer"></div>
-    <div id="nav-eq-container"></div>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
-        <svg id="bulbIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.4 4.89 3.5 6.13V18a1 1 0 001 1h5a1 1 0 001-1v-2.87C17.6 13.89 19 11.61 19 9c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="1.5"/>
-            <line id="bulbFilament1" x1="10" y1="9" x2="14" y2="13" stroke="currentColor" stroke-width="1.5"/>
-            <line id="bulbFilament2" x1="14" y1="9" x2="10" y2="13" stroke="currentColor" stroke-width="1.5"/>
-            <line x1="9" y1="22" x2="15" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-    </button>
-    <div id="nav-share-container"></div>
-</nav>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="m-about.html">about</a>
+    <a href="m-current.html">current</a>
+    <a href="m-design.html">design</a>
+    <a href="m-fun.html">fun</a>
+    <a href="m-merch.html">merch</a>
+    <a href="m-music.html">music</a>
+    <a href="m-services.html">services</a>
+    <a href="m-synths.html">synths</a>
+    <a href="m-tools.html" class="active">tools</a>
+    <a href="m-software.html">software</a>
+    <a href="m-video.html">video</a>
+</div>
 
 <div class="page">
-
     <section class="hero reveal">
-        <div class="hero-label">// dPaul Technologies — Tools &amp; Utilities</div>
-        <h1>Browser tools.<br>Built for <em>real use.</em></h1>
-        <p class="hero-intro">Every tool here started as something I needed myself and couldn't find a clean version of. No sign-ups, no paywalls — open and use. Runs entirely in the browser.</p>
-        <div class="tts-player" id="ttsPlayer">
-            <span class="tts-label">// Speak this page</span>
+        <div class="hero-label">// Utility Lab</div>
+        <h1>Browser tools.<br>Built for<br><em>real use.</em></h1>
+        <p class="hero-intro">Function should never be boring. Every tool on this page started as a problem that needed solving during production or development. No installs, no accounts—just utilities that live in your browser.</p>
+
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
             <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
-                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
-                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
-                <div class="tts-sep"></div>
-                <div class="tts-speed-wrap">
-                    <span class="tts-speed-label">Speed</span>
-                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
-                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
-                </div>
-                <div class="tts-sep"></div>
-                <div class="tts-section-wrap">
-                    <span class="tts-section-label">Voice</span>
-                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)"><option value="">Loading voices...</option></select>
-                </div>
-                <div class="tts-sep"></div>
-                <div class="tts-section-wrap">
-                    <span class="tts-section-label">Jump to</span>
-                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)"><option value="-1">-- section --</option></select>
-                </div>
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
             </div>
-            <span class="tts-progress" id="ttsProgress"></span>
         </div>
     </section>
 
-    <!-- ── SECTION: AUDIO & VOICE ── -->
-    <div class="section-divider reveal">
-        <div class="section-divider-label">// Audio &amp; Voice</div>
-        <p class="section-divider-desc">Browser-based audio utilities built around the Web Audio API. No installs, no accounts.</p>
-    </div>
-
-    <!-- VU METER -->
-    <div class="instrument reveal" id="tools-vu" data-post-section data-post-title="dPaul Studio — dPaul VU">
+    <section class="instrument reveal" data-post-section data-post-title="dPaul VU — Browser Audio Utility">
         <div class="instrument-eyebrow">// 01 — Audio Utility</div>
-        <div class="instrument-name">dPaul VU <span style="color:var(--dim);font-size:1.2rem;font-weight:400;">v2.01</span></div>
-        <div class="instrument-body">
-            <div>
-                <p class="instrument-story">Monitoring levels accurately is the difference between a clean take and a digital mess. The dPaul VU is a high-sensitivity monitoring tool that captures incoming audio via the Web Audio API to provide real-time decibel tracking, peak history, and signal-to-noise visualisation.</p>
-                <ul class="spec-list">
-                    <li><span class="spec-key">Processing</span><span class="spec-val">Real-time Fast Fourier Transform</span></li>
-                    <li><span class="spec-key">Range</span><span class="spec-val">-40dB to +6dB full scale</span></li>
-                    <li><span class="spec-key">Features</span><span class="spec-val">Peak Hold &#183; Test Tone &#183; Reset</span></li>
-                    <li><span class="spec-key">Engine</span><span class="spec-val">Vanilla JS / Web Audio API</span></li>
-                </ul>
-                <a href="../vu-launcher-desktop.html" target="_blank" class="launch-btn">Launch VU Meter &#8594;</a>
-            </div>
-            <div class="instrument-visual vu-visual">
-                <img src="../assets/vu.webp" alt="dPaul VU Meter" class="tool-render-img img-small">
-            </div>
-        </div>
-    </div>
+        <div class="instrument-name">dPaul VU</div>
+        <p class="instrument-story">Monitoring levels accurately is the difference between a clean take and a digital mess. The dPaul VU is a high-sensitivity monitoring tool that captures incoming audio via the Web Audio API to provide real-time decibel tracking and peak history.</p>
+        
+        <ul class="spec-list">
+            <li><span class="spec-key">Processing</span><span class="spec-val">Real-time FFT</span></li>
+            <li><span class="spec-key">Range</span><span class="spec-val">-40dB to +6dB</span></li>
+            <li><span class="spec-key">Features</span><span class="spec-val">Peak Hold · Test Tone</span></li>
+            <li><span class="spec-key">Engine</span><span class="spec-val">Web Audio API</span></li>
+        </ul>
 
-    <!-- TTS -->
-    <div class="instrument reveal" id="tools-tts" data-post-section data-post-title="dPaul Studio — dPaul TTS">
-        <div class="instrument-eyebrow">// 02 — Voice Generation</div>
-        <div class="instrument-name">dPaul TTS <span style="color:var(--dim);font-size:1.2rem;font-weight:400;">AI Engine</span></div>
-        <div class="instrument-body">
-            <div>
-                <p class="instrument-story">Voiceover work often requires a quick turnaround. This tool bridges the gap between raw text and professional-grade audio by integrating high-fidelity AI voice models. Granular control over speed, pitch, and export options makes it a clean interface for rapid vocal prototyping.</p>
-                <ul class="spec-list">
-                    <li><span class="spec-key">Integration</span><span class="spec-val">Unreal Speech API + Browser Fallback</span></li>
-                    <li><span class="spec-key">Controls</span><span class="spec-val">Pitch &#183; Rate &#183; Multi-voice Selection</span></li>
-                    <li><span class="spec-key">Export</span><span class="spec-val">Direct WAV Download</span></li>
-                    <li><span class="spec-key">Format</span><span class="spec-val">44.1kHz High-Fidelity Audio</span></li>
-                </ul>
-                <a href="https://dpaul.studio/tools/tts/tts-desktop-v3.html" onclick="window.open('https://dpaul.studio/tools/tts/tts-desktop-v3.html','ttsEngine','width=1400,height=900,resizable=yes,scrollbars=yes'); return false;" class="launch-btn">Launch TTS Engine &#8594;</a>
-            </div>
-            <div class="instrument-visual tts-visual">
-                <img src="../assets/tts5.webp" alt="dPaul TTS" class="tool-render-img img-large">
-            </div>
-        </div>
-    </div>
-
-    <!-- LEARNING SECTION -->
-    <section class="learning-section reveal">
-        <div class="section-label">// The philosophy behind the tools</div>
-        <div class="learning-grid">
-            <div class="learning-main">
-                <p class="learning-body">Building these tools taught more about JavaScript than any tutorial ever could. Dealing with the Web Audio API for the VU meter meant understanding buffers, sample rates, and how browsers handle real-time input. Getting HTMLHint integrated into HTML-Live meant reading API documentation properly for the first time — because the feature wouldn't work without it.</p>
-                <p class="learning-body">The Text-to-Speech tool was a lesson in API integration — handling asynchronous requests, managing the handoff between local browser capabilities and remote AI processing, and building a UI that made the complexity invisible to the person using it.</p>
-                <p class="learning-body">HTML-Live came from a more personal frustration. Reading through hundreds of lines of code in a flat text editor, switching between browser tabs to see the result, losing track of where things were — all of that friction adds up. The solution was to build the tool that should have existed already. Which, it turns out, is how most useful things get made.</p>
-            </div>
-            <div class="learning-aside">
-                <div class="aside-block">
-                    <div class="aside-label">The strategy</div>
-                    <p class="aside-text">The goal is always a single-file utility. If a tool can run entirely from one HTML file, it can live anywhere — on a USB stick, a shared folder, a GitHub page, or sent as an email attachment. Portability is the core philosophy of the dPaul Tech Lab. No dependencies, no server, no setup.</p>
-                </div>
-                <div class="aside-block">
-                    <div class="aside-label">Free &amp; open</div>
-                    <p class="aside-text">Every tool on this page is free to use. The work that goes into building and maintaining them takes time — if a tool has been useful to you, a coffee goes a long way.</p>
-                </div>
-            </div>
-        </div>
+        <img src="../assets/vu-3d.webp" alt="VU 3D render" class="tool-render-img img-vu">
+        <p class="visual-caption">3D render</p>
+        
+        <a href="../tools/vu/vu-mobile.html" class="launch-btn">Launch VU Meter</a>
     </section>
 
-    <div class="cta-block reveal">
-        <h2>Got a tool idea?</h2>
-        <p>Something you'd find useful in the browser — let me know and I'll build it.</p>
-        <a href="about.html" class="cta-btn">Get in touch</a>
-    </div>
+    <section class="instrument reveal" data-post-section data-post-title="dPaul TTS — AI Voice Engine">
+        <div class="instrument-eyebrow">// 02 — Voice Generation</div>
+        <div class="instrument-name">dPaul TTS</div>
+        <p class="instrument-story">Voiceover work often requires a quick turnaround. This tool bridges the gap between raw text and professional-grade audio by integrating high-fidelity AI voice models.</p>
+        
+        <ul class="spec-list">
+            <li><span class="spec-key">Integration</span><span class="spec-val">Unreal Speech AI</span></li>
+            <li><span class="spec-key">Controls</span><span class="spec-val">Pitch · Rate · Tone</span></li>
+            <li><span class="spec-key">Export</span><span class="spec-val">Direct WAV Download</span></li>
+            <li><span class="spec-key">Engine</span><span class="spec-val">AI Voice Models</span></li>
+        </ul>
 
-    <footer class="company-footer reveal">
-        <div class="company-footer-block">
-            <div class="company-footer-label">Company</div>
-            <div class="company-footer-val">CitiIT Limited</div>
-            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
-        </div>
-        <div class="company-footer-block">
-            <div class="company-footer-label">Company No.</div>
-            <div class="company-footer-val">15811174</div>
-        </div>
-        <div class="company-footer-block">
-            <div class="company-footer-label">VAT No.</div>
-            <div class="company-footer-val">473 5892 49</div>
-        </div>
-        <div class="company-footer-block">
-            <div class="company-footer-label">Website</div>
-            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
-        </div>
-    </footer>
+        <img src="../assets/tts.webp" alt="TTS 3D render" class="tool-render-img img-tts">
+        <p class="visual-caption">3D render</p>
+        
+        <a href="../tools/tts/tts-mobile.html" class="launch-btn">Launch TTS Engine</a>
+    </section>
 
-    <div class="footer-line reveal">// dPaul Technologies — Tools &amp; Utilities</div>
+    <section class="learning-section reveal">
+        <div class="section-label">// The Philosophy</div>
+        <div class="learning-body">
+            Building these tools taught more about JavaScript than any tutorial ever could. Dealing with the Web Audio API for the VU meter meant understanding buffers, sample rates, and how browsers handle real-time input.
+        </div>
+        <div class="learning-body">
+            The Text-to-Speech tool was a lesson in API integration—handling asynchronous requests and managing the handoff between local capabilities and remote AI processing.
+        </div>
+        <div class="learning-body">
+            HTML-Live came from personal frustration. Reading through hundreds of lines of code in a flat text editor adds friction. The solution was to build the tool that should have existed already.
+        </div>
 
+        <div class="aside-block">
+            <div class="aside-label">The Portability Strategy</div>
+            <p class="aside-text">The goal is always a single-file utility. No dependencies, no server, no setup. If a tool can run from one HTML file, it can live anywhere—on a USB stick, a shared folder, or a GitHub page.</p>
+        </div>
+    </section>
 </div>
-
 <script>
-    // THEME TOGGLE
-    function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);try{localStorage.setItem('dp-theme',theme);}catch(e){}}
-    function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';applyTheme(c==='light'?'dark':'light');}
-    try{const s=localStorage.getItem('dp-theme');if(s)applyTheme(s);}catch(e){}
+    // ── MENU LOGIC ──
+        function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
+    }
 
-    // NAV EQ
-    (function(){const NUM_BARS=8,MAX_H=20,container=document.getElementById('nav-eq-container');if(!container)return;const levels=Array.from({length:NUM_BARS},()=>Math.random()*MAX_H),targets=[...levels],bars=[];for(let i=0;i<NUM_BARS;i++){const b=document.createElement('div');b.className='nav-eq-bar';container.appendChild(b);bars.push(b);}function animateEQ(){for(let i=0;i<NUM_BARS;i++){if(Math.random()<0.1)targets[i]=Math.random()*MAX_H+2;levels[i]+=(targets[i]-levels[i])*0.15;bars[i].style.height=levels[i]+'px';}requestAnimationFrame(animateEQ);}animateEQ();})();
+    // ── REVEAL ANIMATION ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // FONT NUDGE
-    const fontScaleLevels=[1,1.15,1.3,1.5,1.7];let fontScaleIndex=0;const indicators=['100%','115%','130%','150%','170%'];
-    function applyFontScale(){document.documentElement.style.setProperty('--font-scale',fontScaleLevels[fontScaleIndex]);document.getElementById('fontIndicator').textContent=indicators[fontScaleIndex];try{localStorage.setItem('dp-font-scale',fontScaleIndex);}catch(e){}}
-    function adjustFont(dir){fontScaleIndex=Math.max(0,Math.min(fontScaleLevels.length-1,fontScaleIndex+dir));applyFontScale();}
-    function dismissNudge(){document.getElementById('fontNudge').style.opacity='0';document.getElementById('fontNudge').style.pointerEvents='none';try{localStorage.setItem('dp-nudge-dismissed','1');}catch(e){}}
-    try{const saved=localStorage.getItem('dp-font-scale');if(saved!==null){fontScaleIndex=parseInt(saved);applyFontScale();}if(localStorage.getItem('dp-nudge-dismissed')==='1'){dismissNudge();}}catch(e){}
+    // ── TTS ENGINE ──
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let currentIdx = 0;
 
-    // REVEAL
-    const revealEls=document.querySelectorAll('.reveal');
-    const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.08});
-    revealEls.forEach(el=>observer.observe(el));
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        if(!sel) return;
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        enVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
+        });
+        selectedVoice = enVoices[0];
+    }
 
-    // TTS
-    (function(){
-        const synth=window.speechSynthesis;
-        let chunks=[],idx=0,paused=false,currentUtterance=null,lastHighlighted=null,selectedVoice=null;
-        const READ_SELECTORS=['.hero h1','.hero-intro','.instrument-story','.tool-story','.learning-body','.aside-text'];
-        const SECTION_SELECTORS=['.hero-label','.section-divider-label','.instrument-eyebrow','.instrument-name','.tool-sub'];
-        function populateVoiceList(){const voices=synth.getVoices();if(!voices.length)return;const sel=document.getElementById('ttsVoiceSel');if(!sel)return;sel.innerHTML='';const enVoices=voices.filter(v=>/^en/i.test(v.lang));const preferredFemale=['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];const preferredMale=['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];function pickVoice(preferred){for(const name of preferred){const match=enVoices.find(v=>v.name.includes(name));if(match)return match;}return null;}const femaleVoice=pickVoice(preferredFemale);const maleVoice=pickVoice(preferredMale);const fallbacks=enVoices.filter(v=>v!==femaleVoice&&v!==maleVoice);const options=[{label:'// voice — female',voice:femaleVoice||fallbacks[0]||null},{label:'// voice — male',voice:maleVoice||fallbacks[1]||null}].filter(o=>o.voice!==null);options.forEach(({label,voice})=>{const o=document.createElement('option');o.value=voice.name;o.textContent=label;sel.appendChild(o);});if(!selectedVoice&&options.length>0){selectedVoice=options[0].voice;sel.value=options[0].voice.name;}}
-        window.ttsSetVoice=function(name){const voices=synth.getVoices();selectedVoice=voices.find(v=>v.name===name)||null;if(synth.speaking){synth.cancel();setTimeout(speakCurrent,80);}};
-        function buildChunks(){chunks=[];document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el=>{const txt=el.innerText.trim();if(txt.length>2)chunks.push({el,text:txt});});}
-        function buildSectionMenu(){const sel=document.getElementById('ttsSectionSel');if(!sel)return;while(sel.options.length>1)sel.remove(1);let map=[];document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl=>{const label=labelEl.innerText.replace(/^\/\/\s*/,'').trim();if(!label||label.length<2)return;let matchIdx=-1;for(let i=0;i<chunks.length;i++){if(labelEl.compareDocumentPosition(chunks[i].el)&Node.DOCUMENT_POSITION_FOLLOWING){matchIdx=i;break;}}if(matchIdx>=0)map.push({label,idx:matchIdx});});const seen=new Set();map=map.filter(s=>{if(seen.has(s.idx))return false;seen.add(s.idx);return true;});map.forEach(s=>{const opt=document.createElement('option');opt.value=s.idx;opt.textContent=s.label.length>38?s.label.slice(0,36)+'...':s.label;sel.appendChild(opt);});}
-        function highlight(el){if(lastHighlighted)lastHighlighted.classList.remove('tts-highlight');if(el){el.classList.add('tts-highlight');el.scrollIntoView({behavior:'smooth',block:'center'});}lastHighlighted=el;}
-        function setProgress(){const prog=document.getElementById('ttsProgress');if(prog)prog.textContent=chunks.length?(idx+1)+' / '+chunks.length:'';}
-        function setButtons(state){const play=document.getElementById('ttsPlay'),pause=document.getElementById('ttsPause'),stop=document.getElementById('ttsStop');if(!play||!pause||!stop)return;if(state==='idle'){play.textContent='\u25B6 Play';play.disabled=false;play.classList.remove('active');pause.disabled=true;pause.classList.remove('active');stop.disabled=true;}else if(state==='playing'){play.textContent='\u25B6 Playing';play.disabled=true;play.classList.add('active');pause.disabled=false;pause.textContent='\u23F8\u23F8 Pause';pause.classList.remove('active');stop.disabled=false;}else if(state==='paused'){play.textContent='\u25B6 Resume';play.disabled=false;play.classList.remove('active');pause.textContent='\u23F8\u23F8 Paused';pause.classList.add('active');stop.disabled=false;}}
-        function speakCurrent(){if(idx>=chunks.length){ttsStop();return;}const chunk=chunks[idx];highlight(chunk.el);setProgress();const rate=parseFloat(document.getElementById('ttsSpeed').value);const u=new SpeechSynthesisUtterance(chunk.text);u.rate=rate;u.lang='en-GB';if(selectedVoice)u.voice=selectedVoice;u.onend=()=>{if(!paused){idx++;speakCurrent();}};u.onerror=(e)=>{if(e.error!=='interrupted'&&e.error!=='canceled'){idx++;speakCurrent();}};currentUtterance=u;synth.speak(u);}
-        function speakAt(startIdx){synth.cancel();if(startIdx>=chunks.length){ttsStop();return;}idx=startIdx;paused=false;setButtons('playing');speakCurrent();}
-        window.ttsPlay=function(){if(!chunks.length){buildChunks();buildSectionMenu();}if(paused){paused=false;synth.resume();setButtons('playing');}else{speakAt(idx);}};
-        window.ttsPause=function(){if(synth.speaking&&!synth.paused){paused=true;synth.pause();setButtons('paused');}};
-        window.ttsStop=function(){paused=false;synth.cancel();idx=0;if(lastHighlighted){lastHighlighted.classList.remove('tts-highlight');lastHighlighted=null;}const prog=document.getElementById('ttsProgress');if(prog)prog.textContent='';const sSel=document.getElementById('ttsSectionSel');if(sSel)sSel.value='-1';setButtons('idle');};
-        window.ttsUpdateSpeed=function(){const val=parseFloat(document.getElementById('ttsSpeed').value).toFixed(2);const sVal=document.getElementById('ttsSpeedVal');if(sVal)sVal.textContent=val+'x';if(currentUtterance)currentUtterance.rate=parseFloat(val);};
-        window.ttsJumpTo=function(val){const i=parseInt(val);if(isNaN(i)||i<0)return;speakAt(i);document.getElementById('ttsSectionSel').value='-1';};
-        window.addEventListener('load',()=>{buildChunks();buildSectionMenu();if(synth.onvoiceschanged!==undefined){synth.onvoiceschanged=()=>{selectedVoice=null;populateVoiceList();};}populateVoiceList();});
-        window.addEventListener('beforeunload',()=>synth.cancel());
-    })();
+    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
+    
+    function buildChunks() {
+        chunks = [];
+        document.querySelectorAll('h1, .hero-intro, .instrument-story, .learning-body, .aside-text').forEach(el => {
+            chunks.push({ el, text: el.innerText });
+        });
+    }
+
+    window.ttsPlay = () => {
+        if (!chunks.length) buildChunks();
+        synth.cancel();
+        currentIdx = 0;
+        speak();
+        const playBtn = document.getElementById('ttsPlay');
+        if(playBtn) playBtn.disabled = true;
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        const playBtn = document.getElementById('ttsPlay');
+        if(playBtn) playBtn.disabled = false;
+    };
+
+    function speak() {
+        if (currentIdx >= chunks.length) { ttsStop(); return; }
+        const chunk = chunks[currentIdx];
+        chunk.el.classList.add('tts-highlight');
+        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => {
+            chunk.el.classList.remove('tts-highlight');
+            currentIdx++;
+            speak();
+        };
+        synth.speak(utter);
+    }
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
 </script>
-<script src="share.js"></script>
-<script src="post-generator.js"></script>
+
 </body>
 </html>

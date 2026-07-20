@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <title>Video — dPaul Technologies</title>
+    <title>Video — dPaul Technologies (Mobile)</title>
     
     <style>
+        /* ── THEME VARIABLES ── */
         :root {
             --bg:      #171717;
             --bg2:     #1e1e1e;
-            --orange: #e6432a;
+            --orange:  #e6432a;
             --cream:   #f4f3ef;
             --text:    #a8a6a0;
             --dim:     #8f8d87;
-            --border: rgba(230,67,42,0.25);
+            --border:  rgba(230,67,42,0.25);
             --border-dim: rgba(255,255,255,0.07);
-            --font-scale: 1;
         }
 
         html[data-theme="light"] {
@@ -30,705 +30,369 @@
             --border:  rgba(23,23,23,0.35);
             --border-dim: rgba(0,0,0,0.12);
         }
-        html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.05; }
-        html[data-theme="light"] .hero h1,
-        html[data-theme="light"] .section h2,
-        html[data-theme="light"] .portfolio-card h3,
-        html[data-theme="light"] .skill-card h3,
-        html[data-theme="light"] .company-footer-val { color: #171310; }
-        html[data-theme="light"] .hero h1 span { color: var(--orange); }
-        html[data-theme="light"] nav a.active { color: #fff; }
-        html[data-theme="light"] .form-field input::placeholder,
-        html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
-        html[data-theme="light"] .form-field input,
-        html[data-theme="light"] .form-field textarea { color: #171310; }
-        html[data-theme="light"] .tts-player { background: #e6432a; color: #000; border: 3px solid #000; }
-        html[data-theme="light"] .tts-label { font-weight: bold; color: #000; }
-        html[data-theme="light"] #ttsPause:not(.active),
-        html[data-theme="light"] #ttsStop:not(.active) { background: #e6432a !important; color: #000 !important; border-color: #000 !important; }
-        html[data-theme="light"] .tts-btn,
-        html[data-theme="light"] .tts-section-sel,
-        html[data-theme="light"] .tts-voice-sel,
-        html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #e6432a !important; border-color: #000 !important; }
-        html[data-theme="light"] .tts-progress,
-        html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: #000; }
-        html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
-
-        /* ── THEME TOGGLE ── */
-        .theme-toggle {
-            background: none; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius:0; font-size: 1rem;
-            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-            margin-right: 15px;
-        }
-        .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
-        #bulbFilament1, #bulbFilament2 { transition: stroke 0.2s, filter 0.2s; }
-        html[data-theme="light"] #bulbFilament1,
-        html[data-theme="light"] #bulbFilament2 {
-            stroke: var(--orange);
-            filter: drop-shadow(0 0 3px var(--orange));
-        }
-        html[data-theme="light"] .cta-block h2 { color: #171310; }
-        html[data-theme="light"] .cta-btn { background: #e6432a; color: #000; }
-        html[data-theme="light"] .cta-btn:hover { background: #f0654a; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        h1, h2, h3 { overflow-wrap: break-word; word-break: break-word; }
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family:'JetBrains Mono', monospace;
-            font-size: 130%;
-            min-height: 100vh;
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 110%; 
+            margin: 0;
+            line-height: 1.7;
             overflow-x: hidden;
         }
 
+        /* Grain Overlay */
         body::before {
             content: '';
             position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 9999; opacity: 0.35;
+            pointer-events: none; z-index: 9999; opacity: 0.3;
         }
 
-        /* Background Image - Set to -1 to stay behind main content */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 72px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('../assets/camera-gimble.webp');
-            background-size: cover;
-            background-position: center top;
-            background-repeat: no-repeat;
-            opacity: 0.08;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .font-nudge {
-            position: fixed; bottom: 24px; right: 24px; z-index: 500;
-            background: var(--bg2); border: 1px solid var(--border);
-            border-radius:0; padding: 12px 16px;
-            display: flex; flex-direction: column; gap: 8px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
-        }
-        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
-        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
-        .font-btn {
-            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
-            cursor: pointer; border-radius:0; font-size: 1rem;
-            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
-        }
-        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
-        .font-nudge-dismiss {
-            background: none; border: none; color: var(--dim);
-            font-family:'JetBrains Mono', monospace; font-size: 0.65rem;
-            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
-        }
-        .font-nudge-dismiss:hover { color: var(--orange); }
-
-        nav {
-            position: sticky; top: 0; z-index: 100;
+        /* ── NAVIGATION ── */
+        #mobile-nav-container {
+            position: sticky; top: 0; z-index: 1000;
             background: var(--bg); border-bottom: 1px solid var(--border);
-            padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
+            height: 64px;
         }
-        nav a {
-            font-family:'JetBrains Mono', monospace;
-            font-size: 1.1rem; color: var(--cream);
-            font-weight: bold; text-decoration: none;
-            display: inline-block; min-width: 0; white-space: nowrap; text-align: center;
-            border: 1px solid transparent; border-radius:0;
-            letter-spacing: 0.05em; transition: none; text-transform: lowercase;
-            box-sizing: border-box; padding: 10px 12px;
+        .nav-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; height: 100%;
         }
-        nav a:hover { border-color: var(--orange); color: var(--orange); }
-        nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
-        .nav-spacer { flex: 1; }
-        /* ── MOBILE NAV TOGGLE ── */
-        .nav-toggle {
-            display: none;
-            background: none; border: 1px solid var(--border-dim); color: var(--cream);
-            width: 36px; height: 36px; flex-shrink: 0; cursor: pointer; border-radius: 0;
-            align-items: center; justify-content: center; margin-right: 10px;
+        .nav-brand { font-size: 0.8rem; color: var(--orange); letter-spacing: 0.1em; text-transform: uppercase; }
+        
+        .burger {
+            background: none; border: none; cursor: pointer;
+            width: 30px; height: 20px; position: relative; 
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 0; z-index: 1001;
         }
-        .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
-        .nav-toggle-bars { position: relative; width: 18px; height: 2px; background: currentColor; }
-        .nav-toggle-bars::before, .nav-toggle-bars::after {
-            content: ''; position: absolute; left: 0; width: 18px; height: 2px; background: currentColor;
+        .burger span {
+            display: block; width: 100%; height: 2px; 
+            background: var(--cream);
+            transition: all 0.3s ease;
         }
-        .nav-toggle-bars::before { top: -6px; }
-        .nav-toggle-bars::after { top: 6px; }
+        .burger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: var(--orange); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: var(--orange); }
 
-        .nav-links { display: flex; align-items: center; gap: 2px; }
-
-        @media (max-width: 1340px) {
-            nav { position: relative; }
-            .nav-toggle { display: flex; }
-            #nav-eq-container { display: none; }
-            .nav-links {
-                display: none;
-                position: absolute; top: 100%; left: 0; right: 0;
-                flex-direction: column; align-items: stretch; gap: 0;
-                background: var(--bg); border-bottom: 1px solid var(--border);
-                max-height: calc(100vh - 72px); overflow-y: auto;
-                padding: 8px 16px 16px; z-index: 200;
-            }
-            .nav-links.open { display: flex; }
-            .nav-links a {
-                width: 100%; text-align: left; padding: 14px 8px;
-                border-bottom: 1px solid var(--border-dim); font-size: 1.05rem;
-            }
-            .nav-links a:last-child { border-bottom: none; }
+        .mobile-menu {
+            position: fixed; top: 64px; left: 0; width: 100%; height: 0;
+            background: var(--bg); overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start;
+            padding: 24px 28px 0 0; gap: 0;
+            z-index: 1000;
         }
-
-
-        /* ── MINI EQ IN NAV ── */
-        #nav-eq-container {
-            display: flex; align-items: flex-end; gap: 2px;
-            height: 22px; margin: 0 24px; padding-bottom: 2px;
+        .mobile-menu.open { height: calc(100vh - 64px); overflow-y: auto; }
+        .mobile-menu a {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4rem; font-weight: 700;
+            color: rgba(212,196,168,0.25);
+            text-decoration: none; text-transform: lowercase;
+            letter-spacing: 0.02em; line-height: 1.05;
+            padding: 4px 10px; display: block;
+            transition: color 0.25s ease, transform 0.25s ease;
+            white-space: nowrap;
         }
-        .nav-eq-bar {
-            width: 3px; background: var(--orange);
-            transition: height 0.1s ease; border-radius:0;
-        }
+        .mobile-menu a:active { color: var(--orange); transform: translateX(-12px); }
+        .mobile-menu a.active { color: var(--orange); }
 
-        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
+        /* ── PAGE CONTENT ── */
+        .page { padding: 0 20px 80px; max-width: 600px; margin: 0 auto; }
 
-        /* ── LANGUAGE SWITCHER ── */
-        #lang-switcher {
-            display: flex; gap: 6px; align-items: center; margin-right: 15px;
-        }
-        .lang-btn {
-            background: none;
-            border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35);
-            font-family:'JetBrains Mono', monospace;
-            font-size: 0.7rem; font-weight: 700;
-            letter-spacing: 0.12em; padding: 4px 8px;
-            cursor: pointer; transition: color 0.2s, border-color 0.2s;
-            text-transform: uppercase;
-        }
-        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
-        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
-
-        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 80px; position: relative; z-index: 1; }
-
-        .hero { padding: 80px 0 72px; border-bottom: 1px solid var(--border); }
-        .hero-label {
-            font-size: 1.04rem; color: var(--orange);
-            letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
-        }
-        .hero h1 {
-            font-family:'Anton',sans-serif; text-transform:uppercase;
-            font-size: clamp(3.12rem, 5.5vw, 5.46rem);
-            font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 28px;
-            letter-spacing: 0;
-        }
+        .hero { padding: 40px 0 32px; border-bottom: 1px solid var(--border); }
+        .hero-label { font-size: 0.75rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-family: 'Anton', sans-serif; font-size: 1.8rem; line-height: 1.2; margin-bottom: 24px; color: #fff; font-weight: 400; text-transform: uppercase; }
         .hero h1 span { color: var(--orange); }
-        .hero p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; max-width: 660px; color: var(--text); }
+        .hero-intro { font-size: 1.1rem; border-left: 2px solid var(--orange); padding-left: 16px; margin-bottom: 32px; color: var(--text); }
 
-        .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
-        .section-label { font-size: 1.17rem; letter-spacing: 0.22em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
-        .section h2 { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 400; color: #fff; margin-bottom: 32px; letter-spacing: 0; }
-
-        .showreel-text p { font-size: calc(1.235rem * var(--font-scale)); line-height: 1.95; color: var(--text); margin-bottom: 16px; max-width: 820px; }
-        .showreel-text p strong { color: var(--orange); font-weight: normal; }
-
-        .video-frame-full {
-            width: 100%; border: 1px solid var(--border); border-radius:0; overflow: hidden;
-            background: #000; margin-top: 36px; transition: border-color 0.2s;
+        /* TTS PLAYER (Mobile Optimized) */
+        .tts-player {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+            padding: 16px; margin: 24px 0 0; display: flex; flex-direction: column; gap: 12px;
         }
-        .video-frame-full:hover { border-color: var(--orange); }
-        .video-frame-full iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
+        .tts-label { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .tts-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tts-btn {
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
+            padding: 8px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; border-radius: 3px; cursor: pointer;
+        }
+        .tts-btn.active { background: var(--orange); color: #000; }
+        .tts-voice-sel { 
+            background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); 
+            padding: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; width: 100%;
+        }
+        .tts-highlight { background: rgba(230,67,42,0.2); border-radius: 2px; }
 
-        .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
-        .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius:0; padding: 22px 18px; text-align: center; transition: border-color 0.2s; }
-        .stat-card:hover { border-color: var(--orange); }
-        .stat-card .stat-num { font-family:'Anton',sans-serif; font-size: 2.4rem; font-weight: 400; color: var(--orange); margin-bottom: 10px; }
-        .stat-card .stat-label { font-size: calc(1.04rem * var(--font-scale)); color: var(--text); line-height: 1.6; }
+        /* SECTIONS */
+        .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--orange); text-transform: uppercase; margin-bottom: 12px; }
+        .section h2 { font-family: 'Anton', sans-serif; font-size: 1.6rem; color: #fff; margin-bottom: 24px; line-height: 1.2; font-weight: 400; text-transform: uppercase; }
 
-        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
-        .tag { font-size: calc(1.066rem * var(--font-scale)); letter-spacing: 0.1em; padding: 6px 14px; border: 1px solid var(--border-dim); border-radius:0; color: var(--cream); text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
-        .tag:hover { border-color: var(--orange); color: var(--orange); }
+        .split-text p { margin-bottom: 20px; font-size: 1rem; }
+        .split-text p strong { color: var(--orange); }
 
-        .cta-block { padding: 72px 0 0; text-align: center; }
-        .cta-block h2 { font-size: clamp(2.6rem, 4vw, 3.9rem); color: #fff; margin-bottom: 16px; letter-spacing: -0.02em; }
-        .cta-block p { font-size: calc(1.17rem * var(--font-scale)); color: var(--text); margin-bottom: 32px; }
-        .cta-btn { display: inline-block; padding: 14px 36px; background: var(--orange); color: #000; font-size: calc(1.235rem * var(--font-scale)); letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; border-radius:0; transition: background 0.2s, transform 0.15s; }
-        .cta-btn:hover { background: #f0654a; transform: translateY(-2px); }
+        /* VIDEO */
+        .video-frame {
+            width: 100%; border: 1px solid var(--border); border-radius: 6px;
+            overflow: hidden; background: #000; margin: 24px 0;
+        }
+        .video-frame iframe { width: 100%; aspect-ratio: 16/9; border: none; display: block; }
 
-        /* TTS PLAYER */
-        .tts-player { background: var(--bg2); border: 1px solid var(--border); border-radius:0; padding: 16px 20px; margin: 32px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px; }
-        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
-        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .tts-btn { background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); font-family:'JetBrains Mono', monospace; font-size: 1.014rem; letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius:0; transition: all 0.15s; white-space: nowrap; }
-        .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
-        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
-        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
-        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
-        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
-        .tts-speed { -webkit-appearance: none; appearance: none; width: 90px; height: 4px; background: var(--border-dim); border-radius:0; outline: none; cursor: pointer; }
-        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
-        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
-        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
-        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
-        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
-        .tts-section-sel, .tts-voice-sel { background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream); font-family:'JetBrains Mono', monospace; font-size: 0.936rem; padding: 5px 10px; border-radius:0; cursor: pointer; outline: none; }
-        .tts-section-sel { max-width: 200px; }
-        .tts-voice-sel  { max-width: 240px; }
-        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
-        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
-        .tts-highlight { background: rgba(230,67,42,0.15); outline: 1px solid rgba(230,67,42,0.3); border-radius:0; transition: background 0.3s; }
+        /* STATS */
+        .stat-row { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+        .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 20px; text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: 900; color: var(--orange); margin-bottom: 4px; }
+        .stat-label { font-size: 0.85rem; color: var(--text); letter-spacing: 0.05em; }
 
-        .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
-        .reveal.visible { opacity: 1; transform: none; }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+        .tag { font-size: 0.75rem; border: 1px solid var(--border-dim); padding: 4px 10px; color: var(--cream); text-transform: uppercase; }
 
-        @media (max-width: 900px) { .stat-row { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 600px) {
-            nav { padding: 0 16px; }
-            nav a { padding: 5px 8px; font-size: 1rem; }
-            .page { padding: 0 20px 80px; }
-            .stat-row { grid-template-columns: minmax(0,1fr); }
-            .font-nudge { bottom: 16px; right: 16px; }
+        .cta-block { padding: 64px 0 0; text-align: center; }
+        .cta-btn { 
+            display: inline-block; padding: 14px 28px; background: var(--orange); 
+            color: #000; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: bold; 
+            text-transform: uppercase; text-decoration: none; border-radius: 3px; 
         }
 
-        /* ── COMPANY FOOTER ── */
-        .company-footer {
-            margin-top: 48px; padding: 32px 0;
-            border-top: 1px solid var(--border-dim);
-            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; max-width: 960px;
-        }
-        .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
-        .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
-        .company-footer-val { font-size: 0.91rem; color: var(--dim); letter-spacing: 0.05em; }
-        .company-footer-val a { color: var(--dim); text-decoration: none; }
-        .company-footer-val a:hover { color: var(--orange); }
-        .company-footer-note { font-size: 0.84rem; color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
+        .footer-toggle { text-align: center; padding: 60px 0; }
+        .footer-toggle a { color: var(--dim); font-size: 0.8rem; text-decoration: none; text-transform: uppercase; }
 
-        /* ── FOOTER ── */
-        .footer-line {
-            margin-top: 80px; padding-top: 32px; padding-bottom: 0;
-            font-size: 0.85rem; letter-spacing: 0.15em;
-            color: var(--dim); text-transform: uppercase;
-            border-top: 1px solid var(--border);
-        }
+        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="font-nudge" id="fontNudge">
-    <div class="font-nudge-label">Text too small?</div>
-    <div class="font-nudge-controls">
-        <button class="font-btn" onclick="adjustFont(-1)">A&#8722;</button>
-        <span class="font-size-indicator" id="fontIndicator">100%</span>
-        <button class="font-btn" onclick="adjustFont(1)">A+</button>
+<div id="mobile-nav-container">
+    <div class="nav-wrapper">
+        <div class="nav-brand">dPaul Technologies</div>
+        <button class="burger" id="burgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
     </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
 </div>
 
-<nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
-        <span class="nav-toggle-bars"></span>
-    </button>
-    <div class="nav-links" id="navLinks">
-    <a href="about.html" data-i18n="nav_about">about</a>
-    <a href="current.html" data-i18n="nav_current">current</a>
-    <a href="design.html" data-i18n="nav_design">design</a>
-    <a href="fun.html">fun</a>
-    <a href="merch.html" data-i18n="nav_merch">merch</a>
-    <a href="music.html" data-i18n="nav_music">music</a>
-    <a href="services.html" data-i18n="nav_services">services</a>
-    <a href="software.html">software</a>
-    <a href="synths.html" data-i18n="nav_synths">synths</a>
-    <a href="tools.html" data-i18n="nav_tools">tools</a>
-    <a href="video.html" class="active" data-i18n="nav_video">video</a>
-    </div>
-    <div class="nav-spacer"></div>
-    <div id="nav-eq-container"></div>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
-        <svg id="bulbIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.4 4.89 3.5 6.13V18a1 1 0 001 1h5a1 1 0 001-1v-2.87C17.6 13.89 19 11.61 19 9c0-3.87-3.13-7-7-7z" stroke="currentColor" stroke-width="1.5"/>
-            <line id="bulbFilament1" x1="10" y1="9" x2="14" y2="13" stroke="currentColor" stroke-width="1.5"/>
-            <line id="bulbFilament2" x1="14" y1="9" x2="10" y2="13" stroke="currentColor" stroke-width="1.5"/>
-            <line x1="9" y1="22" x2="15" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-    </button>
-    <!-- lang-switcher removed: body copy not fully translated
-    <div id="lang-switcher">
-        <button class="lang-btn active" data-lang="en" onclick="I18N.applyLang('en')">EN</button>
-        <button class="lang-btn"        data-lang="fr" onclick="I18N.applyLang('fr')">FR</button>
-        <button class="lang-btn"        data-lang="es" onclick="I18N.applyLang('es')">ES</button>
-    </div>
-    -->
-    <div id="nav-share-container"></div>
-</nav>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="m-about.html">about</a>
+    <a href="m-current.html">current</a>
+    <a href="m-design.html">design</a>
+    <a href="m-fun.html">fun</a>
+    <a href="m-merch.html">merch</a>
+    <a href="m-music.html">music</a>
+    <a href="m-services.html">services</a>
+    <a href="m-software.html">software</a>
+    <a href="m-synths.html">synths</a>
+    <a href="m-tools.html">tools</a>
+    <a href="m-video.html" class="active">video</a>
+</div>
 
 <div class="page">
-
     <section class="hero reveal">
-        <div class="hero-label" data-i18n="video_hero_label">// dPaul Technologies — Video Production</div>
-        <h1 data-i18n-html="video_hero_h1">Professional video<br>for your <span>marque.</span></h1>
-        <p data-i18n="video_hero_p">Cut for wherever your audience watches. Widescreen 16:9 4K delivers a cinematic finish perfect for YouTube, while portrait 9:16 is built for TikTok, Instagram Reels, and the social platforms that matter most to your brand.</p>
+        <div class="hero-label">// Video Production</div>
+        <h1>Professional video<br>for your <span>marque.</span></h1>
+        <p class="hero-intro">Cut for wherever your audience watches. Widescreen 16:9 4K for cinema, or 9:16 portrait for the platforms that matter most to your brand.</p>
 
-        <div class="tts-player" id="ttsPlayer">
-            <span class="tts-label" data-i18n="tts_speak_label">// Speak this page</span>
+        <div class="tts-player">
+            <span class="tts-label">// Speak page</span>
+            <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
+                <option value="">Loading voices...</option>
+            </select>
             <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
-                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
-                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
-                <div class="tts-sep"></div>
-                <div class="tts-speed-wrap">
-                    <span class="tts-speed-label" data-i18n="tts_speed">Speed</span>
-                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
-                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
-                </div>
-                <div class="tts-sep"></div>
-                <div class="tts-section-wrap">
-                    <span class="tts-section-label" data-i18n="tts_voice">Voice</span>
-                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)"><option value="">Loading voices...</option></select>
-                </div>
-                <div class="tts-sep"></div>
-                <div class="tts-section-wrap">
-                    <span class="tts-section-label" data-i18n="tts_jump">Jump to</span>
-                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)"><option value="-1">-- section --</option></select>
-                </div>
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" onclick="ttsStop()">■ Stop</button>
             </div>
-            <span class="tts-progress" id="ttsProgress"></span>
         </div>
     </section>
 
-    <section class="section reveal"
-             id="vid-stupidtees"
-             data-post-section
-             data-post-title="Stupid-Tees.com — Prom Video"
-             data-post-content="Stupid-Tees.com — coming soon. A prom video for the site currently in the works.">
+    <section class="section reveal" data-post-section data-post-title="Stupid-Tees.com — Prom Video">
         <div class="section-label">// 01 — Stupid-Tees.com</div>
         <h2>Coming soon: Stupid-Tees.com</h2>
 
-        <div class="showreel-text">
-            <p><strong style="color:var(--orange); font-weight:normal;">Stupid-Tees.com</strong> is a new site currently in the works. This prom video was made along the way — a taste of what's coming.</p>
+        <div class="split-text">
+            <p><strong style="color:var(--orange);">Stupid-Tees.com</strong> is a new site currently in the works. This prom video was made along the way — a taste of what's coming.</p>
             <p><a href="https://www.stupid-tees.com" target="_blank" style="color:var(--orange);text-decoration:none;border-bottom:1px solid rgba(230,67,42,0.4);">www.stupid-tees.com</a> (coming soon)</p>
             <div class="tags">
-                <div class="tag">Coming Soon</div><div class="tag">Stupid-Tees.com</div><div class="tag">Prom Video</div>
+                <div class="tag">Coming Soon</div>
+                <div class="tag">Stupid-Tees.com</div>
+                <div class="tag">Prom Video</div>
             </div>
         </div>
 
-        <div class="video-frame-full">
-            <video src="assets/stupidtees-promo.webm" controls playsinline poster="assets/stupid-tees.webp" style="width:100%;aspect-ratio:16/9;display:block;border:none;"></video>
+        <div class="video-frame">
+            <video src="../assets/stupidtees-promo.webm" controls playsinline poster="../assets/stupid-tees.webp" style="width:100%;aspect-ratio:16/9;display:block;border:none;"></video>
         </div>
     </section>
 
-    <section class="section reveal"
-             id="vid-dreamthree"
-             data-post-section
-             data-post-title="Dream Three — Carbonography Preview"
-             data-post-content="A cinematic promo for Carbonography — choose your dream three vehicles and wear them. Coming summer 2025.">
+    <section class="section reveal" data-post-section data-post-title="Dream Three — Carbonography Preview">
         <div class="section-label">// 02 — Dream Three</div>
         <h2>What's your dream three?</h2>
 
-        <div class="showreel-text">
+        <div class="split-text">
             <p>A personal project in the works — <strong><a href="https://www.carbonography.co.uk" target="_blank" style="color:var(--orange);text-decoration:none;border-bottom:1px solid rgba(230,67,42,0.4);">Carbonography</a></strong>. The concept is simple: you pick your dream three vehicles, and we put them on merch. Hoodies, t-shirts, caps — built around the machines that matter to you.</p>
             <p>This short promo was made to capture the idea. Three vehicles, fading in one by one, scored to music. The R34 Skyline GT-R, a classic Datsun, and an MV Agusta F4 RR. Not a random selection — a <strong>statement of taste</strong>. These happen to be my son Logan's dream three.</p>
             <p><a href="https://www.carbonography.co.uk" target="_blank" style="color:var(--orange);text-decoration:none;border-bottom:1px solid rgba(230,67,42,0.4);">Carbonography</a> launches later this summer. When it does, you'll be able to choose any three vehicles, configure your colourway, and order your own custom piece.</p>
             <div class="tags">
-                <div class="tag">Coming Soon</div><div class="tag">Custom Merch</div><div class="tag">Your Dream Three</div><div class="tag">Carbonography</div>
+                <div class="tag">Coming Soon</div>
+                <div class="tag">Custom Merch</div>
+                <div class="tag">Your Dream Three</div>
+                <div class="tag">Carbonography</div>
             </div>
         </div>
 
-        <div class="video-frame-full">
-            <video src="assets/dream-three-promo.webm" controls playsinline poster="assets/dream-three.webp" style="width:100%;aspect-ratio:16/9;display:block;border:none;"></video>
+        <div class="video-frame">
+            <iframe src="https://www.youtube.com/embed/339ZvVtEOMA" allow="autoplay; fullscreen" allowfullscreen title="Dream Three — Carbonography"></iframe>
         </div>
 
-        <div style="margin-top:48px; display:flex; gap:40px; align-items:flex-start; flex-wrap:wrap;">
-            <img src="assets/my-dream-three-logan.webp" alt="An example Carbonography t-shirt" style="width:340px; max-width:100%; border:1px solid var(--border); border-radius:0; flex-shrink:0;">
-            <div style="flex:1; min-width:240px;">
-                <div class="section-label" style="margin-bottom:12px;">// Merch Preview</div>
-                <p style="font-size:calc(1.235rem * var(--font-scale)); line-height:1.95; color:var(--text); margin-bottom:16px;">"Dream Three" on a t-shirt — an example of what <strong style="color:var(--orange); font-weight:normal;">Carbonography</strong> merch will look like. The R34 Skyline GT-R, a classic Datsun, and an MV Agusta F4 RR. His machines, his statement.</p>
-                <p style="font-size:calc(1.235rem * var(--font-scale)); line-height:1.95; color:var(--text);">This piece isn't for sale yet. Merch will be available when the <a href="https://www.carbonography.co.uk" target="_blank" style="color:var(--orange);text-decoration:none;border-bottom:1px solid rgba(230,67,42,0.4);">Carbonography</a> site goes live — then you'll be able to build your own.</p>
-                <div class="tags" style="margin-top:20px;">
-                    <div class="tag">Not For Sale</div><div class="tag">Example Only</div><div class="tag">Coming Soon</div>
-                </div>
+        <div style="margin-top:32px;">
+            <img src="../assets/my-dream-three-logan.webp" alt="Logan's Dream Three — example Carbonography t-shirt" style="width:100%; border:1px solid var(--border); border-radius:6px; margin-bottom:20px;">
+            <div class="section-label" style="margin-bottom:10px;">// Merch Preview</div>
+            <p style="margin-bottom:14px;">This is an example garment printed with the three vehicles of what <strong>Carbonography</strong> merch will look like. </p>
+            <p>This piece isn't for sale yet. Merch will be available when the <a href="https://www.carbonography.co.uk" target="_blank" style="color:var(--orange);text-decoration:none;border-bottom:1px solid rgba(230,67,42,0.4);">Carbonography</a> site goes live.</p>
+            <div class="tags" style="margin-top:16px;">
+                <div class="tag">Not For Sale</div><div class="tag">Example Only</div><div class="tag">Coming Soon</div>
             </div>
         </div>
     </section>
 
-    <section class="section reveal" 
-             id="vid-showreel"
-             data-post-section
-             data-post-title="Professional 4K Video Production — dPaul Technologies"
-             data-post-content="Elevate your brand with cinematic 4K video. Optimized for 16:9 YouTube and 9:16 social platforms like TikTok and Reels.">
-        <div class="section-label" data-i18n="video_section_label">// 03 — Showreel</div>
-        <h2 data-i18n="video_section_h2">Cinematic. 4K. Platform-ready.</h2>
+    <section class="section reveal" data-post-section data-post-title="dPaul Studio — Showreel & Motion Work">
+        <div class="section-label">// 03 — Showreel</div>
+        <h2>Cinematic. 4K. Platform-ready.</h2>
 
-        <div class="showreel-text">
-            <p data-i18n-html="video_body_p1">Video content receives <strong>significantly higher engagement</strong> than static images across all platforms — social media, websites, and digital advertising.</p>
-            <p data-i18n-html="video_body_p2">A professional video presentation elevates your product above standard listings, <strong>captures attention in crowded marketplaces</strong>, and communicates information more effectively than text alone.</p>
+        <div class="split-text">
+            <p>Video content receives <strong>significantly higher engagement</strong> than static images across all platforms.</p>
+            <p>A professional presentation elevates your product above standard listings and captures attention in crowded marketplaces.</p>
             <div class="tags">
-                <div class="tag">4K Widescreen</div><div class="tag">YouTube Ready</div><div class="tag">Sony Camera</div><div class="tag">Cinematic Grade</div>
+                <div class="tag">4K Widescreen</div>
+                <div class="tag">YouTube Ready</div>
+                <div class="tag">Sony Camera</div>
+                <div class="tag">Cinematic Grade</div>
             </div>
         </div>
 
-        <div class="video-frame-full">
-            <iframe src="https://player.vimeo.com/video/1158945348?badge=0&autopause=0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        <div class="video-frame">
+            <iframe src="https://player.vimeo.com/video/1158945348?badge=0&autopause=0" allow="autoplay; fullscreen" allowfullscreen title="Showreel"></iframe>
         </div>
 
         <div class="stat-row">
-            <div class="stat-card"><div class="stat-num">4K</div><div class="stat-label">UHD resolution — cinematic finish</div></div>
-            <div class="stat-card"><div class="stat-num">16:9</div><div class="stat-label">Widescreen — YouTube & web</div></div>
-            <div class="stat-card"><div class="stat-num">9:16</div><div class="stat-label">Portrait — TikTok & Reels</div></div>
+            <div class="stat-card">
+                <div class="stat-num">4K</div>
+                <div class="stat-label">UHD Resolution — cinematic finish</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">16:9</div>
+                <div class="stat-label">Widescreen — YouTube &amp; web</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">9:16</div>
+                <div class="stat-label">Portrait — TikTok &amp; Reels</div>
+            </div>
         </div>
     </section>
 
-    <div class="cta-block reveal" 
-         id="vid-cta"
-         data-post-section
-         data-post-title="Work with dPaul Studio — Video Production"
-         data-post-content="Automotive, property, or product — let's capture your marque in stunning 4K. Contact dPaul Technologies for a consultation.">
-        <h2 data-i18n="video_cta_h2">Fancy a video for your marque?</h2>
-        <p data-i18n="video_cta_p">Automotive, property, product, or brand — let's talk about what you need.</p>
-        <a href="about.html" class="cta-btn" data-i18n="video_cta_btn">Get in touch</a>
+    <div class="cta-block reveal" data-post-section data-post-title="dPaul Studio — Work With Me">
+        <h2>Want a video for your marque?</h2>
+        <p>Automotive, property, or brand — let's talk about what you need.</p>
+        <a href="about.html" class="cta-btn">Get in touch</a>
     </div>
-
-    <footer class="company-footer reveal">
-        <div class="company-footer-block">
-            <div class="company-footer-label">Company</div>
-            <div class="company-footer-val">CitiIT Limited</div>
-            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
-        </div>
-        <div class="company-footer-block">
-            <div class="company-footer-label">Company No.</div>
-            <div class="company-footer-val">15811174</div>
-        </div>
-        <div class="company-footer-block">
-            <div class="company-footer-label">VAT No.</div>
-            <div class="company-footer-val">473 5892 49</div>
-        </div>
-        <div class="company-footer-block">
-            <div class="company-footer-label">Website</div>
-            <div class="company-footer-val"><a href="https://citiit.uk" target="_blank">citiit.uk</a></div>
-        </div>
-    </footer>
-
-    <div class="footer-line reveal">// dPaul Technologies — Video</div>
-
 </div>
 
+<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
-    // ── THEME TOGGLE ──
-    function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        try { localStorage.setItem('dp-theme', theme); } catch(e) {}
+    // ── MENU LOGIC ──
+        function toggleMenu() {
+        const menu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('burgerBtn');
+        menu.classList.toggle('open');
+        btn.classList.toggle('active');
+        const isOpen = menu.classList.contains('open');
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto';
+        document.querySelectorAll('.ticker-wrap').forEach(el => el.style.visibility = isOpen ? 'hidden' : 'visible');
+        document.querySelector('.nav-brand').style.visibility = isOpen ? 'hidden' : 'visible';
+        document.getElementById('mobile-nav-container').style.borderBottom = isOpen ? 'none' : '1px solid var(--border)';
+        document.querySelectorAll('.nav-wrapper > *:not(#burgerBtn)').forEach(el => {
+            el.style.visibility = isOpen ? 'hidden' : 'visible';
+        });
+        const page = document.querySelector('.page');
+        if (page) page.style.visibility = isOpen ? 'hidden' : 'visible';
     }
-    function toggleTheme() {
-        const current = document.documentElement.getAttribute('data-theme') || 'dark';
-        applyTheme(current === 'light' ? 'dark' : 'light');
-    }
-    try {
-        const savedTheme = localStorage.getItem('dp-theme');
-        if (savedTheme) applyTheme(savedTheme);
-    } catch(e) {}
 
-    // ── NAV EQ ANIMATION ──
-    (function() {
-        const NUM_BARS = 8;
-        const MAX_H = 20;
-        const container = document.getElementById('nav-eq-container');
-        if (!container) return;
-        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
-        const targets = [...levels];
-        const bars = [];
-        for (let i = 0; i < NUM_BARS; i++) {
-            const b = document.createElement('div');
-            b.className = 'nav-eq-bar';
-            container.appendChild(b);
-            bars.push(b);
-        }
-        function animateEQ() {
-            for (let i = 0; i < NUM_BARS; i++) {
-                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
-                levels[i] += (targets[i] - levels[i]) * 0.15;
-                bars[i].style.height = levels[i] + 'px';
-            }
-            requestAnimationFrame(animateEQ);
-        }
-        animateEQ();
-    })();
-
-    // FONT NUDGE
-    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
-    let fontScaleIndex = 0;
-    const indicators = ['100%', '115%', '130%', '150%', '170%'];
-    function applyFontScale() {
-        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
-        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
-        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
-    }
-    function adjustFont(dir) {
-        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
-        applyFontScale();
-    }
-    function dismissNudge() {
-        document.getElementById('fontNudge').style.opacity = '0';
-        document.getElementById('fontNudge').style.pointerEvents = 'none';
-        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
-    }
-    try {
-        const saved = localStorage.getItem('dp-font-scale');
-        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
-        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
-    } catch(e) {}
-
-    // REVEAL
+    // ── REVEAL ANIMATION ──
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // ——— TTS ENGINE ———————————————————————————————————————————
-    (function() {
-        const synth = window.speechSynthesis;
-        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null, selectedVoice = null;
+    // ── TTS ENGINE ──
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let currentIdx = 0;
 
-        const READ_SELECTORS = ['.hero h1', '.hero p', '.showreel-text p', '.stat-label', '.cta-block p'];
-        const SECTION_SELECTORS = ['.hero-label', '.section-label', '.cta-block h2'];
-
-        const AUTO_PRIORITY = ['Google UK English Male', 'Google UK English Female', 'Daniel', 'Arthur', 'Samantha', 'Sonia', 'Ryan'];
-
-        function genderGlyph(name) {
-            if (/female|woman|girl|sonia|samantha|karen|moira/i.test(name)) return ' ♀';
-            if (/male|man|guy|daniel|arthur|ryan|alex/i.test(name)) return ' ♂';
-            return '';
-        }
-
-        function populateVoiceList() {
-            const voices = synth.getVoices(); if (!voices.length) return;
-            const sel = document.getElementById('ttsVoiceSel'); sel.innerHTML = '';
-            const enVoices = voices.filter(v => /^en/i.test(v.lang));
-            
-            enVoices.forEach(v => {
-                const o = document.createElement('option');
-                o.value = v.name; o.textContent = v.name + genderGlyph(v.name);
-                sel.appendChild(o);
-            });
-
-            if (!selectedVoice) {
-                for (const name of AUTO_PRIORITY) {
-                    const found = voices.find(v => v.name.includes(name));
-                    if (found) { selectedVoice = found; break; }
-                }
-                if (!selectedVoice) selectedVoice = enVoices[0];
-            }
-            if (selectedVoice) sel.value = selectedVoice.name;
-        }
-
-        window.ttsSetVoice = function(name) {
-            const voices = synth.getVoices();
-            selectedVoice = voices.find(v => v.name === name) || null;
-            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
-        };
-
-        function buildChunks() {
-            chunks = [];
-            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
-                const txt = el.innerText.trim(); if (txt.length > 2) chunks.push({ el, text: txt });
-            });
-        }
-
-        function buildSectionMenu() {
-            const sel = document.getElementById('ttsSectionSel'); while (sel.options.length > 1) sel.remove(1);
-            let map = [];
-            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
-                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
-                let matchIdx = -1;
-                for (let i = 0; i < chunks.length; i++) {
-                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
-                }
-                if (matchIdx >= 0) map.push({ label, idx: matchIdx });
-            });
-            const seen = new Set();
-            map.filter(s => !seen.has(s.idx) && seen.add(s.idx)).forEach(s => {
-                const o = document.createElement('option'); o.value = s.idx;
-                o.textContent = s.label.length > 30 ? s.label.slice(0, 28) + '...' : s.label;
-                sel.appendChild(o);
-            });
-        }
-
-        function highlight(el) {
-            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
-            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-            lastHighlighted = el;
-        }
-
-        function setButtons(state) {
-            const play = document.getElementById('ttsPlay'), pause = document.getElementById('ttsPause'), stop = document.getElementById('ttsStop');
-            if (state === 'idle') {
-                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
-                pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
-            } else if (state === 'playing') {
-                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
-                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active'); stop.disabled = false;
-            } else if (state === 'paused') {
-                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
-                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
-            }
-        }
-
-        function speakCurrent() {
-            if (idx >= chunks.length) { ttsStop(); return; }
-            const chunk = chunks[idx]; highlight(chunk.el);
-            document.getElementById('ttsProgress').textContent = (idx + 1) + ' / ' + chunks.length;
-            const u = new SpeechSynthesisUtterance(chunk.text);
-            u.rate = parseFloat(document.getElementById('ttsSpeed').value);
-            if (selectedVoice) u.voice = selectedVoice;
-            u.onend = () => { if (!paused) { idx++; speakCurrent(); } };
-            currentUtterance = u; synth.speak(u);
-        }
-
-        window.ttsPlay = function() {
-            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
-            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
-            else { speakAt(idx); }
-        };
-        window.ttsPause = function() { if (synth.speaking && !synth.paused) { paused = true; synth.pause(); setButtons('paused'); } };
-        window.ttsStop = function() { paused = false; synth.cancel(); idx = 0; highlight(null); document.getElementById('ttsProgress').textContent = ''; setButtons('idle'); };
-        window.ttsUpdateSpeed = function() {
-            const val = parseFloat(document.getElementById('ttsSpeed').value).toFixed(2);
-            document.getElementById('ttsSpeedVal').textContent = val + 'x';
-            if (currentUtterance) currentUtterance.rate = val;
-        };
-        window.ttsJumpTo = function(v) { const i = parseInt(v); if (i >= 0) speakAt(i); document.getElementById('ttsSectionSel').value = '-1'; };
-        function speakAt(sIdx) { synth.cancel(); idx = sIdx; paused = false; setButtons('playing'); speakCurrent(); }
-
-        window.addEventListener('load', () => {
-            buildChunks(); buildSectionMenu();
-            if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoiceList;
-            populateVoiceList();
+    function populateVoices() {
+        const voices = synth.getVoices();
+        const sel = document.getElementById('ttsVoiceSel');
+        if(!sel) return;
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => v.lang.startsWith('en'));
+        enVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name.replace('Google ', '');
+            sel.appendChild(opt);
         });
-    })();
+        selectedVoice = enVoices[0];
+    }
+
+    window.ttsSetVoice = (name) => { selectedVoice = synth.getVoices().find(v => v.name === name); };
+    
+    function buildChunks() {
+        chunks = [];
+        document.querySelectorAll('h1, h2, .hero-intro, .split-text p, .service-list li').forEach(el => {
+            chunks.push({ el, text: el.innerText });
+        });
+    }
+
+    window.ttsPlay = () => {
+        if (!chunks.length) buildChunks();
+        synth.cancel();
+        currentIdx = 0;
+        speak();
+        const playBtn = document.getElementById('ttsPlay');
+        if(playBtn) playBtn.disabled = true;
+    };
+
+    window.ttsStop = () => {
+        synth.cancel();
+        if(chunks[currentIdx]) chunks[currentIdx].el.classList.remove('tts-highlight');
+        const playBtn = document.getElementById('ttsPlay');
+        if(playBtn) playBtn.disabled = false;
+    };
+
+    function speak() {
+        if (currentIdx >= chunks.length) { ttsStop(); return; }
+        const chunk = chunks[currentIdx];
+        chunk.el.classList.add('tts-highlight');
+        chunk.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        const utter = new SpeechSynthesisUtterance(chunk.text);
+        if (selectedVoice) utter.voice = selectedVoice;
+        utter.onend = () => {
+            chunk.el.classList.remove('tts-highlight');
+            currentIdx++;
+            speak();
+        };
+        synth.speak(utter);
+    }
+
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.onload = populateVoices;
 </script>
 
-<script src="share.js"></script>
 <script src="post-generator.js"></script>
-
-<script src="assets/translations.js"></script>
-<script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
 </body>
 </html>
