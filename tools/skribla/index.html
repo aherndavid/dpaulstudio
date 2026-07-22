@@ -66,6 +66,7 @@
   .action-btn.home:hover { border-color: #aaaaff; color: #ccccff; background: #22223a; }
 
   #canvas-wrap { flex: 1; position: relative; overflow: hidden; }
+  #bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000000; }
   #canvas { position: absolute; top: 0; left: 0; cursor: crosshair; touch-action: none; display: block; }
 
   #about-overlay {
@@ -84,6 +85,21 @@
   #about-box .studio { font-size: 18px; color: #ccc; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
   #about-close { font-size: 15px; padding: 8px 24px; border: 1px solid #555; background: transparent; color: #888; border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace; letter-spacing: 1px; text-transform: uppercase; }
   #about-close:hover { background: #2a2a2a; color: #ccc; border-color: #888; }
+
+  @media (max-width: 480px) {
+    .toolbar-row { flex-wrap: wrap; row-gap: 8px; }
+    .colour, #bgToggle, .size-btn { width: 44px; height: 44px; }
+    .section-divider { height: 44px; }
+
+    .toolbar-row.full { flex-wrap: wrap; }
+    .action-btn {
+      flex: 1 1 calc(33.333% - 6px);
+      min-width: 0;
+      font-size: 18px;
+      padding: 12px 4px;
+      white-space: normal;
+    }
+  }
 </style>
 </head>
 <body>
@@ -112,6 +128,7 @@
   </div>
 
   <div id="canvas-wrap">
+    <div id="bg-layer"></div>
     <canvas id="canvas"></canvas>
   </div>
 </div>
@@ -130,6 +147,7 @@
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
   const wrap = document.getElementById('canvas-wrap');
+  const bgLayer = document.getElementById('bg-layer');
 
   let currentColor = '#FF3B5C';
   let currentSize = 4;
@@ -142,20 +160,15 @@
     const w = wrap.clientWidth, h = wrap.clientHeight;
     const snap = (canvas.width > 0 && canvas.height > 0) ? canvas.toDataURL() : null;
     canvas.width = w; canvas.height = h;
-    fillBackground();
     if (snap) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = snap; }
   }
-
-  function fillBackground() { ctx.fillStyle = bgColor; ctx.fillRect(0, 0, canvas.width, canvas.height); }
 
   window.addEventListener('load', resize);
   window.addEventListener('resize', resize);
 
   document.getElementById('bgToggle').addEventListener('click', () => {
-    const snap = canvas.toDataURL(); snapshots = [];
     bgColor = bgColor === '#000000' ? '#ffffff' : '#000000';
-    fillBackground();
-    const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = snap;
+    bgLayer.style.background = bgColor;
   });
 
   document.querySelectorAll('.colour').forEach(el => {
@@ -182,12 +195,17 @@
     img.src = prev;
   });
 
-  document.getElementById('clearBtn').addEventListener('click', () => { saveSnapshot(); fillBackground(); });
+  document.getElementById('clearBtn').addEventListener('click', () => { saveSnapshot(); ctx.clearRect(0, 0, canvas.width, canvas.height); });
 
   document.getElementById('saveBtn').addEventListener('click', () => {
+    const flat = document.createElement('canvas');
+    flat.width = canvas.width; flat.height = canvas.height;
+    const fctx = flat.getContext('2d');
+    fctx.fillStyle = bgColor; fctx.fillRect(0, 0, flat.width, flat.height);
+    fctx.drawImage(canvas, 0, 0);
     const link = document.createElement('a');
     link.download = 'skribble-' + Date.now() + '.png';
-    link.href = canvas.toDataURL('image/png'); link.click();
+    link.href = flat.toDataURL('image/png'); link.click();
   });
 
   const aboutBtn = document.getElementById('aboutBtn');
