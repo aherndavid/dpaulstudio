@@ -8,12 +8,6 @@
     <title>Music — dPaul Technologies</title>
     
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root {
             --bg:      #171717;
             --bg2:     #1e1e1e;
@@ -61,9 +55,6 @@
         html[data-theme="light"] .tts-section-label { color: var(--dim); }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
         /* ── THEME TOGGLE ── */
         .theme-toggle {
@@ -386,7 +377,6 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">
@@ -540,7 +530,7 @@
 </div><!-- /page -->
 
 <script>
-    /* ── MOBILE NAVIGATION TOGGLE ── */
+    // ── MOBILE NAVIGATION TOGGLE ──
     function toggleMobileNav() {
         const navLinks = document.getElementById('navLinks');
         const navToggle = document.getElementById('navToggle');
@@ -558,7 +548,7 @@
         }
     });
 
-    /* ── FONT NUDGE TOGGLE ── */
+    // ── FONT NUDGE TOGGLE ──
     function toggleNudge() {
         const nudge = document.getElementById('fontNudge');
         const trigger = document.querySelector('.font-nudge-trigger');
@@ -713,10 +703,9 @@
     window.addEventListener('load', populateVoices);
 </script>
 
-<script src="share.js"></script>
-<script src="post-generator.js"></script>
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
+<script src="post-generator.js"></script>
 
 <script>
     /* ── FORMSPREE SUBMISSION ── */

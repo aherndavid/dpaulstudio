@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <title>Services — CitiIT Limited</title>
-
+    <title>Music — dPaul Technologies</title>
+    
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root {
             --bg:      #171717;
             --bg2:     #1e1e1e;
@@ -44,48 +38,14 @@
         html[data-theme="light"] .skill-card h3,
         html[data-theme="light"] .company-footer-val { color: #171310; }
         html[data-theme="light"] .hero h1 span { color: var(--orange); }
-        /* Hero sits over a photo background — keep light text regardless of theme */
-        html[data-theme="light"] .hero h1 { color: #fff; }
-        html[data-theme="light"] .hero h1 em { color: #e6432a; }
-        html[data-theme="light"] .hero-intro { color: #e8e4da; }
-        html[data-theme="light"] .hero-label { color: #e6432a; }
-        html[data-theme="light"] .cta-heading { color: #171310; }
-        html[data-theme="light"] .section-title { color: #fff !important; }
-        html[data-theme="light"] .section-eyebrow { color: #e6432a !important; }
-        html[data-theme="light"] .service-section .hero-intro { color: #fff !important; }
-        html[data-theme="light"] .addon-table td,
-        html[data-theme="light"] .addon-table th,
-        html[data-theme="light"] .addon-table td.addon-desc { color: #fff !important; }
-        html[data-theme="light"] .pricing-card,
-        html[data-theme="light"] .terms-block { background: rgba(241,241,239,0.75); backdrop-filter: blur(2px); }
-        html[data-theme="light"] .featured-badge { background: #e6432a; color: #000; }
-        html[data-theme="light"] .card-price { color: #171310; }
         html[data-theme="light"] nav a.active { color: #fff; }
         html[data-theme="light"] .form-field input::placeholder,
         html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
         html[data-theme="light"] .form-field input,
         html[data-theme="light"] .form-field textarea { color: #171310; }
         html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
-        html[data-theme="light"] .tts-btn,
-        html[data-theme="light"] .tts-section-sel,
-        html[data-theme="light"] .tts-voice-sel,
-        html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #e6432a !important; color: #fff !important; }
-        html[data-theme="light"] .tts-progress,
-        html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: var(--dim); }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        /* Nav background stays dark in both themes — keep these elements legible against it */
-        html[data-theme="light"] .nav-eq-bar { background: #e6432a; }
-        html[data-theme="light"] .theme-toggle { color: #f4f3ef; }
-        html[data-theme="light"] .theme-toggle:hover { border-color: #e6432a; color: #e6432a; }
-        html[data-theme="light"] #bulbFilament1,
-        html[data-theme="light"] #bulbFilament2 { stroke: #e6432a; filter: drop-shadow(0 0 3px #e6432a); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(255,255,255,0.45); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: #e6432a; border-color: #e6432a; }
 
         /* ── THEME TOGGLE ── */
         .theme-toggle {
@@ -109,20 +69,11 @@
             width: 100%;
             max-width: 100%;
             overflow-x: hidden;
-            background: var(--bg) url('assets/desk-2.webp') no-repeat center center fixed;
-            background-size: cover;
+            background: var(--bg);
             color: var(--text);
             font-family:'JetBrains Mono', monospace;
             font-size: 130%;
             min-height: 100vh;
-        }
-
-        /* Dark tint over background image */
-        body::after {
-            content: '';
-            position: fixed; inset: 0;
-            background: rgba(19, 20, 19, 0.65);
-            pointer-events: none; z-index: 0;
         }
 
         /* Grain Overlay */
@@ -131,6 +82,23 @@
             position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* Renaissance CD background image */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('assets/renaissance-cd-cover.webp');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: -1; 
         }
 
         /* ── NAV & HAMBURGER ── */
@@ -142,8 +110,8 @@
         }
         .nav-links { display: flex; align-items: center; gap: 2px; }
         nav a {
-            font-family:'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--cream);
-            font-weight: bold; text-decoration: none;
+            font-family:'JetBrains Mono', monospace; font-size: 1.1rem;
+            color: var(--cream); font-weight: bold; text-decoration: none;
             display: inline-block; min-width: 0; white-space: nowrap; text-align: center;
             border: 1px solid transparent; border-radius:0;
             letter-spacing: 0.05em; transition: none;
@@ -162,7 +130,9 @@
         }
         .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
 
-        /* Mini EQ in nav */
+        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
+
+        /* ── MINI EQ IN NAV ── */
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
             height: 22px; margin: 0 16px; padding-bottom: 2px;
@@ -171,8 +141,6 @@
             width: 3px; background: var(--orange);
             transition: height 0.1s ease; border-radius:0;
         }
-
-        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
 
         /* ── FONT NUDGE TRIGGER & PANEL ── */
         .font-nudge-trigger {
@@ -211,28 +179,27 @@
         }
         .font-nudge-dismiss:hover { color: var(--orange); }
 
-        /* Page */
-        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; width: 100%; }
+        /* ── PAGE ── */
+        .page { max-width: 1400px; margin: 0 auto; padding: 0 56px 80px; position: relative; z-index: 1; width: 100%; }
 
-        /* Hero */
-        .hero { padding: 80px 0 72px; border-bottom: 1px solid var(--border); max-width: 1000px; }
-        .hero-label {
-            font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase;
-            margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+        /* ── HERO ── */
+        .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); max-width: 1000px; }
+        .hero-label { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 {
+            font-family:'Anton',sans-serif; text-transform:uppercase;
+            font-size: clamp(2.86rem, 5.5vw, 5.2rem);
+            font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 20px;
         }
-        .hero-label::after { content: ''; display: block; width: 48px; height: 1px; background: var(--orange); opacity: 0.5; }
-        .hero h1 { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(3.12rem, 5.5vw, 5.46rem); font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 28px; letter-spacing: 0; }
-        .hero h1 em { color: var(--orange); font-style: normal; }
-        .hero-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.95; color: var(--text); max-width: 660px; border-left: 2px solid var(--orange); padding-left: 20px; margin-top: 8px; }
+        .hero h1 span { color: var(--orange); }
+        .hero p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; max-width: 600px; color: var(--text); }
 
-        /* TTS Player */
+        /* ── TTS PLAYER ── */
         .tts-player {
             background: var(--bg2); border: 1px solid var(--border); border-radius:0;
             padding: 16px 20px; margin: 32px 0 0;
             display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px; width: 100%;
         }
-        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
-        .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
         .tts-btn {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
             font-family:'JetBrains Mono', monospace; font-size: 1.014rem;
@@ -240,231 +207,79 @@
             transition: all 0.15s; white-space: nowrap;
         }
         .tts-btn:hover { border-color: var(--orange); color: var(--orange); }
-        .tts-btn.active { background: var(--orange); color: #000; border-color: var(--orange); font-weight: bold; }
-        .tts-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .tts-btn.stop-btn:hover { border-color: #cc3300; color: #cc3300; }
-        .tts-sep { width: 1px; height: 24px; background: var(--border-dim); margin: 0 4px; }
-        .tts-speed-wrap { display: flex; align-items: center; gap: 8px; }
-        .tts-speed-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
-        .tts-speed {
-            -webkit-appearance: none; appearance: none;
-            width: 90px; height: 4px; background: var(--border-dim); border-radius:0; outline: none; cursor: pointer;
-        }
-        .tts-speed::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--orange); border-radius: 50%; cursor: pointer; }
-        .tts-speed::-moz-range-thumb { width: 14px; height: 14px; background: var(--orange); border: none; border-radius: 50%; cursor: pointer; }
-        .tts-speed-val { font-size: 0.884rem; color: var(--cream); letter-spacing: 0.05em; min-width: 28px; }
-        .tts-section-wrap { display: flex; align-items: center; gap: 8px; }
-        .tts-section-label { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.1em; white-space: nowrap; }
-        .tts-section-sel, .tts-voice-sel {
+        .tts-btn.active { background: var(--orange); color: #000; font-weight: bold; }
+        .tts-voice-sel {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
             font-family:'JetBrains Mono', monospace; font-size: 0.936rem;
-            padding: 5px 10px; border-radius:0; cursor: pointer; outline: none;
+            padding: 5px 10px; border-radius:0; cursor: pointer; outline: none; max-width: 240px;
         }
-        .tts-section-sel { max-width: 200px; }
-        .tts-voice-sel  { max-width: 240px; }
-        .tts-section-sel:focus, .tts-voice-sel:focus { border-color: var(--orange); }
-        .tts-progress { font-size: 0.884rem; color: var(--dim); letter-spacing: 0.08em; white-space: nowrap; margin-left: auto; }
-        .tts-highlight { background: rgba(230,67,42,0.15); outline: 1px solid rgba(230,67,42,0.3); border-radius:0; transition: background 0.3s; }
+        .tts-voice-sel:focus { border-color: var(--orange); }
+        .tts-highlight { background: rgba(230,67,42,0.15); border-radius:0; }
 
-        /* Section structure */
-        .service-section { padding: 80px 0; border-bottom: 1px solid var(--border); }
-        .section-eyebrow { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 10px; }
-        .section-title { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 400; color: #fff; letter-spacing: 0; margin-bottom: 40px; }
+        /* ── SECTIONS ── */
+        .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+        .section-label { font-size: 1.17rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
+        .section h2 { font-size: clamp(1.82rem, 3.2vw, 2.6rem); font-weight: 700; color: #fff; margin-bottom: 14px; }
+        .section-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.85; max-width: 620px; margin-bottom: 40px; }
 
-        /* Single column pricing layout */
-        .pricing-single-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            margin-bottom: 48px;
+        /* ── SPLIT / ALBUM ── */
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+        .split-text p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; margin-bottom: 14px; }
+        .split-text p strong { color: var(--orange); font-weight: normal; }
+        
+        .album-link { text-decoration: none; display: block; width: 100%; }
+        .album-cover {
+            width: 100%; aspect-ratio: 1; border: 1px solid var(--border); border-radius:0;
+            overflow: hidden; position: relative; background: #0e0f0e; transition: all 0.3s ease;
         }
+        .album-cover:hover { border-color: var(--orange); }
+        .album-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .click-hint {
+            position: absolute; bottom: 12px; left: 0; right: 0; text-align: center;
+            font-size: 0.8rem; letter-spacing: 0.15em; color: var(--orange); text-transform: uppercase;
+            opacity: 0; transition: opacity 0.2s; pointer-events: none;
+        }
+        .album-cover:hover .click-hint { opacity: 1; }
 
-        /* Top row inside card: price info left, button right */
-        .card-row-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 32px;
-            margin-bottom: 0;
-            flex-wrap: wrap;
-        }
-        .card-row-top .stripe-btn { flex-shrink: 0; align-self: center; }
-
-        /* Stacked list: // marker left, label + description stacked right */
-        .include-list--inline li {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-        }
-        .include-list--inline li::before {
-            flex-shrink: 0;
-            margin-top: 3px;
-        }
-        .inc-text {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        .include-list--inline .included {
-            color: var(--cream);
-        }
-        .inc-desc {
-            color: var(--dim);
-            font-size: calc(0.96rem * var(--font-scale));
-            line-height: 1.55;
+        /* ── PROCESS ── */
+        .process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+        .process-card { background: var(--bg2); border: 1px solid var(--border); padding: 22px 20px; border-radius:0; }
+        a.process-card { transition: border-color 0.2s ease, background 0.2s ease; }
+        a.process-card:hover { border-color: var(--orange); background: rgba(230,67,42,0.06); }
+        a.process-card h3 { color: var(--orange) !important; }
+        .card-label { font-size: 0.78rem; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
+        
+        .outcome-strip {
+            margin-top: 40px; padding: 28px 32px; border: 1px solid var(--orange);
+            border-radius:0; background: rgba(230,67,42,0.04);
         }
 
-        /* Pricing card grid */
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2px;
-            margin-bottom: 48px;
-        }
-
-        .pricing-card {
-            background: var(--bg2);
-            border: 1px solid var(--border-dim);
-            padding: 40px 36px;
-            transition: border-color 0.2s;
-        }
-        .pricing-card:hover { border-color: var(--border); }
-        .pricing-card.featured {
-            border-color: var(--orange);
-            position: relative;
-        }
-        .featured-badge {
-            position: absolute; top: -1px; left: 36px;
-            background: var(--orange); color: #000;
-            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-            padding: 4px 12px;
-        }
-
-        .card-label { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
-        .card-price {
-            font-family:'Anton',sans-serif;
-            font-size: clamp(2.2rem, 3.5vw, 3.2rem); font-weight: 400; color: #fff;
-            letter-spacing: 0; line-height: 1; margin-bottom: 6px;
-        }
-        .card-price span { font-size: 1rem; font-weight: 400; color: var(--dim); letter-spacing: 0.05em; }
-        .card-total { font-size: calc(0.91rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.12em; margin-bottom: 28px; }
-        .card-divider { width: 100%; height: 1px; background: var(--border-dim); margin-bottom: 28px; }
-
-        .card-includes-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dim); margin-bottom: 16px; }
-
-        .include-list { list-style: none; }
-        .include-list li {
-            display: flex; align-items: flex-start; gap: 14px;
-            font-size: calc(1.04rem * var(--font-scale)); line-height: 1.65;
-            color: var(--text); padding: 10px 0;
-            border-bottom: 1px solid var(--border-dim);
-        }
-        .include-list li:last-child { border-bottom: none; }
-        .include-list li::before {
-            content: '//'; color: var(--orange); font-weight: 700;
-            font-size: 0.8rem; letter-spacing: 0.05em;
-            flex-shrink: 0; margin-top: 2px;
-        }
-        .include-list .included { color: var(--cream); }
-
-        /* Addon table */
-        .addon-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-        .addon-table th {
-            font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase;
-            color: var(--orange); text-align: left; padding: 0 0 12px;
-            border-bottom: 1px solid var(--border);
-        }
-        .addon-table th:last-child { text-align: right; }
-        .addon-table td {
-            font-size: calc(1.17rem * var(--font-scale)); color: var(--text);
-            padding: 18px 0; border-bottom: 1px solid var(--border-dim);
-            vertical-align: top; line-height: 1.6;
-        }
-        .addon-table td:last-child { 
-            text-align: right; color: var(--cream); white-space: nowrap; 
-            padding-left: 24px; vertical-align: middle; width: 160px;
-        }
-        .addon-table td.addon-desc { color: #e8e4da; font-size: calc(1rem * var(--font-scale)); display: block; margin-top: 3px; }
-        .addon-name { color: #fff; display: block; font-size: calc(1.17rem * var(--font-scale)); }
-
-        /* Terms blocks */
-        .terms-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 8px;
-        }
-        .terms-block {
-            background: var(--bg2); border: 1px solid var(--border-dim);
-            padding: 32px 28px;
-        }
-        .terms-block-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px; }
-        .terms-list { list-style: none; }
-        .terms-list li {
-            font-size: calc(1.04rem * var(--font-scale)); color: var(--text); line-height: 1.75;
-            padding: 8px 0; border-bottom: 1px solid var(--border-dim);
-            display: flex; gap: 12px; align-items: flex-start;
-        }
-        .terms-list li:last-child { border-bottom: none; }
-        .terms-list li::before { content: '—'; color: var(--orange); flex-shrink: 0; }
-
-        /* CTA block */
-        .cta-block {
-            margin-top: 80px; padding: 56px; border: 1px solid var(--border);
-            background: var(--bg2); display: flex; align-items: center; gap: 56px; width: 100%;
-        }
-        .cta-copy { flex: 1; }
-        .cta-label { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
-        .cta-heading { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 400; color: #fff; line-height: 1.2; margin-bottom: 16px; }
-        .cta-text { font-size: calc(1.17rem * var(--font-scale)); line-height: 1.85; color: var(--text); max-width: 520px; }
-        .cta-actions { display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
         .cta-btn {
-            display: inline-block; padding: 14px 36px;
-            border: 1px solid var(--orange); color: var(--orange);
-            font-family:'JetBrains Mono', monospace; font-size: 1.066rem;
-            letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
-            border-radius:0; transition: all 0.2s; cursor: pointer; background: transparent;
-        }
-        .cta-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
-        .cta-btn.secondary { border-color: var(--border-dim); color: var(--dim); }
-        .cta-btn.secondary:hover { border-color: var(--cream); color: var(--cream); background: transparent; transform: none; }
-
-        .cta-aside {
-            display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0;
-        }
-        .cta-stat { text-align: center; }
-        .cta-stat-num { font-family:'Anton',sans-serif; font-size: 3rem; font-weight: 400; color: var(--orange); line-height: 1; }
-        .cta-stat-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-top: 4px; }
-        .cta-divider { width: 1px; height: 40px; background: var(--border-dim); }
-
-        /* Stripe Pay Button */
-        .stripe-btn {
-            display: inline-flex; align-items: center; gap: 10px;
-            margin-top: 28px; padding: 14px 28px;
-            background: var(--orange); color: #000;
-            font-family:'JetBrains Mono', monospace;
-            font-size: 0.9rem; font-weight: 700;
-            letter-spacing: 0.18em; text-transform: uppercase;
-            text-decoration: none; border-radius:0;
-            transition: all 0.2s; border: none; cursor: pointer;
-        }
-        .stripe-btn:hover { background: #f0654a; transform: translateY(-2px); }
-        .stripe-btn svg { flex-shrink: 0; }
-        .addon-stripe-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 8px 16px; background: transparent;
-            border: 1px solid var(--orange); color: var(--orange);
-            font-family:'JetBrains Mono', monospace;
-            font-size: 0.78rem; font-weight: 700;
-            letter-spacing: 0.15em; text-transform: uppercase;
-            text-decoration: none; border-radius:0;
-            transition: all 0.15s; white-space: nowrap;
-        }
-        .addon-stripe-btn:hover { background: var(--orange); color: #000; }
-        .addon-td-wrap { 
-            display: flex; align-items: center; justify-content: flex-end; 
-            gap: 16px; flex-wrap: nowrap;
+            display: inline-block; padding: 14px 36px; background: var(--orange); color: #000;
+            text-decoration: none; font-weight: bold; border-radius:0; letter-spacing: 0.15em; text-transform: uppercase;
         }
 
-        /* Reveal */
-        .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+        /* ── CONTACT FORM ── */
+        .contact-form { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin-top: 32px; }
+        .form-field { display: flex; flex-direction: column; gap: 4px; }
+        .form-field label { font-size: 0.95rem; letter-spacing: 0.15em; color: var(--orange); text-transform: uppercase; }
+        .form-field input, .form-field textarea {
+            background: transparent; border: 1px solid var(--border); border-radius:0; padding: 10px 14px;
+            color: #fff; font-family:'JetBrains Mono', monospace; font-size: 1rem; outline: none; transition: border-color 0.2s; width: 100%;
+        }
+        .form-field input:focus, .form-field textarea:focus { border-color: var(--orange); }
+        .form-field textarea { resize: vertical; min-height: 110px; }
+        .send-btn {
+            padding: 13px; background: transparent; border: 1px solid var(--orange); color: var(--orange);
+            font-family:'JetBrains Mono', monospace; font-size: 1.014rem; letter-spacing: 0.2em;
+            text-transform: uppercase; cursor: pointer; border-radius:0; transition: all 0.2s; margin-top: 4px;
+        }
+        .send-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .form-success { display: none; padding: 20px; border: 1px solid var(--orange); border-radius:0; text-align: center; color: var(--orange); }
+        .form-error { display: none; padding: 12px 16px; border: 1px solid #cc3300; border-radius:0; color: #cc3300; margin-top: 8px; }
+
+        .reveal { opacity: 0; transform: translateY(22px); transition: 0.55s ease; }
         .reveal.visible { opacity: 1; transform: none; }
 
         @media (max-width: 900px) {
@@ -482,29 +297,22 @@
             .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
             .font-nudge { bottom: 16px; right: 16px; }
 
+            .split, .process-grid { grid-template-columns: 1fr; }
             .page { padding: 0 20px 80px; }
-            .pricing-grid { grid-template-columns: 1fr; }
-            .terms-grid { grid-template-columns: 1fr; }
-            .cta-block { flex-direction: column; gap: 32px; padding: 32px 24px; }
-            .cta-aside { flex-direction: row; }
-            .cta-divider { width: 40px; height: 1px; }
-        }
-        @media (max-width: 600px) {
-            .tts-controls { gap: 6px; }
         }
 
         /* ── COMPANY FOOTER ── */
         .company-footer {
-            margin-top: 80px; padding: 32px 0;
+            margin-top: 48px; padding: 32px 0;
             border-top: 1px solid var(--border-dim);
             display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; max-width: 960px; width: 100%;
         }
         .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
         .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
-        .company-footer-val { font-size: calc(0.91rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.05em; }
+        .company-footer-val { font-size: 0.91rem; color: var(--dim); letter-spacing: 0.05em; }
         .company-footer-val a { color: var(--dim); text-decoration: none; }
         .company-footer-val a:hover { color: var(--orange); }
-        .company-footer-note { font-size: calc(0.84rem * var(--font-scale)); color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
+        .company-footer-note { font-size: 0.84rem; color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
 
         /* ── FOOTER ── */
         .footer-line {
@@ -512,42 +320,6 @@
             font-size: 0.85rem; letter-spacing: 0.15em;
             color: var(--dim); text-transform: uppercase;
             border-top: 1px solid var(--border); width: 100%;
-        }
-
-        /* ── PRINT STYLES ── */
-        @media print {
-            nav, .font-nudge, .tts-player, .cta-btn.secondary { display: none !important; }
-            body, .page, .pricing-card, .terms-block, .cta-block, .addon-table td, .addon-table th {
-                background: #fff !important; color: #111 !important;
-            }
-            body::before { display: none; }
-            .hero-label, .section-eyebrow, .card-label, .card-includes-label,
-            .terms-block-label, .cta-label, .company-footer-label,
-            .addon-table th, .include-list li::before, .terms-list li::before,
-            .featured-badge { color: #cc5200 !important; }
-            .hero h1, .section-title, .cta-heading { color: #000 !important; }
-            .hero h1 em { color: #cc5200 !important; }
-            .card-price, .cta-stat-num { color: #000 !important; }
-            .card-price span, .card-total, .company-footer-val,
-            .addon-table td, .terms-list li, .include-list li,
-            .hero-intro, .cta-text { color: #333 !important; }
-            .pricing-card, .terms-block, .cta-block { border: 1px solid #ccc !important; }
-            .pricing-card.featured { border-color: #cc5200 !important; }
-            .featured-badge { background: #cc5200 !important; color: #fff !important; }
-            .include-list li, .terms-list li, .addon-table tr { border-bottom-color: #ddd !important; }
-            .card-divider { background: #ddd !important; }
-            .addon-table th { border-bottom-color: #bbb !important; }
-            .cta-aside { border-left: 1px solid #ddd; padding-left: 32px; }
-            .cta-stat-label { color: #666 !important; }
-            .cta-divider { background: #ddd !important; }
-            .company-footer { border-top-color: #ddd !important; }
-            .company-footer-val, .company-footer-val a, .company-footer-note { color: #555 !important; }
-            .page { padding: 0 32px !important; }
-            .pricing-grid { grid-template-columns: 1fr 1fr !important; }
-            .terms-grid { grid-template-columns: 1fr 1fr !important; }
-            .cta-block { flex-direction: row !important; }
-            .service-section { page-break-inside: avoid; }
-            .cta-block { page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -578,8 +350,8 @@
         <a href="design.html" data-i18n="nav_design">design</a>
         <a href="fun.html">fun</a>
         <a href="merch.html" data-i18n="nav_merch">merch</a>
-        <a href="music.html" data-i18n="nav_music">music</a>
-        <a href="services.html" class="active" data-i18n="nav_services">services</a>
+        <a href="music.html" class="active" data-i18n="nav_music">music</a>
+        <a href="services.html" data-i18n="nav_services">services</a>
         <a href="software.html">software</a>
         <a href="synths.html" data-i18n="nav_synths">synths</a>
         <a href="tools.html" data-i18n="nav_tools">tools</a>
@@ -596,247 +368,140 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">
-
-    <!-- HERO -->
-    <section class="hero reveal">
-        <div class="hero-label">// CitiIT Limited — Web &amp; Digital Services</div>
-        <h1>Web services.<br>Built to<br><em>last.</em></h1>
-        <p class="hero-intro">
-            Small businesses deserve websites that actually work. CitiIT Limited builds and maintains your entire digital presence — from logo to launch, and everything that keeps it running. Two straightforward service levels, one monthly fee, no surprises. With 30 years of experience working at the top level of business, we know how to get it right first time.
-        </p>
-
-        <div class="tts-player" id="ttsPlayer">
-            <span class="tts-label">// Speak this page</span>
-            <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
-                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>❚❚ Pause</button>
-                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>■ Stop</button>
-                <div class="tts-sep"></div>
-                <div class="tts-speed-wrap">
-                    <span class="tts-speed-label">Speed</span>
-                    <input type="range" class="tts-speed" id="ttsSpeed" min="0.6" max="1.8" step="0.1" value="0.95" oninput="ttsUpdateSpeed()">
-                    <span class="tts-speed-val" id="ttsSpeedVal">0.95x</span>
-                </div>
-                <div class="tts-sep"></div>
-                <div class="tts-section-wrap">
-                    <span class="tts-section-label">Voice</span>
-                    <select class="tts-voice-sel" id="ttsVoiceSel" onchange="ttsSetVoice(this.value)">
-                        <option value="">Loading voices...</option>
-                    </select>
-                </div>
-                <div class="tts-sep"></div>
-                <div class="tts-section-wrap">
-                    <span class="tts-section-label">Jump to</span>
-                    <select class="tts-section-sel" id="ttsSectionSel" onchange="ttsJumpTo(this.value)">
-                        <option value="-1">-- section --</option>
-                    </select>
-                </div>
-            </div>
-            <span class="tts-progress" id="ttsProgress"></span>
-        </div>
+    <section class="hero reveal"
+             id="music-intro"
+             data-post-section
+             data-post-title="dPaul Studio — Music">
+        <div class="hero-label" data-i18n="music_hero_label">// dPaul Technologies — Music</div>
+        <h1>Music <span>Archive</span></h1>
+        <p>Original productions and curated archives — engineered in Logic Pro.</p>
     </section>
 
-    <!-- PRICING TIERS -->
-    <section class="service-section reveal">
-        <div class="section-eyebrow">// 01 — Choose your level</div>
-        <div class="section-title">Two clear options</div>
+    <section class="section reveal"
+             id="music-release"
+             data-post-section
+             data-post-title="dPaul Studio — Renaissance Archive">
+        <div class="section-label" data-i18n="music_section_01_label">// 01 — The Release</div>
+        <h2 data-i18n="music_section_01_h2">Sasha & John Digweed — Renaissance</h2>
+        <p class="section-intro">The Renaissance <span style="color:var(--orange)">"Trilogy Feed"</span> Archive — an interactive archive built from three 70-minute master recordings, engineered in Logic Pro and presented as a zero-delay, high-fidelity experience.</p>
 
-        <p class="hero-intro" style="margin-bottom: 48px; border-left-color: var(--border-dim); color: var(--dim);">
-            Both plans include everything you need to get online and stay online — one monthly payment covers design, build, hosting and support. No setup fees. No hidden extras. Any work outside the scope below is charged at a simple £50 per hour, and calls and emails to discuss your needs are always free.
-        </p>
-
-        <div class="pricing-grid">
-
-            <!-- TIER 1 -->
-            <div class="pricing-card featured">
-                <div class="featured-badge">Most popular</div>
-                <div class="card-label">Standard Website</div>
-                <div class="card-price">£99 <span>/ month</span></div>
-                <div class="card-total">Everything included — design, build, hosting &amp; ongoing support</div>
-                <div class="card-divider"></div>
-                <div class="card-includes-label">What’s included:</div>
-                <ul class="include-list include-list--inline">
-                    <li><div class="inc-text"><span class="included">Home page &amp; contact page</span><span class="inc-desc">Including your location, an embedded map and opening hours</span></div></li>
-                    <li><div class="inc-text"><span class="included">Sales page — up to 50 items</span><span class="inc-desc">Products or services listed with descriptions. Not an online shop — no checkout required</span></div></li>
-                    <li><div class="inc-text"><span class="included">Logo design (if required)</span><span class="inc-desc">A clean, professional logo created to match your brand</span></div></li>
-                    <li><div class="inc-text"><span class="included">Business card &amp; invoice design</span><span class="inc-desc">Print-ready branded stationery, matched to your website</span></div></li>
-                    <li><div class="inc-text"><span class="included">Domain registration</span><span class="inc-desc">Purchased in your name via Google Domains — you own it, not CitiIT. Auto-renewed annually at no markup</span></div></li>
-                    <li><div class="inc-text"><span class="included">Hosting &amp; monthly maintenance</span><span class="inc-desc">Secure hosting, security patches, updates and regular health checks — your site is always looked after</span></div></li>
-                    <li><div class="inc-text"><span class="included">One professional email account</span><span class="inc-desc">Business email at your domain, accessed on any phone, tablet or computer. Includes Google Calendar, Drive, Docs and more via Google Workspace</span></div></li>
-                    <li><div class="inc-text"><span class="included">Up to 3 hours of site changes per month</span><span class="inc-desc">Text, pricing, images — keep your content up to date without worrying about extra charges</span></div></li>
-                    
-                </ul>
+        <div class="split">
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <a href="renaissance-launcher.html" target="_blank" class="album-link">
+                    <div class="album-cover" id="albumCover">
+                        <img src="assets/renaissance-cover.webp" alt="Renaissance Cover">
+                        <div class="click-hint" data-i18n="music_click_hint">// Click to enjoy</div>
+                    </div>
+                </a>
             </div>
 
-            <!-- TIER 2 -->
-            <div class="pricing-card">
-                <div class="card-label">Standard + E-Commerce</div>
-                <div class="card-price" style="font-size:2.4rem;">£199 <span>/ month</span></div>
-                <div class="card-total">Everything in Standard, plus a fully managed online shop</div>
-                <div class="card-divider"></div>
-                <div class="card-includes-label">Everything in Standard, plus:</div>
-                <ul class="include-list include-list--inline">
-                    <li><div class="inc-text"><span class="included">Full e-commerce store</span><span class="inc-desc">Products listed with photos, descriptions and pricing — ready for customers to buy online</span></div></li>
-                    <li><div class="inc-text"><span class="included">Stock monitoring</span><span class="inc-desc">We keep track of your inventory and alert you when stock is running low — so you never sell something you don’t have</span></div></li>
-                    <li><div class="inc-text"><span class="included">Secure payment processing</span><span class="inc-desc">Industry-standard payment gateway integrated and configured — your customers’ card details are always protected</span></div></li>
-                    <li><div class="inc-text"><span class="included">Low-stock notifications</span><span class="inc-desc">You’ll hear from us before you run out — no more missed sales due to empty shelves</span></div></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <!-- Extras callout -->
-        <div class="pricing-card" style="margin-top: 2px; padding: 28px 36px;">
-            <div style="display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start;">
-                <div style="flex: 1; min-width: 220px;">
-                    <div class="card-label">Additional work</div>
-                    <div class="card-price" style="font-size:2rem;">£50 <span>/ hour</span></div>
-                    <div class="card-total">For anything outside the scope of your plan</div>
-                </div>
-                <div style="flex: 2; min-width: 260px;">
-                    <ul class="include-list include-list--inline" style="margin-top: 4px;">
-                        <li><div class="inc-text"><span class="included">Calls &amp; emails are always free</span><span class="inc-desc">No charge for correspondence to discuss your needs — ever</span></div></li>
-                        <li><div class="inc-text"><span class="included">Additional email accounts</span><span class="inc-desc">Each extra mailbox added to your domain is £10 per month</span></div></li>
-                        <li><div class="inc-text"><span class="included">Domain renewal</span><span class="inc-desc">Auto-renewed each year at exact registrar cost — no markup, no surprises</span></div></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-    </section>
-
-    <!-- WHAT TO EXPECT -->
-    <section class="service-section reveal">
-        <div class="section-eyebrow">// 02 — How it works</div>
-        <div class="section-title">Simple from day one</div>
-
-        <p class="hero-intro" style="margin-bottom: 48px; border-left-color: var(--border-dim); color: #fff;">
-            One monthly payment. No setup fees. No surprise invoices. We handle everything technical so you can focus on running your business. With 30 years of experience at CEO and senior management level, we understand that your time is valuable — and we work accordingly.
-        </p>
-
-        <table class="addon-table">
-            <thead>
-                <tr>
-                    <th>What you get</th>
-                    <th>Detail</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <span class="addon-name">No lock-in</span>
-                        <span class="addon-desc">Cancel with 30 days’ written notice — no exit fees, no penalties</span>
-                    </td>
-                    <td><div class="addon-td-wrap"><span>Always</span></div></td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="addon-name">Free correspondence</span>
-                        <span class="addon-desc">Calls and emails to discuss your site, your needs or any ideas are never charged</span>
-                    </td>
-                    <td><div class="addon-td-wrap"><span>Always free</span></div></td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="addon-name">Additional email accounts</span>
-                        <span class="addon-desc">Each extra address beyond the one included — e.g. sales@, info@ — accessed on any device</span>
-                    </td>
-                    <td><div class="addon-td-wrap"><span>£10/mo each</span></div></td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="addon-name">Work outside your plan</span>
-                        <span class="addon-desc">Anything beyond your monthly hours or agreed scope — extra pages, large content overhauls, graphic work</span>
-                    </td>
-                    <td><div class="addon-td-wrap"><span>£50/hr</span></div></td>
-                </tr>
-                <tr>
-                    <td>
-                        <span class="addon-name">Domain auto-renewal</span>
-                        <span class="addon-desc">Your domain renews automatically each year via Google Domains — passed through at exact cost, no markup</span>
-                    </td>
-                    <td><div class="addon-td-wrap"><span>At cost/yr</span></div></td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- TERMS -->
-    <section class="service-section reveal">
-        <div class="section-eyebrow">// 03 — Working together</div>
-        <div class="section-title">Terms &amp; what to bring</div>
-
-        <div class="terms-grid">
-            <div class="terms-block">
-                <div class="terms-block-label">Service conditions</div>
-                <ul class="terms-list">
-                    <li>£99/month covers everything in your chosen plan — design, build, hosting and ongoing support</li>
-                    <li>Any work beyond your plan’s included hours or scope is charged at £50 per hour</li>
-                    <li>Calls and emails to discuss your needs are always free — no clock running</li>
-                    <li>Additional email accounts beyond the one included are £10 per month each</li>
-                    <li>Your domain is registered in your name via Google Domains and renews automatically each year at cost</li>
-                    <li>Missed payments result in service suspension after 7 days written notice</li>
-                    <li>Reactivation after suspension incurs a £25 administration fee</li>
-                    <li>Cancel with 30 days written notice — no exit fees</li>
-                    <li>CitiIT Limited reserves the right to update pricing with 30 days written notice</li>
-                    <li>A full service agreement is provided before any work begins</li>
-                </ul>
-            </div>
-            <div class="terms-block">
-                <div class="terms-block-label">What the client provides</div>
-                <ul class="terms-list">
-                    <li>Logo or branding assets, if you already have them (we design one if not)</li>
-                    <li>High-quality photos of your business, team or products — or we’ll photograph during a site visit</li>
-                    <li>Accurate copy, pricing and any content to appear on the site</li>
-                    <li>Access to any existing domain if transferring from another registrar</li>
-                    <li>Written approval before the site goes live</li>
-                    <li>For e-commerce: your product list, stock levels and preferred payment provider</li>
-                </ul>
+            <div class="split-text">
+                <p data-i18n="music_sasha_p1">In 1994, Sasha & John Digweed changed electronic music with <strong>Renaissance: The Mix Collection</strong> — the first official nightclub "sampler."</p>
+                <p data-i18n="music_sasha_p2">The album was a masterclass in early 90s <strong>progressive house and trance</strong>. It wasn't just a hit — it was a cultural milestone.</p>
+                <p data-i18n="music_sasha_p3">From its iconic Sistine Chapel artwork to the triple-CD package, it defined the sound of a generation.</p>
             </div>
         </div>
     </section>
 
-    <!-- CTA -->
-    <div class="cta-block reveal">
-        <div class="cta-copy">
-            <div class="cta-label">// Ready to start?</div>
-            <div class="cta-heading">Get your business online. £99 a month. Everything included.</div>
-            <p class="cta-text">
-                One straightforward monthly fee covers your entire digital presence — design, build, hosting, maintenance, email and support. No setup costs, no hidden extras. Any calls or emails to discuss what you need are always free. Reach out and we’ll put together a proposal around your business.
-            </p>
-            <div class="cta-actions">
-                <a href="about.html" class="cta-btn">Get in touch →</a>
-                <a href="assets/citi-pricing-brochure.pdf" download class="cta-btn secondary">Download Pricing</a>
-            </div>
-        </div>
-        <div class="cta-aside">
-            <div class="cta-stat">
-                <div class="cta-stat-num">£99</div>
-                <div class="cta-stat-label">per month, all in</div>
-            </div>
-            <div class="cta-divider"></div>
-            <div class="cta-stat">
-                <div class="cta-stat-num">£50</div>
-                <div class="cta-stat-label">per hour, extra work</div>
-            </div>
-            <div class="cta-divider"></div>
-            <div class="cta-stat">
-                <div class="cta-stat-num">30</div>
-                <div class="cta-stat-label">years’ experience</div>
-            </div>
-        </div>
-    </div>
+    <section class="section reveal"
+             id="music-process"
+             data-post-section
+             data-post-title="dPaul Studio — Music Engineering">
+        <div class="section-label" data-i18n="music_section_02_label">// 02 — The Build Process</div>
+        <h2 data-i18n="music_section_02_h2">Engineering a web archive</h2>
+        <p class="section-intro" data-i18n="music_section_02_intro">This project demonstrated how DAW expertise and web infrastructure can deliver professional-grade interactive audio.</p>
 
-    <!-- COMPANY FOOTER -->
-    <footer class="company-footer">
+        <div class="process-grid">
+            <div class="process-card">
+                <div class="card-label" data-i18n="music_card_media_label">// Media Engineering</div>
+                <h3 data-i18n="music_card_media_h3">Logic Pro Masters</h3>
+                <p data-i18n="music_card_media_p">Three separate 70-minute masters mixed specifically for web streaming constraints.</p>
+            </div>
+            <div class="process-card">
+                <div class="card-label" data-i18n="music_card_infra_label">// Infrastructure</div>
+                <h3 data-i18n="music_card_infra_h3">Latency control</h3>
+                <p data-i18n="music_card_infra_p">Extensive testing ensured the "Feed" remained stable without drop-outs or lag.</p>
+            </div>
+        </div>
+
+        <div class="outcome-strip">
+            <p data-i18n="music_outcome"><strong>The Outcome:</strong> A zero-delay, interactive archive taking a creative concept into a finished digital reality.</p>
+        </div>
+    </section>
+
+    <section class="section reveal"
+             id="music-listen"
+             data-post-section
+             data-post-title="dPaul Studio — Listen Now">
+        <div class="section-label">// 03 — Out Now</div>
+        <h2>I Wait For Skylar (Chaos Mix)</h2>
+
+        <div style="display:flex; flex-wrap:wrap; align-items:flex-start; gap:20px; margin:20px 0;">
+            <video src="assets/i-wait-promo.webm" autoplay muted loop playsinline
+                   style="width:180px; aspect-ratio:9/16; object-fit:cover; display:block; border:1px solid rgba(230,67,42,0.2); border-radius:0;"></video>
+            <div style="flex:1; min-width:220px;">
+                <p class="section-intro" style="margin:0 0 16px;">A dance cut built around a bassline pulled straight from a <strong style="color:var(--orange)">90's Korg M1</strong> — that unmistakable slap bass patch that soundtracked a whole era of house and dance records. Out now on iTunes, YouTube Music, and all the leading streaming platforms.</p>
+                <p style="margin:0; color:var(--dim); font-size:0.95rem;"><em>// Note:</em> other tracks are also available through the same iTunes, YouTube Music, and streaming platform pages.</p>
+            </div>
+        </div>
+
+        <div class="process-grid" style="grid-template-columns:1fr; margin-top:0;">
+            <a href="https://music.apple.com/gb/album/i-wait-for-skylar-chaos-mix/6786213023?i=6786213024"
+               target="_blank" rel="noopener" class="process-card" style="text-decoration:none; display:block;">
+                <div class="card-label">// Apple Music</div>
+                <h3 style="color:#fff; font-weight:700; margin-bottom:4px;">Listen on iTunes &#8594;</h3>
+            </a>
+            <a href="http://url2734.distrokid.com/ls/click?upn=u001.a0grtTtFNGObbwv02PitCBD0hhptL0BTFhOwF9TaDJHC9tlG5lkfYb9kFMplF6sRoxsU4KZlq195jnQPAK9e0kMz-2B-2BbU1tneK4-2FJXBozlbhIYK7RW8UfzGnuVw-2BE8i8WB6EvlvofYcmSNkyHy1zrFhq-2FGqTO8zIuJK9L1-2FnGDfk-3DQal1_syXCvRBUDlnC3ymG9HBLJNZa8kAboE6aU3SApRNiK-2BK7sHGM0a59PPEl542TCdHxM-2FpUlEGBpC-2F-2FuZFj0heKXpOW-2Fid8nO16n4fDKWkrtCJvwjVl8jguJlDpViXGaDdR2QmhedgdXmYfxPNwPTp6XUh95kLdR-2Fxl-2B6F03yTGNmyUCi9wcZ-2BuibH8nFs5OJHvlMOufVsKX7uns1GiWGRJKw-3D-3D"
+               target="_blank" rel="noopener" class="process-card" style="text-decoration:none; display:block;">
+                <div class="card-label">// All Platforms</div>
+                <h3 style="color:#fff; font-weight:700; margin-bottom:4px;">Listen Everywhere &#8594;</h3>
+            </a>
+            <a href="https://www.youtube.com/watch?v=2FyASRoJwmM&list=OLAK5uy_mbvJ20mfLOcOD1-V8RQQFLF1SKL-ie9P0"
+               target="_blank" rel="noopener" class="process-card" style="text-decoration:none; display:block;">
+                <div class="card-label">// YouTube Music</div>
+                <h3 style="color:#fff; font-weight:700; margin-bottom:4px;">Listen on YouTube Music &#8594;</h3>
+            </a>
+        </div>
+    </section>
+
+    <section class="section reveal" id="music-contact">
+        <div class="section-label" data-i18n="music_contact_label">// 04 — Project Inquiry</div>
+        <h2 data-i18n="music_cta_h2">Want something built?</h2>
+        <p data-i18n="music_cta_p">Custom audio players or interactive archives for your music project.</p>
+
+        <form class="contact-form" id="contactForm">
+            <input type="hidden" name="_subject" value="New Music Project Inquiry">
+            <input type="text" name="_gotcha" style="display:none" />
+
+            <div class="form-field">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Your name" required>
+            </div>
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-field">
+                <label for="message">Project Details</label>
+                <textarea id="message" name="message" placeholder="Tell me about your music project..." required></textarea>
+            </div>
+            <button type="submit" class="send-btn" id="sendBtn">SEND INQUIRY</button>
+            <div class="form-error" id="formError">// Something went wrong. Please try again.</div>
+        </form>
+        
+        <div class="form-success" id="formSuccess">
+            // Inquiry received. I'll get back to you shortly.
+        </div>
+    </section>
+
+    <footer class="company-footer reveal">
         <div class="company-footer-block">
             <div class="company-footer-label">Company</div>
             <div class="company-footer-val">CitiIT Limited</div>
-            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as <strong style="color:var(--cream)">dpaul.studio</strong> for creative and digital work.</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
         </div>
         <div class="company-footer-block">
             <div class="company-footer-label">Company No.</div>
@@ -852,6 +517,7 @@
         </div>
     </footer>
 
+    <div class="footer-line reveal">// dPower Technologies — Music</div>
 </div><!-- /page -->
 
 <script>
@@ -889,7 +555,7 @@
         try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
     }
 
-    // ── THEME TOGGLE ──
+    /* ── THEME TOGGLE ── */
     function applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         try { localStorage.setItem('dp-theme', theme); } catch(e) {}
@@ -903,9 +569,10 @@
         if (savedTheme) applyTheme(savedTheme);
     } catch(e) {}
 
-    // ── NAV EQ ANIMATION ──
+    /* ── NAV EQ ANIMATION ── */
     (function() {
-        const NUM_BARS = 8, MAX_H = 20;
+        const NUM_BARS = 8;
+        const MAX_H = 20;
         const container = document.getElementById('nav-eq-container');
         if (!container) return;
         const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
@@ -928,188 +595,149 @@
         animateEQ();
     })();
 
-    // SCROLL REVEAL
-    const revealEls = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    /* ── FONT NUDGE ── */
+    const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
+    let fontScaleIndex = 0;
+    const indicators = ['100%', '115%', '130%', '150%', '170%'];
+    function applyFontScale() {
+        document.documentElement.style.setProperty('--font-scale', fontScaleLevels[fontScaleIndex]);
+        document.getElementById('fontIndicator').textContent = indicators[fontScaleIndex];
+        try { localStorage.setItem('dp-font-scale', fontScaleIndex); } catch(e) {}
+    }
+    function adjustFont(dir) {
+        fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
+        applyFontScale();
+    }
+    try {
+        const saved = localStorage.getItem('dp-font-scale');
+        if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
+        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
+    } catch(e) {}
+
+    /* REVEAL */
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    /* TTS */
+    const synth = window.speechSynthesis;
+    let selectedVoice = null;
+    let chunks = [];
+    let cur = 0;
+
+    function populateVoices() {
+        const voices = synth.getVoices();
+        if (!voices.length) return;
+        const sel = document.getElementById('ttsVoiceSel');
+        if (!sel) return;
+        sel.innerHTML = '';
+        const enVoices = voices.filter(v => /^en/i.test(v.lang));
+        const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
+        const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
+        function pickVoice(preferred) {
+            for (const name of preferred) {
+                const match = enVoices.find(v => v.name.includes(name));
+                if (match) return match;
+            }
+            return null;
+        }
+        const femaleVoice = pickVoice(preferredFemale);
+        const maleVoice   = pickVoice(preferredMale);
+        const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
+        const options = [
+            { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
+            { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
+        ].filter(o => o.voice !== null);
+        options.forEach(({ label, voice }) => {
+            const o = document.createElement('option');
+            o.value = voice.name;
+            o.textContent = label;
+            sel.appendChild(o);
         });
-    }, { threshold: 0.08 });
-    revealEls.forEach(el => observer.observe(el));
-
-    // ─── TTS ENGINE ────────────────────────────────────────────────────
-    (function() {
-        const synth = window.speechSynthesis;
-        let chunks = [], idx = 0, paused = false, currentUtterance = null, lastHighlighted = null;
-        let selectedVoice = null;
-
-        const READ_SELECTORS = [
-            '.hero h1', '.hero-intro', '.include-list li',
-            '.addon-table td', '.terms-list li', '.cta-text', '.cta-heading'
-        ];
-        const SECTION_SELECTORS = [
-            '.hero-label', '.section-eyebrow', '.section-title', '.cta-label'
-        ];
-
-        function populateVoiceList() {
-            const voices = synth.getVoices();
-            if (!voices.length) return;
-            const sel = document.getElementById('ttsVoiceSel');
-            if (!sel) return;
-            sel.innerHTML = '';
-            const enVoices = voices.filter(v => /^en/i.test(v.lang));
-            const preferredFemale = ['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];
-            const preferredMale   = ['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];
-            function pickVoice(preferred) {
-                for (const name of preferred) {
-                    const match = enVoices.find(v => v.name.includes(name));
-                    if (match) return match;
-                }
-                return null;
-            }
-            const femaleVoice = pickVoice(preferredFemale);
-            const maleVoice   = pickVoice(preferredMale);
-            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
-            const options = [
-                { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
-                { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
-            ].filter(o => o.voice !== null);
-            options.forEach(({ label, voice }) => {
-                const o = document.createElement('option');
-                o.value = voice.name; o.textContent = label;
-                sel.appendChild(o);
-            });
-            if (!selectedVoice && options.length > 0) {
-                selectedVoice = options[0].voice;
-                sel.value = options[0].voice.name;
-            }
+        if (!selectedVoice && options.length > 0) {
+            selectedVoice = options[0].voice;
+            sel.value = options[0].voice.name;
         }
+    }
 
-        window.ttsSetVoice = function(name) {
-            const voices = synth.getVoices();
-            selectedVoice = voices.find(v => v.name === name) || null;
-            if (synth.speaking) { synth.cancel(); setTimeout(speakCurrent, 80); }
-        };
+    window.ttsSetVoice = (n) => {
+        selectedVoice = synth.getVoices().find(v => v.name === n) || null;
+    };
 
-        function buildChunks() {
-            chunks = [];
-            document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el => {
-                const txt = el.innerText.trim();
-                if (txt.length > 2) chunks.push({ el, text: txt });
-            });
-        }
-        function buildSectionMenu() {
-            const sel = document.getElementById('ttsSectionSel');
-            if (!sel) return;
-            while (sel.options.length > 1) sel.remove(1);
-            let map = [];
-            document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl => {
-                const label = labelEl.innerText.replace(/^\/\/\s*/, '').trim();
-                if (!label || label.length < 2) return;
-                let matchIdx = -1;
-                for (let i = 0; i < chunks.length; i++) {
-                    if (labelEl.compareDocumentPosition(chunks[i].el) & Node.DOCUMENT_POSITION_FOLLOWING) { matchIdx = i; break; }
-                }
-                if (matchIdx >= 0) map.push({ label, idx: matchIdx });
-            });
-            const seen = new Set();
-            map = map.filter(s => { if (seen.has(s.idx)) return false; seen.add(s.idx); return true; });
-            map.forEach(s => {
-                const o = document.createElement('option');
-                o.value = s.idx;
-                o.textContent = s.label.length > 38 ? s.label.slice(0, 36) + '...' : s.label;
-                sel.appendChild(o);
-            });
-        }
+    function speak() {
+        if (cur >= chunks.length) { ttsStop(); return; }
+        const u = new SpeechSynthesisUtterance(chunks[cur].text);
+        if (selectedVoice) u.voice = selectedVoice;
+        chunks[cur].el.classList.add('tts-highlight');
+        u.onend = () => { chunks[cur].el.classList.remove('tts-highlight'); cur++; speak(); };
+        synth.speak(u);
+    }
 
-        function highlight(el) {
-            if (lastHighlighted) lastHighlighted.classList.remove('tts-highlight');
-            if (el) { el.classList.add('tts-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-            lastHighlighted = el;
+    window.ttsPlay = () => {
+        if (!chunks.length) {
+            document.querySelectorAll('h1, h2, p').forEach(el => chunks.push({ el, text: el.innerText }));
         }
-        function setProgress() {
-            const prog = document.getElementById('ttsProgress');
-            if (prog) prog.textContent = chunks.length ? (idx + 1) + ' / ' + chunks.length : '';
-        }
-        function setButtons(state) {
-            const play = document.getElementById('ttsPlay');
-            const pause = document.getElementById('ttsPause');
-            const stop  = document.getElementById('ttsStop');
-            if (!play || !pause || !stop) return;
-            if (state === 'idle') {
-                play.textContent = '▶ Play'; play.disabled = false; play.classList.remove('active');
-                pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
-            } else if (state === 'playing') {
-                play.textContent = '▶ Playing'; play.disabled = true; play.classList.add('active');
-                pause.disabled = false; pause.textContent = '❚❚ Pause'; pause.classList.remove('active');
-                stop.disabled = false;
-            } else if (state === 'paused') {
-                play.textContent = '▶ Resume'; play.disabled = false; play.classList.remove('active');
-                pause.textContent = '❚❚ Paused'; pause.classList.add('active'); stop.disabled = false;
-            }
-        }
-        function speakAt(startIdx) {
-            synth.cancel();
-            if (startIdx >= chunks.length) { ttsStop(); return; }
-            idx = startIdx; paused = false; setButtons('playing'); speakCurrent();
-        }
-        function speakCurrent() {
-            if (idx >= chunks.length) { ttsStop(); return; }
-            const chunk = chunks[idx];
-            highlight(chunk.el); setProgress();
-            const rate = parseFloat(document.getElementById('ttsSpeed').value);
-            const u = new SpeechSynthesisUtterance(chunk.text);
-            u.rate = rate; u.lang = 'en-GB';
-            if (selectedVoice) u.voice = selectedVoice;
-            u.onend  = () => { if (!paused) { idx++; speakCurrent(); } };
-            u.onerror = (e) => { if (e.error !== 'interrupted' && e.error !== 'canceled') { idx++; speakCurrent(); } };
-            currentUtterance = u;
-            synth.speak(u);
-        }
+        synth.cancel(); cur = 0; speak();
+        const playBtn = document.getElementById('ttsPlay');
+        if (playBtn) playBtn.classList.add('active');
+    };
 
-        window.ttsPlay = function() {
-            if (!chunks.length) { buildChunks(); buildSectionMenu(); }
-            if (paused) { paused = false; synth.resume(); setButtons('playing'); }
-            else { speakAt(idx); }
-        };
-        window.ttsPause = function() {
-            if (synth.speaking && !synth.paused) { paused = true; synth.pause(); setButtons('paused'); }
-        };
-        window.ttsStop = function() {
-            paused = false; synth.cancel(); idx = 0;
-            if (lastHighlighted) { lastHighlighted.classList.remove('tts-highlight'); lastHighlighted = null; }
-            const prog = document.getElementById('ttsProgress');
-            if (prog) prog.textContent = '';
-            const sel = document.getElementById('ttsSectionSel');
-            if (sel) sel.value = '-1';
-            setButtons('idle');
-        };
-        window.ttsUpdateSpeed = function() {
-            const val = parseFloat(document.getElementById('ttsSpeed').value).toFixed(2);
-            document.getElementById('ttsSpeedVal').textContent = val + 'x';
-            if (currentUtterance) currentUtterance.rate = parseFloat(val);
-        };
-        window.ttsJumpTo = function(val) {
-            const i = parseInt(val);
-            if (isNaN(i) || i < 0) return;
-            speakAt(i);
-            document.getElementById('ttsSectionSel').value = '-1';
-        };
+    window.ttsStop = () => {
+        synth.cancel();
+        if (chunks[cur]) chunks[cur].el.classList.remove('tts-highlight');
+        const playBtn = document.getElementById('ttsPlay');
+        if (playBtn) playBtn.classList.remove('active');
+    };
 
-        window.addEventListener('load', () => {
-            buildChunks(); buildSectionMenu();
-            if (synth.onvoiceschanged !== undefined) {
-                synth.onvoiceschanged = () => { selectedVoice = null; populateVoiceList(); };
-            }
-            populateVoiceList();
-        });
-        window.addEventListener('beforeunload', () => synth.cancel());
-    })();
+    if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+    window.addEventListener('load', populateVoices);
 </script>
 
-<script src="share.js"></script>
-<script src="post-generator.js"></script>
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
+<script src="post-generator.js"></script>
+
+<script>
+    /* ── FORMSPREE SUBMISSION ── */
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const honeypot = document.getElementsByName("_gotcha")[0];
+        if (honeypot && honeypot.value) return;
+
+        const btn = document.getElementById('sendBtn');
+        const errorEl = document.getElementById('formError');
+        errorEl.style.display = 'none';
+        btn.disabled = true;
+        btn.textContent = 'SENDING...';
+
+        const data = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value,
+            _subject: "New Music Project Inquiry from dPaul Technologies"
+        };
+
+        try {
+            const res = await fetch('https://formspree.io/f/xaqawnwv', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                document.getElementById('contactForm').style.display = 'none';
+                document.getElementById('formSuccess').style.display = 'block';
+            } else {
+                throw new Error('Server error');
+            }
+        } catch(err) {
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'SEND INQUIRY';
+        }
+    });
+</script>
 </body>
 </html>

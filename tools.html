@@ -7,12 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Tools — dPaul Technologies</title>
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root { --bg:#171717;--bg2:#1e1e1e;--orange:#e6432a;--cream:#f4f3ef;--text:#a8a6a0;--dim:#8f8d87;--border:rgba(230,67,42,0.25);--border-dim:rgba(255,255,255,0.07);--font-scale:1; }
 
         html[data-theme="light"] { --bg:#f4f3ef;--bg2:#e8e6e0;--orange:#171717;--cream:#2b2b28;--text:#262421;--dim:#8f8d87;--border:rgba(23,23,23,0.35);--border-dim:rgba(0,0,0,0.12); }
@@ -46,9 +40,6 @@
         html[data-theme="light"] .section-divider-desc { color: #171310 !important; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
         .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
         .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
@@ -141,7 +132,6 @@
 
         #nav-eq-container{display:flex;align-items:flex-end;gap:2px;height:22px;margin:0 16px;padding-bottom:2px;}
         .nav-eq-bar{width:3px;background:var(--orange);transition:height 0.1s ease;border-radius:0;}
-        #nav-share-container{min-width:90px; margin-right: 20px; display:flex;align-items:center;justify-content:flex-end;}
 
         .page{max-width:1440px;margin:0 auto;padding:0 56px 120px;position:relative;z-index:1;width:100%;}
 
@@ -182,41 +172,9 @@
         .vu-visual{margin-top:-28px;}
         .tts-visual{margin-top:-10px;}
 
-        /* TOOL BLOCKS (from dev-tools.html) */
-        .tool-block{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;padding:72px 0;border-bottom:1px solid var(--border);}
-        .tool-block.flip{direction:rtl;}
-        .tool-block.flip > *{direction:ltr;}
-        .tool-visual{display:flex;justify-content:center;align-items:start;}
-        .tool-frame{width:100%;max-width:840px;border:1px solid var(--border);border-radius:0;overflow:hidden;background:#0e0f0e;transition:border-color .2s;}
-        .tool-frame:hover{border-color:var(--orange);}
-        .tool-story{font-size:calc(1.235rem * var(--font-scale));line-height:1.95;color:var(--text);margin-bottom:16px;}
-        .tool-story em{color:var(--cream);font-style:normal;border-bottom:1px solid rgba(244,243,239,.3);}
-        .spec-list-bullets{list-style:none;margin:20px 0 0;}
-        .spec-list-bullets li{font-size:calc(1.04rem * var(--font-scale));color:var(--text);padding:7px 0 7px 16px;border-bottom:1px solid var(--border-dim);position:relative;line-height:1.6;}
-        .spec-list-bullets li:first-child{border-top:1px solid var(--border-dim);}
-        .spec-list-bullets li::before{content:'›';position:absolute;left:0;color:var(--orange);}
-        .tool-info h3{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.82rem;font-weight:400;color:#fff;margin-bottom:6px;}
-        .tool-sub{font-size:1.066rem;letter-spacing:.18em;color:var(--orange);text-transform:uppercase;margin-bottom:20px;}
-        .screenshot-gallery{display:flex;flex-direction:column;gap:24px;position:sticky;top:100px;}
-        .screenshot-label{font-size:.936rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-        .screenshot-img{width:100%;height:auto;display:block;border-radius:0;border:1px solid var(--border-dim);transition:border-color .2s;}
-        .screenshot-img:hover{border-color:var(--orange);}
-        .screenshot-caption{font-size:calc(1.014rem * var(--font-scale));color:var(--dim);letter-spacing:.08em;margin-top:6px;}
-        .status-badge{display:inline-block;font-size:.884rem;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border-radius:0;margin-left:10px;vertical-align:middle;}
-        .status-badge.live{background:rgba(80,200,100,.12);color:#50c864;border:1px solid rgba(80,200,100,.25);}
-        .status-badge.wip{background:rgba(230,67,42,.1);color:var(--orange);border:1px solid var(--border);}
-
         /* LAUNCH / BUY BUTTONS */
         .launch-btn{display:inline-block;margin-top:28px;padding:11px 28px;border:1px solid var(--orange);color:var(--orange);font-family:'JetBrains Mono', monospace;font-size:1.066rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border-radius:0;transition:all .2s;}
         .launch-btn:hover{background:var(--orange);color:#000;transform:translateY(-2px);}
-
-        /* BMC BLOCK */
-        .bmc-block{margin-top:28px;padding:20px 22px;border:1px solid var(--border-dim);border-radius:0;background:var(--bg2);display:flex;align-items:center;gap:20px;max-width:560px;}
-        .bmc-text{flex:1;}
-        .bmc-label{font-size:.91rem;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-        .bmc-desc{font-size:1rem;line-height:1.7;color:var(--dim);}
-        .bmc-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#FFDD00;color:#000;font-family:'JetBrains Mono', monospace;font-size:1.04rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:0;white-space:nowrap;transition:background .2s,transform .15s;flex-shrink:0;}
-        .bmc-btn:hover{background:#ffe633;transform:translateY(-2px);}
 
         /* SKILLS STRIP */
         .skills-strip{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0;}
@@ -297,7 +255,6 @@
             .tool-block{grid-template-columns:1fr;gap:32px;}
             .tool-block.flip{direction:ltr;}
             .screenshot-gallery{position:relative;top:0;}
-            .bmc-block{flex-direction:column;align-items:flex-start;}
             .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
             .font-nudge { bottom: 16px; right: 16px; }
             .page{padding:0 20px 80px;}
@@ -349,7 +306,6 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">

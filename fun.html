@@ -7,12 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Fun — dPaul Technologies</title>
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root { --bg:#171717;--bg2:#1e1e1e;--orange:#e6432a;--cream:#f4f3ef;--text:#a8a6a0;--dim:#8f8d87;--border:rgba(230,67,42,0.25);--border-dim:rgba(255,255,255,0.07);--font-scale:1; }
 
         html[data-theme="light"] { --bg:#f4f3ef;--bg2:#e8e6e0;--orange:#171717;--cream:#2b2b28;--text:#262421;--dim:#8f8d87;--border:rgba(23,23,23,0.35);--border-dim:rgba(0,0,0,0.12); }
@@ -51,9 +45,6 @@
         html[data-theme="light"] .tts-section-label { color: #000; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
         .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
         .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
@@ -188,7 +179,7 @@
         .tts-btn.active{background:var(--orange);color:#000;border-color:var(--orange);font-weight:bold;}
         .tts-btn:disabled{opacity:.3;cursor:not-allowed;}
         .tts-btn.stop-btn:hover{border-color:#cc3300;color:#cc3300;}
-        .tts-sep{display:none;} /* Hidden on mobile stacking, shown via media query if needed */
+        .tts-sep{display:none;}
         .tts-speed-wrap{display:flex;align-items:center;gap:8px;width:100%;margin-top:4px;}
         .tts-speed-label{font-size:.884rem;color:var(--dim);letter-spacing:.1em;white-space:nowrap;}
         .tts-speed{-webkit-appearance:none;appearance:none;flex:1;height:4px;background:var(--border-dim);border-radius:0;outline:none;cursor:pointer;}
@@ -290,7 +281,6 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">
@@ -358,8 +348,8 @@
         </div>
     </div>
 
-    <!-- SNAKE -->
-    <div class="tool-block flip reveal" id="fun-snake" data-post-section data-post-title="dPaul Studio — Snake">
+    <!-- SNAKE (Hidden on mobile phones automatically via CSS) -->
+    <div class="tool-block flip reveal" id="fun-snake" data-post-section data-post-title="dPaul Studio — Snake" style="display: none;">
         <div class="tool-visual">
             <div class="tool-frame" style="overflow:hidden;border:none;background:transparent;border-radius:0;">
                 <div style="width:50%;aspect-ratio:9/16;position:relative;margin:0 auto;border:1px solid var(--orange);border-radius:0;overflow:hidden;">
@@ -406,6 +396,15 @@
 </div>
 
 <script>
+    // Detect mobile device or narrow screen and hide Snake section automatically
+    document.addEventListener("DOMContentLoaded", function() {
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 900;
+        const snakeBlock = document.getElementById('fun-snake');
+        if (snakeBlock && !isMobile) {
+            snakeBlock.style.display = 'grid'; // restore desktop grid display if not mobile
+        }
+    });
+
     // THEME TOGGLE
     function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);try{localStorage.setItem('dp-theme',theme);}catch(e){}}
     function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';applyTheme(c==='light'?'dark':'light');}

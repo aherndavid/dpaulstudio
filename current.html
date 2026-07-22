@@ -8,12 +8,6 @@
     <title>Current — dPaul Technologies</title>
 
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root {
             --bg:      #171717;
             --bg2:     #1e1e1e;
@@ -64,9 +58,6 @@
         html[data-theme="light"] .tts-section-label { color: #000; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
         /* ── THEME TOGGLE ── */
         .theme-toggle {
@@ -187,8 +178,6 @@
         }
         .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
 
-        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
-
         /* Mini EQ */
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
@@ -208,7 +197,7 @@
             letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px;
         }
         .hero h1 {
-            font-family:'Anton', sans-serif; text-transform:uppercase;
+            font-family: 'Anton', sans-serif; text-transform:uppercase;
             font-size: clamp(3.12rem, 5.5vw, 5.46rem);
             font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 28px;
             letter-spacing: 0;
@@ -261,7 +250,7 @@
         /* Sections */
         .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
         .section-label { font-size: 1.04rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
-        .section h2 { font-family:'Anton', sans-serif; text-transform:uppercase; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 400; color: #fff; margin-bottom: 40px; letter-spacing: 0; }
+        .section h2 { font-family: 'Anton', sans-serif; text-transform:uppercase; font-size: clamp(2.6rem, 4vw, 3.9rem); font-weight: 400; color: #fff; margin-bottom: 40px; letter-spacing: 0; }
         .section-intro { font-size: calc(1.3rem * var(--font-scale)); line-height: 1.9; color: var(--text); max-width: 820px; margin-bottom: 48px; }
         .section-intro strong { color: var(--orange); font-weight: normal; }
 
@@ -291,7 +280,7 @@
             background: var(--border-dim);
         }
         .log-date {
-            font-family:'JetBrains Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 0.78rem; letter-spacing: 0.2em;
             color: var(--orange); text-transform: uppercase;
             display: block; margin-bottom: 8px;
@@ -315,8 +304,6 @@
         .log-body p:last-child { margin-bottom: 0; }
         .log-body strong { color: var(--cream); font-weight: normal; }
         .log-body em { color: var(--orange); font-style: normal; }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
         @media (max-width: 860px) {
             .log-entry { grid-template-columns: 1fr; }
@@ -411,13 +398,12 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">
 
     <section class="hero reveal">
-        <div class="hero-label" data-i18n="video_hero_label">// dPaul Technologies — Studio Log</div>
+        <div class="hero-label">// dPaul Technologies — Studio Log</div>
         <h1>What I've been<br><span>working on.</span></h1>
 
         <p class="hero-desc">
@@ -744,7 +730,7 @@
             </div>
         </div>
 
-        <div class="log-entry reveal">
+                <div class="log-entry reveal">
             <div class="log-date-col">
                 <span class="log-date">02 Jun 2026</span>
                 <span class="log-day-label">Tuesday</span>
@@ -1428,120 +1414,5 @@
 <script src="post-generator.js"></script>
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
-
-
-<!-- ── EMAIL SIGNUP POPUP ── -->
-<div id="dp-email-overlay" style="
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
-    z-index:99999; align-items:center; justify-content:center;
-    backdrop-filter:blur(4px);
-">
-    <div style="
-        background:#171717; border:1px solid rgba(230,67,42,0.4);
-        border-radius:0; padding:40px 44px; max-width:480px; width:90%;
-        position:relative; box-shadow:0 24px 64px rgba(0,0,0,0.7);
-        font-family:'JetBrains Mono', monospace;
-    ">
-        <button onclick="dpClosePopup()" style="
-            position:absolute; top:14px; right:18px; background:none; border:none;
-            color:rgba(255,255,255,0.35); font-size:1.4rem; cursor:pointer;
-            line-height:1; transition:color 0.15s;
-        " onmouseover="this.style.color='#e6432a'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">✕</button>
-
-        <div style="font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:#e6432a; margin-bottom:14px;">// Stay in the loop</div>
-        <div style="font-size:1.6rem; font-weight:900; color:#fff; margin-bottom:10px; letter-spacing:-0.02em;">New builds. Live updates.</div>
-        <p style="font-size:1rem; color:#8f8d87; line-height:1.7; margin-bottom:28px;">
-            Drop your email and I'll let you know when something new lands — tools, synths, merch, or anything worth seeing. No noise. No pitch.
-        </p>
-
-        <div id="dp-popup-form">
-            <input type="email" id="dp-popup-email" placeholder="your@email.com" style="
-                width:100%; box-sizing:border-box;
-                background:#1e201e; border:1px solid rgba(230,67,42,0.25);
-                color:#a8a6a0; font-family:'JetBrains Mono', monospace;
-                font-size:1rem; padding:12px 16px; border-radius:0;
-                outline:none; margin-bottom:12px; transition:border-color 0.2s;
-            " onfocus="this.style.borderColor='#e6432a'" onblur="this.style.borderColor='rgba(230,67,42,0.25)'"
-               onkeydown="if(event.key==='Enter')dpSubmitEmail()">
-            <button onclick="dpSubmitEmail()" style="
-                width:100%; background:#e6432a; color:#000; border:none;
-                font-family:'JetBrains Mono', monospace; font-size:1rem;
-                font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
-                padding:13px; border-radius:0; cursor:pointer; transition:background 0.2s;
-            " onmouseover="this.style.background='#f0654a'" onmouseout="this.style.background='#e6432a'">
-                Sign me up →
-            </button>
-        </div>
-
-        <div id="dp-popup-thanks" style="display:none; text-align:center; padding:16px 0;">
-            <div style="font-size:1.5rem; color:#e6432a; margin-bottom:8px;">✓</div>
-            <div style="color:#fff; font-size:1.1rem; font-weight:700;">You're in.</div>
-            <div style="color:#8f8d87; font-size:0.9rem; margin-top:6px;">I'll be in touch when something new drops.</div>
-        </div>
-
-        <p style="font-size:0.72rem; color:#4a4a44; margin-top:16px; margin-bottom:0; text-align:center; letter-spacing:0.05em;">
-            No spam. Unsubscribe any time.
-        </p>
-    </div>
-</div>
-
-<script>
-(function() {
-    // Show popup after 8 seconds, only once per session
-    if (!sessionStorage.getItem('dp-popup-seen')) {
-        setTimeout(() => {
-            const overlay = document.getElementById('dp-email-overlay');
-            overlay.style.display = 'flex';
-            overlay.style.opacity = '0';
-            overlay.style.transition = 'opacity 0.4s';
-            requestAnimationFrame(() => { overlay.style.opacity = '1'; });
-        }, 8000);
-    }
-
-    // Close on overlay click
-    document.getElementById('dp-email-overlay').addEventListener('click', function(e) {
-        if (e.target === this) dpClosePopup();
-    });
-
-    // Close on Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') dpClosePopup();
-    });
-})();
-
-function dpClosePopup() {
-    const overlay = document.getElementById('dp-email-overlay');
-    overlay.style.opacity = '0';
-    setTimeout(() => { overlay.style.display = 'none'; }, 400);
-    sessionStorage.setItem('dp-popup-seen', '1');
-}
-
-function dpSubmitEmail() {
-    const email = document.getElementById('dp-popup-email').value.trim();
-    if (!email || !email.includes('@')) {
-        document.getElementById('dp-popup-email').style.borderColor = '#cc3300';
-        setTimeout(() => {
-            document.getElementById('dp-popup-email').style.borderColor = 'rgba(230,67,42,0.25)';
-        }, 1000);
-        return;
-    }
-    fetch('https://formspree.io/f/xaqawnwv', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ email: email, message: 'Sign me up for updates' })
-    }).then(res => {
-        if (res.ok) {
-            document.getElementById('dp-popup-form').style.display = 'none';
-            document.getElementById('dp-popup-thanks').style.display = 'block';
-            sessionStorage.setItem('dp-popup-seen', '1');
-            setTimeout(dpClosePopup, 3000);
-        } else {
-            alert('Something went wrong — please try again.');
-        }
-    }).catch(() => {
-        alert('Something went wrong — please try again.');
-    });
-}
-</script>
 </body>
 </html>

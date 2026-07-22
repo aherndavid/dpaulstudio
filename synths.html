@@ -8,12 +8,6 @@
     <title>Synths — dPaul Technologies</title>
     
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root {
             --bg:      #171717;
             --bg2:     #1e1e1e;
@@ -93,9 +87,6 @@
         html[data-theme="light"] .tts-section-label { color: #000; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
         /* ── THEME TOGGLE ── */
         .theme-toggle {
@@ -220,8 +211,6 @@
             width: 3px; background: var(--orange);
             transition: height 0.1s ease; border-radius:0;
         }
-
-        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
 
         .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; width: 100%; }
 
@@ -478,7 +467,6 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">

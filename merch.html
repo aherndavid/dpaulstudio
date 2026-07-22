@@ -5,23 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <title>Merch — dPaul Technologies</title>
+    <title>Design — dPaul Technologies</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root {
-            --bg:      #171717;
-            --bg2:     #1e1e1e;
-            --orange:  #e6432a;
-            --cream:   #f4f3ef;
-            --text:    #a8a6a0;
-            --dim:     #8f8d87;
-            --border:  rgba(230,67,42,0.25);
+            --bg:            #171717;
+            --bg2:           #1e1e1e;
+            --orange:        #e6432a;
+            --cream:         #f4f3ef;
+            --text:          #a8a6a0;
+            --dim:           #8f8d87;
+            --border:        rgba(230,67,42,0.25);
             --border-dim: rgba(255,255,255,0.07);
             --font-scale: 1;
         }
@@ -38,7 +32,6 @@
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
         html[data-theme="light"] body::after { opacity: 0.55; }
-        html[data-theme="light"] .bg-wrap img { opacity: 0.35; }
         html[data-theme="light"] .hero h1,
         html[data-theme="light"] .hero-text h1,
         html[data-theme="light"] .section h2,
@@ -46,6 +39,9 @@
         html[data-theme="light"] .skill-card h3,
         html[data-theme="light"] .company-footer-val { color: #171310; }
         html[data-theme="light"] .hero-text h1 em { color: var(--orange); }
+        html[data-theme="light"] .ticker-wrap { background: #171717; border-color: #444; }
+        html[data-theme="light"] .ticker-track span { color: #e6432a; text-shadow: 0 0 8px rgba(230,67,42,0.7); }
+        html[data-theme="light"] .ticker-bottom span { color: #fff; text-shadow: none; }
         html[data-theme="light"] nav a.active { color: #fff; }
         html[data-theme="light"] .form-field input::placeholder,
         html[data-theme="light"] .form-field textarea::placeholder { color: rgba(46,42,36,0.35); }
@@ -54,11 +50,6 @@
         html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
-        html[data-theme="light"] .btn-buy { background: #e6432a; color: #000; border-color: #e6432a; }
-        html[data-theme="light"] .btn-buy:hover { background: #e55a00; }
 
         /* ── THEME TOGGLE ── */
         .theme-toggle {
@@ -75,8 +66,6 @@
             stroke: var(--orange);
             filter: drop-shadow(0 0 3px var(--orange));
         }
-        html[data-theme="light"] .product-name { color: #171310; }
-        html[data-theme="light"] .product-name em { color: #e6432a; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -91,6 +80,7 @@
             min-height: 100vh;
         }
 
+        /* ── GRAIN OVERLAY ── */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -98,19 +88,21 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        .bg-wrap {
+        /* ── BACKGROUND IMAGE ── */
+        body::after {
+            content: '';
             position: fixed;
             top: 72px; left: 0; right: 0; bottom: 0;
-            z-index: -1; pointer-events: none;
-        }
-        .bg-wrap img {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center;
+            background-image: url('assets/logos.webp');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
             opacity: 0.08;
+            pointer-events: none;
+            z-index: -1;
         }
 
-        /* ── NAV & HAMBURGER ── */
+        /* ── NAVIGATION & HAMBURGER ── */
         nav {
             position: sticky; top: 0; z-index: 100;
             background: var(--bg); border-bottom: 1px solid var(--border);
@@ -139,15 +131,17 @@
         }
         .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
 
-        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
-
+        /* ── MINI EQ IN NAV ── */
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
             height: 22px; margin: 0 16px; padding-bottom: 2px;
         }
-        .nav-eq-bar { width: 3px; background: var(--orange); transition: height 0.1s ease; border-radius:0; }
+        .nav-eq-bar {
+            width: 3px; background: var(--orange);
+            transition: height 0.1s ease; border-radius:0;
+        }
 
-        /* ── FONT NUDGE TRIGGER & PANEL ── */
+        /* ── FONT NUDGE (COLLAPSED BY DEFAULT) ── */
         .font-nudge-trigger {
             position: fixed; bottom: 20px; right: 20px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
@@ -184,7 +178,29 @@
         }
         .font-nudge-dismiss:hover { color: var(--orange); }
 
-        /* ── PAGE ── */
+        /* ── TICKERS ── */
+        .ticker-wrap {
+            position: relative; width: 100%; background: #000; border-bottom: 2px solid #222;
+            overflow: hidden; padding: 14px 0; box-shadow: inset 0 0 20px rgba(0,0,0,1);
+        }
+        .ticker-track {
+            display: flex; gap: 60px; width: max-content;
+            animation: ticker 80s linear infinite;
+            white-space: nowrap; align-items: center;
+        }
+        .ticker-track span {
+            font-family: 'VT323', monospace; font-size: 2.8rem; letter-spacing: 0.05em;
+            text-transform: uppercase; color: var(--orange);
+            text-shadow: 0 0 8px rgba(230,67,42,0.7);
+        }
+        .ticker-track .tick-dot { color: #444; margin: 0 10px; }
+
+        .ticker-bottom { border-bottom: none; border-top: 2px solid #222; margin-top: 60px; }
+        .ticker-bottom span { color: var(--cream); text-shadow: 0 0 8px rgba(244,243,239,0.4); }
+
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* ── CONTENT ── */
         .page { max-width: 1440px; margin: 0 auto; padding: 56px 56px 60px; position: relative; z-index: 1; width: 100%; }
 
         .hero-text { padding: 64px 0 56px; border-bottom: 1px solid var(--border); max-width: 1000px; }
@@ -197,154 +213,55 @@
             padding-left: 20px; margin-bottom: 24px;
         }
 
-        /* ── SHIPPING BANNER ── */
-        .shipping-banner {
-            display: flex; align-items: center; gap: 16px;
-            padding: 16px 24px; border: 1px solid rgba(230,67,42,0.2);
-            background: rgba(230,67,42,0.04); margin: 40px 0 0;
+        /* ── BILLBOARD ── */
+        .billboard-wrap { width: 100%; margin-top: 56px; }
+        .screen-chrome { background: #0e0f0e; border: 1px solid var(--border); border-radius:0; overflow: hidden; }
+        .chrome-bar {
+            background: #111; padding: 10px 14px; display: flex; align-items: center;
+            gap: 7px; border-bottom: 1px solid rgba(230,67,42,0.1);
         }
-        .shipping-banner .ship-icon { color: var(--orange); font-size: 1rem; letter-spacing: 0.1em; flex-shrink: 0; }
-        .shipping-banner p { font-size: 0.82rem; letter-spacing: 0.12em; color: var(--cream); text-transform: uppercase; line-height: 1.6; }
-        .shipping-banner a { color: var(--orange); text-decoration: none; border-bottom: 1px solid rgba(230,67,42,0.4); }
-        .shipping-banner a:hover { border-color: var(--orange); }
+        .dot { width: 9px; height: 9px; border-radius: 50%; }
+        .dot-r { background: #ff5f57; }
+        .dot-y { background: #febc2e; }
+        .dot-g { background: #28c840; }
+        .screen-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+        .screen-video video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ── COLLECTION ── */
-        .collection { padding: 80px 0 0; }
-        .collection-label { font-size: 1.04rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 64px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+        /* ── SCROLL REVEAL ── */
+        .reveal { opacity: 0; transform: translateY(22px); transition: 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
 
-        /* ── PRODUCT ROW ── */
-        .product-row {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 0; border: 1px solid var(--border);
-            margin-bottom: 48px;
-            transition: border-color 0.3s;
+        /* ── SOUND TOGGLE ── */
+        .sound-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .toggle-label { font-size: 0.7rem; color: var(--dim); user-select: none; }
+        .toggle-track {
+            width: 28px; height: 14px; background: #444; border-radius:0;
+            position: relative; transition: background 0.2s; cursor: pointer;
         }
-        .product-row:hover { border-color: rgba(230,67,42,0.5); }
-        .product-row.reverse { direction: rtl; }
-        .product-row.reverse > * { direction: ltr; }
+        .toggle-track:not(.off) { background: var(--orange); }
+        .toggle-thumb {
+            position: absolute; top: 2px; left: 2px;
+            width: 10px; height: 10px; background: #fff;
+            border-radius: 50%; transition: left 0.2s;
+        }
+        .toggle-track:not(.off) .toggle-thumb { left: 14px; }
 
-        .product-image-col {
-            position: relative; overflow: hidden;
-            min-height: 600px;
+        @media (max-width: 900px) {
+            nav { padding: 0 16px; justify-content: space-between; }
+            .nav-toggle { display: flex; }
+            .nav-links {
+                display: none; position: absolute; top: 72px; left: 0; right: 0;
+                flex-direction: column; align-items: stretch; gap: 0;
+                background: var(--bg); border-bottom: 1px solid var(--border);
+                padding: 8px 16px 16px; max-height: calc(100vh - 72px);
+                overflow-y: auto; box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { width: 100%; text-align: left; padding: 13px 10px; font-size: 1.05rem; }
+            .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
+            .font-nudge { bottom: 16px; right: 16px; }
+            .page { padding: 32px 20px; }
         }
-        .product-image-col img {
-            width: 100%; height: 100%; object-fit: contain;
-            display: block; transition: transform 0.8s ease, opacity 0.5s ease;
-        }
-        .product-image-col:hover img { transform: scale(1.02); }
-
-        /* colour toggle overlay */
-        .colour-toggle {
-            position: absolute; bottom: 20px; left: 20px;
-            display: flex; gap: 8px; z-index: 2;
-        }
-        .colour-btn {
-            width: 28px; height: 28px; border: 1px solid rgba(255,255,255,0.3);
-            cursor: pointer; transition: border-color 0.2s; position: relative;
-        }
-        .colour-btn.black { background: #111; }
-        .colour-btn.white { background: #f0f0f0; }
-        .colour-btn.active { border-color: var(--orange); }
-        .colour-btn::after {
-            content: ''; position: absolute; inset: -4px;
-            border: 1px solid transparent; transition: border-color 0.2s;
-        }
-        .colour-btn.active::after { border-color: rgba(230,67,42,0.4); }
-
-        .product-info-col {
-            padding: 52px 52px 48px;
-            display: flex; flex-direction: column;
-            border-left: 1px solid var(--border);
-            background: var(--bg);
-        }
-        .product-row.reverse .product-info-col { border-left: none; border-right: 1px solid var(--border); }
-
-        .product-tag { font-size: 0.72rem; letter-spacing: 0.28em; color: var(--orange); text-transform: uppercase; margin-bottom: 20px; }
-        .product-name { font-family:'Anton',sans-serif; text-transform:uppercase; font-size: clamp(1.8rem, 2.5vw, 2.6rem); font-weight: 400; color: #fff; line-height: 1.1; margin-bottom: 12px; letter-spacing: 0; }
-        .product-name em { color: var(--orange); font-style: normal; }
-        .product-price { font-size: 1.5rem; color: var(--cream); letter-spacing: 0.08em; margin-bottom: 32px; }
-        .product-price span { font-size: 0.75rem; color: var(--dim); letter-spacing: 0.2em; margin-left: 8px; text-transform: uppercase; }
-
-        /* sizes */
-        .sizes-label { font-size: 0.68rem; letter-spacing: 0.25em; color: var(--dim); text-transform: uppercase; margin-bottom: 12px; }
-        .size-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 32px; }
-        .size-pill {
-            padding: 6px 14px; border: 1px solid rgba(255,255,255,0.12);
-            font-size: 0.75rem; letter-spacing: 0.12em; color: var(--dim);
-            cursor: pointer; transition: all 0.15s; text-transform: uppercase;
-        }
-        .size-pill:hover { border-color: var(--orange); color: var(--cream); }
-        .size-pill.selected { border-color: var(--orange); color: var(--orange); background: rgba(230,67,42,0.06); }
-
-        /* spec list */
-        .spec-list { list-style: none; margin-bottom: 36px; flex: 1; }
-        .spec-list li {
-            display: flex; align-items: baseline; gap: 12px;
-            padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.82rem; color: var(--text); letter-spacing: 0.06em;
-        }
-        .spec-list li:last-child { border-bottom: none; }
-        .spec-list li::before { content: '—'; color: var(--orange); flex-shrink: 0; }
-
-        /* actions */
-        .product-actions { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
-
-        .btn-buy {
-            display: block; text-align: center; text-decoration: none;
-            background: var(--orange); color: #000;
-            padding: 16px 24px; font-family:'JetBrains Mono', monospace;
-            font-size: 0.82rem; font-weight: 700; letter-spacing: 0.25em;
-            text-transform: uppercase; transition: background 0.2s, transform 0.1s;
-            border: 1px solid var(--orange);
-        }
-        .btn-buy:hover { background: #e55a00; transform: translateY(-1px); }
-        .btn-buy:active { transform: translateY(0); }
-
-        .btn-size-guide {
-            background: none; border: 1px solid rgba(230,67,42,0.25);
-            color: var(--dim); font-family:'JetBrains Mono', monospace;
-            font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
-            padding: 10px 24px; cursor: pointer; transition: all 0.2s; text-align: center;
-        }
-        .btn-size-guide:hover { border-color: var(--orange); color: var(--orange); }
-
-        /* ── SIZE GUIDE MODAL ── */
-        .modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.82); z-index: 1000;
-            align-items: center; justify-content: center; padding: 2rem;
-        }
-        .modal-overlay.open { display: flex; }
-        .modal-box {
-            background: #171717; border: 1px solid rgba(230,67,42,0.35);
-            max-width: 520px; width: 100%;
-            animation: modalIn 0.25s ease;
-        }
-        @keyframes modalIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-        .modal-header {
-            background: var(--orange); padding: 14px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .modal-header span { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: #000; font-weight: 700; }
-        .modal-close {
-            background: none; border: none; cursor: pointer; color: #000;
-            font-size: 1.1rem; line-height: 1; padding: 0 2px; opacity: 0.75;
-            font-family:'JetBrains Mono', monospace;
-        }
-        .modal-close:hover { opacity: 1; }
-        .modal-body { padding: 28px 28px 32px; }
-        .modal-sub { font-size: 0.75rem; letter-spacing: 0.12em; color: rgba(122,122,112,0.8); text-transform: uppercase; margin-bottom: 24px; border-left: 2px solid rgba(230,67,42,0.4); padding-left: 10px; }
-        .size-table { width: 100%; border-collapse: collapse; }
-        .size-table th {
-            text-align: left; padding: 10px 14px; font-size: 0.7rem;
-            letter-spacing: 0.22em; color: var(--orange); text-transform: uppercase;
-            border-bottom: 1px solid rgba(230,67,42,0.3); font-weight: 700;
-        }
-        .size-table th:not(:first-child) { text-align: center; }
-        .size-table td { padding: 10px 14px; font-size: 0.88rem; color: var(--text); border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .size-table td:first-child { color: var(--cream); font-weight: 700; letter-spacing: 0.1em; }
-        .size-table td:not(:first-child) { text-align: center; }
-        .size-table tr:nth-child(even) td { background: rgba(230,67,42,0.03); }
 
         /* ── COMPANY FOOTER ── */
         .company-footer {
@@ -366,57 +283,6 @@
             color: var(--dim); text-transform: uppercase;
             border-top: 1px solid var(--border); width: 100%;
         }
-
-        .reveal { opacity: 0; transform: translateY(22px); transition: 0.6s ease; }
-        .reveal.visible { opacity: 1; transform: none; }
-
-        /* ── VIEW TOGGLE (front/rear) ── */
-        .view-toggle {
-            position: absolute; top: 20px; right: 20px;
-            display: flex; gap: 6px; z-index: 2;
-        }
-        .view-btn {
-            padding: 4px 10px; font-family:'JetBrains Mono', monospace;
-            font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
-            border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.4);
-            background: rgba(0,0,0,0.5); cursor: pointer; transition: all 0.15s;
-        }
-        .view-btn.active { border-color: var(--orange); color: var(--orange); background: rgba(230,67,42,0.08); }
-        .view-btn:hover { border-color: rgba(255,255,255,0.4); color: var(--cream); }
-        .view-btn.active:hover { border-color: var(--orange); color: var(--orange); }
-
-        /* ── LIMITED EDITION BADGE ── */
-        .limited-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            border: 1px solid rgba(230,67,42,0.4); padding: 6px 14px;
-            font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
-            color: var(--orange); margin-bottom: 20px;
-        }
-        .limited-badge::before { content: '◆'; font-size: 0.5rem; }
-
-        @media (max-width: 1100px) {
-            .product-row { grid-template-columns: 1fr; }
-            .product-row.reverse { direction: ltr; }
-            .product-image-col { min-height: 420px; }
-            .product-info-col { border-left: none !important; border-right: none !important; border-top: 1px solid var(--border); }
-        }
-        @media (max-width: 900px) {
-            nav { padding: 0 16px; justify-content: space-between; }
-            .nav-toggle { display: flex; }
-            .nav-links {
-                display: none; position: absolute; top: 72px; left: 0; right: 0;
-                flex-direction: column; align-items: stretch; gap: 0;
-                background: var(--bg); border-bottom: 1px solid var(--border);
-                padding: 8px 16px 16px; max-height: calc(100vh - 72px);
-                overflow-y: auto; box-shadow: 0 12px 24px rgba(0,0,0,0.35);
-            }
-            .nav-links.open { display: flex; }
-            .nav-links a { width: 100%; text-align: left; padding: 13px 10px; font-size: 1.05rem; }
-            .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
-            .font-nudge { bottom: 16px; right: 16px; }
-            .page { padding: 32px 20px; }
-            .product-info-col { padding: 36px 28px; }
-        }
     </style>
 </head>
 <body>
@@ -432,66 +298,6 @@
     <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss ×</button>
 </div>
 
-<div class="bg-wrap">
-    <img src="assets/iron.webp" alt="">
-</div>
-
-<!-- ── SIZE GUIDE MODAL ── -->
-<div class="modal-overlay" id="sizeModal" onclick="if(event.target===this)closeSizeGuide()">
-    <div class="modal-box">
-        <div class="modal-header">
-            <span>// Size Guide — Men's T-Shirt</span>
-            <button class="modal-close" onclick="closeSizeGuide()">✕</button>
-        </div>
-        <div class="modal-body">
-            <p class="modal-sub">Measured in centimetres — accurate to within 2–3cm</p>
-            <table class="size-table">
-                <thead>
-                    <tr><th>Size</th><th>Length</th><th>Width</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>XS</td><td>68</td><td>46</td></tr>
-                    <tr><td>S</td><td>69</td><td>48.5</td></tr>
-                    <tr><td>M</td><td>73</td><td>51</td></tr>
-                    <tr><td>L</td><td>74</td><td>56</td></tr>
-                    <tr><td>XL</td><td>75</td><td>58.5</td></tr>
-                    <tr><td>2XL</td><td>79</td><td>61</td></tr>
-                    <tr><td>3XL</td><td>82.5</td><td>66</td></tr>
-                    <tr><td>4XL</td><td>85</td><td>68.5</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- ── SIZE GUIDE MODAL — HOODIE ── -->
-<div class="modal-overlay" id="hoodieModal" onclick="if(event.target===this)closeHoodieGuide()">
-    <div class="modal-box">
-        <div class="modal-header">
-            <span>// Size Guide — Men's Hoodie</span>
-            <button class="modal-close" onclick="closeHoodieGuide()">✕</button>
-        </div>
-        <div class="modal-body">
-            <p class="modal-sub">Gildan GD067 — To fit chest measurement</p>
-            <table class="size-table">
-                <thead>
-                    <tr><th>Size</th><th>Chest (in)</th><th>Chest (cm)</th></tr>
-                </thead>
-                <tbody>
-                    <tr><td>S</td><td>34–36"</td><td>86–91</td></tr>
-                    <tr><td>M</td><td>38–40"</td><td>97–102</td></tr>
-                    <tr><td>L</td><td>42–44"</td><td>107–112</td></tr>
-                    <tr><td>XL</td><td>46–48"</td><td>117–122</td></tr>
-                    <tr><td>2XL</td><td>50–52"</td><td>127–132</td></tr>
-                    <tr><td>3XL</td><td>54–56"</td><td>137–142</td></tr>
-                    <tr><td>4XL</td><td>58–60"</td><td>147–152</td></tr>
-                    <tr><td>5XL</td><td>62–64"</td><td>157–163</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
 <nav>
     <button class="nav-toggle" id="navToggle" onclick="toggleMobileNav()" aria-label="Toggle menu" aria-expanded="false">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -503,9 +309,9 @@
     <div class="nav-links" id="navLinks">
         <a href="about.html" data-i18n="nav_about">about</a>
         <a href="current.html" data-i18n="nav_current">current</a>
-        <a href="design.html" data-i18n="nav_design">design</a>
+        <a href="design.html" class="active" data-i18n="nav_design">design</a>
         <a href="fun.html">fun</a>
-        <a href="merch.html" class="active" data-i18n="nav_merch">merch</a>
+        <a href="merch.html" data-i18n="nav_merch">merch</a>
         <a href="music.html" data-i18n="nav_music">music</a>
         <a href="services.html" data-i18n="nav_services">services</a>
         <a href="software.html">software</a>
@@ -524,542 +330,75 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
-<div class="page">
+<div class="ticker-wrap">
+    <div class="ticker-track">
+        <span data-i18n="ticker_logo">LOGO DESIGN</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_animation">ANIMATION</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_brand">BRAND IDENTITY</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_motion">MOTION GRAPHICS</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_print">PRINT READY</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_web">WEB DESIGN</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_logo">LOGO DESIGN</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_animation">ANIMATION</span><span class="tick-dot">-</span>
+    </div>
+</div>
 
-    <!-- HERO -->
-    <div class="hero-text reveal">
-        <div class="hero-label">// dPaul Technologies — Merch</div>
-        <h1>Limited-run pieces.<br>Built on the<br><em>studio aesthetic.</em></h1>
-        <p class="hero-intro">
-            The dpaul.studio exclusive merch collection. Limited-run pieces designed with the studio's signature aesthetic — once they're gone, they're gone. Inspired by the precision and vision of Kraftwerk.
+<div class="page">
+    <div class="hero-text reveal" data-post-section data-post-title="dPaul Studio — Design Services" data-post-content="Logo design and brand identity work — static or animated logos for email signatures, labels, and videos. Print-ready files, animated versions, brand guidelines. Every project starts with a conversation and is built around what the client actually needs.">
+        <div class="hero-label" data-i18n="design_hero_label">// dPaul Technologies — Design Services</div>
+        <h1 data-i18n="design_hero_h1">Your brand deserves<br>a logo that works <em>everywhere.</em></h1>
+        <p class="hero-intro" data-i18n="design_hero_intro1">
+            Whether you need a static or animated logo for email signatures, labels, or videos — I help you create designs that stay clear and professional.
         </p>
-        <div class="shipping-banner">
-            <span class="ship-icon">// FREE UK SHIPPING</span>
-            <p>Free shipping on all UK orders. International enquiries — <a href="mailto:david@dpaul.studio">david@dpaul.studio</a></p>
-        </div>
+        <p class="hero-intro" data-i18n="design_hero_intro2">
+            Every design starts with a conversation. From concept through to final delivery — print-ready files, animated versions, brand guidelines — the process is straightforward and built around what you actually need.
+        </p>
     </div>
 
-    <!-- COLLECTION -->
-    <div class="collection" data-post-section data-post-title="dPaul Studio — Merch Collection" data-post-content="Limited-run merch from the dpaul.studio collection — t-shirts and hoodies designed with the studio's signature aesthetic, inspired by the precision and vision of Kraftwerk. Once they're gone, they're gone.">
-        <div class="section-label collection-label reveal">// Debut Collection — 2024</div>
-
-        <!-- ── PRODUCT 001 ── -->
-        <div class="product-row reveal">
-            <div class="product-image-col">
-                <img id="img-001" src="assets/merch/design-001w.webp" alt="DPAUL Head Right T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour('001','black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour('001','white',this)"></div>
+    <div class="billboard-wrap reveal">
+        <div class="screen-chrome">
+            <div class="chrome-bar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+                <div style="flex:1;"></div>
+                <div class="sound-toggle" id="sound-toggle" title="Sound on/off">
+                    <span class="toggle-label" id="toggle-label">🔇</span>
+                    <div class="toggle-track off" id="toggle-track">
+                        <div class="toggle-thumb" id="toggle-thumb"></div>
+                    </div>
                 </div>
             </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Head Right</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/9B6fZifcleaafdDekXb3q07" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
+            <div class="screen-video">
+                <video id="vid1" autoplay muted playsinline>
+                    <source src="assets/traffic-narrator-with-sound.webm" type="video/webm">
+                </video>
+                <video id="vid2" muted playsinline style="display:none;">
+                    <source src="assets/orange-porsche-with-sound.webm" type="video/webm">
+                </video>
+                <video id="vid3" muted playsinline style="display:none;">
+                    <source src="assets/autofacts-white-gold-logo.webm" type="video/webm">
+                </video>
+                <video id="vid4" muted playsinline style="display:none;">
+                    <source src="assets/motion-wheels-part-1.webm" type="video/webm">
+                </video>
+                <video id="vid5" muted playsinline style="display:none;">
+                    <source src="assets/motion-wheels-part-2.webm" type="video/webm">
+                </video>
+                <video id="vid6" muted playsinline style="display:none;">
+                    <source src="assets/computer-screen.webm" type="video/webm">
+                </video>
             </div>
         </div>
-
-        <!-- ── PRODUCT 002 ── -->
-        <div class="product-row reverse reveal">
-            <div class="product-image-col">
-                <img id="img-002" src="assets/merch/design-002w.webp" alt="DPAUL Head Left T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour('002','black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour('002','white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Head Left</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/5kQ8wQ2pz4zAfdDdgTb3q08" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 003 ── -->
-        <div class="product-row reveal">
-            <div class="product-image-col">
-                <img id="img-003" src="assets/merch/design-003w.webp" alt="Embrace AI T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour('003','black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour('003','white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Embrace AI</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/9B6fZie8h5DE4yZ1ybb3q09" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 004 ── -->
-        <div class="product-row reverse reveal">
-            <div class="product-image-col">
-                <img id="img-004" src="assets/merch/design-004w.webp" alt="Logic by Day T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour('004','black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour('004','white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Logic by Day</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/fZuaEYfcl2rse9z3Gjb3q0a" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 005 — HOODIE ── -->
-        <div class="product-row reveal">
-            <div class="product-image-col">
-                <img id="img-005" src="assets/merch/design-005w.webp" alt="DPAUL Hoodie in White — Front">
-                <div class="view-toggle">
-                    <button class="view-btn active" onclick="switchView('005','front',this)">Front</button>
-                    <button class="view-btn" onclick="switchView('005','rear',this)">Rear</button>
-                </div>
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColourHoodie('005','black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColourHoodie('005','white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's Hoodie</p>
-                <h2 class="product-name">DPAUL Design<br><em>Studio Hoodie</em></h2>
-                <p class="product-price">£29.00 <span>GBP · Free UK shipping</span></p>
-
-                <div class="limited-badge">Limited Edition — Numbered 01–50 per colour</div>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">5XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>80% Cotton, 20% Polyester</li>
-                    <li>285gsm (White: 278gsm) — Gildan GD067</li>
-                    <li>Twin needle stitching throughout</li>
-                    <li>Kangaroo pouch pocket</li>
-                    <li>Drawcord double lined hood</li>
-                    <li>World-class print &amp; embroidery technology</li>
-                    <li>Available in Black &amp; White — once gone, gone</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/3cI8wQe8haXYd5v1ybb3q0b" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £29.00</a>
-                    <button class="btn-size-guide" onclick="openHoodieGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 006 — ZEBRA THREE ── -->
-        <div class="product-row reverse reveal">
-            <div class="product-image-col">
-                <img id="img-006" src="assets/merch/design-006w.webp" alt="Zebra Three T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour006('black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour006('white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Zebra Three</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a id="buy-006" href="https://buy.stripe.com/8x2fZie8heaafdDfp1b3q0d" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 007 — APOLLO 11 ── -->
-        <div class="product-row reverse reveal">
-            <div class="product-image-col">
-                <img id="img-007" src="assets/merch/design-007.webp" alt="Apollo 11 Men's T-Shirt in Black">
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Apollo 11</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black only</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/14AdRa8NX8PQ3uV2Cfb3q0c" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 008 — 1979 ── -->
-        <div class="product-row reveal">
-            <div class="product-image-col">
-                <img id="img-008" src="assets/merch/design-008w.webp" alt="1979 T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour008('black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour008('white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>1979</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a id="buy-008" href="https://buy.stripe.com/00wfZic095DEe9z3Gjb3q0f" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 009 — DPAUL LOGO T-SHIRT ── -->
-        <div class="product-row reverse reveal">
-            <div class="product-image-col">
-                <img id="img-009" src="assets/merch/design-009w.webp" alt="DPAUL Logo T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour009('black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour009('white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Logo T-Shirt</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a id="buy-009" href="https://buy.stripe.com/3cI4gA5BLeaa7Lba4Hb3q0i" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 010 ── -->
-        <div class="product-row reveal">
-            <div class="product-image-col">
-                <img id="img-010" src="assets/merch/design-011-wf.webp" alt="DPAUL T-Shirt — 010 Front">
-                <div class="view-toggle">
-                    <button class="view-btn active" onclick="switchView010('front',this)">Front</button>
-                    <button class="view-btn" onclick="switchView010('rear',this)">Rear</button>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Bugatti Veyron</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/3cIdRa0hr8PQ4yZb8Lb3q0j" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 011 — PORSCHE 993 ── -->
-        <div class="product-row reverse reveal">
-            <div class="product-image-col">
-                <img id="img-011" src="assets/merch/air-cooled-white.webp" alt="DPAUL Design Porsche 993 Air-Cooled Architecture T-Shirt in White">
-                <div class="colour-toggle">
-                    <div class="colour-btn black" title="Black" onclick="switchColour011('black',this)"></div>
-                    <div class="colour-btn white active" title="White" onclick="switchColour011('white',this)"></div>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Porsche 993 — Air-Cooled Architecture</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in Black &amp; White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a id="buy-011" href="https://buy.stripe.com/eVqbJ27JT7LMe9zfp1b3q0k" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── PRODUCT 012 — LAMBO ── -->
-        <div class="product-row reveal">
-            <div class="product-image-col">
-                <img id="img-012" src="assets/merch/dpaulstudio-lambo-white-front.webp" alt="DPAUL Design Lambo T-Shirt — Front">
-                <div class="view-toggle">
-                    <button class="view-btn active" onclick="switchView012('front',this)">Front</button>
-                    <button class="view-btn" onclick="switchView012('rear',this)">Rear</button>
-                </div>
-            </div>
-            <div class="product-info-col">
-                <p class="product-tag">// Men's T-Shirt</p>
-                <h2 class="product-name">DPAUL Design<br><em>Lambo</em></h2>
-                <p class="product-price">£19.00 <span>GBP · Free UK shipping</span></p>
-
-                <p class="sizes-label">Select size</p>
-                <div class="size-pills">
-                    <div class="size-pill" onclick="selectSize(this)">XS</div>
-                    <div class="size-pill" onclick="selectSize(this)">S</div>
-                    <div class="size-pill" onclick="selectSize(this)">M</div>
-                    <div class="size-pill" onclick="selectSize(this)">L</div>
-                    <div class="size-pill" onclick="selectSize(this)">XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">2XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">3XL</div>
-                    <div class="size-pill" onclick="selectSize(this)">4XL</div>
-                </div>
-
-                <ul class="spec-list">
-                    <li>100% Cotton</li>
-                    <li>Fine gauge knit, 141 GSM</li>
-                    <li>Shoulder-to-shoulder taping</li>
-                    <li>Rolled forward shoulders for a better fit</li>
-                    <li>Front coverseaming on collar</li>
-                    <li>Available in White</li>
-                </ul>
-
-                <div class="product-actions">
-                    <a href="https://buy.stripe.com/7sYeVe2pzfee5D3gt5b3q0l" class="btn-buy" target="_blank" rel="noopener">// Buy Now — £19.00</a>
-                    <button class="btn-size-guide" onclick="openSizeGuide()">// Size Guide</button>
-                </div>
-            </div>
-        </div>
-
-    </div><!-- /collection -->
+    </div>
 
     <footer class="company-footer reveal">
         <div class="company-footer-block">
             <div class="company-footer-label">Company</div>
             <div class="company-footer-val">CitiIT Limited</div>
-            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as <strong style="color:var(--cream)">dpaul.studio</strong> for creative and digital work.</div>
+            <div class="company-footer-note">CitiIT Limited is the registered company name. The studio trades as dpaul.studio for creative and digital work.</div>
         </div>
         <div class="company-footer-block">
             <div class="company-footer-label">Company No.</div>
@@ -1075,11 +414,61 @@
         </div>
     </footer>
 
-    <div class="footer-line reveal">// dPaul Technologies — Limited run — once gone, gone</div>
+    <div class="footer-line reveal">// dPaul Technologies — Design</div>
 
 </div><!-- /page -->
 
+<div class="ticker-wrap ticker-bottom">
+    <div class="ticker-track">
+        <span data-i18n="ticker_est">EST. 2024</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_build">LET'S BUILD SOMETHING</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_touch">GET IN TOUCH</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_est">EST. 2024</span><span class="tick-dot">-</span>
+        <span data-i18n="ticker_build">LET'S BUILD SOMETHING</span><span class="tick-dot">-</span>
+    </div>
+</div>
+
 <script>
+    // ── THEME TOGGLE ──
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('dp-theme', theme); } catch(e) {}
+    }
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        applyTheme(current === 'light' ? 'dark' : 'light');
+    }
+    try {
+        const savedTheme = localStorage.getItem('dp-theme');
+        if (savedTheme) applyTheme(savedTheme);
+    } catch(e) {}
+
+    // ── NAV EQ ANIMATION ──
+    (function () {
+        const NUM_BARS = 8;
+        const MAX_H = 20;
+        const container = document.getElementById('nav-eq-container');
+        if (!container) return;
+        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
+        const targets = [...levels];
+        const bars = [];
+        for (let i = 0; i < NUM_BARS; i++) {
+            const b = document.createElement('div');
+            b.className = 'nav-eq-bar';
+            container.appendChild(b);
+            bars.push(b);
+        }
+        function animateEQ() {
+            for (let i = 0; i < NUM_BARS; i++) {
+                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
+                levels[i] += (targets[i] - levels[i]) * 0.15;
+                bars[i].style.height = levels[i] + 'px';
+            }
+            requestAnimationFrame(animateEQ);
+        }
+        animateEQ();
+    })();
+
     // ── MOBILE NAVIGATION TOGGLE ──
     function toggleMobileNav() {
         const navLinks = document.getElementById('navLinks');
@@ -1114,7 +503,48 @@
         try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
     }
 
-    /* ── FONT NUDGE ── */
+    // ── VIDEO PLAYLIST ──
+    const videos = [
+        document.getElementById('vid1'),
+        document.getElementById('vid2'),
+        document.getElementById('vid3'),
+        document.getElementById('vid4'),
+        document.getElementById('vid5'),
+        document.getElementById('vid6')
+    ].filter(Boolean);
+
+    let currentVid = 0;
+    let soundOn = false;
+
+    function playNext() {
+        videos[currentVid].style.display = 'none';
+        currentVid = (currentVid + 1) % videos.length;
+        videos[currentVid].style.display = 'block';
+        videos[currentVid].muted = !soundOn;
+        videos[currentVid].play();
+    }
+
+    videos.forEach(v => v.addEventListener('ended', playNext));
+
+    const track = document.getElementById('toggle-track');
+    const label = document.getElementById('toggle-label');
+
+    document.getElementById('sound-toggle').addEventListener('click', function () {
+        soundOn = !soundOn;
+        videos.forEach(v => v.muted = !soundOn);
+        track.classList.toggle('off', !soundOn);
+        label.textContent = soundOn ? '🔊' : '🔇';
+    });
+
+    function tryUnmuteOnInteraction() {
+        if (soundOn) videos[0].muted = false;
+        document.removeEventListener('click', tryUnmuteOnInteraction);
+        document.removeEventListener('keydown', tryUnmuteOnInteraction);
+    }
+    document.addEventListener('click', tryUnmuteOnInteraction);
+    document.addEventListener('keydown', tryUnmuteOnInteraction);
+
+    // ── FONT NUDGE ──
     const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
     let fontScaleIndex = 0;
     const indicators = ['100%', '115%', '130%', '150%', '170%'];
@@ -1133,216 +563,15 @@
         if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
     } catch(e) {}
 
-    /* ── THEME TOGGLE ── */
-    function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        try { localStorage.setItem('dp-theme', theme); } catch(e) {}
-    }
-    function toggleTheme() {
-        const current = document.documentElement.getAttribute('data-theme') || 'dark';
-        applyTheme(current === 'light' ? 'dark' : 'light');
-    }
-    try {
-        const savedTheme = localStorage.getItem('dp-theme');
-        if (savedTheme) applyTheme(savedTheme);
-    } catch(e) {}
-
-    /* ── NAV EQ ── */
-    (function() {
-        const NUM_BARS = 8, MAX_H = 20;
-        const container = document.getElementById('nav-eq-container');
-        if (!container) return;
-        const levels = Array.from({ length: NUM_BARS }, () => Math.random() * MAX_H);
-        const targets = [...levels];
-        const bars = [];
-        for (let i = 0; i < NUM_BARS; i++) {
-            const b = document.createElement('div');
-            b.className = 'nav-eq-bar';
-            container.appendChild(b);
-            bars.push(b);
-        }
-        function animateEQ() {
-            for (let i = 0; i < NUM_BARS; i++) {
-                if (Math.random() < 0.1) targets[i] = Math.random() * MAX_H + 2;
-                levels[i] += (targets[i] - levels[i]) * 0.15;
-                bars[i].style.height = levels[i] + 'px';
-            }
-            requestAnimationFrame(animateEQ);
-        }
-        animateEQ();
-    })();
-
-    /* ── SCROLL REVEAL ── */
+    // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.08 });
+    }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    /* ── SIZE GUIDE MODAL ── */
-    function openSizeGuide() { document.getElementById('sizeModal').classList.add('open'); }
-    function closeSizeGuide() { document.getElementById('sizeModal').classList.remove('open'); }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeSizeGuide(); closeHoodieGuide(); } });
-
-    /* ── HOODIE SIZE GUIDE ── */
-    function openHoodieGuide() { document.getElementById('hoodieModal').classList.add('open'); }
-    function closeHoodieGuide() { document.getElementById('hoodieModal').classList.remove('open'); }
-
-    /* ── FRONT / REAR VIEW TOGGLE ── */
-    function switchView(productId, view, btn) {
-        const img = document.getElementById('img-' + productId);
-        const colourBtns = btn.closest('.product-image-col').querySelectorAll('.colour-btn');
-        const isWhite = Array.from(colourBtns).find(b => b.classList.contains('active') && b.classList.contains('white'));
-        const colourSuffix = isWhite ? 'w' : '';
-        const viewSuffix = view === 'rear' ? 'r' : '';
-        img.style.opacity = '0';
-        setTimeout(() => {
-            img.src = 'assets/merch/design-' + productId + colourSuffix + viewSuffix + '.webp';
-            img.style.opacity = '1';
-        }, 300);
-        const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
-        viewBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── HOODIE COLOUR SWITCHER (respects front/rear view) ── */
-    function switchColourHoodie(productId, colour, btn) {
-        const img = document.getElementById('img-' + productId);
-        const viewBtns = btn.closest('.product-image-col').querySelectorAll('.view-btn');
-        const activeView = Array.from(viewBtns).find(b => b.classList.contains('active'));
-        const isRear = activeView && activeView.textContent.trim().toLowerCase() === 'rear';
-        const colourSuffix = colour === 'white' ? 'w' : '';
-        const viewSuffix = isRear ? 'r' : '';
-        img.style.opacity = '0';
-        setTimeout(() => {
-            img.src = 'assets/merch/design-' + productId + colourSuffix + viewSuffix + '.webp';
-            img.style.opacity = '1';
-        }, 300);
-        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── SIZE PILL SELECTION ── */
-    function selectSize(el) {
-        const pills = el.closest('.size-pills').querySelectorAll('.size-pill');
-        pills.forEach(p => p.classList.remove('selected'));
-        el.classList.add('selected');
-    }
-
-    /* ── COLOUR SWITCHER — 009 DPAUL LOGO T-SHIRT (separate Stripe links per colour) ── */
-    const stripeLinks009 = {
-        black: 'https://buy.stripe.com/3cI4gA5BLeaa7Lba4Hb3q0i',
-        white: 'https://buy.stripe.com/bJe5kE2pz5DEc1rekXb3q0h'
-    };
-    function switchColour009(colour, btn) {
-        const img = document.getElementById('img-009');
-        const suffix = colour === 'white' ? 'w' : 'b';
-        img.style.opacity = '0';
-        setTimeout(() => {
-            img.src = 'assets/merch/design-009' + suffix + '.webp';
-            img.style.opacity = '1';
-        }, 300);
-        document.getElementById('buy-009').href = stripeLinks009[colour];
-        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── COLOUR SWITCHER — 008 1979 (separate Stripe links per colour) ── */
-    const stripeLinks008 = {
-        black: 'https://buy.stripe.com/00wfZic095DEe9z3Gjb3q0f',
-        white: 'https://buy.stripe.com/9B67sM8NX1no2qRdgTb3q0g'
-    };
-    function switchColour008(colour, btn) {
-        const img = document.getElementById('img-008');
-        const suffix = colour === 'white' ? 'w' : 'b';
-        img.style.opacity = '0';
-        setTimeout(() => {
-            img.src = 'assets/merch/design-008' + suffix + '.webp';
-            img.style.opacity = '1';
-        }, 300);
-        document.getElementById('buy-008').href = stripeLinks008[colour];
-        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── COLOUR SWITCHER — 006 ZEBRA THREE (separate Stripe links per colour) ── */
-    const stripeLinks006 = {
-        black: 'https://buy.stripe.com/8x2fZie8heaafdDfp1b3q0d',
-        white: 'https://buy.stripe.com/cNi7sM6FPaXYfdDdgTb3q0e'
-    };
-    function switchColour006(colour, btn) {
-        const img = document.getElementById('img-006');
-        const suffix = colour === 'white' ? 'w' : 'b';
-        img.style.opacity = '0';
-        setTimeout(() => {
-            img.src = 'assets/merch/design-006' + suffix + '.webp';
-            img.style.opacity = '1';
-        }, 300);
-        document.getElementById('buy-006').href = stripeLinks006[colour];
-        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── VIEW TOGGLE — 010 ── */
-    function switchView010(view, btn) {
-        const img = document.getElementById('img-010');
-        const src = view === 'rear'
-            ? 'assets/merch/design-011-wr.webp'
-            : 'assets/merch/design-011-wf.webp';
-        img.style.opacity = '0';
-        setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 300);
-        const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
-        viewBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── COLOUR SWITCHER — 011 PORSCHE 993 ── */
-    function switchColour011(colour, btn) {
-        const img = document.getElementById('img-011');
-        const src = colour === 'white'
-            ? 'assets/merch/air-cooled-white.webp'
-            : 'assets/merch/air-cooled-black.webp';
-        img.style.opacity = '0';
-        setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 300);
-        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── VIEW TOGGLE — 012 LAMBO ── */
-    function switchView012(view, btn) {
-        const img = document.getElementById('img-012');
-        const src = view === 'rear'
-            ? 'assets/merch/dpaulstudio-lambo-white-rear.webp'
-            : 'assets/merch/dpaulstudio-lambo-white-front.webp';
-        img.style.opacity = '0';
-        setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 300);
-        const viewBtns = btn.closest('.view-toggle').querySelectorAll('.view-btn');
-        viewBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    /* ── COLOUR SWITCHER ── */
-    function switchColour(productId, colour, btn) {
-        const img = document.getElementById('img-' + productId);
-        const suffix = colour === 'white' ? 'w' : '';
-        img.style.opacity = '0';
-        setTimeout(() => {
-            img.src = 'assets/merch/design-' + productId + suffix + '.webp';
-            img.style.opacity = '1';
-        }, 300);
-        const btns = btn.closest('.colour-toggle').querySelectorAll('.colour-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
 </script>
 
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
-<script src="share.js"></script>
 <script src="post-generator.js"></script>
 </body>
 </html>

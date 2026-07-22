@@ -7,12 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>dPaul Software</title>
     <style>
-    #dp-share-btn {
-        font-family: 'Anton', sans-serif !important;
-        font-size: 1.1rem !important;
-        text-transform: lowercase !important;
-        letter-spacing: 0.05em !important;
-    }
         :root { --bg:#171717;--bg2:#1e1e1e;--orange:#e6432a;--cream:#f4f3ef;--text:#a8a6a0;--dim:#8f8d87;--border:rgba(230,67,42,0.25);--border-dim:rgba(255,255,255,0.07);--gold:#c98a3d;--font-scale:1; }
 
         html[data-theme="light"] { --bg:#f4f3ef;--bg2:#e8e6e0;--orange:#171717;--cream:#2b2b28;--text:#262421;--dim:#8f8d87;--border:rgba(23,23,23,0.35);--border-dim:rgba(0,0,0,0.12); }
@@ -43,9 +37,6 @@
         html[data-theme="light"] .tts-section-label { color: var(--dim); }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
         .theme-toggle { background:none;border:1px solid var(--border-dim);color:var(--cream);font-family:'JetBrains Mono', monospace;width:32px;height:32px;cursor:pointer;border-radius:0;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-right:15px; }
         .theme-toggle:hover { border-color: var(--orange); color: var(--orange); }
@@ -119,7 +110,7 @@
         }
         nav a:hover{border-color:var(--orange);color:var(--orange);}
         nav a.active{background:var(--orange);color:#000;border-color:var(--orange);}
-        .nav-spacer{flex:1;}
+        .nav-spacer{flex:1px; flex:1;}
         
         .nav-toggle {
             display: none;
@@ -132,7 +123,6 @@
 
         #nav-eq-container{display:flex;align-items:flex-end;gap:2px;height:22px;margin:0 16px;padding-bottom:2px;}
         .nav-eq-bar{width:3px;background:var(--orange);transition:height 0.1s ease;border-radius:0;}
-        #nav-share-container{min-width:90px; margin-right: 20px; display:flex;align-items:center;justify-content:flex-end;}
 
         .page{max-width:1400px;margin:0 auto;padding:0 56px 120px;position:relative;z-index:1;width:100%;}
 
@@ -290,7 +280,6 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">
@@ -504,7 +493,6 @@
     const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.08});
     revealEls.forEach(el=>observer.observe(el));
 </script>
-<script src="share.js"></script>
 <script src="post-generator.js"></script>
 </body>
 </html>
