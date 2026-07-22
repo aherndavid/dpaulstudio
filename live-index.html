@@ -13,6 +13,7 @@
             --bg:      #161616;
             --orange:  #e6432a;
             --cream:   #f4f3ef;
+            --border:  rgba(230,67,42,0.25);
         }
 
         *, *::before, *::after {
@@ -108,7 +109,16 @@
             overflow: hidden;
         }
 
-        /* ── HORIZONTAL NAV ── */
+        /* ── NAVIGATION & HAMBURGER ── */
+        .nav-toggle {
+            display: none;
+            background: rgba(0,0,0,0.6); border: 1px solid var(--border); color: var(--cream);
+            width: 44px; height: 44px; cursor: pointer; border-radius: 0;
+            align-items: center; justify-content: center; transition: all 0.15s;
+            margin: 20px auto 0 auto;
+        }
+        .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
+
         #nav-bar {
             display: flex;
             flex-wrap: wrap;
@@ -135,11 +145,26 @@
 
         @media (max-width: 768px) {
             html, body { overflow-y: auto; }
-            body { align-items: flex-start; padding: 60px 0; }
+            body { align-items: center; padding: 20px 0; }
             #brand-group { width: 95%; }
             .wordmark { font-size: clamp(3.8rem, 16vw, 6.5rem); }
-            #nav-bar { margin-top: 28px; gap: 6px 0; }
-            .nav-link { font-size: 0.95rem; padding: 4px 10px; }
+            
+            .nav-toggle { display: flex; }
+            #nav-bar {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                background: rgba(23, 23, 23, 0.95);
+                border: 1px solid var(--border);
+                padding: 16px;
+                margin-top: 16px;
+                width: 100%;
+                max-width: 280px;
+                box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+            }
+            #nav-bar.open { display: flex; }
+            .nav-link { font-size: 1.1rem; padding: 8px 12px; width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -149,6 +174,15 @@
         <div class="wordmark">
             <span class="accent"><div id="eq-container"></div>d</span>paul<br>.studio
         </div>
+        
+        <button class="nav-toggle" id="navToggle" onclick="toggleMobileNav()" aria-label="Toggle menu" aria-expanded="false">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+
         <nav id="nav-bar">
             <a href="about.html" class="nav-link" data-i18n="nav_about">about</a>
             <a href="current.html" class="nav-link">current</a>
@@ -163,6 +197,26 @@
             <a href="video.html" class="nav-link" data-i18n="nav_video">video</a>
         </nav>
     </div>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        function toggleMobileNav() {
+            const navBar = document.getElementById('nav-bar');
+            const navToggle = document.getElementById('navToggle');
+            const isOpen = navBar.classList.toggle('open');
+            navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+
+        // Close when clicking outside
+        document.addEventListener('click', function(e) {
+            const navBar = document.getElementById('nav-bar');
+            const navToggle = document.getElementById('navToggle');
+            if (navBar.classList.contains('open') && !navBar.contains(e.target) && !navToggle.contains(e.target)) {
+                navBar.classList.remove('open');
+                navToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    </script>
 
     <!-- i18n engine -->
     <script src="assets/translations.js"></script>
