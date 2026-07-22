@@ -142,13 +142,13 @@
 
         /* PRODUCT BLOCKS */
         .product-block{display:grid;grid-template-columns:220px 1fr;gap:0;padding:52px 0;border-bottom:1px solid var(--border-dim);}
-        .product-date-col{padding-right:48px;padding-top:4px;position:relative;}
+        .product-date-col{padding-right:48px;padding-top:4px;position:relative;min-width:0;}
         .product-date-col::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:var(--border-dim);}
         .product-eyebrow-col{font-size:.78rem;letter-spacing:.2em;color:var(--orange);text-transform:uppercase;display:block;margin-bottom:8px;}
         .product-title-col{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:1.5rem;font-weight:400;color:#fff;line-height:1.1;display:block;}
         .product-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:16px;}
         .product-tag{font-size:.62rem;letter-spacing:.1em;padding:2px 8px;border:1px solid var(--border-dim);color:var(--dim);text-transform:uppercase;}
-        .product-body{padding-left:48px;}
+        .product-body{padding-left:48px;min-width:0;}
         .product-body p{font-size:calc(1.1rem * var(--font-scale));line-height:1.9;color:var(--text);margin-bottom:20px;}
         .product-body strong{color:var(--cream);font-weight:normal;}
         .product-body em{color:var(--orange);font-style:normal;}
@@ -239,6 +239,7 @@
             .product-date-col::after{display:none;}
             .product-body{padding-left:0;}
             .page{padding:0 20px 80px;}
+            .buy-btn,.buy-btn-secondary,.pro-buy-btn{white-space:normal;min-width:0;text-align:center;}
         }
     </style>
 </head>

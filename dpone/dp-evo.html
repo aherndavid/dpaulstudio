@@ -638,9 +638,50 @@
             align-self: center;
         }
         .midi-device-name.connected { color: #5577ee; }
+
+        /* ══════════════════════════════════════════════
+           FORCE-LANDSCAPE ON MOBILE (PORTRAIT)
+           No browser lets a plain webpage lock real device
+           orientation, so instead we rotate the whole page
+           90° with CSS and then scale the chassis to fit
+           whatever width that gives us.
+        ══════════════════════════════════════════════ */
+        @media screen and (max-width: 900px) and (orientation: portrait) {
+            html, body {
+                width: 100vh;
+                height: 100vw;
+                overflow-x: hidden;
+            }
+            .rotate-wrap {
+                position: absolute;
+                top: 0;
+                left: 100%;
+                width: 100vh;
+                height: 100vw;
+                transform: rotate(90deg);
+                transform-origin: top left;
+                overflow-y: auto;
+                overflow-x: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                padding: 24px 0;
+            }
+            body { display: block; padding: 0; }
+        }
+        .chassis-scale {
+            /* width/height are set by JS to the final (already-scaled)
+               pixel size, so this box takes up exactly the right amount
+               of layout space — no leftover blank gap. */
+        }
+        .chassis {
+            transform-origin: top left;
+        }
     </style>
 </head>
 <body>
+<div class="rotate-wrap">
+<div class="chassis-scale">
 <div class="chassis">
 
     <!-- ══════════════════════════════════════════════
@@ -1192,8 +1233,50 @@
     </div>
 
 </div><!-- .chassis -->
+</div><!-- .chassis-scale -->
 
 <script>
+// ═══════════════════════════════════════════════════════
+// FIT CHASSIS TO SCREEN
+// The chassis has a fixed 1120px design width. This scales
+// it down (never up) so it always fits the available width —
+// including the rotated landscape view used on portrait phones.
+// ═══════════════════════════════════════════════════════
+function fitChassis() {
+    const wrap = document.querySelector('.chassis-scale');
+    const chassis = document.querySelector('.chassis');
+    if (!wrap || !chassis) return;
+
+    const isRotated = window.matchMedia('(max-width: 900px) and (orientation: portrait)').matches;
+
+    // Measure the chassis at its true natural size (ignore any
+    // previously-applied scale) before doing the math.
+    chassis.style.transform = 'none';
+    const naturalWidth = chassis.offsetWidth || 1120;
+    const naturalHeight = chassis.offsetHeight || 700;
+
+    // After the 90deg rotation, the "landscape frame" we're fitting
+    // into is device-height × device-width (swapped), not
+    // device-width × device-height.
+    const frameWidth = isRotated ? window.innerHeight : window.innerWidth;
+    const frameHeight = isRotated ? window.innerWidth : window.innerHeight;
+
+    const scale = Math.min(
+        1,
+        (frameWidth - 24) / naturalWidth,
+        (frameHeight - 48) / naturalHeight
+    );
+
+    chassis.style.transform = `scale(${scale})`;
+    // Collapse the wrapper's box to the scaled size so it doesn't
+    // leave a big blank gap where the unscaled layout used to be.
+    wrap.style.width = (naturalWidth * scale) + 'px';
+    wrap.style.height = (naturalHeight * scale) + 'px';
+}
+window.addEventListener('load', fitChassis);
+window.addEventListener('resize', fitChassis);
+window.addEventListener('orientationchange', () => setTimeout(fitChassis, 100));
+
 // ═══════════════════════════════════════════════════════
 // AUDIO ENGINE
 // ═══════════════════════════════════════════════════════
@@ -2288,5 +2371,6 @@ drawScope();
         </div>
     </div>
 
+</div><!-- .rotate-wrap -->
 </body>
 </html>
