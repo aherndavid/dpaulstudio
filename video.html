@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    // Find the current filename (e.g., 'design.html')
-    var path = window.location.pathname.split("/").pop();
-    // If we're at the root, default to index.html
-    if (path === "") path = "index.html";
-    // Send them to the exact same page but inside the /m/ folder
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +8,7 @@
     <title>Video — dPaul Technologies</title>
     
     <style>
-/* Added CSS rule for the share button font and size matching the main menu */
+    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -124,7 +114,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('../assets/camera-gimble.webp');
+            background-image: url('assets/camera-gimble.webp');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
@@ -700,7 +690,6 @@
 
 <script src="share.js"></script>
 <script src="post-generator.js"></script>
-
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 

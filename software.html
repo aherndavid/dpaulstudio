@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    var path = window.location.pathname.split("/").pop();
-    if (path === "") path = "index.html";
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>dPaul Software</title>
     <style>
-/* Added CSS rule for the share button font and size matching the main menu */
+    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -178,12 +171,10 @@
         .footer-line{margin-top:80px;padding-top:32px;padding-bottom:0;font-size:.85rem;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;border-top:1px solid var(--border);}
 
         @media(max-width:900px){
-            .product-block{grid-template-columns:1fr;gap:40px;}
-            .product-block.flip{direction:ltr;}
-            nav{padding:0 16px;}
-            nav a{padding:5px 8px;font-size:1rem;min-width:unset;}
-            .page{padding:0 24px 80px;}
-            .font-nudge{bottom:16px;right:16px;}
+            .product-block{grid-template-columns:1fr;}
+            .product-date-col{padding-right:0;padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid var(--border-dim);}
+            .product-date-col::after{display:none;}
+            .product-body{padding-left:0;}
         }
     </style>
 </head>
@@ -249,17 +240,17 @@
             <div class="webp-split">
                 <div class="webp-split-text">
                     <p>
-                        Batch convert your image library to WebP &mdash; and, with Pro, your video library to WebM. Smaller files, faster load times, zero uploads.
+                        Batch convert your image library to WebP — and, with Pro, your video library to WebM. Smaller files, faster load times, zero uploads.
                     </p>
                     <p>
-                        Every image and video on the web should be WebP and WebM &mdash; the formats browsers were built for. <em>Select a folder</em>, set a quality level, and batch convert the lot in seconds, right on your Mac. <strong>No uploads, no accounts, no cloud</strong> — everything happens locally, and the results screen shows exactly how much space you've saved per file.
+                        Every image and video on the web should be WebP and WebM — the formats browsers were built for. <em>Select a folder</em>, set a quality level, and batch convert the lot in seconds, right on your Mac. <strong>No uploads, no accounts, no cloud</strong> — everything happens locally, and the results screen shows exactly how much space you've saved per file.
                     </p>
                     <ul class="feature-list">
                         <li>Batch convert entire folders — PNG, JPG, GIF and more</li>
                         <li>Adjustable compression quality with real-time file size comparison</li>
                         <li>Add prefix, suffix, or auto-numbering to output filenames</li>
                         <li>Download individually or as a single zip — no cloud, fully offline</li>
-                        <li>Native Apple Silicon &mdash; built for M1, M2, M3, and M4 Macs</li>
+                        <li>Native Apple Silicon — built for M1, M2, M3, and M4 Macs</li>
                         <li>Requires macOS 12 or later</li>
                         <li><strong>Pro adds:</strong> batch convert video too (MP4, MOV &rarr; WebM), mixed into the same image batch, with its own adjustable bitrate</li>
                     </ul>
@@ -307,7 +298,7 @@
             <p>
                 Detects exact and visually similar duplicates. Group review side by side. Adjustable sensitivity. Supports JPG, PNG, WEBP, HEIC, GIF, BMP and more. Up to 1,000 images per session. <strong>100% local — nothing leaves your Mac.</strong>
             </p>
-            <img src="../assets/dupe-remove-one.webp" alt="Dupe Remove — Duplicate Image Cleaner for Mac"
+            <img src="assets/dupe-remove-one.webp" alt="Dupe Remove — Duplicate Image Cleaner for Mac"
                  style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:0;margin-top:4px;margin-bottom:28px;display:block;">
             <div>
                 <a href="https://davidpaul2.gumroad.com/l/wfujsa" target="_blank" class="buy-btn">Buy Now — £19</a>
@@ -336,7 +327,7 @@
             <p>
                 Built entirely with vanilla JavaScript. Real-time preview, desktop/tablet/mobile modes, Find &amp; Replace with regex, HTMLHint debug panel, Inspect mode, version rollback, and export as raw, formatted or minified HTML.
             </p>
-            <img src="../assets/html-live-on-macbook.webp" alt="HTML Live running on a MacBook"
+            <img src="assets/html-live-on-macbook.webp" alt="HTML Live running on a MacBook"
                  style="width:100%;max-width:100%;border:1px solid var(--border);border-radius:0;margin-top:4px;margin-bottom:28px;display:block;">
             <div>
                 <a href="https://github.com/aherndavid/dpaulstudio/releases/download/v2.1.0/HTML.Live.Preview-2.1.0-universal.dmg" target="_blank" class="buy-btn">Get HTML&#8209;Live</a>

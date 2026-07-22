@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    // Find the current filename (e.g., 'design.html')
-    var path = window.location.pathname.split("/").pop();
-    // If we're at the root, default to index.html
-    if (path === "") path = "index.html";
-    // Send them to the exact same page but inside the /m/ folder
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +8,7 @@
     <title>Synths — dPaul Technologies</title>
     
     <style>
-/* Added CSS rule for the share button font and size matching the main menu */
+    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -139,7 +129,7 @@
             content: '';
             position: fixed;
             top: 72px; left: 0; right: 0; bottom: 0;
-            background-image: url('../assets/keys.webp');
+            background-image: url('assets/keys.webp');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
@@ -502,7 +492,7 @@
             <p class="instrument-story" style="margin-bottom:16px;">This one shipped as DP-ONE MKVI and grew enough — a full drum kit, an arpeggiator, per-drum FX, an AI bass generator — that it earned its own name: <strong style="color:var(--cream);">DP-Evolution</strong>. Same rebuilt engine from the MkV, several rounds of real-world use on top. It's available two ways: play it instantly right here in the browser — free, no install, no account — or download it as a native Mac app, built with Electron on the same Web Audio engine, that installs and runs like any other piece of studio software.</p>
 
             <div style="display:flex; gap:40px; align-items:flex-start; margin-bottom:16px;" class="evo-split-row">
-                <video src="../assets/evo-promo-v2.webm" autoplay muted loop playsinline poster="../assets/dp-one-large.webp" style="width:50%;flex:0 0 50%;border-radius:0;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,0.7));"></video>
+                <video src="assets/evo-promo-v2.webm" autoplay muted loop playsinline poster="assets/dp-one-large.webp" style="width:50%;flex:0 0 50%;border-radius:0;display:block;filter:drop-shadow(0 24px 40px rgba(0,0,0,0.7));"></video>
                 <div style="flex:1;">
                     <p class="instrument-story">Three synth engines — SuperSaw, Moog Bass, and FM Lead — feed through a full seven-mode filter bank with LFO, envelope, drive, chorus, BPM-locked echo, and convolution reverb. A nine-track drum sequencer — kick, snare, hat, tom, rim, shaker, clap, crash, plus a synth track — runs alongside a dual bass sequencer with six engine types: Sub Bass, Acid 303, Slap Bass, Rubber, Reese, and Click Bass.</p>
                 </div>
@@ -531,7 +521,7 @@
                 <span class="skill-tag">3 preset slots · JSON export</span>
             </div>
             <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-                <a href="../dpone/dp-evo.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block;">Launch in Browser</a>
+                <a href="dpone/dp-evo.html" target="_blank" rel="noopener noreferrer" class="launch-btn" style="display:inline-block;">Launch in Browser</a>
                 <a href="https://davidpaul2.gumroad.com/l/fycixk" target="_blank" rel="noopener noreferrer" class="launch-btn secondary" style="display:inline-block;">Download for Mac</a>
             </div>
             <p style="font-size:calc(1.066rem * var(--font-scale)); color:var(--dim); letter-spacing:0.08em; margin-top:8px;">Browser: free forever &nbsp;·&nbsp; no install &nbsp;·&nbsp; no account required &nbsp;&nbsp;|&nbsp;&nbsp; Mac app: native Electron build, available on Gumroad</p>
@@ -633,11 +623,11 @@
             </div>
             <div class="origin-image-wrap">
                 <div class="origin-img-frame" style="margin-bottom:16px;">
-                    <img src="../assets/loot.webp" alt="The Loot classified ads newspaper" class="origin-img">
+                    <img src="assets/loot.webp" alt="The Loot classified ads newspaper" class="origin-img">
                     <div class="origin-img-caption"><span class="origin-img-tag" data-i18n="tag_pre_internet">Pre-internet</span>The Loot - classified ads on paper. No photos, no reviews, just a phone number.</div>
                 </div>
                 <div class="origin-img-frame">
-                    <img src="../assets/korg-m1.webp" alt="Korg M1 synthesiser - the instrument that started everything" class="origin-img">
+                    <img src="assets/korg-m1.webp" alt="Korg M1 synthesiser - the instrument that started everything" class="origin-img">
                     <div class="origin-img-caption"><span class="origin-img-tag">1991</span>The Korg M1. Bought for 300 pounds. Found one floor away.</div>
                 </div>
                 <div class="origin-footnote" style="margin-top:16px;">
@@ -659,12 +649,12 @@
                 <p class="instrument-story" style="margin-bottom:40px;">Every journey starts somewhere. This one started with a single prompt and a question - can a working synth actually be built in a browser with no coding background? One oscillator, three waveforms, a basic filter, a two-octave keyboard. Barely anything. But it made sound, it responded to the keys, and that was enough to keep going. Everything else on this page grew from here.</p>
                 <div class="mki-embed-wrap">
                     <div class="mki-label" data-i18n="mki_live_label">// Live instrument - click a key to play</div>
-                    <iframe class="mki-iframe" style="height: 440px;" src="../dpone/dpone-mki.html" scrolling="no" title="DPAUL Synth MKI v1.0"></iframe>
+                    <iframe class="mki-iframe" style="height: 440px;" src="dpone/dpone-mki.html" scrolling="no" title="DPAUL Synth MKI v1.0"></iframe>
                     <div class="mki-footer">1 oscillator &nbsp;·&nbsp; 3 waveforms &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard &nbsp;·&nbsp; ~80 lines of JS</div>
                 </div>
             </div>
             <div class="instrument-visual">
-                <img src="../assets/dpone-mki-3d.webp" alt="DPAUL Synth MKI - 3D render" class="synth-3d-img">
+                <img src="assets/dpone-mki-3d.webp" alt="DPAUL Synth MKI - 3D render" class="synth-3d-img">
                 <p class="visual-caption" data-i18n="mki_caption">MKI — 3D render from HTML UI screenshot</p>
             </div>
         </div>
@@ -681,12 +671,12 @@
                 <p class="instrument-story" style="margin-bottom:40px;">Try holding several keys at once with the arp running - it's one of those features that immediately makes you want to play rather than just test.</p>
                 <div class="mki-embed-wrap">
                     <div class="mki-label" data-i18n="mkii_live_label">// Live instrument - hold a key, toggle ARP ON</div>
-                    <iframe class="mki-iframe" style="height: 440px;" src="../dpone/dpone-mkii.html" scrolling="no" title="DPAUL Synth MKII PolyArp"></iframe>
+                    <iframe class="mki-iframe" style="height: 440px;" src="dpone/dpone-mkii.html" scrolling="no" title="DPAUL Synth MKII PolyArp"></iframe>
                     <div class="mki-footer">4-voice engine &nbsp;·&nbsp; voice spread/detune &nbsp;·&nbsp; arpeggiator with tempo + octave range &nbsp;·&nbsp; lowpass filter &nbsp;·&nbsp; 2-octave keyboard</div>
                 </div>
             </div>
             <div class="instrument-visual">
-                <img src="../assets/dpone-mkii-3d.webp" alt="DPAUL Synth MKII - 3D render" class="synth-3d-img">
+                <img src="assets/dpone-mkii-3d.webp" alt="DPAUL Synth MKII - 3D render" class="synth-3d-img">
                 <p class="visual-caption" data-i18n="mkii_caption">MKII PolyArp — 3D render from HTML UI screenshot</p>
             </div>
         </div>
@@ -725,7 +715,7 @@
                 <p class="instrument-story" style="margin-bottom: 28px;">The rebuild itself took two to three days. The six months of knowledge that made it possible — knowing what to ask for, which decisions would cause problems later, what was worth carrying across — is what actually took the time. It's still an ongoing project, running alongside several others at once, picked up and set aside as ideas arrive.</p>
             </div>
             <div style="position: sticky; top: 100px;">
-                <img src="../assets/dpone-mki-lif-off.webp" alt="DPAUL Synth MKI lift off" class="synth-3d-img" style="border-radius:0;">
+                <img src="assets/dpone-mki-lif-off.webp" alt="DPAUL Synth MKI lift off" class="synth-3d-img" style="border-radius:0;">
             </div>
         </div>
     </div>
@@ -747,10 +737,10 @@
                     <li><span class="spec-key">MIDI</span><span class="spec-val" data-i18n="acid_midi_val">Full MIDI input support</span></li>
                     <li><span class="spec-key" data-i18n="spec_platform">Platform</span><span class="spec-val" data-i18n="acid_platform_val">Browser - no install required</span></li>
                 </ul>
-                <a href="../acid-box/acid-box-desktop.html" target="_blank" class="launch-btn" data-i18n="acid_launch_btn">Launch Acid-Box</a>
+                <a href="acid-box/acid-box-desktop.html" target="_blank" class="launch-btn" data-i18n="acid_launch_btn">Launch Acid-Box</a>
             </div>
             <div class="instrument-visual">
-                <img id="acid-box-render" src="../assets/acid-box-3d-01.webp" alt="Acid-Box 3D render" class="synth-3d-img">
+                <img id="acid-box-render" src="assets/acid-box-3d-01.webp" alt="Acid-Box 3D render" class="synth-3d-img">
                 <p class="visual-caption" data-i18n="acid_caption">3D render generated from HTML UI screenshot</p>
             </div>
         </div>
@@ -770,7 +760,7 @@
         </p>
 
         <div style="width: 100%; overflow-x: auto; margin-bottom: 10px;">
-            <img src="../assets/all-synths.webp" alt="Hardware synthesisers owned over thirty years" style="width: 100%; min-width: 900px; height: auto; display: block; border-radius:0; mix-blend-mode: lighten;">
+            <img src="assets/all-synths.webp" alt="Hardware synthesisers owned over thirty years" style="width: 100%; min-width: 900px; height: auto; display: block; border-radius:0; mix-blend-mode: lighten;">
         </div>
         <p class="hw-list" style="font-size: calc(1.066rem * var(--font-scale)); color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; margin-bottom: 40px; text-align: center;">
             M1 &nbsp;·&nbsp; Triton &nbsp;·&nbsp; E-mu Proteus &nbsp;·&nbsp; ER-1 &amp; EA-1 &nbsp;·&nbsp; MicroKorg &nbsp;·&nbsp; Microsampler &nbsp;·&nbsp; Monologue &nbsp;·&nbsp; Roland FP-10
@@ -1096,7 +1086,7 @@
     })();
 
     const acidBoxImg = document.getElementById('acid-box-render');
-    const acidImages = ["../assets/acid-box-3d-01.webp", "../assets/acid-box-3d-02.webp"];
+    const acidImages = ["assets/acid-box-3d-01.webp", "assets/acid-box-3d-02.webp"];
     let acidIdx = 0;
     acidImages.forEach(src => { const i = new Image(); i.src = src; });
     setInterval(() => {
@@ -1113,7 +1103,6 @@
 
 <script src="share.js"></script>
 <script src="post-generator.js"></script>
-
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 

@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    var path = window.location.pathname.split("/").pop();
-    if (path === "") path = "index.html";
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Fun — dPaul Technologies</title>
     <style>
-/* Added CSS rule for the share button font and size matching the main menu */
+    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -245,14 +238,14 @@
     <div class="tool-block flip reveal" id="fun-skribla" data-post-section data-post-title="dPaul Studio — Skribla">
         <div class="tool-visual">
             <div class="tool-frame">
-                <img src="../assets/skribla-on-desk.webp" alt="Skribla on iPhone" style="width:100%;height:auto;display:block;">
+                <img src="assets/skribla-on-desk.webp" alt="Skribla on iPhone" style="width:100%;height:auto;display:block;">
             </div>
         </div>
         <div class="tool-info">
             <div class="tool-sub">// 01 — Scribble Pad</div>
             <h3>Skribla</h3>
             <p class="tool-story">A touch-friendly scribble pad that works on any device. Draw, sketch, doodle — lightweight and built for mobile.</p>
-            <a href="../tools/skribla/index.html" target="_blank" class="launch-btn">Launch Skribla &#8594;</a>
+            <a href="tools/skribla/index.html" target="_blank" class="launch-btn">Launch Skribla &#8594;</a>
         </div>
     </div>
 
@@ -261,7 +254,7 @@
         <div class="tool-visual">
             <div class="tool-frame" style="position:relative;overflow:hidden;border:none;background:transparent;border-radius:0;">
                 <div style="width:50%;aspect-ratio:9/16;position:relative;margin:0 auto;">
-                    <video src="../assets/neon.webm" style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;" autoplay loop muted playsinline></video>
+                    <video src="assets/neon.webm" style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;" autoplay loop muted playsinline></video>
                 </div>
             </div>
         </div>
@@ -278,7 +271,7 @@
         <div class="tool-visual">
             <div class="tool-frame" style="overflow:hidden;border:none;background:transparent;border-radius:0;">
                 <div style="width:50%;aspect-ratio:9/16;position:relative;margin:0 auto;border:1px solid var(--orange);border-radius:0;overflow:hidden;">
-                    <img src="../assets/snake.webp" alt="Snake — pixelated browser snake game" style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;display:block;">
+                    <img src="assets/snake.webp" alt="Snake — pixelated browser snake game" style="width:100%;height:100%;position:absolute;top:0;left:0;object-fit:cover;display:block;">
                 </div>
             </div>
         </div>
@@ -374,7 +367,7 @@
     flex-direction:column; align-items:center; justify-content:center;
 ">
     <iframe id="snakeFrame"
-        src="https://aherndavid.github.io/dpaulstudio/snake.html"
+        src="snake.html"
         style="border:none; border-radius:0; transition: width 0.8s cubic-bezier(0.22,1,0.36,1), height 0.8s cubic-bezier(0.22,1,0.36,1);"
         width="320" height="420">
     </iframe>

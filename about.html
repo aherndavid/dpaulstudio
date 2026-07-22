@@ -1,22 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    var path = window.location.pathname.split("/").pop();
-    if (path === "" || path === "index.html") path = "index.html";
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>About — dPaul Technologies</title>
-    
 
     <style>
-/* Added CSS rule for the share button font and size matching the main menu */
+    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -77,7 +69,6 @@
         html[data-theme="light"] #dp-share-btn:hover,
         html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
 
-
         /* ── THEME TOGGLE ── */
         .theme-toggle {
             background: none; border: 1px solid var(--border-dim); color: var(--cream);
@@ -117,7 +108,6 @@
         html[data-theme="light"] .studio-log-card [style*="color: var(--orange)"],
         html[data-theme="light"] .studio-log-card [style*="color:var(--orange)"] { color: #e6432a !important; }
 
-        /* All cards/sections — semi-opaque black with white text in light mode */
         html[data-theme="light"] .skill-card,
         html[data-theme="light"] .portfolio-card {
             background: rgba(0,0,0,0.75) !important;
@@ -144,7 +134,6 @@
             overflow-x: hidden;
         }
 
-        /* Grain Overlay - Top level */
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -152,7 +141,6 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* Background image forced to -1 to stay behind content */
         body::after {
             content: '';
             position: fixed;
@@ -209,7 +197,6 @@
 
         #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
 
-        /* ── MINI EQ IN NAV ── */
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
             height: 22px; margin: 0 24px; padding-bottom: 2px;
@@ -219,18 +206,6 @@
             transition: height 0.1s ease; border-radius:0;
         }
 
-        /* ── LANGUAGE SWITCHER ── */
-        #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
-        .lang-btn {
-            background: none; border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35); font-family:'JetBrains Mono', monospace;
-            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
-            cursor: pointer; transition: all 0.2s; text-transform: uppercase;
-        }
-        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
-        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
-
-        /* Page content elevated above background */
         .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 80px; position: relative; z-index: 1; }
 
         .hero { padding: 80px 0 48px; border-bottom: 1px solid var(--border); }
@@ -398,7 +373,6 @@
         .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
         .reveal.visible { opacity: 1; transform: none; }
 
-        /* ── FIX 2: Business Card CSS ── */
         .card-intro {
             color: var(--cream);
             font-family:'JetBrains Mono', monospace;
@@ -442,7 +416,6 @@
         }
         .dl-btn:hover { background: var(--orange); color: var(--bg); }
 
-        /* ── GALLERY GRID ── */
         .gallery-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -473,7 +446,6 @@
         }
         .gallery-item:hover .gallery-overlay { opacity: 1; }
 
-        /* ── LIGHTBOX ── */
         .lightbox {
             position: fixed; inset: 0; z-index: 9000;
             background: rgba(0,0,0,0.92);
@@ -520,7 +492,7 @@
             .lightbox-prev { left: 8px; }
             .lightbox-next { right: 8px; }
         }
-        /* ── COMPANY FOOTER ── */
+
         .company-footer {
             margin-top: 48px; padding: 32px 0;
             border-top: 1px solid var(--border-dim);
@@ -533,7 +505,6 @@
         .company-footer-val a:hover { color: var(--orange); }
         .company-footer-note { font-size: 0.84rem; color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
 
-        /* ── FOOTER ── */
         .footer-line {
             margin-top: 80px; padding-top: 32px; padding-bottom: 0;
             font-size: 0.85rem; letter-spacing: 0.15em;
@@ -638,14 +609,14 @@
             </div>
             <div>
                 <div class="photo-frame">
-                    <img src="../assets/me.webp" alt="David">
+                    <img src="assets/me.webp" alt="David">
                 </div>
             </div>
         </div>
     </section>
 
     <div class="reveal" style="width: 100vw; margin-left: calc(-50vw + 50%); overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-        <img src="../assets/dpaul-lambo-front.webp" alt="dPaul Technologies — Gatecrasher Black Lamborghini wrap" style="width: 100%; display: block; object-fit: cover; filter: brightness(0.92); transition: filter 0.4s;" onmouseover="this.style.filter='brightness(1)'" onmouseout="this.style.filter='brightness(0.92)'">
+        <img src="assets/dpaul-lambo-front.webp" alt="dPaul Technologies — Gatecrasher Black Lamborghini wrap" style="width: 100%; display: block; object-fit: cover; filter: brightness(0.92); transition: filter 0.4s;" onmouseover="this.style.filter='brightness(1)'" onmouseout="this.style.filter='brightness(0.92)'">
     </div>
 
     <section class="section reveal" id="about-disciplines" data-post-section data-post-title="dPaul Studio — Skills & Disciplines">
@@ -695,24 +666,6 @@
         </a>
     </section>
 
-    <!--  GALLERY — hidden for now
-    <section class="section reveal" id="about-gallery" data-post-section data-post-title="dPaul Studio — Still Gallery">        <div class="section-label" data-i18n="gallery_label">// 03 — Still Gallery</div>
-        <h2 data-i18n="gallery_h2">Captured Moments.</h2>
-        <div class="gallery-grid">
-            <div class="gallery-item"><img src="assets/stills/still-001.webp" alt="Still 001"><div class="gallery-overlay">001</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-002.webp" alt="Still 002"><div class="gallery-overlay">002</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-003.webp" alt="Still 003"><div class="gallery-overlay">003</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-004.webp" alt="Still 004"><div class="gallery-overlay">004</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-005.webp" alt="Still 005"><div class="gallery-overlay">005</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-006.webp" alt="Still 006"><div class="gallery-overlay">006</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-007.webp" alt="Still 007"><div class="gallery-overlay">007</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-008.webp" alt="Still 008"><div class="gallery-overlay">008</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-009.webp" alt="Still 009"><div class="gallery-overlay">009</div></div>
-            <div class="gallery-item"><img src="assets/stills/still-010.webp" alt="Still 010"><div class="gallery-overlay">010</div></div>
-        </div>
-    </section>
-    GALLERY — end -->
-
     <!-- BUSINESS CARD SECTION -->
     <section class="section reveal" id="about-card" data-post-section data-post-title="dPaul Studio — Business Card">
         <div class="section-label">// 04 — Business Card</div>
@@ -723,27 +676,26 @@
             <div class="flip-card">
                 <div class="flip-card-inner">
                     <div class="flip-card-front">
-                        <img src="../assets/card-design-two-front.webp" alt="dPaul Studio business card front" />
+                        <img src="assets/card-design-two-front.webp" alt="dPaul Studio business card front" />
                     </div>
                     <div class="flip-card-back">
-                        <img src="../assets/card-design-two-rear.webp" alt="dPaul Studio business card back" />
+                        <img src="assets/card-design-two-rear.webp" alt="dPaul Studio business card back" />
                     </div>
                 </div>
             </div>
             <p class="flip-hint">hover to flip</p>
         </div>
 
-        <!-- FIX 3: corrected download paths (removed /images/ subfolder) -->
         <div class="card-downloads">
-            <a class="dl-btn" href="../assets/card-design-two-front.webp" download="dpaul-studio-card-front.webp">↓ front</a>
-            <a class="dl-btn" href="../assets/card-design-two-rear.webp" download="dpaul-studio-card-back.webp">↓ back</a>
+            <a class="dl-btn" href="assets/card-design-two-front.webp" download="dpaul-studio-card-front.webp">↓ front</a>
+            <a class="dl-btn" href="assets/card-design-two-rear.webp" download="dpaul-studio-card-back.webp">↓ back</a>
         </div>
     </section>
 
     <section class="section reveal" id="about-contact" data-post-section data-post-title="dPaul Studio — Get in Touch">
         <div class="section-label" data-i18n="about_contact_label">// 05 — Get in Touch</div>
         <div style="display: flex; align-items: flex-end; gap: 32px; margin-bottom: 40px;">
-            <img src="../assets/old-mobile-landscape.webp" alt="Get in touch" style="width: 220px; opacity: 0.85; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6)); flex-shrink: 0;">
+            <img src="assets/old-mobile-landscape.webp" alt="Get in touch" style="width: 220px; opacity: 0.85; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6)); flex-shrink: 0;">
             <h2 style="margin-bottom: 0;" data-i18n="about_contact_h2">Let's talk.</h2>
         </div>
 
@@ -753,7 +705,7 @@
                 <div class="cv-strip">
                     <p data-i18n="cv_strip_p"><strong>Agencies</strong> can download a copy of my current CV, covering IT infrastructure and creative technology work.</p>
                     <div class="cv-link-group">
-                        <a href="../assets/cv/cv.html" target="_blank" class="cv-link" data-i18n="cv_link_full">Download CV</a>
+                        <a href="assets/cv/cv.html" target="_blank" class="cv-link" data-i18n="cv_link_full">Download CV</a>
                     </div>
                 </div>
             </div>
@@ -1034,68 +986,8 @@
     })();
 </script>
 
-<!-- ── LIGHTBOX ── -->
-<div class="lightbox" id="lightbox" onclick="lbClickOutside(event)">
-    <button class="lightbox-close" onclick="lbClose()">&times;</button>
-    <button class="lightbox-prev" onclick="lbStep(-1)">&#8592;</button>
-    <img class="lightbox-img" id="lightboxImg" src="" alt="">
-    <button class="lightbox-next" onclick="lbStep(1)">&#8594;</button>
-    <div class="lightbox-counter" id="lightboxCounter"></div>
-</div>
-
-<script>
-    (function() {
-        const items = Array.from(document.querySelectorAll('.gallery-item'));
-        let current = 0;
-
-        function lbOpen(idx) {
-            current = idx;
-            const img = items[current].querySelector('img');
-            document.getElementById('lightboxImg').src = img.src;
-            document.getElementById('lightboxImg').alt = img.alt;
-            document.getElementById('lightboxCounter').textContent = (current + 1) + ' / ' + items.length;
-            document.getElementById('lightbox').classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        window.lbClose = function() {
-            document.getElementById('lightbox').classList.remove('open');
-            document.body.style.overflow = '';
-        };
-
-        window.lbStep = function(dir) {
-            current = (current + dir + items.length) % items.length;
-            const img = items[current].querySelector('img');
-            const lbImg = document.getElementById('lightboxImg');
-            lbImg.style.opacity = '0';
-            setTimeout(() => {
-                lbImg.src = img.src;
-                lbImg.alt = img.alt;
-                lbImg.style.opacity = '1';
-                document.getElementById('lightboxCounter').textContent = (current + 1) + ' / ' + items.length;
-            }, 150);
-        };
-
-        window.lbClickOutside = function(e) {
-            if (e.target === document.getElementById('lightbox')) lbClose();
-        };
-
-        document.addEventListener('keydown', function(e) {
-            const lb = document.getElementById('lightbox');
-            if (!lb.classList.contains('open')) return;
-            if (e.key === 'Escape') lbClose();
-            if (e.key === 'ArrowLeft') lbStep(-1);
-            if (e.key === 'ArrowRight') lbStep(1);
-        });
-
-        items.forEach((item, idx) => item.addEventListener('click', () => lbOpen(idx)));
-        document.getElementById('lightboxImg').style.transition = 'opacity 0.15s ease';
-    })();
-</script>
-
 <script src="share.js"></script>
 <script src="post-generator.js"></script>
-
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 

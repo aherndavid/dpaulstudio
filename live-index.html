@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    // Find the current filename (e.g., 'design.html')
-    var path = window.location.pathname.split("/").pop();
-    // If we're at the root, default to index.html
-    if (path === "") path = "index.html";
-    // Send them to the exact same page but inside the /m/ folder
-    window.location.replace('m-' + path);
-  }
-</script>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,11 +30,17 @@
             background-attachment: fixed;
             background-blend-mode: luminosity;
             font-family:'JetBrains Mono', monospace;
-            overflow: hidden;
+            overflow-x: hidden;
             color: var(--cream);
         }
 
-        body { position: relative; }
+        body {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
         body::before {
             content: '';
@@ -63,20 +59,19 @@
 
         /* ── BRAND GROUP ── */
         #brand-group {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             z-index: 10;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-shadow: 0 0 20px rgba(0,0,0,0.8);
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
         }
 
         .eq-bar {
-            width: 9px;
+            width: 7px;
             background: var(--orange);
             transition: height 0.1s ease;
             flex-shrink: 0;
@@ -84,7 +79,7 @@
 
         .wordmark {
             font-family:'Anton', sans-serif;
-            font-size: clamp(5.5rem, 16vw, 14rem);
+            font-size: clamp(4.5rem, 15vw, 13rem);
             font-weight: 400;
             line-height: 0.85;
             color: #FFFFFF;
@@ -106,6 +101,7 @@
             margin-bottom: 8px;
             display: flex;
             align-items: flex-end;
+            justify-content: center;
             gap: 3px;
             height: 36px;
             pointer-events: none;
@@ -117,31 +113,33 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0;
-            margin-top: 28px;
+            gap: 8px 0;
+            margin-top: 36px;
             align-self: center;
+            max-width: 900px;
         }
 
         .nav-link {
             text-decoration: none;
             color: rgba(255, 255, 255, 0.45);
-            font-size: clamp(1rem, 2vw, 1.6rem);
+            font-size: clamp(0.9rem, 1.8vw, 1.4rem);
             font-weight: 700;
             text-transform: lowercase;
             letter-spacing: 0.08em;
             white-space: nowrap;
             transition: color 0.2s ease;
-            padding: 0 20px;
+            padding: 4px 16px;
         }
 
         .nav-link:hover { color: var(--orange); }
 
         @media (max-width: 768px) {
-            #brand-group { width: 90%; }
-            .wordmark { font-size: clamp(4.5rem, 18vw, 7rem); }
-            #nav-bar { margin-top: 20px; }
-            .nav-link { font-size: clamp(0.85rem, 4vw, 1.1rem); padding: 4px 12px; }
-            #lang-switcher { top: 14px; right: 16px; }
+            html, body { overflow-y: auto; }
+            body { align-items: flex-start; padding: 60px 0; }
+            #brand-group { width: 95%; }
+            .wordmark { font-size: clamp(3.8rem, 16vw, 6.5rem); }
+            #nav-bar { margin-top: 28px; gap: 6px 0; }
+            .nav-link { font-size: 0.95rem; padding: 4px 10px; }
         }
     </style>
 </head>
@@ -152,38 +150,23 @@
             <span class="accent"><div id="eq-container"></div>d</span>paul<br>.studio
         </div>
         <nav id="nav-bar">
-
-
-            <a href="about.html"     class="nav-link" data-i18n="nav_about">about</a>
-            <a href="current.html"    class="nav-link">current</a>
-            <a href="design.html"    class="nav-link" data-i18n="nav_design">design</a>
-            <a href="fun.html"    class="nav-link">fun</a>
-
-            <a href="merch.html"     class="nav-link" data-i18n="nav_merch">merch</a>
-            <a href="music.html"     class="nav-link" data-i18n="nav_music">music</a>
-
-            <a href="services.html"   class="nav-link">services</a>
-            <a href="software.html"  class="nav-link">software</a>
-            <a href="synths.html"    class="nav-link" data-i18n="nav_synths">synths</a>
-            <a href="tools.html"     class="nav-link" data-i18n="nav_tools">tools</a>
-            <a href="video.html"     class="nav-link" data-i18n="nav_video">video</a>
-            
-            
-           
-           
-
-
-
-
-
-
+            <a href="about.html" class="nav-link" data-i18n="nav_about">about</a>
+            <a href="current.html" class="nav-link">current</a>
+            <a href="design.html" class="nav-link" data-i18n="nav_design">design</a>
+            <a href="fun.html" class="nav-link">fun</a>
+            <a href="merch.html" class="nav-link" data-i18n="nav_merch">merch</a>
+            <a href="music.html" class="nav-link" data-i18n="nav_music">music</a>
+            <a href="services.html" class="nav-link">services</a>
+            <a href="software.html" class="nav-link">software</a>
+            <a href="synths.html" class="nav-link" data-i18n="nav_synths">synths</a>
+            <a href="tools.html" class="nav-link" data-i18n="nav_tools">tools</a>
+            <a href="video.html" class="nav-link" data-i18n="nav_video">video</a>
         </nav>
     </div>
 
     <!-- i18n engine -->
     <script src="assets/translations.js"></script>
     <script>
-        // Init language on load (respects saved preference & browser language)
         document.addEventListener('DOMContentLoaded', I18N.init);
     </script>
 

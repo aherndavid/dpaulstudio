@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    var path = window.location.pathname.split("/").pop();
-    if (path === "") path = "index.html";
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <title>Tools — dPaul Technologies</title>
     <style>
-/* Added CSS rule for the share button font and size matching the main menu */
+    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -72,7 +65,7 @@
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono', monospace;font-size:130%;min-height:100vh;overflow-x:hidden;}
         body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.35;}
-        body::after{content:'';position:fixed;top:72px;left:0;right:0;bottom:0;background-image:url('../assets/tools.jpg');background-size:cover;background-position:center top;background-repeat:no-repeat;opacity:.08;pointer-events:none;z-index:-1;}
+        body::after{content:'';position:fixed;top:72px;left:0;right:0;bottom:0;background-image:url('assets/tools.jpg');background-size:cover;background-position:center top;background-repeat:no-repeat;opacity:.08;pointer-events:none;z-index:-1;}
 
         .font-nudge{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--bg2);border:1px solid var(--border);border-radius:0;padding:12px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .3s;}
         .font-nudge-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);}
@@ -332,10 +325,10 @@
                     <li><span class="spec-key">Features</span><span class="spec-val">Peak Hold &#183; Test Tone &#183; Reset</span></li>
                     <li><span class="spec-key">Engine</span><span class="spec-val">Vanilla JS / Web Audio API</span></li>
                 </ul>
-                <a href="../vu-launcher-desktop.html" target="_blank" class="launch-btn">Launch VU Meter &#8594;</a>
+                <a href="vu-launcher-desktop.html" target="_blank" class="launch-btn">Launch VU Meter &#8594;</a>
             </div>
             <div class="instrument-visual vu-visual">
-                <img src="../assets/vu.webp" alt="dPaul VU Meter" class="tool-render-img img-small">
+                <img src="assets/vu.webp" alt="dPaul VU Meter" class="tool-render-img img-small">
             </div>
         </div>
     </div>
@@ -356,7 +349,7 @@
                 <a href="https://dpaul.studio/tools/tts/tts-desktop-v3.html" onclick="window.open('https://dpaul.studio/tools/tts/tts-desktop-v3.html','ttsEngine','width=1400,height=900,resizable=yes,scrollbars=yes'); return false;" class="launch-btn">Launch TTS Engine &#8594;</a>
             </div>
             <div class="instrument-visual tts-visual">
-                <img src="../assets/tts5.webp" alt="dPaul TTS" class="tool-render-img img-large">
+                <img src="assets/tts5.webp" alt="dPaul TTS" class="tool-render-img img-large">
             </div>
         </div>
     </div>

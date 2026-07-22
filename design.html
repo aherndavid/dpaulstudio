@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-        if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-            var path = window.location.pathname.split("/").pop();
-            if (path === "") path = "index.html";
-            window.location.replace('m/' + path);
-        }
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +8,7 @@
     <title>Design — dPaul Technologies</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-/* Added CSS rule for the share button font and size matching the main menu */
+    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -23,13 +16,13 @@
         letter-spacing: 0.05em !important;
     }
         :root {
-            --bg:         #171717;
-            --bg2:        #1e1e1e;
-            --orange:     #e6432a;
-            --cream:      #f4f3ef;
-            --text:       #a8a6a0;
-            --dim:        #8f8d87;
-            --border:     rgba(230,67,42,0.25);
+            --bg:           #171717;
+            --bg2:          #1e1e1e;
+            --orange:       #e6432a;
+            --cream:        #f4f3ef;
+            --text:         #a8a6a0;
+            --dim:          #8f8d87;
+            --border:       rgba(230,67,42,0.25);
             --border-dim: rgba(255,255,255,0.07);
             --font-scale: 1;
         }
@@ -156,17 +149,6 @@
             transition: height 0.1s ease; border-radius:0;
         }
 
-        /* ── LANGUAGE SWITCHER ── */
-        #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
-        .lang-btn {
-            background: none; border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35); font-family:'JetBrains Mono', monospace;
-            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
-            cursor: pointer; transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
-        }
-        .lang-btn:hover  { color: var(--cream); border-color: rgba(255,255,255,0.4); }
-        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
-
         /* ── FONT NUDGE ── */
         .font-nudge {
             position: fixed; bottom: 24px; right: 24px; z-index: 500;
@@ -249,16 +231,16 @@
         .sound-toggle { display: flex; align-items: center; gap: 6px; cursor: pointer; }
         .toggle-label { font-size: 0.7rem; color: var(--dim); user-select: none; }
         .toggle-track {
-            width: 28px; height: 14px; background: var(--orange); border-radius:0;
+            width: 28px; height: 14px; background: #444; border-radius:0;
             position: relative; transition: background 0.2s; cursor: pointer;
         }
-        .toggle-track.off { background: #444; }
+        .toggle-track:not(.off) { background: var(--orange); }
         .toggle-thumb {
-            position: absolute; top: 2px; left: 14px;
+            position: absolute; top: 2px; left: 2px;
             width: 10px; height: 10px; background: #fff;
             border-radius: 50%; transition: left 0.2s;
         }
-        .toggle-track.off .toggle-thumb { left: 2px; }
+        .toggle-track:not(.off) .toggle-thumb { left: 14px; }
 
         @media (max-width: 900px) {
             nav { padding: 0 24px; }
@@ -358,8 +340,8 @@
                 <div class="dot dot-g"></div>
                 <div style="flex:1;"></div>
                 <div class="sound-toggle" id="sound-toggle" title="Sound on/off">
-                    <span class="toggle-label" id="toggle-label">🔊</span>
-                    <div class="toggle-track" id="toggle-track">
+                    <span class="toggle-label" id="toggle-label">🔇</span>
+                    <div class="toggle-track off" id="toggle-track">
                         <div class="toggle-thumb" id="toggle-thumb"></div>
                     </div>
                 </div>
@@ -372,16 +354,16 @@
                     <source src="assets/orange-porsche-with-sound.webm" type="video/webm">
                 </video>
                 <video id="vid3" muted playsinline style="display:none;">
-                    <source src="../assets/autofacts-white-gold-logo.webm" type="video/webm">
+                    <source src="assets/autofacts-white-gold-logo.webm" type="video/webm">
                 </video>
                 <video id="vid4" muted playsinline style="display:none;">
-                    <source src="../assets/motion-wheels-part-1.webm" type="video/webm">
+                    <source src="assets/motion-wheels-part-1.webm" type="video/webm">
                 </video>
                 <video id="vid5" muted playsinline style="display:none;">
-                    <source src="../assets/motion-wheels-part-2.webm" type="video/webm">
+                    <source src="assets/motion-wheels-part-2.webm" type="video/webm">
                 </video>
                 <video id="vid6" muted playsinline style="display:none;">
-                    <source src="../assets/computer-screen.webm" type="video/webm">
+                    <source src="assets/computer-screen.webm" type="video/webm">
                 </video>
             </div>
         </div>
@@ -488,9 +470,6 @@
     const track = document.getElementById('toggle-track');
     const label = document.getElementById('toggle-label');
 
-    track.classList.remove('off');
-    label.textContent = '🔊';
-
     document.getElementById('sound-toggle').addEventListener('click', function () {
         soundOn = !soundOn;
         videos.forEach(v => v.muted = !soundOn);
@@ -539,7 +518,6 @@
 
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
-
 <script src="share.js"></script>
 <script src="post-generator.js"></script>
 </body>
