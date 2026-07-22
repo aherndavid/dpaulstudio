@@ -59,7 +59,7 @@
         html[data-theme="light"] .tts-voice-sel,
         html[data-theme="light"] .tts-section-sel option,
         html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #e6432a !important; color: #e6432a !important; border-color: #000 !important; }
+        html[data-theme="light"] .tts-btn.active { background: #000 !important; color: #e6432a !important; border-color: #000 !important; }
         html[data-theme="light"] .tts-progress,
         html[data-theme="light"] .tts-speed-label,
         html[data-theme="light"] .tts-section-label { color: #000; }
@@ -122,13 +122,26 @@
             z-index: -1; 
         }
 
+        /* ── FONT NUDGE (COLLAPSED BY DEFAULT) ── */
+        .font-nudge-trigger {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            color: var(--orange); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+            padding: 8px 12px; cursor: pointer; border-radius: 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: all 0.15s;
+            text-transform: uppercase; display: flex; align-items: center; gap: 6px;
+        }
+        .font-nudge-trigger:hover { background: var(--orange); color: #000; border-color: var(--orange); }
+
         .font-nudge {
-            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
             border-radius:0; padding: 12px 16px;
-            display: flex; flex-direction: column; gap: 8px;
+            display: none; flex-direction: column; gap: 8px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
         }
+        .font-nudge.open { display: flex; }
         .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
         .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
         .font-btn {
@@ -176,11 +189,11 @@
         }
         .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
 
-        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
+        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
 
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
-            height: 22px; margin: 0 24px; padding-bottom: 2px;
+            height: 22px; margin: 0 16px; padding-bottom: 2px;
         }
         .nav-eq-bar {
             width: 3px; background: var(--orange);
@@ -348,7 +361,7 @@
             border-top: 1px solid var(--border); width: 100%;
         }
 
-        /* ── MOBILE MENU MEDIA QUERY ── */
+        /* ── MOBILE MENU & CONTACT HEADER FIX ── */
         @media (max-width: 900px) {
             nav { padding: 0 16px; justify-content: space-between; }
             .nav-toggle { display: flex; }
@@ -367,6 +380,12 @@
             .skills-grid { grid-template-columns: 1fr 1fr; }
             .contact-split { grid-template-columns: 1fr; gap: 40px; }
             .cv-strip { flex-direction: column; align-items: flex-start; }
+            
+            /* Fixed mobile header stacking for section 05 */
+            #about-contact > div:nth-child(2) { flex-direction: column; align-items: flex-start; gap: 16px !important; }
+            #about-contact img { width: 140px !important; }
+
+            .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
             .font-nudge { bottom: 16px; right: 16px; }
             .page { padding: 0 20px 80px; }
         }
@@ -378,6 +397,7 @@
 </head>
 <body>
 
+<button class="font-nudge-trigger" onclick="toggleNudge()">A+ text size</button>
 <div class="font-nudge" id="fontNudge">
     <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
     <div class="font-nudge-controls">
@@ -385,7 +405,7 @@
         <span class="font-size-indicator" id="fontIndicator">100%</span>
         <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
     </div>
-    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss ×</button>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">hide ×</button>
 </div>
 
 <nav>
@@ -689,6 +709,22 @@
         }
     });
 
+    // ── FONT NUDGE TOGGLE ──
+    function toggleNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        const isOpen = nudge.classList.toggle('open');
+        trigger.style.display = isOpen ? 'none' : 'flex';
+    }
+
+    function dismissNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        nudge.classList.remove('open');
+        trigger.style.display = 'flex';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+
     // ── FONT NUDGE ──
     const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
     let fontScaleIndex = 0;
@@ -702,15 +738,9 @@
         fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
         applyFontScale();
     }
-    function dismissNudge() {
-        document.getElementById('fontNudge').style.opacity = '0';
-        document.getElementById('fontNudge').style.pointerEvents = 'none';
-        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
-    }
     try {
         const saved = localStorage.getItem('dp-font-scale');
         if (saved !== null) { fontScaleIndex = parseInt(saved); applyFontScale(); }
-        if (localStorage.getItem('dp-nudge-dismissed') === '1') { dismissNudge(); }
     } catch(e) {}
 
     // ── SCROLL REVEAL ──
@@ -780,7 +810,7 @@
             }
             const femaleVoice = pickVoice(preferredFemale);
             const maleVoice   = pickVoice(preferredMale);
-            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v!== maleVoice);
+            const fallbacks   = enVoices.filter(v => v !== femaleVoice && v !== maleVoice);
             const options = [
                 { label: '// voice — female', voice: femaleVoice || fallbacks[0] || null },
                 { label: '// voice — male',   voice: maleVoice   || fallbacks[1] || null }
@@ -845,7 +875,7 @@
             if (selectedVoice) u.voice = selectedVoice;
             u.onend = () => { if (!paused) { idx++; speakCurrent(); } };
             currentUtterance = u;
-            synth.swapSpeak = synth.speak(u);
+            synth.speak(u);
         }
 
         window.ttsPlay = function() {
