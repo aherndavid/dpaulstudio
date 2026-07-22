@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    var path = window.location.pathname.split("/").pop();
-    if (path === "") path = "index.html";
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,6 +139,23 @@
         nav a:hover { border-color: var(--orange); color: var(--orange); }
         nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
         .nav-spacer { flex: 1; }
+        .nav-links { display: flex; align-items: center; gap: 2px; }
+
+        /* Hamburger button — hidden on desktop */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+            background: none; border: 1px solid var(--border-dim); cursor: pointer;
+            width: 40px; height: 40px; padding: 0; margin-left: 4px;
+        }
+        .nav-hamburger span {
+            display: block; width: 20px; height: 2px; background: var(--cream);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .nav-hamburger:hover { border-color: var(--orange); }
+        .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
         /* Mini EQ in nav */
         #nav-eq-container {
@@ -428,13 +438,28 @@
 
         @media (max-width: 900px) {
             nav { padding: 0 16px; }
-            nav a { padding: 5px 8px; font-size: 1rem; min-width: unset; }
             .page { padding: 0 24px 80px; }
             .pricing-grid { grid-template-columns: 1fr; }
             .terms-grid { grid-template-columns: 1fr; }
             .cta-block { flex-direction: column; gap: 32px; padding: 32px 24px; }
             .cta-aside { flex-direction: row; }
             .cta-divider { width: 40px; height: 1px; }
+
+            .nav-hamburger { display: flex; }
+            #nav-eq-container { display: none; }
+
+            .nav-links {
+                display: none;
+                position: absolute; top: 72px; left: 0; right: 0;
+                flex-direction: column; align-items: stretch; gap: 0;
+                background: var(--bg); border-bottom: 1px solid var(--border);
+                max-height: calc(100vh - 72px); overflow-y: auto;
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a {
+                padding: 14px 20px; font-size: 1rem; text-align: left;
+                border-bottom: 1px solid var(--border-dim); border-radius: 0;
+            }
         }
         @media (max-width: 600px) {
             .font-nudge { bottom: 16px; right: 16px; }
@@ -517,17 +542,19 @@
 <body>
 
 <nav>
-    <a href="about.html" data-i18n="nav_about">about</a>
-    <a href="current.html" data-i18n="nav_current">current</a>
-    <a href="design.html" data-i18n="nav_design">design</a>
-    <a href="fun.html">fun</a>
-    <a href="merch.html" data-i18n="nav_merch">merch</a>
-    <a href="music.html" data-i18n="nav_music">music</a>
-    <a href="services.html" class="active" data-i18n="nav_services">services</a>
-    <a href="software.html">software</a>
-    <a href="synths.html" data-i18n="nav_synths">synths</a>
-    <a href="tools.html" data-i18n="nav_tools">tools</a>
-    <a href="video.html" data-i18n="nav_video">video</a>
+    <div class="nav-links" id="navLinks">
+        <a href="about.html" data-i18n="nav_about">about</a>
+        <a href="current.html" data-i18n="nav_current">current</a>
+        <a href="design.html" data-i18n="nav_design">design</a>
+        <a href="fun.html">fun</a>
+        <a href="merch.html" data-i18n="nav_merch">merch</a>
+        <a href="music.html" data-i18n="nav_music">music</a>
+        <a href="services.html" class="active" data-i18n="nav_services">services</a>
+        <a href="software.html">software</a>
+        <a href="synths.html" data-i18n="nav_synths">synths</a>
+        <a href="tools.html" data-i18n="nav_tools">tools</a>
+        <a href="video.html" data-i18n="nav_video">video</a>
+    </div>
     <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
@@ -538,6 +565,9 @@
             <line x1="9" y1="22" x2="15" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
+    </button>
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
     </button>
 </nav>
 
@@ -810,6 +840,33 @@
         const savedTheme = localStorage.getItem('dp-theme');
         if (savedTheme) applyTheme(savedTheme);
     } catch(e) {}
+
+    // ── MOBILE HAMBURGER NAV ──
+    function toggleMobileNav() {
+        const links = document.getElementById('navLinks');
+        const btn = document.getElementById('navHamburger');
+        if (!links || !btn) return;
+        const isOpen = links.classList.toggle('open');
+        btn.classList.toggle('open', isOpen);
+        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+    function closeMobileNav() {
+        const links = document.getElementById('navLinks');
+        const btn = document.getElementById('navHamburger');
+        if (!links || !btn) return;
+        links.classList.remove('open');
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const links = document.getElementById('navLinks');
+        if (links) {
+            links.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+        }
+    });
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 900) closeMobileNav();
+    });
 
     // ── NAV EQ ANIMATION ──
     (function() {

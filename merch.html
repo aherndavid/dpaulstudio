@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    var path = window.location.pathname.split("/").pop();
-    if (path === "") path = "index.html";
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -421,6 +414,17 @@
             .product-info-col { padding: 36px 28px; } 
             .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
             .font-nudge { bottom: 16px; right: 16px; }
+
+            /* -- Fix for shipping banner -- */
+            .shipping-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .shipping-banner p {
+                overflow-wrap: break-word; 
+                word-break: break-word; 
+            }
         }
     </style>
 </head>
