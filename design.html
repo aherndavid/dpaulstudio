@@ -31,7 +31,7 @@
             --border-dim: rgba(0,0,0,0.12);
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.55; }
+        html[data-theme="light"] .bg-wrap img { opacity: 0.35; }
         html[data-theme="light"] .hero h1,
         html[data-theme="light"] .hero-text h1,
         html[data-theme="light"] .section h2,
@@ -69,7 +69,13 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html, body {
+        html {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
             width: 100%;
             max-width: 100%;
             overflow-x: hidden;
@@ -89,17 +95,16 @@
         }
 
         /* ── BACKGROUND IMAGE ── */
-        body::after {
-            content: '';
+        .bg-wrap {
             position: fixed;
             top: 72px; left: 0; right: 0; bottom: 0;
-            background-image: url('assets/logos.webp');
-            background-size: cover;
-            background-position: center top;
-            background-repeat: no-repeat;
+            z-index: -1; pointer-events: none;
+        }
+        .bg-wrap img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center top;
             opacity: 0.08;
-            pointer-events: none;
-            z-index: -1;
         }
 
         /* ── NAVIGATION & HAMBURGER ── */
@@ -296,6 +301,10 @@
         <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
     </div>
     <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss ×</button>
+</div>
+
+<div class="bg-wrap">
+    <img src="assets/logos.webp" alt="">
 </div>
 
 <nav>

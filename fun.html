@@ -11,7 +11,7 @@
 
         html[data-theme="light"] { --bg:#f4f3ef;--bg2:#e8e6e0;--orange:#171717;--cream:#2b2b28;--text:#262421;--dim:#8f8d87;--border:rgba(23,23,23,0.35);--border-dim:rgba(0,0,0,0.12); }
         html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.55; }
+        html[data-theme="light"] .bg-wrap img { opacity: 0.35; }
         html[data-theme="light"] .cta-btn { background: #e6432a; color: #000; border: 2px solid #000; }
         html[data-theme="light"] .cta-btn:hover { background: #f0654a; }
         html[data-theme="light"] .launch-btn { background: #e6432a; color: #000; border-color: #e6432a; }
@@ -54,7 +54,13 @@
         
         * { margin:0; padding:0; box-sizing:border-box; }
 
-        html, body {
+        html {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
             width: 100%;
             max-width: 100%;
             overflow-x: hidden;
@@ -66,7 +72,8 @@
         }
 
         body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.35;}
-        body::after{content:'';position:fixed;top:72px;left:0;right:0;bottom:0;background-image:url('assets/man-logo.webp');background-size:cover;background-position:center top;background-repeat:no-repeat;opacity:.08;pointer-events:none;z-index:-1;}
+        .bg-wrap { position: fixed; top: 72px; left: 0; right: 0; bottom: 0; z-index: -1; pointer-events: none; }
+        .bg-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; opacity: .08; }
 
         /* ── FONT NUDGE TRIGGER & PANEL ── */
         .font-nudge-trigger {
@@ -246,6 +253,10 @@
         <button class="font-btn" onclick="adjustFont(1)">A+</button>
     </div>
     <button class="font-nudge-dismiss" onclick="dismissNudge()">dismiss &#215;</button>
+</div>
+
+<div class="bg-wrap">
+    <img src="assets/man-logo.webp" alt="">
 </div>
 
 <nav>
@@ -481,7 +492,6 @@
         window.addEventListener('beforeunload',()=>synth.cancel());
     })();
 </script>
-<script src="share.js"></script>
 <script src="post-generator.js"></script>
 
 <!-- ── SNAKE FALL EFFECT ── -->

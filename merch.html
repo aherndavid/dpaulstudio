@@ -53,9 +53,6 @@
         html[data-theme="light"] .form-field textarea { color: #171310; }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
-        html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
-        html[data-theme="light"] #dp-share-btn:hover,
-        html[data-theme="light"] #dp-share-btn.open { color: var(--orange); border-color: var(--orange); }
         html[data-theme="light"] .btn-buy { background: var(--orange); color: #fff; border-color: var(--orange); }
         html[data-theme="light"] .btn-buy:hover { background: #cc3300; }
 
@@ -135,8 +132,6 @@
             flex-shrink: 0;
         }
         .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
-
-        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
 
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
@@ -534,7 +529,6 @@
             <line x1="10" y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
     </button>
-    <div id="nav-share-container"></div>
 </nav>
 
 <div class="page">
@@ -1357,7 +1351,6 @@
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
 
-<script src="share.js"></script>
 <script src="post-generator.js"></script>
 </body>
 </html>

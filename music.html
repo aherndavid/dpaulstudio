@@ -31,7 +31,7 @@
             --border-dim: rgba(0,0,0,0.12);
         }
         html[data-theme="light"] body::before { opacity: 0.06; }
-        html[data-theme="light"] body::after { opacity: 0.05; }
+        html[data-theme="light"] .bg-wrap img { opacity: 0.35; }
         html[data-theme="light"] .hero h1,
         html[data-theme="light"] .section h2,
         html[data-theme="light"] .portfolio-card h3,
@@ -74,7 +74,13 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html, body {
+        html {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
             width: 100%;
             max-width: 100%;
             overflow-x: hidden;
@@ -94,20 +100,16 @@
         }
 
         /* Renaissance CD background image */
-        body::after {
-            content: '';
+        .bg-wrap {
             position: fixed;
-            top: 72px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('assets/renaissance-cd-cover.webp');
-            background-size: cover;
-            background-position: center top;
-            background-repeat: no-repeat;
+            top: 72px; left: 0; right: 0; bottom: 0;
+            z-index: -1; pointer-events: none;
+        }
+        .bg-wrap img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center top;
             opacity: 0.08;
-            pointer-events: none;
-            z-index: -1; 
         }
 
         /* ── NAV & HAMBURGER ── */
@@ -193,14 +195,14 @@
 
         /* ── HERO ── */
         .hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); max-width: 1000px; }
-        .hero-label { font-size: 1.17rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+        .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
         .hero h1 {
             font-family:'Anton',sans-serif; text-transform:uppercase;
             font-size: clamp(2.86rem, 5.5vw, 5.2rem);
             font-weight: 400; color: #fff; line-height: 1.05; margin-bottom: 20px;
         }
         .hero h1 span { color: var(--orange); }
-        .hero p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; max-width: 600px; color: var(--text); }
+        .hero p { font-size: calc(1.3rem * var(--font-scale)); line-height: 1.9; max-width: 600px; color: var(--text); }
 
         /* ── TTS PLAYER ── */
         .tts-player {
@@ -211,7 +213,7 @@
         .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
         .tts-btn {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family:'JetBrains Mono', monospace; font-size: 1.014rem;
+            font-family:'JetBrains Mono', monospace; font-size: 1rem;
             letter-spacing: 0.1em; padding: 7px 16px; cursor: pointer; border-radius:0;
             transition: all 0.15s; white-space: nowrap;
         }
@@ -219,7 +221,7 @@
         .tts-btn.active { background: var(--orange); color: #000; font-weight: bold; }
         .tts-voice-sel {
             background: #1e201e; border: 1px solid var(--border-dim); color: var(--cream);
-            font-family:'JetBrains Mono', monospace; font-size: 0.936rem;
+            font-family:'JetBrains Mono', monospace; font-size: 0.91rem;
             padding: 5px 10px; border-radius:0; cursor: pointer; outline: none; max-width: 240px;
         }
         .tts-voice-sel:focus { border-color: var(--orange); }
@@ -227,13 +229,13 @@
 
         /* ── SECTIONS ── */
         .section { padding: 72px 0; border-bottom: 1px solid var(--border); }
-        .section-label { font-size: 1.17rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
+        .section-label { font-size: 1.04rem; letter-spacing: 0.25em; color: var(--orange); text-transform: uppercase; margin-bottom: 10px; }
         .section h2 { font-size: clamp(1.82rem, 3.2vw, 2.6rem); font-weight: 700; color: #fff; margin-bottom: 14px; }
-        .section-intro { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.85; max-width: 620px; margin-bottom: 40px; }
+        .section-intro { font-size: calc(1.3rem * var(--font-scale)); line-height: 1.85; max-width: 620px; margin-bottom: 40px; }
 
         /* ── SPLIT / ALBUM ── */
         .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
-        .split-text p { font-size: calc(1.365rem * var(--font-scale)); line-height: 1.9; margin-bottom: 14px; }
+        .split-text p { font-size: calc(1.3rem * var(--font-scale)); line-height: 1.9; margin-bottom: 14px; }
         .split-text p strong { color: var(--orange); font-weight: normal; }
         
         .album-link { text-decoration: none; display: block; width: 100%; }
@@ -280,7 +282,7 @@
         .form-field textarea { resize: vertical; min-height: 110px; }
         .send-btn {
             padding: 13px; background: transparent; border: 1px solid var(--orange); color: var(--orange);
-            font-family:'JetBrains Mono', monospace; font-size: 1.014rem; letter-spacing: 0.2em;
+            font-family:'JetBrains Mono', monospace; font-size: 1rem; letter-spacing: 0.2em;
             text-transform: uppercase; cursor: pointer; border-radius:0; transition: all 0.2s; margin-top: 4px;
         }
         .send-btn:hover { background: var(--orange); color: #000; transform: translateY(-2px); }
@@ -343,6 +345,10 @@
         <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
     </div>
     <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss ×</button>
+</div>
+
+<div class="bg-wrap">
+    <img src="assets/renaissance-cover.webp" alt="">
 </div>
 
 <nav>
