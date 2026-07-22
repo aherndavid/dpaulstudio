@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-  if (/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768) {
-    var path = window.location.pathname.split("/").pop();
-    if (path === "") path = "index.html";
-    window.location.replace('m/' + path);
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +8,6 @@
     <title>Services — CitiIT Limited</title>
 
     <style>
-    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -51,7 +43,7 @@
         html[data-theme="light"] .portfolio-card h3,
         html[data-theme="light"] .skill-card h3,
         html[data-theme="light"] .company-footer-val { color: #171310; }
-        html[data-theme="light"] .hero h1 em { color: var(--orange); }
+        html[data-theme="light"] .hero h1 span { color: var(--orange); }
         /* Hero sits over a photo background — keep light text regardless of theme */
         html[data-theme="light"] .hero h1 { color: #fff; }
         html[data-theme="light"] .hero h1 em { color: #e6432a; }
@@ -113,14 +105,16 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
             background: var(--bg) url('assets/desk-2.webp') no-repeat center center fixed;
             background-size: cover;
             color: var(--text);
             font-family:'JetBrains Mono', monospace;
             font-size: 130%;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         /* Dark tint over background image */
@@ -139,12 +133,14 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
-        /* Nav */
+        /* ── NAV & HAMBURGER ── */
         nav {
             position: sticky; top: 0; z-index: 100;
             background: var(--bg); border-bottom: 1px solid var(--border);
             padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
+            width: 100%;
         }
+        .nav-links { display: flex; align-items: center; gap: 2px; }
         nav a {
             font-family:'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--cream);
             font-weight: bold; text-decoration: none;
@@ -157,34 +153,66 @@
         nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
         .nav-spacer { flex: 1; }
 
+        .nav-toggle {
+            display: none;
+            background: none; border: 1px solid var(--border-dim); color: var(--cream);
+            width: 36px; height: 36px; cursor: pointer; border-radius: 0;
+            align-items: center; justify-content: center; transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
+
         /* Mini EQ in nav */
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
-            height: 22px; margin: 0 24px; padding-bottom: 2px;
+            height: 22px; margin: 0 16px; padding-bottom: 2px;
         }
         .nav-eq-bar {
             width: 3px; background: var(--orange);
             transition: height 0.1s ease; border-radius:0;
         }
 
-        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
+        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
 
-        /* Language Switcher */
-        #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
-        .lang-btn {
-            background: none; border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35);
-            font-family:'JetBrains Mono', monospace;
-            font-size: 0.7rem; font-weight: 700;
-            letter-spacing: 0.12em; padding: 4px 8px;
-            cursor: pointer; transition: color 0.2s, border-color 0.2s;
-            text-transform: uppercase;
+        /* ── FONT NUDGE TRIGGER & PANEL ── */
+        .font-nudge-trigger {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            color: var(--orange); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+            padding: 8px 12px; cursor: pointer; border-radius: 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: all 0.15s;
+            text-transform: uppercase; display: flex; align-items: center; gap: 6px;
         }
-        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
-        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+        .font-nudge-trigger:hover { background: var(--orange); color: #000; border-color: var(--orange); }
+
+        .font-nudge {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius:0; padding: 12px 16px;
+            display: none; flex-direction: column; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
+        }
+        .font-nudge.open { display: flex; }
+        .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
+        .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
+        .font-btn {
+            background: #222; border: 1px solid var(--border-dim); color: var(--cream);
+            font-family:'JetBrains Mono', monospace; width: 32px; height: 32px;
+            cursor: pointer; border-radius:0; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+        }
+        .font-btn:hover { border-color: var(--orange); color: var(--orange); }
+        .font-size-indicator { font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em; min-width: 32px; text-align: center; }
+        .font-nudge-dismiss {
+            background: none; border: none; color: var(--dim);
+            font-family:'JetBrains Mono', monospace; font-size: 0.65rem;
+            cursor: pointer; letter-spacing: 0.1em; text-align: right; padding: 0;
+        }
+        .font-nudge-dismiss:hover { color: var(--orange); }
 
         /* Page */
-        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; }
+        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; width: 100%; }
 
         /* Hero */
         .hero { padding: 80px 0 72px; border-bottom: 1px solid var(--border); max-width: 1000px; }
@@ -201,7 +229,7 @@
         .tts-player {
             background: var(--bg2); border: 1px solid var(--border); border-radius:0;
             padding: 16px 20px; margin: 32px 0 0;
-            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px; width: 100%;
         }
         .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
         .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -380,7 +408,7 @@
         /* CTA block */
         .cta-block {
             margin-top: 80px; padding: 56px; border: 1px solid var(--border);
-            background: var(--bg2); display: flex; align-items: center; gap: 56px;
+            background: var(--bg2); display: flex; align-items: center; gap: 56px; width: 100%;
         }
         .cta-copy { flex: 1; }
         .cta-label { font-size: 0.78rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
@@ -440,9 +468,21 @@
         .reveal.visible { opacity: 1; transform: none; }
 
         @media (max-width: 900px) {
-            nav { padding: 0 16px; }
-            nav a { padding: 5px 8px; font-size: 1rem; min-width: unset; }
-            .page { padding: 0 24px 80px; }
+            nav { padding: 0 16px; justify-content: space-between; }
+            .nav-toggle { display: flex; }
+            .nav-links {
+                display: none; position: absolute; top: 72px; left: 0; right: 0;
+                flex-direction: column; align-items: stretch; gap: 0;
+                background: var(--bg); border-bottom: 1px solid var(--border);
+                padding: 8px 16px 16px; max-height: calc(100vh - 72px);
+                overflow-y: auto; box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { width: 100%; text-align: left; padding: 13px 10px; font-size: 1.05rem; }
+            .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
+            .font-nudge { bottom: 16px; right: 16px; }
+
+            .page { padding: 0 20px 80px; }
             .pricing-grid { grid-template-columns: 1fr; }
             .terms-grid { grid-template-columns: 1fr; }
             .cta-block { flex-direction: column; gap: 32px; padding: 32px 24px; }
@@ -450,7 +490,6 @@
             .cta-divider { width: 40px; height: 1px; }
         }
         @media (max-width: 600px) {
-            .font-nudge { bottom: 16px; right: 16px; }
             .tts-controls { gap: 6px; }
         }
 
@@ -458,7 +497,7 @@
         .company-footer {
             margin-top: 80px; padding: 32px 0;
             border-top: 1px solid var(--border-dim);
-            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;
+            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; max-width: 960px; width: 100%;
         }
         .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
         .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
@@ -467,61 +506,46 @@
         .company-footer-val a:hover { color: var(--orange); }
         .company-footer-note { font-size: calc(0.84rem * var(--font-scale)); color: var(--dim); opacity: 0.6; max-width: 520px; line-height: 1.7; }
 
+        /* ── FOOTER ── */
+        .footer-line {
+            margin-top: 80px; padding-top: 32px; padding-bottom: 0;
+            font-size: 0.85rem; letter-spacing: 0.15em;
+            color: var(--dim); text-transform: uppercase;
+            border-top: 1px solid var(--border); width: 100%;
+        }
+
         /* ── PRINT STYLES ── */
         @media print {
-            /* Hide interactive chrome */
             nav, .font-nudge, .tts-player, .cta-btn.secondary { display: none !important; }
-
-            /* White background, dark text */
             body, .page, .pricing-card, .terms-block, .cta-block, .addon-table td, .addon-table th {
-                background: #fff !important;
-                color: #111 !important;
+                background: #fff !important; color: #111 !important;
             }
-
             body::before { display: none; }
-
-            /* Orange accent stays legible on white */
             .hero-label, .section-eyebrow, .card-label, .card-includes-label,
             .terms-block-label, .cta-label, .company-footer-label,
             .addon-table th, .include-list li::before, .terms-list li::before,
             .featured-badge { color: #cc5200 !important; }
-
             .hero h1, .section-title, .cta-heading { color: #000 !important; }
             .hero h1 em { color: #cc5200 !important; }
-
             .card-price, .cta-stat-num { color: #000 !important; }
             .card-price span, .card-total, .company-footer-val,
             .addon-table td, .terms-list li, .include-list li,
             .hero-intro, .cta-text { color: #333 !important; }
-
-            /* Borders readable on white */
-            .pricing-card, .terms-block, .cta-block {
-                border: 1px solid #ccc !important;
-            }
+            .pricing-card, .terms-block, .cta-block { border: 1px solid #ccc !important; }
             .pricing-card.featured { border-color: #cc5200 !important; }
             .featured-badge { background: #cc5200 !important; color: #fff !important; }
-
             .include-list li, .terms-list li, .addon-table tr { border-bottom-color: #ddd !important; }
             .card-divider { background: #ddd !important; }
-
             .addon-table th { border-bottom-color: #bbb !important; }
-
-            /* CTA aside stats */
             .cta-aside { border-left: 1px solid #ddd; padding-left: 32px; }
             .cta-stat-label { color: #666 !important; }
             .cta-divider { background: #ddd !important; }
-
-            /* Company footer */
             .company-footer { border-top-color: #ddd !important; }
             .company-footer-val, .company-footer-val a, .company-footer-note { color: #555 !important; }
-
-            /* Page layout */
             .page { padding: 0 32px !important; }
             .pricing-grid { grid-template-columns: 1fr 1fr !important; }
             .terms-grid { grid-template-columns: 1fr 1fr !important; }
             .cta-block { flex-direction: row !important; }
-
-            /* Page breaks */
             .service-section { page-break-inside: avoid; }
             .cta-block { page-break-inside: avoid; }
         }
@@ -529,18 +553,38 @@
 </head>
 <body>
 
+<button class="font-nudge-trigger" onclick="toggleNudge()">A+ text size</button>
+<div class="font-nudge" id="fontNudge">
+    <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
+    <div class="font-nudge-controls">
+        <button class="font-btn" onclick="adjustFont(-1)" title="Decrease text size">A-</button>
+        <span class="font-size-indicator" id="fontIndicator">100%</span>
+        <button class="font-btn" onclick="adjustFont(1)" title="Increase text size">A+</button>
+    </div>
+    <button class="font-nudge-dismiss" onclick="dismissNudge()" data-i18n="nudge_dismiss">dismiss ×</button>
+</div>
+
 <nav>
-    <a href="about.html" data-i18n="nav_about">about</a>
-    <a href="current.html" data-i18n="nav_current">current</a>
-    <a href="design.html" data-i18n="nav_design">design</a>
-    <a href="fun.html">fun</a>
-    <a href="merch.html" data-i18n="nav_merch">merch</a>
-    <a href="music.html" data-i18n="nav_music">music</a>
-    <a href="services.html" class="active" data-i18n="nav_services">services</a>
-    <a href="software.html">software</a>
-    <a href="synths.html" data-i18n="nav_synths">synths</a>
-    <a href="tools.html" data-i18n="nav_tools">tools</a>
-    <a href="video.html" data-i18n="nav_video">video</a>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMobileNav()" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+    <div class="nav-links" id="navLinks">
+        <a href="about.html" data-i18n="nav_about">about</a>
+        <a href="current.html" data-i18n="nav_current">current</a>
+        <a href="design.html" data-i18n="nav_design">design</a>
+        <a href="fun.html">fun</a>
+        <a href="merch.html" data-i18n="nav_merch">merch</a>
+        <a href="music.html" data-i18n="nav_music">music</a>
+        <a href="services.html" class="active" data-i18n="nav_services">services</a>
+        <a href="software.html">software</a>
+        <a href="synths.html" data-i18n="nav_synths">synths</a>
+        <a href="tools.html" data-i18n="nav_tools">tools</a>
+        <a href="video.html" data-i18n="nav_video">video</a>
+    </div>
     <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
@@ -559,18 +603,18 @@
 
     <!-- HERO -->
     <section class="hero reveal">
-        <div class="hero-label">// CitiIT Limited &#8212; Web &amp; Digital Services</div>
+        <div class="hero-label">// CitiIT Limited — Web &amp; Digital Services</div>
         <h1>Web services.<br>Built to<br><em>last.</em></h1>
         <p class="hero-intro">
-            Small businesses deserve websites that actually work. CitiIT Limited builds and maintains your entire digital presence &#8212; from logo to launch, and everything that keeps it running. Two straightforward service levels, one monthly fee, no surprises. With 30 years of experience working at the top level of business, we know how to get it right first time.
+            Small businesses deserve websites that actually work. CitiIT Limited builds and maintains your entire digital presence — from logo to launch, and everything that keeps it running. Two straightforward service levels, one monthly fee, no surprises. With 30 years of experience working at the top level of business, we know how to get it right first time.
         </p>
 
         <div class="tts-player" id="ttsPlayer">
             <span class="tts-label">// Speak this page</span>
             <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
-                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
-                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>❚❚ Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>■ Stop</button>
                 <div class="tts-sep"></div>
                 <div class="tts-speed-wrap">
                     <span class="tts-speed-label">Speed</span>
@@ -598,11 +642,11 @@
 
     <!-- PRICING TIERS -->
     <section class="service-section reveal">
-        <div class="section-eyebrow">// 01 &#8212; Choose your level</div>
+        <div class="section-eyebrow">// 01 — Choose your level</div>
         <div class="section-title">Two clear options</div>
 
         <p class="hero-intro" style="margin-bottom: 48px; border-left-color: var(--border-dim); color: var(--dim);">
-            Both plans include everything you need to get online and stay online &#8212; one monthly payment covers design, build, hosting and support. No setup fees. No hidden extras. Any work outside the scope below is charged at a simple £50 per hour, and calls and emails to discuss your needs are always free.
+            Both plans include everything you need to get online and stay online — one monthly payment covers design, build, hosting and support. No setup fees. No hidden extras. Any work outside the scope below is charged at a simple £50 per hour, and calls and emails to discuss your needs are always free.
         </p>
 
         <div class="pricing-grid">
@@ -612,18 +656,18 @@
                 <div class="featured-badge">Most popular</div>
                 <div class="card-label">Standard Website</div>
                 <div class="card-price">£99 <span>/ month</span></div>
-                <div class="card-total">Everything included &#8212; design, build, hosting &amp; ongoing support</div>
+                <div class="card-total">Everything included — design, build, hosting &amp; ongoing support</div>
                 <div class="card-divider"></div>
-                <div class="card-includes-label">What&rsquo;s included:</div>
+                <div class="card-includes-label">What’s included:</div>
                 <ul class="include-list include-list--inline">
                     <li><div class="inc-text"><span class="included">Home page &amp; contact page</span><span class="inc-desc">Including your location, an embedded map and opening hours</span></div></li>
-                    <li><div class="inc-text"><span class="included">Sales page &#8212; up to 50 items</span><span class="inc-desc">Products or services listed with descriptions. Not an online shop &#8212; no checkout required</span></div></li>
+                    <li><div class="inc-text"><span class="included">Sales page — up to 50 items</span><span class="inc-desc">Products or services listed with descriptions. Not an online shop — no checkout required</span></div></li>
                     <li><div class="inc-text"><span class="included">Logo design (if required)</span><span class="inc-desc">A clean, professional logo created to match your brand</span></div></li>
                     <li><div class="inc-text"><span class="included">Business card &amp; invoice design</span><span class="inc-desc">Print-ready branded stationery, matched to your website</span></div></li>
-                    <li><div class="inc-text"><span class="included">Domain registration</span><span class="inc-desc">Purchased in your name via Google Domains &#8212; you own it, not CitiIT. Auto-renewed annually at no markup</span></div></li>
-                    <li><div class="inc-text"><span class="included">Hosting &amp; monthly maintenance</span><span class="inc-desc">Secure hosting, security patches, updates and regular health checks &#8212; your site is always looked after</span></div></li>
+                    <li><div class="inc-text"><span class="included">Domain registration</span><span class="inc-desc">Purchased in your name via Google Domains — you own it, not CitiIT. Auto-renewed annually at no markup</span></div></li>
+                    <li><div class="inc-text"><span class="included">Hosting &amp; monthly maintenance</span><span class="inc-desc">Secure hosting, security patches, updates and regular health checks — your site is always looked after</span></div></li>
                     <li><div class="inc-text"><span class="included">One professional email account</span><span class="inc-desc">Business email at your domain, accessed on any phone, tablet or computer. Includes Google Calendar, Drive, Docs and more via Google Workspace</span></div></li>
-                    <li><div class="inc-text"><span class="included">Up to 3 hours of site changes per month</span><span class="inc-desc">Text, pricing, images &#8212; keep your content up to date without worrying about extra charges</span></div></li>
+                    <li><div class="inc-text"><span class="included">Up to 3 hours of site changes per month</span><span class="inc-desc">Text, pricing, images — keep your content up to date without worrying about extra charges</span></div></li>
                     
                 </ul>
             </div>
@@ -636,10 +680,10 @@
                 <div class="card-divider"></div>
                 <div class="card-includes-label">Everything in Standard, plus:</div>
                 <ul class="include-list include-list--inline">
-                    <li><div class="inc-text"><span class="included">Full e-commerce store</span><span class="inc-desc">Products listed with photos, descriptions and pricing &#8212; ready for customers to buy online</span></div></li>
-                    <li><div class="inc-text"><span class="included">Stock monitoring</span><span class="inc-desc">We keep track of your inventory and alert you when stock is running low &#8212; so you never sell something you don&rsquo;t have</span></div></li>
-                    <li><div class="inc-text"><span class="included">Secure payment processing</span><span class="inc-desc">Industry-standard payment gateway integrated and configured &#8212; your customers&rsquo; card details are always protected</span></div></li>
-                    <li><div class="inc-text"><span class="included">Low-stock notifications</span><span class="inc-desc">You&rsquo;ll hear from us before you run out &#8212; no more missed sales due to empty shelves</span></div></li>
+                    <li><div class="inc-text"><span class="included">Full e-commerce store</span><span class="inc-desc">Products listed with photos, descriptions and pricing — ready for customers to buy online</span></div></li>
+                    <li><div class="inc-text"><span class="included">Stock monitoring</span><span class="inc-desc">We keep track of your inventory and alert you when stock is running low — so you never sell something you don’t have</span></div></li>
+                    <li><div class="inc-text"><span class="included">Secure payment processing</span><span class="inc-desc">Industry-standard payment gateway integrated and configured — your customers’ card details are always protected</span></div></li>
+                    <li><div class="inc-text"><span class="included">Low-stock notifications</span><span class="inc-desc">You’ll hear from us before you run out — no more missed sales due to empty shelves</span></div></li>
                 </ul>
             </div>
 
@@ -655,9 +699,9 @@
                 </div>
                 <div style="flex: 2; min-width: 260px;">
                     <ul class="include-list include-list--inline" style="margin-top: 4px;">
-                        <li><div class="inc-text"><span class="included">Calls &amp; emails are always free</span><span class="inc-desc">No charge for correspondence to discuss your needs &#8212; ever</span></div></li>
+                        <li><div class="inc-text"><span class="included">Calls &amp; emails are always free</span><span class="inc-desc">No charge for correspondence to discuss your needs — ever</span></div></li>
                         <li><div class="inc-text"><span class="included">Additional email accounts</span><span class="inc-desc">Each extra mailbox added to your domain is £10 per month</span></div></li>
-                        <li><div class="inc-text"><span class="included">Domain renewal</span><span class="inc-desc">Auto-renewed each year at exact registrar cost &#8212; no markup, no surprises</span></div></li>
+                        <li><div class="inc-text"><span class="included">Domain renewal</span><span class="inc-desc">Auto-renewed each year at exact registrar cost — no markup, no surprises</span></div></li>
                     </ul>
                 </div>
             </div>
@@ -667,11 +711,11 @@
 
     <!-- WHAT TO EXPECT -->
     <section class="service-section reveal">
-        <div class="section-eyebrow">// 02 &#8212; How it works</div>
+        <div class="section-eyebrow">// 02 — How it works</div>
         <div class="section-title">Simple from day one</div>
 
         <p class="hero-intro" style="margin-bottom: 48px; border-left-color: var(--border-dim); color: #fff;">
-            One monthly payment. No setup fees. No surprise invoices. We handle everything technical so you can focus on running your business. With 30 years of experience at CEO and senior management level, we understand that your time is valuable &#8212; and we work accordingly.
+            One monthly payment. No setup fees. No surprise invoices. We handle everything technical so you can focus on running your business. With 30 years of experience at CEO and senior management level, we understand that your time is valuable — and we work accordingly.
         </p>
 
         <table class="addon-table">
@@ -685,7 +729,7 @@
                 <tr>
                     <td>
                         <span class="addon-name">No lock-in</span>
-                        <span class="addon-desc">Cancel with 30 days&rsquo; written notice &#8212; no exit fees, no penalties</span>
+                        <span class="addon-desc">Cancel with 30 days’ written notice — no exit fees, no penalties</span>
                     </td>
                     <td><div class="addon-td-wrap"><span>Always</span></div></td>
                 </tr>
@@ -699,21 +743,21 @@
                 <tr>
                     <td>
                         <span class="addon-name">Additional email accounts</span>
-                        <span class="addon-desc">Each extra address beyond the one included &#8212; e.g. sales@, info@ &#8212; accessed on any device</span>
+                        <span class="addon-desc">Each extra address beyond the one included — e.g. sales@, info@ — accessed on any device</span>
                     </td>
                     <td><div class="addon-td-wrap"><span>£10/mo each</span></div></td>
                 </tr>
                 <tr>
                     <td>
                         <span class="addon-name">Work outside your plan</span>
-                        <span class="addon-desc">Anything beyond your monthly hours or agreed scope &#8212; extra pages, large content overhauls, graphic work</span>
+                        <span class="addon-desc">Anything beyond your monthly hours or agreed scope — extra pages, large content overhauls, graphic work</span>
                     </td>
                     <td><div class="addon-td-wrap"><span>£50/hr</span></div></td>
                 </tr>
                 <tr>
                     <td>
                         <span class="addon-name">Domain auto-renewal</span>
-                        <span class="addon-desc">Your domain renews automatically each year via Google Domains &#8212; passed through at exact cost, no markup</span>
+                        <span class="addon-desc">Your domain renews automatically each year via Google Domains — passed through at exact cost, no markup</span>
                     </td>
                     <td><div class="addon-td-wrap"><span>At cost/yr</span></div></td>
                 </tr>
@@ -723,21 +767,21 @@
 
     <!-- TERMS -->
     <section class="service-section reveal">
-        <div class="section-eyebrow">// 03 &#8212; Working together</div>
+        <div class="section-eyebrow">// 03 — Working together</div>
         <div class="section-title">Terms &amp; what to bring</div>
 
         <div class="terms-grid">
             <div class="terms-block">
                 <div class="terms-block-label">Service conditions</div>
                 <ul class="terms-list">
-                    <li>£99/month covers everything in your chosen plan &#8212; design, build, hosting and ongoing support</li>
-                    <li>Any work beyond your plan&rsquo;s included hours or scope is charged at £50 per hour</li>
-                    <li>Calls and emails to discuss your needs are always free &#8212; no clock running</li>
+                    <li>£99/month covers everything in your chosen plan — design, build, hosting and ongoing support</li>
+                    <li>Any work beyond your plan’s included hours or scope is charged at £50 per hour</li>
+                    <li>Calls and emails to discuss your needs are always free — no clock running</li>
                     <li>Additional email accounts beyond the one included are £10 per month each</li>
                     <li>Your domain is registered in your name via Google Domains and renews automatically each year at cost</li>
                     <li>Missed payments result in service suspension after 7 days written notice</li>
                     <li>Reactivation after suspension incurs a £25 administration fee</li>
-                    <li>Cancel with 30 days written notice &#8212; no exit fees</li>
+                    <li>Cancel with 30 days written notice — no exit fees</li>
                     <li>CitiIT Limited reserves the right to update pricing with 30 days written notice</li>
                     <li>A full service agreement is provided before any work begins</li>
                 </ul>
@@ -746,7 +790,7 @@
                 <div class="terms-block-label">What the client provides</div>
                 <ul class="terms-list">
                     <li>Logo or branding assets, if you already have them (we design one if not)</li>
-                    <li>High-quality photos of your business, team or products &#8212; or we&rsquo;ll photograph during a site visit</li>
+                    <li>High-quality photos of your business, team or products — or we’ll photograph during a site visit</li>
                     <li>Accurate copy, pricing and any content to appear on the site</li>
                     <li>Access to any existing domain if transferring from another registrar</li>
                     <li>Written approval before the site goes live</li>
@@ -762,10 +806,10 @@
             <div class="cta-label">// Ready to start?</div>
             <div class="cta-heading">Get your business online. £99 a month. Everything included.</div>
             <p class="cta-text">
-                One straightforward monthly fee covers your entire digital presence &#8212; design, build, hosting, maintenance, email and support. No setup costs, no hidden extras. Any calls or emails to discuss what you need are always free. Reach out and we&rsquo;ll put together a proposal around your business.
+                One straightforward monthly fee covers your entire digital presence — design, build, hosting, maintenance, email and support. No setup costs, no hidden extras. Any calls or emails to discuss what you need are always free. Reach out and we’ll put together a proposal around your business.
             </p>
             <div class="cta-actions">
-                <a href="about.html" class="cta-btn">Get in touch &#8594;</a>
+                <a href="about.html" class="cta-btn">Get in touch →</a>
                 <a href="assets/citi-pricing-brochure.pdf" download class="cta-btn secondary">Download Pricing</a>
             </div>
         </div>
@@ -782,7 +826,7 @@
             <div class="cta-divider"></div>
             <div class="cta-stat">
                 <div class="cta-stat-num">30</div>
-                <div class="cta-stat-label">years&rsquo; experience</div>
+                <div class="cta-stat-label">years’ experience</div>
             </div>
         </div>
     </div>
@@ -811,6 +855,40 @@
 </div><!-- /page -->
 
 <script>
+    // ── MOBILE NAVIGATION TOGGLE ──
+    function toggleMobileNav() {
+        const navLinks = document.getElementById('navLinks');
+        const navToggle = document.getElementById('navToggle');
+        const isOpen = navLinks.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    // Close mobile nav when clicking outside
+    document.addEventListener('click', function(e) {
+        const navLinks = document.getElementById('navLinks');
+        const navToggle = document.getElementById('navToggle');
+        if (navLinks.classList.contains('open') && !navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+            navLinks.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    // ── FONT NUDGE TOGGLE ──
+    function toggleNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        const isOpen = nudge.classList.toggle('open');
+        trigger.style.display = isOpen ? 'none' : 'flex';
+    }
+
+    function dismissNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        nudge.classList.remove('open');
+        trigger.style.display = 'flex';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+
     // ── THEME TOGGLE ──
     function applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
@@ -959,15 +1037,15 @@
             const stop  = document.getElementById('ttsStop');
             if (!play || !pause || !stop) return;
             if (state === 'idle') {
-                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
+                play.textContent = '▶ Play'; play.disabled = false; play.classList.remove('active');
                 pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
             } else if (state === 'playing') {
-                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
-                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active');
+                play.textContent = '▶ Playing'; play.disabled = true; play.classList.add('active');
+                pause.disabled = false; pause.textContent = '❚❚ Pause'; pause.classList.remove('active');
                 stop.disabled = false;
             } else if (state === 'paused') {
-                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
-                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
+                play.textContent = '▶ Resume'; play.disabled = false; play.classList.remove('active');
+                pause.textContent = '❚❚ Paused'; pause.classList.add('active'); stop.disabled = false;
             }
         }
         function speakAt(startIdx) {
@@ -1031,9 +1109,7 @@
 
 <script src="share.js"></script>
 <script src="post-generator.js"></script>
-
 <script src="assets/translations.js"></script>
 <script>document.addEventListener('DOMContentLoaded', I18N.init);</script>
-
 </body>
 </html>

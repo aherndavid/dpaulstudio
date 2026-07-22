@@ -8,7 +8,6 @@
     <title>Merch — dPaul Technologies</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -53,15 +52,6 @@
         html[data-theme="light"] .form-field input,
         html[data-theme="light"] .form-field textarea { color: #171310; }
         html[data-theme="light"] .tts-player { background: #fff; color: var(--cream); }
-        html[data-theme="light"] .tts-btn,
-        html[data-theme="light"] .tts-section-sel,
-        html[data-theme="light"] .tts-voice-sel,
-        html[data-theme="light"] .tts-section-sel option,
-        html[data-theme="light"] .tts-voice-sel option { background: #000 !important; color: #e6432a !important; border-color: #000; }
-        html[data-theme="light"] .tts-btn.active { background: #e6432a !important; color: #fff !important; }
-        html[data-theme="light"] .tts-progress,
-        html[data-theme="light"] .tts-speed-label,
-        html[data-theme="light"] .tts-section-label { color: var(--dim); }
         html[data-theme="light"] .font-btn { background: #000 !important; color: #e6432a !important; border-color: #000; }
         html[data-theme="light"] .font-nudge { background: var(--bg2); }
         html[data-theme="light"] #dp-share-btn { color: rgba(26,22,16,0.55); }
@@ -90,13 +80,15 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
             background: var(--bg);
             color: var(--text);
             font-family:'JetBrains Mono', monospace;
             font-size: 130%;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         body::before {
@@ -118,12 +110,14 @@
             opacity: 0.08;
         }
 
-        /* ── NAV ── */
+        /* ── NAV & HAMBURGER ── */
         nav {
             position: sticky; top: 0; z-index: 100;
             background: var(--bg); border-bottom: 1px solid var(--border);
             padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
+            width: 100%;
         }
+        .nav-links { display: flex; align-items: center; gap: 2px; }
         nav a {
             font-family:'JetBrains Mono', monospace; font-size: 1.1rem;
             color: var(--cream); font-weight: bold; text-decoration: none;
@@ -136,32 +130,43 @@
         nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
         .nav-spacer { flex: 1; }
 
-        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
+        .nav-toggle {
+            display: none;
+            background: none; border: 1px solid var(--border-dim); color: var(--cream);
+            width: 36px; height: 36px; cursor: pointer; border-radius: 0;
+            align-items: center; justify-content: center; transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
+
+        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
 
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
-            height: 22px; margin: 0 24px; padding-bottom: 2px;
+            height: 22px; margin: 0 16px; padding-bottom: 2px;
         }
         .nav-eq-bar { width: 3px; background: var(--orange); transition: height 0.1s ease; border-radius:0; }
 
-        #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
-        .lang-btn {
-            background: none; border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35); font-family:'JetBrains Mono', monospace;
-            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
-            cursor: pointer; transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
+        /* ── FONT NUDGE TRIGGER & PANEL ── */
+        .font-nudge-trigger {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            color: var(--orange); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+            padding: 8px 12px; cursor: pointer; border-radius: 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: all 0.15s;
+            text-transform: uppercase; display: flex; align-items: center; gap: 6px;
         }
-        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
-        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+        .font-nudge-trigger:hover { background: var(--orange); color: #000; border-color: var(--orange); }
 
-        /* ── FONT NUDGE ── */
         .font-nudge {
-            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
             border-radius:0; padding: 12px 16px;
-            display: flex; flex-direction: column; gap: 8px;
+            display: none; flex-direction: column; gap: 8px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
         }
+        .font-nudge.open { display: flex; }
         .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
         .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
         .font-btn {
@@ -180,7 +185,7 @@
         .font-nudge-dismiss:hover { color: var(--orange); }
 
         /* ── PAGE ── */
-        .page { max-width: 1440px; margin: 0 auto; padding: 56px 56px 60px; position: relative; z-index: 1; }
+        .page { max-width: 1440px; margin: 0 auto; padding: 56px 56px 60px; position: relative; z-index: 1; width: 100%; }
 
         .hero-text { padding: 64px 0 56px; border-bottom: 1px solid var(--border); max-width: 1000px; }
         .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; }
@@ -246,12 +251,6 @@
         }
         .colour-btn.active::after { border-color: rgba(230,67,42,0.4); }
 
-        .product-num {
-            position: absolute; top: 20px; left: 20px;
-            font-family: 'VT323', monospace; font-size: 1.4rem;
-            color: rgba(230,67,42,0.5); letter-spacing: 0.1em; z-index: 2;
-        }
-
         .product-info-col {
             padding: 52px 52px 48px;
             display: flex; flex-direction: column;
@@ -300,11 +299,6 @@
         }
         .btn-buy:hover { background: #e55a00; transform: translateY(-1px); }
         .btn-buy:active { transform: translateY(0); }
-        .btn-buy.disabled {
-            background: transparent; color: var(--dim);
-            border-color: rgba(255,255,255,0.1); cursor: default;
-            pointer-events: none;
-        }
 
         .btn-size-guide {
             background: none; border: 1px solid rgba(230,67,42,0.25);
@@ -356,7 +350,7 @@
         .company-footer {
             margin-top: 48px; padding: 32px 0;
             border-top: 1px solid var(--border-dim);
-            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start;
+            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; max-width: 960px; width: 100%;
         }
         .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
         .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
@@ -370,7 +364,7 @@
             margin-top: 80px; padding-top: 32px; padding-bottom: 0;
             font-size: 0.85rem; letter-spacing: 0.15em;
             color: var(--dim); text-transform: uppercase;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border); width: 100%;
         }
 
         .reveal { opacity: 0; transform: translateY(22px); transition: 0.6s ease; }
@@ -406,11 +400,28 @@
             .product-image-col { min-height: 420px; }
             .product-info-col { border-left: none !important; border-right: none !important; border-top: 1px solid var(--border); }
         }
-        @media (max-width: 900px) { nav { padding: 0 16px; } nav a { padding: 5px 8px; font-size: 1rem; min-width: unset; } .page { padding: 32px 24px; } .product-info-col { padding: 36px 28px; } }
+        @media (max-width: 900px) {
+            nav { padding: 0 16px; justify-content: space-between; }
+            .nav-toggle { display: flex; }
+            .nav-links {
+                display: none; position: absolute; top: 72px; left: 0; right: 0;
+                flex-direction: column; align-items: stretch; gap: 0;
+                background: var(--bg); border-bottom: 1px solid var(--border);
+                padding: 8px 16px 16px; max-height: calc(100vh - 72px);
+                overflow-y: auto; box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { width: 100%; text-align: left; padding: 13px 10px; font-size: 1.05rem; }
+            .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
+            .font-nudge { bottom: 16px; right: 16px; }
+            .page { padding: 32px 20px; }
+            .product-info-col { padding: 36px 28px; }
+        }
     </style>
 </head>
 <body>
 
+<button class="font-nudge-trigger" onclick="toggleNudge()">A+ text size</button>
 <div class="font-nudge" id="fontNudge">
     <div class="font-nudge-label">Text too small?</div>
     <div class="font-nudge-controls">
@@ -482,17 +493,26 @@
 </div>
 
 <nav>
-    <a href="about.html" data-i18n="nav_about">about</a>
-    <a href="current.html" data-i18n="nav_current">current</a>
-    <a href="design.html" data-i18n="nav_design">design</a>
-    <a href="fun.html">fun</a>
-    <a href="merch.html" class="active" data-i18n="nav_merch">merch</a>
-    <a href="music.html" data-i18n="nav_music">music</a>
-    <a href="services.html" data-i18n="nav_services">services</a>
-    <a href="software.html">software</a>
-    <a href="synths.html" data-i18n="nav_synths">synths</a>
-    <a href="tools.html" data-i18n="nav_tools">tools</a>
-    <a href="video.html" data-i18n="nav_video">video</a>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMobileNav()" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+    <div class="nav-links" id="navLinks">
+        <a href="about.html" data-i18n="nav_about">about</a>
+        <a href="current.html" data-i18n="nav_current">current</a>
+        <a href="design.html" data-i18n="nav_design">design</a>
+        <a href="fun.html">fun</a>
+        <a href="merch.html" class="active" data-i18n="nav_merch">merch</a>
+        <a href="music.html" data-i18n="nav_music">music</a>
+        <a href="services.html" data-i18n="nav_services">services</a>
+        <a href="software.html">software</a>
+        <a href="synths.html" data-i18n="nav_synths">synths</a>
+        <a href="tools.html" data-i18n="nav_tools">tools</a>
+        <a href="video.html" data-i18n="nav_video">video</a>
+    </div>
     <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
@@ -1035,7 +1055,7 @@
 
     </div><!-- /collection -->
 
-    <footer class="company-footer">
+    <footer class="company-footer reveal">
         <div class="company-footer-block">
             <div class="company-footer-label">Company</div>
             <div class="company-footer-val">CitiIT Limited</div>
@@ -1060,6 +1080,40 @@
 </div><!-- /page -->
 
 <script>
+    // ── MOBILE NAVIGATION TOGGLE ──
+    function toggleMobileNav() {
+        const navLinks = document.getElementById('navLinks');
+        const navToggle = document.getElementById('navToggle');
+        const isOpen = navLinks.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    // Close mobile nav when clicking outside
+    document.addEventListener('click', function(e) {
+        const navLinks = document.getElementById('navLinks');
+        const navToggle = document.getElementById('navToggle');
+        if (navLinks.classList.contains('open') && !navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+            navLinks.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    // ── FONT NUDGE TOGGLE ──
+    function toggleNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        const isOpen = nudge.classList.toggle('open');
+        trigger.style.display = isOpen ? 'none' : 'flex';
+    }
+
+    function dismissNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        nudge.classList.remove('open');
+        trigger.style.display = 'flex';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+
     /* ── FONT NUDGE ── */
     const fontScaleLevels = [1, 1.15, 1.3, 1.5, 1.7];
     let fontScaleIndex = 0;
@@ -1072,11 +1126,6 @@
     function adjustFont(dir) {
         fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
         applyFontScale();
-    }
-    function dismissNudge() {
-        document.getElementById('fontNudge').style.opacity = '0';
-        document.getElementById('fontNudge').style.pointerEvents = 'none';
-        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
     }
     try {
         const saved = localStorage.getItem('dp-font-scale');

@@ -8,7 +8,6 @@
     <title>Synths — dPaul Technologies</title>
     
     <style>
-    /* Added CSS rule for the share button font and size matching the main menu */
     #dp-share-btn {
         font-family: 'Anton', sans-serif !important;
         font-size: 1.1rem !important;
@@ -116,13 +115,15 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
+        html, body {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
             background: var(--bg);
             color: var(--text);
             font-family:'JetBrains Mono', monospace;
             font-size: 130%;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         body::after {
@@ -145,13 +146,26 @@
             pointer-events: none; z-index: 9999; opacity: 0.35;
         }
 
+        /* ── FONT NUDGE TRIGGER & PANEL ── */
+        .font-nudge-trigger {
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
+            background: var(--bg2); border: 1px solid var(--border);
+            color: var(--orange); font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+            padding: 8px 12px; cursor: pointer; border-radius: 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: all 0.15s;
+            text-transform: uppercase; display: flex; align-items: center; gap: 6px;
+        }
+        .font-nudge-trigger:hover { background: var(--orange); color: #000; border-color: var(--orange); }
+
         .font-nudge {
-            position: fixed; bottom: 24px; right: 24px; z-index: 500;
+            position: fixed; bottom: 20px; right: 20px; z-index: 500;
             background: var(--bg2); border: 1px solid var(--border);
             border-radius:0; padding: 12px 16px;
-            display: flex; flex-direction: column; gap: 8px;
+            display: none; flex-direction: column; gap: 8px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.5); transition: opacity 0.3s;
         }
+        .font-nudge.open { display: flex; }
         .font-nudge-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); }
         .font-nudge-controls { display: flex; align-items: center; gap: 8px; }
         .font-btn {
@@ -169,11 +183,14 @@
         }
         .font-nudge-dismiss:hover { color: var(--orange); }
 
+        /* ── NAV & HAMBURGER ── */
         nav {
             position: sticky; top: 0; z-index: 100;
             background: var(--bg); border-bottom: 1px solid var(--border);
             padding: 0 32px; display: flex; align-items: center; gap: 2px; height: 72px;
+            width: 100%;
         }
+        .nav-links { display: flex; align-items: center; gap: 2px; }
         nav a {
             font-family:'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--cream);
             font-weight: bold; text-decoration: none;
@@ -185,31 +202,28 @@
         nav a:hover { border-color: var(--orange); color: var(--orange); }
         nav a.active { background: var(--orange); color: #000; border-color: var(--orange); }
         .nav-spacer { flex: 1; }
-        #nav-share-container { min-width: 130px; display: flex; align-items: center; justify-content: flex-end; }
 
-        /* ── MINI EQ IN NAV ── */
+        .nav-toggle {
+            display: none;
+            background: none; border: 1px solid var(--border-dim); color: var(--cream);
+            width: 36px; height: 36px; cursor: pointer; border-radius: 0;
+            align-items: center; justify-content: center; transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .nav-toggle:hover { border-color: var(--orange); color: var(--orange); }
+
         #nav-eq-container {
             display: flex; align-items: flex-end; gap: 2px;
-            height: 22px; margin: 0 24px; padding-bottom: 2px;
+            height: 22px; margin: 0 16px; padding-bottom: 2px;
         }
         .nav-eq-bar {
             width: 3px; background: var(--orange);
             transition: height 0.1s ease; border-radius:0;
         }
 
-        /* ── LANGUAGE SWITCHER ── */
-        #lang-switcher { display: flex; gap: 6px; align-items: center; margin-right: 15px; }
-        .lang-btn {
-            background: none; border: 1px solid rgba(255,255,255,0.18);
-            color: rgba(255,255,255,0.35);
-            font-family:'JetBrains Mono', monospace;
-            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; padding: 4px 8px;
-            cursor: pointer; transition: color 0.2s, border-color 0.2s; text-transform: uppercase;
-        }
-        .lang-btn:hover { color: var(--cream); border-color: rgba(255,255,255,0.4); }
-        .lang-btn.active { color: var(--orange); border-color: var(--orange); }
+        #nav-share-container { min-width: 90px; margin-right: 20px; display: flex; align-items: center; justify-content: flex-end; }
 
-        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; }
+        .page { max-width: 1440px; margin: 0 auto; padding: 0 56px 120px; position: relative; z-index: 1; width: 100%; }
 
         .hero { padding: 80px 0 72px; border-bottom: 1px solid var(--border); max-width: 1000px; }
         .hero-label { font-size: 1.04rem; color: var(--orange); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
@@ -322,7 +336,7 @@
         .tts-player {
             background: var(--bg2); border: 1px solid var(--border); border-radius:0;
             padding: 16px 20px; margin: 32px 0 0;
-            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px;
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; max-width: 960px; width: 100%;
         }
         .tts-label { font-size: 0.91rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
         .tts-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -360,6 +374,20 @@
         .reveal.visible { opacity: 1; transform: none; }
 
         @media (max-width: 900px) {
+            nav { padding: 0 16px; justify-content: space-between; }
+            .nav-toggle { display: flex; }
+            .nav-links {
+                display: none; position: absolute; top: 72px; left: 0; right: 0;
+                flex-direction: column; align-items: stretch; gap: 0;
+                background: var(--bg); border-bottom: 1px solid var(--border);
+                padding: 8px 16px 16px; max-height: calc(100vh - 72px);
+                overflow-y: auto; box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+            }
+            .nav-links.open { display: flex; }
+            .nav-links a { width: 100%; text-align: left; padding: 13px 10px; font-size: 1.05rem; }
+            .font-nudge-trigger { bottom: 16px; right: 16px; padding: 8px 12px; font-size: 0.7rem; }
+            .font-nudge { bottom: 16px; right: 16px; }
+
             .timeline { grid-template-columns: repeat(3, 1fr); }
             .timeline-step:nth-child(3) { border-right: none; }
             .timeline-step:nth-child(n+4) { border-top: 1px solid var(--border-dim); }
@@ -373,10 +401,10 @@
             .next-grid { grid-template-columns: 1fr; }
             .timeline { grid-template-columns: 1fr 1fr; }
             .learning-grid { grid-template-columns: 1fr; }
-            .font-nudge { bottom: 16px; right: 16px; }
             #synths-mkv video { float: none !important; width: 100% !important; max-width: 100% !important; margin: 0 0 24px !important; }
             .evo-split-row { flex-direction: column !important; }
             .evo-split-row video { width: 100% !important; flex: 0 0 auto !important; }
+            .page { padding: 0 20px 80px; }
         }
         @media (max-width: 480px) {
             .timeline { grid-template-columns: 1fr; }
@@ -387,7 +415,7 @@
         .company-footer {
             margin-top: 48px; padding: 32px 0;
             border-top: 1px solid var(--border-dim);
-            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; max-width: 960px;
+            display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-start; max-width: 960px; width: 100%;
         }
         .company-footer-block { display: flex; flex-direction: column; gap: 6px; }
         .company-footer-label { font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); }
@@ -401,12 +429,13 @@
             margin-top: 80px; padding-top: 32px; padding-bottom: 0;
             font-size: 0.85rem; letter-spacing: 0.15em;
             color: var(--dim); text-transform: uppercase;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border); width: 100%;
         }
     </style>
 </head>
 <body>
 
+<button class="font-nudge-trigger" onclick="toggleNudge()">A+ text size</button>
 <div class="font-nudge" id="fontNudge">
     <div class="font-nudge-label" data-i18n="nudge_label">Text too small?</div>
     <div class="font-nudge-controls">
@@ -418,17 +447,26 @@
 </div>
 
 <nav>
-    <a href="about.html" data-i18n="nav_about">about</a>
-    <a href="current.html" data-i18n="nav_current">current</a>
-    <a href="design.html" data-i18n="nav_design">design</a>
-    <a href="fun.html">fun</a>
-    <a href="merch.html" data-i18n="nav_merch">merch</a>
-    <a href="music.html" data-i18n="nav_music">music</a>
-    <a href="services.html" data-i18n="nav_services">services</a>
-    <a href="software.html">software</a>
-    <a href="synths.html" class="active" data-i18n="nav_synths">synths</a>
-    <a href="tools.html" data-i18n="nav_tools">tools</a>
-    <a href="video.html" data-i18n="nav_video">video</a>
+    <button class="nav-toggle" id="navToggle" onclick="toggleMobileNav()" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+    </button>
+    <div class="nav-links" id="navLinks">
+        <a href="about.html" data-i18n="nav_about">about</a>
+        <a href="current.html" data-i18n="nav_current">current</a>
+        <a href="design.html" data-i18n="nav_design">design</a>
+        <a href="fun.html">fun</a>
+        <a href="merch.html" data-i18n="nav_merch">merch</a>
+        <a href="music.html" data-i18n="nav_music">music</a>
+        <a href="services.html" data-i18n="nav_services">services</a>
+        <a href="software.html">software</a>
+        <a href="synths.html" class="active" data-i18n="nav_synths">synths</a>
+        <a href="tools.html" data-i18n="nav_tools">tools</a>
+        <a href="video.html" data-i18n="nav_video">video</a>
+    </div>
     <div class="nav-spacer"></div>
     <div id="nav-eq-container"></div>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark">
@@ -455,9 +493,9 @@
         <div class="tts-player" id="ttsPlayer">
             <span class="tts-label" data-i18n="tts_speak_label">// Speak this page</span>
             <div class="tts-controls">
-                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">&#9654; Play</button>
-                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>&#10074;&#10074; Pause</button>
-                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>&#9632; Stop</button>
+                <button class="tts-btn" id="ttsPlay" onclick="ttsPlay()">▶ Play</button>
+                <button class="tts-btn" id="ttsPause" onclick="ttsPause()" disabled>❚❚ Pause</button>
+                <button class="tts-btn stop-btn" id="ttsStop" onclick="ttsStop()" disabled>■ Stop</button>
                 <div class="tts-sep"></div>
                 <div class="tts-speed-wrap">
                     <span class="tts-speed-label" data-i18n="tts_speed">Speed</span>
@@ -855,6 +893,40 @@
         if (savedTheme) applyTheme(savedTheme);
     } catch(e) {}
 
+    // ── MOBILE NAVIGATION TOGGLE ──
+    function toggleMobileNav() {
+        const navLinks = document.getElementById('navLinks');
+        const navToggle = document.getElementById('navToggle');
+        const isOpen = navLinks.classList.toggle('open');
+        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    // Close mobile nav when clicking outside
+    document.addEventListener('click', function(e) {
+        const navLinks = document.getElementById('navLinks');
+        const navToggle = document.getElementById('navToggle');
+        if (navLinks.classList.contains('open') && !navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+            navLinks.classList.remove('open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    // ── FONT NUDGE TOGGLE ──
+    function toggleNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        const isOpen = nudge.classList.toggle('open');
+        trigger.style.display = isOpen ? 'none' : 'flex';
+    }
+
+    function dismissNudge() {
+        const nudge = document.getElementById('fontNudge');
+        const trigger = document.querySelector('.font-nudge-trigger');
+        nudge.classList.remove('open');
+        trigger.style.display = 'flex';
+        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
+    }
+
     // ── NAV EQ ANIMATION ──
     (function() {
         const NUM_BARS = 8;
@@ -893,11 +965,6 @@
     function adjustFont(dir) {
         fontScaleIndex = Math.max(0, Math.min(fontScaleLevels.length - 1, fontScaleIndex + dir));
         applyFontScale();
-    }
-    function dismissNudge() {
-        document.getElementById('fontNudge').style.opacity = '0';
-        document.getElementById('fontNudge').style.pointerEvents = 'none';
-        try { localStorage.setItem('dp-nudge-dismissed', '1'); } catch(e) {}
     }
     try {
         const saved = localStorage.getItem('dp-font-scale');
@@ -1016,15 +1083,15 @@
             const pause = document.getElementById('ttsPause');
             const stop   = document.getElementById('ttsStop');
             if (state === 'idle') {
-                play.textContent = '\u25B6 Play'; play.disabled = false; play.classList.remove('active');
+                play.textContent = '▶ Play'; play.disabled = false; play.classList.remove('active');
                 pause.disabled = true; pause.classList.remove('active'); stop.disabled = true;
             } else if (state === 'playing') {
-                play.textContent = '\u25B6 Playing'; play.disabled = true; play.classList.add('active');
-                pause.disabled = false; pause.textContent = '\u23F8\u23F8 Pause'; pause.classList.remove('active');
+                play.textContent = '▶ Playing'; play.disabled = true; play.classList.add('active');
+                pause.disabled = false; pause.textContent = '❚❚ Pause'; pause.classList.remove('active');
                 stop.disabled = false;
             } else if (state === 'paused') {
-                play.textContent = '\u25B6 Resume'; play.disabled = false; play.classList.remove('active');
-                pause.textContent = '\u23F8\u23F8 Paused'; pause.classList.add('active'); stop.disabled = false;
+                play.textContent = '▶ Resume'; play.disabled = false; play.classList.remove('active');
+                pause.textContent = '❚❚ Paused'; pause.classList.add('active'); stop.disabled = false;
             }
         }
 
