@@ -502,7 +502,7 @@
         const READ_SELECTORS=['.hero h1','.hero-intro','.instrument-story','.tool-story','.learning-body','.aside-text'];
         const SECTION_SELECTORS=['.hero-label','.section-divider-label','.instrument-eyebrow','.instrument-name','.tool-sub'];
         function populateVoiceList(){const voices=synth.getVoices();if(!voices.length)return;const sel=document.getElementById('ttsVoiceSel');if(!sel)return;sel.innerHTML='';const enVoices=voices.filter(v=>/^en/i.test(v.lang));const preferredFemale=['Samantha','Karen','Moira','Victoria','Serena','Google UK English Female','Google US English'];const preferredMale=['Daniel','Alex','Fred','Oliver','Google UK English Male','Arthur'];function pickVoice(preferred){for(const name of preferred){const match=enVoices.find(v=>v.name.includes(name));if(match)return match;}return null;}const femaleVoice=pickVoice(preferredFemale);const maleVoice=pickVoice(preferredMale);const fallbacks=enVoices.filter(v=>v!==femaleVoice&&v!==maleVoice);const options=[{label:'// voice — female',voice:femaleVoice||fallbacks[0]||null},{label:'// voice — male',voice:maleVoice||fallbacks[1]||null}].filter(o=>o.voice!==null);options.forEach(({label,voice})=>{const o=document.createElement('option');o.value=voice.name;o.textContent=label;sel.appendChild(o);});if(!selectedVoice&&options.length>0){selectedVoice=options[0].voice;sel.value=options[0].voice.name;}}
-        window.ttsSetVoice=function(name){const voices=synth.getVoices();selectedVoice=voices.find(v=>v.name===name)||null;if(synth.speaking){synth.cancel();setTimeout(speakCurrent,80);}};
+        window.ttsSetVoice=function(name){const voices=synth.getVoices();selectedVoice=voices.find(v=>v.name === name)||null;if(synth.speaking){synth.cancel();setTimeout(speakCurrent,80);}};
         function buildChunks(){chunks=[];document.querySelectorAll(READ_SELECTORS.join(',')).forEach(el=>{const txt=el.innerText.trim();if(txt.length>2)chunks.push({el,text:txt});});}
         function buildSectionMenu(){const sel=document.getElementById('ttsSectionSel');if(!sel)return;while(sel.options.length>1)sel.remove(1);let map=[];document.querySelectorAll(SECTION_SELECTORS.join(',')).forEach(labelEl=>{const label=labelEl.innerText.replace(/^\/\/\s*/,'').trim();if(!label||label.length<2)return;let matchIdx=-1;for(let i=0;i<chunks.length;i++){if(labelEl.compareDocumentPosition(chunks[i].el)&Node.DOCUMENT_POSITION_FOLLOWING){matchIdx=i;break;}}if(matchIdx>=0)map.push({label,idx:matchIdx});});const seen=new Set();map=map.filter(s=>{if(seen.has(s.idx))return false;seen.add(s.idx);return true;});map.forEach(s=>{const opt=document.createElement('option');opt.value=s.idx;opt.textContent=s.label.length>38?s.label.slice(0,36)+'...':s.label;sel.appendChild(opt);});}
         function highlight(el){if(lastHighlighted)lastHighlighted.classList.remove('tts-highlight');if(el){el.classList.add('tts-highlight');el.scrollIntoView({behavior:'smooth',block:'center'});}lastHighlighted=el;}
@@ -519,7 +519,6 @@
         window.addEventListener('beforeunload',()=>synth.cancel());
     })();
 </script>
-<script src="share.js"></script>
 <script src="post-generator.js"></script>
 </body>
 </html>
